@@ -1,0 +1,15 @@
+{
+  "extends": ".",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "build"
+  },
+  "include": [
+    "src/main/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
+}
