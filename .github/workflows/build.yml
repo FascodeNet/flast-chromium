@@ -7,8 +7,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-latest, macos-latest ]
-        # os: [ windows-latest, macos-latest, ubuntu-latest ]
+        # os: [ windows-latest, macos-latest ]
+        os: [ windows-latest, macos-latest, ubuntu-latest ]
 
     steps:
       - name: Check out Git repository
@@ -21,11 +21,11 @@ jobs:
         with:
           node-version: 16
 
-      # - name: Install Required Build Toolchain
-      #   if: matrix.os == 'ubuntu-latest'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install gcc-multilib g++-multilib
+      - name: Install Required Build Toolchain
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-multilib g++-multilib
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
@@ -52,6 +52,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          draft: true
           files: "dist/**"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
