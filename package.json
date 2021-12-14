@@ -16,6 +16,10 @@
     "react",
     "styled-components"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FascodeNet/flast_chromium.git"
+  },
   "main": "build/main.js",
   "scripts": {
     "predev": "rimraf build",
@@ -25,9 +29,9 @@
     "dev:webpack": "webpack --watch",
     "build": "webpack --config webpack.config.prod.ts --progress",
     "start": "electron .",
-    "compile-win32": "npm run build && electron-builder -w",
-    "compile-darwin": "npm run build && electron-builder -m",
-    "compile-linux": "npm run build && electron-builder -l"
+    "compile:win32": "npm run build && electron-builder -w",
+    "compile:darwin": "npm run build && electron-builder -m",
+    "compile:linux": "npm run build && electron-builder -l"
   },
   "dependencies": {
     "@emotion/react": "11.6.0",

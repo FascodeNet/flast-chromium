@@ -1,0 +1,56 @@
+name: Build
+
+on: [ push, pull_request ]
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, macos-latest, ubuntu-latest ]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      # - name: Install Required Build Toolchain
+      #   if: matrix.os == 'ubuntu-latest'
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install gcc-multilib g++-multilib
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Compile Windows
+        if: matrix.os == 'windows-latest'
+        run: npm run compile:win32
+
+      - name: Compile macOS
+        if: matrix.os == 'macos-latest'
+        run: npm run compile:darwin
+
+      - name: Compile Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run compile:linux
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.os }}
+          path: dist
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "dist/**"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
