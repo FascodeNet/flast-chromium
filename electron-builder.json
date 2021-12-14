@@ -18,6 +18,7 @@
     "build/**/*",
     "static/**/*"
   ],
+  "publish": "github",
   "win": {
     "icon": "static/icons/app/icon.ico",
     "target": [
