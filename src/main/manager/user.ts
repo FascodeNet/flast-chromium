@@ -44,7 +44,7 @@ export class UserManager {
 
     public set lastUserId(lastUserId: string | undefined) {
         this._lastUserId = lastUserId;
-        UserManager.setConfig({ users: [...this._users.keys()], lastUser: this.lastUserId });
+        UserManager.setConfig({ users: this.normalUsers.map((user) => user.id), lastUser: this.lastUserId });
     }
 
 
@@ -61,10 +61,14 @@ export class UserManager {
         this._users.delete(id);
     }
 
-    public async create() {
-        const user = await this.load(nanoid());
-        await UserManager.setConfig({ users: [...this._users.keys()], lastUser: this.lastUserId });
+    private static async load(id: string) {
+        const user = new NormalUser(id);
+        await user.extensions.loads(user.session.session);
         return user;
+    }
+
+    public async create() {
+        return this.add(await UserManager.load(nanoid()));
     }
 
     public async delete(id: string) {
@@ -79,33 +83,26 @@ export class UserManager {
 
             this._users.delete(id);
             await rmdir(userDataPath);
-            await UserManager.setConfig({ users: [...this._users.keys()], lastUser: this.lastUserId });
+            await UserManager.setConfig({ users: this.normalUsers.map((user) => user.id), lastUser: this.lastUserId });
             return true;
         } catch (e) {
             return false;
         }
     }
 
-    public async load(id: string) {
-        const user = new NormalUser(id);
-        await user.extensions.loads(user.session.session);
-        this._users.set(id, user);
-        return user;
-    }
-
     public async loads(): Promise<IUser[]> {
         try {
-            const data = await UserManager.getConfig();
+            const { users, lastUser } = await UserManager.getConfig();
 
-            for (let i = 0; i < data.users.length; i++)
-                await this.load(data.users[i]);
+            for (let i = 0; i < users.length; i++)
+                this.add(await UserManager.load(users[i]));
 
-            this.lastUserId = data.lastUser;
+            this.lastUserId = lastUser;
             this.loaded = true;
 
             return this.users;
         } catch (e) {
-            await UserManager.setConfig({ users: [] });
+            await UserManager.setConfig({ users: [], lastUser: undefined });
 
             this.lastUserId = undefined;
             this.loaded = true;

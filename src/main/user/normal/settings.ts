@@ -17,7 +17,6 @@ export class NormalSettings implements ISettings {
         this.user = user;
 
         this.path = join(app.getPath('userData'), 'users', user.id, 'config.json');
-
         this.getConfig().then((data) => {
             this._config = deepmerge(DefaultUserConfig, data);
         }).catch(async () => {
@@ -36,8 +35,12 @@ export class NormalSettings implements ISettings {
         this.setConfig(config);
     }
 
-    private async getConfig(): Promise<UserConfig> {
-        return JSON.parse(await readFile(this.path, 'utf8'));
+    private async getConfig() {
+        try {
+            return JSON.parse(await readFile(this.path, 'utf8')) as UserConfig;
+        } catch {
+            return Promise.reject('User config not found!');
+        }
     }
 
     private async setConfig(data: UserConfig) {

@@ -1,3 +1,6 @@
+import { app } from 'electron';
+import { mkdir } from 'fs/promises';
+import { join } from 'path';
 import { UserType } from '../../../interfaces/user';
 import { IUser } from '../interfaces';
 import { NormalBookmarks } from './bookmarks';
@@ -15,6 +18,8 @@ export class NormalUser implements IUser {
     public avatar?: string = undefined;
     public readonly type: UserType = 'normal';
 
+    private readonly path: string;
+
     private _extensions: NormalExtensions;
     private _session: NormalSession;
 
@@ -26,6 +31,9 @@ export class NormalUser implements IUser {
 
     constructor(id: string) {
         this.id = id;
+
+        this.path = join(app.getPath('userData'), 'users', id);
+        mkdir(this.path, { recursive: true });
 
         this._extensions = new NormalExtensions(this);
         this._session = new NormalSession(this);

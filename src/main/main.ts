@@ -55,6 +55,7 @@ class App {
             this.windowManager.add(user);
         }
 
+
         app.once('window-all-closed', () => {
             if (!IS_MAC)
                 app.quit();

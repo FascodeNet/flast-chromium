@@ -13,7 +13,6 @@ export class NormalExtensions implements IExtensions {
         this.user = user;
 
         this.path = join(app.getPath('userData'), 'users', user.id, 'extensions');
-
         mkdir(this.path, { recursive: true });
     }
 
@@ -30,46 +29,50 @@ export class NormalExtensions implements IExtensions {
             }
         };
 
-        const subDirectories = await readdir(this.path, {
-            withFileTypes: true
-        });
+        try {
+            const subDirectories = await readdir(this.path, {
+                withFileTypes: true
+            });
 
-        const extensionDirectories = await Promise.all(
-            subDirectories
-                .filter((dirEnt) => dirEnt.isDirectory())
-                .map(async (dirEnt) => {
-                    const extPath = join(this.path, dirEnt.name);
+            const extensionDirectories = await Promise.all(
+                subDirectories
+                    .filter((dirEnt) => dirEnt.isDirectory())
+                    .map(async (dirEnt) => {
+                        const extPath = join(this.path, dirEnt.name);
 
-                    if (await manifestExists(extPath))
-                        return extPath;
+                        if (await manifestExists(extPath))
+                            return extPath;
 
-                    const extSubDirs = await readdir(extPath, {
-                        withFileTypes: true
-                    });
+                        const extSubDirs = await readdir(extPath, {
+                            withFileTypes: true
+                        });
 
-                    const versionDirPath =
-                        extSubDirs.length === 1 && extSubDirs[0].isDirectory()
-                            ? join(extPath, extSubDirs[0].name)
-                            : undefined;
+                        const versionDirPath =
+                            extSubDirs.length === 1 && extSubDirs[0].isDirectory()
+                                ? join(extPath, extSubDirs[0].name)
+                                : undefined;
 
-                    if (await manifestExists(versionDirPath))
-                        return versionDirPath;
-                })
-        );
+                        if (await manifestExists(versionDirPath))
+                            return versionDirPath;
+                    })
+            );
 
-        const results = [];
+            const results = [];
 
-        for (const extPath of extensionDirectories.filter(Boolean)) {
-            if (typeof extPath !== 'string') continue;
-            console.log(`Loading extension from ${extPath}`);
-            try {
-                const extensionInfo = await ses.loadExtension(extPath);
-                results.push(extensionInfo);
-            } catch (e) {
-                console.error(e);
+            for (const extPath of extensionDirectories.filter(Boolean)) {
+                if (typeof extPath !== 'string') continue;
+                console.log(`Loading extension from ${extPath}`);
+                try {
+                    const extensionInfo = await ses.loadExtension(extPath);
+                    results.push(extensionInfo);
+                } catch (e) {
+                    console.error(e);
+                }
             }
-        }
 
-        return results;
+            return results;
+        } catch {
+            return [];
+        }
     }
 }
