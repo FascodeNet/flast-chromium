@@ -31,7 +31,10 @@
     "start": "electron .",
     "compile:win32": "npm run build && electron-builder -w",
     "compile:darwin": "npm run build && electron-builder -m",
-    "compile:linux": "npm run build && electron-builder -l"
+    "compile:linux": "npm run build && electron-builder -l",
+    "ci-compile:win32": "npm run build && electron-builder -w -p always",
+    "ci-compile:darwin": "npm run build && electron-builder -m -p always",
+    "ci-compile:linux": "npm run build && electron-builder -l -p always"
   },
   "dependencies": {
     "@emotion/react": "11.6.0",

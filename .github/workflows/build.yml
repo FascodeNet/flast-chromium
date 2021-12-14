@@ -32,19 +32,19 @@ jobs:
 
       - name: Compile Windows
         if: matrix.os == 'windows-latest'
-        run: npm run compile:win32
+        run: npm run ci-compile:win32
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Compile macOS
         if: matrix.os == 'macos-latest'
-        run: npm run compile:darwin
+        run: npm run ci-compile:darwin
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Compile Linux
         if: matrix.os == 'ubuntu-latest'
-        run: npm run compile:linux
+        run: npm run ci-compile:linux
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
@@ -54,11 +54,11 @@ jobs:
           name: ${{ matrix.os }}
           path: dist
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          draft: true
-          files: "dist/**"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        if: startsWith(github.ref, 'refs/tags/')
+#        with:
+#          draft: true
+#          files: "dist/**"
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
