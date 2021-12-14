@@ -33,14 +33,20 @@ jobs:
       - name: Compile Windows
         if: matrix.os == 'windows-latest'
         run: npm run compile:win32
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Compile macOS
         if: matrix.os == 'macos-latest'
         run: npm run compile:darwin
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Compile Linux
         if: matrix.os == 'ubuntu-latest'
         run: npm run compile:linux
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v1
@@ -55,4 +61,4 @@ jobs:
           draft: true
           files: "dist/**"
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
