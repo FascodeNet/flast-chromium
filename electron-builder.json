@@ -63,7 +63,19 @@
       "name": "Document",
       "description": "Flast",
       "role": "Viewer",
-      "ext": ["html", "htm", "php"]
+      "ext": "html"
+    },
+    {
+      "name": "Document",
+      "description": "Flast",
+      "role": "Viewer",
+      "ext": "htm"
+    },
+    {
+      "name": "Document",
+      "description": "Flast",
+      "role": "Viewer",
+      "ext": "php"
     }
   ]
 }
