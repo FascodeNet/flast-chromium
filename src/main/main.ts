@@ -4,7 +4,7 @@ import { stat } from 'fs/promises';
 import { extname, isAbsolute } from 'path';
 import { UserConfig } from '../interfaces/user';
 import { APPLICATION_PROTOCOL } from '../utils';
-import { IS_DEVELOPMENT, IS_MAC } from '../utils/process';
+import { IS_DEVELOPMENT, IS_MAC, IS_WINDOWS } from '../utils/process';
 import { isURL, prefixHttp } from '../utils/url';
 import { FaviconManager } from './manager/favicon';
 import { UserManager } from './manager/user';
@@ -136,6 +136,8 @@ class App {
     }
 
     private static setTasks() {
+        if (!IS_WINDOWS) return;
+
         app.setUserTasks([
             {
                 program: process.execPath,
