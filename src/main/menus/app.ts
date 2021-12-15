@@ -12,11 +12,45 @@ import { Shortcuts } from './shortcuts';
 
 export const getApplicationMenu = (window: AppWindow) => {
     const translate = getTranslate(window.user.settings.config);
+    const languageSection = translate.menus.application;
 
     const viewManager = window.viewManager;
 
-    const languageSection = translate.menus.application;
     return Menu.buildFromTemplate([
+        {
+            label: languageSection.app.label,
+            icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+            enabled: IS_MAC,
+            submenu: [
+                {
+                    label: languageSection.app.about,
+                    role: 'about'
+                },
+                { type: 'separator' },
+                {
+                    label: languageSection.app.services,
+                    role: 'services'
+                },
+                { type: 'separator' },
+                {
+                    label: languageSection.app.hide,
+                    role: 'hide'
+                },
+                {
+                    label: languageSection.app.hideOthers,
+                    role: 'hideOthers'
+                },
+                {
+                    label: languageSection.app.showAll,
+                    role: 'unhide'
+                },
+                { type: 'separator' },
+                {
+                    label: languageSection.app.quit,
+                    role: 'quit'
+                }
+            ]
+        },
         {
             label: `${languageSection.file.label}(&F)`,
             icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,

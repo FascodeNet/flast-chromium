@@ -9,7 +9,7 @@ import { AddressBar } from '../AddressBar';
 import { ApplicationMenuButton } from '../ApplicationMenuButton';
 import { NavigationBar } from '../NavigationBar';
 import { HorizontalTabBar } from '../TabBar';
-import { StyledContainer, StyledTitleBar } from './styles';
+import { StyledContainer, StyledTitleBar, StyledWindowControls } from './styles';
 
 export const TitleBar = () => {
     const { isMaximized, minimize, maximize, close } = useElectronAPI();
@@ -73,15 +73,14 @@ export const TitleBar = () => {
         <StyledTitleBar className="title-bar" appearanceStyle={style}>
             <TitleBarContent />
             {!isMac &&
-                <div className="window-controllers">
+                <StyledWindowControls className="window-controllers">
                     <WindowsControls
-                        style={{ height: '100%', appRegion: 'no-drag' }}
                         isMaximized={maximized}
                         onMinimize={() => minimize()}
                         onMaximize={() => maximize()}
                         onClose={() => close()}
                     />
-                </div>
+                </StyledWindowControls>
             }
         </StyledTitleBar>
     );

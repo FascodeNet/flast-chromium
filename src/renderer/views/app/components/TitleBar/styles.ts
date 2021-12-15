@@ -10,7 +10,8 @@ export const StyledTitleBar = styled.div<StyledProps>`
   width: 100%;
   height: ${({ appearanceStyle }) => appearanceStyle === 'top_double' ? '42px' : '50px'};
   display: grid;
-  grid-template-columns: ${platform() !== 'darwin' ? '1fr 135px' : '120px 1fr'};
+  grid-template-columns: ${platform() !== 'darwin' ? '1fr 135px' : '76px 1fr'};
+  grid-template-areas: ${platform() !== 'darwin' ? 'title-bar-content window-controls' : 'window-controls title-bar-content'};
   app-region: drag;
 `;
 
@@ -68,8 +69,20 @@ const getStyle = (style: AppearanceStyle) => {
 export const StyledContainer = styled.div<StyledProps>`
   width: 100%;
   height: inherit;
+  grid-area: title-bar-content;
   display: grid;
   gap: 8px;
 
   ${({ appearanceStyle }) => getStyle(appearanceStyle)};
+`;
+
+export const StyledWindowControls = styled.div`
+  width: 100%;
+  height: inherit;
+  grid-area: window-controls;
+  app-region: no-drag;
+
+  & > div {
+    height: 100%;
+  }
 `;

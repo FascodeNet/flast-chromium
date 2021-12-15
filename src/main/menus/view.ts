@@ -22,6 +22,7 @@ import { Shortcuts } from './shortcuts';
 
 export const getContextMenu = (window: AppWindow, view: AppView, params: ContextMenuParams) => {
     const translate = getTranslate(window.user.settings.config);
+    const languageSection = translate.menus.view;
 
     const {
         linkURL,
@@ -36,7 +37,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
     const fullscreenOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = window.browserWindow.isFullScreen() ? [
         {
-            label: translate.menus.view.fullScreen.fullScreenExit,
+            label: languageSection.fullScreen.fullScreenExit,
             icon: !IS_MAC ? getMenuItemIconFromName('fullscreen_exit') : undefined,
             accelerator: Shortcuts.FULLSCREEN,
             click: () => window.browserWindow.setFullScreen(false)
@@ -53,19 +54,19 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
     const linkOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = linkURL !== '' ? [
         {
-            label: translate.menus.view.link.newTab,
+            label: languageSection.link.newTab,
             icon: !IS_MAC ? getMenuItemIconFromName('tab_add') : undefined,
             accelerator: Shortcuts.TAB_ADD,
             click: () => window.viewManager.add(linkURL)
         },
         {
-            label: translate.menus.view.link.newWindow,
+            label: languageSection.link.newWindow,
             icon: !IS_MAC ? getMenuItemIconFromName('window_add') : undefined,
             accelerator: Shortcuts.WINDOW_ADD,
             click: () => Main.windowManager.add(window.user, [linkURL])
         },
         {
-            label: translate.menus.view.link.openIncognitoWindow,
+            label: languageSection.link.openIncognitoWindow,
             icon: !IS_MAC ? getMenuItemIconFromName('window_incognito') : undefined,
             accelerator: Shortcuts.WINDOW_INCOGNITO,
             click: () => {
@@ -80,7 +81,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         },
         { type: 'separator' },
         {
-            label: translate.menus.view.link.saveLink,
+            label: languageSection.link.saveLink,
             icon: !IS_MAC ? getMenuItemIconFromName('save_as') : undefined,
             accelerator: Shortcuts.SAVE_AS,
             click: () => {
@@ -100,7 +101,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             }
         },
         {
-            label: translate.menus.view.link.copyLink,
+            label: languageSection.link.copyLink,
             icon: !IS_MAC ? getMenuItemIconFromName('copy_link') : undefined,
             accelerator: Shortcuts.EDIT_COPY,
             click: () => {
@@ -112,17 +113,17 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
     const imageOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = hasImageContents ? [
         {
-            label: translate.menus.view.image.newTab,
+            label: languageSection.image.newTab,
             icon: !IS_MAC ? getMenuItemIconFromName('image_add') : undefined,
             click: () => window.viewManager.add(srcURL)
         },
         {
-            label: translate.menus.view.image.saveImage,
+            label: languageSection.image.saveImage,
             icon: !IS_MAC ? getMenuItemIconFromName('save_as_image') : undefined,
             click: () => view.webContents.downloadURL(srcURL)
         },
         {
-            label: translate.menus.view.image.copyImage,
+            label: languageSection.image.copyImage,
             icon: !IS_MAC ? getMenuItemIconFromName('copy_image') : undefined,
             click: () => {
                 const img = nativeImage.createFromDataURL(srcURL);
@@ -132,7 +133,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             }
         },
         {
-            label: translate.menus.view.image.copyLink,
+            label: languageSection.image.copyLink,
             icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
             click: () => {
                 clipboard.clear();
@@ -143,26 +144,26 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
     const searchOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = selectionText !== '' ? [
         {
-            label: translate.menus.view.selection.copy,
+            label: languageSection.selection.copy,
             icon: !IS_MAC ? getMenuItemIconFromName('copy') : undefined,
             accelerator: Shortcuts.EDIT_COPY,
             enabled: canCopy,
             click: () => webContents.copy()
         },
         {
-            label: translate.menus.view.selection.textSearch.replace('%n', 'Google').replace('%t', getSelectionText(true)),
+            label: languageSection.selection.textSearch.replace('%n', 'Google').replace('%t', getSelectionText(true)),
             icon: !IS_MAC ? getMenuItemIconFromName('search') : undefined,
             visible: canCopy && !isURL(getSelectionText(true)),
             click: () => window.viewManager.add(searchTemplateUrl.replace('%s', encodeURIComponent(getSelectionText(true))))
         },
         {
-            label: translate.menus.view.selection.textLoad.replace('%u', getSelectionText(false)),
+            label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
             icon: !IS_MAC ? getMenuItemIconFromName('external_link') : undefined,
             visible: canCopy && isURL(getSelectionText(false)),
             click: () => window.viewManager.add(getSelectionText(false))
         },
         {
-            label: translate.menus.view.print,
+            label: languageSection.print,
             icon: !IS_MAC ? getMenuItemIconFromName('print') : undefined,
             accelerator: Shortcuts.PRINT,
             click: () => webContents.print()
@@ -171,7 +172,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
     const editableEmojiPanelOptions: (MenuItem | MenuItemConstructorOptions)[] = app.isEmojiPanelSupported() ? [
         {
-            label: translate.menus.view.editable.emojiPanel,
+            label: languageSection.editable.emojiPanel,
             icon: !IS_MAC ? getMenuItemIconFromName('emoji') : undefined,
             accelerator: Shortcuts.EDIT_SHOW_EMOJI_PANEL,
             click: () => app.showEmojiPanel()
@@ -182,19 +183,19 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
     const editableSearchOptions: (MenuItem | MenuItemConstructorOptions)[] = selectionText !== '' ? [
         { type: 'separator' },
         {
-            label: translate.menus.view.selection.textSearch.replace('%n', 'Google').replace('%t', getSelectionText(true)),
+            label: languageSection.selection.textSearch.replace('%n', 'Google').replace('%t', getSelectionText(true)),
             icon: !IS_MAC ? getMenuItemIconFromName('search') : undefined,
             visible: canCopy && !isURL(getSelectionText(true)),
             click: () => window.viewManager.add(searchTemplateUrl.replace('%s', encodeURIComponent(getSelectionText(true))))
         },
         {
-            label: translate.menus.view.selection.textLoad.replace('%u', getSelectionText(false)),
+            label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
             icon: !IS_MAC ? getMenuItemIconFromName('external_link') : undefined,
             visible: canCopy && isURL(getSelectionText(false)),
             click: () => window.viewManager.add(getSelectionText(false))
         },
         {
-            label: translate.menus.view.print,
+            label: languageSection.print,
             icon: !IS_MAC ? getMenuItemIconFromName('print') : undefined,
             accelerator: Shortcuts.PRINT,
             click: () => webContents.print()
@@ -204,14 +205,14 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
     const editableOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = isEditable ? [
         ...editableEmojiPanelOptions,
         {
-            label: translate.menus.view.editable.undo,
+            label: languageSection.editable.undo,
             icon: !IS_MAC ? getMenuItemIconFromName('undo') : undefined,
             accelerator: Shortcuts.EDIT_UNDO,
             enabled: canUndo,
             click: () => webContents.undo()
         },
         {
-            label: translate.menus.view.editable.redo,
+            label: languageSection.editable.redo,
             icon: !IS_MAC ? getMenuItemIconFromName('redo') : undefined,
             accelerator: Shortcuts.EDIT_REDO,
             enabled: canRedo,
@@ -219,35 +220,35 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         },
         { type: 'separator' },
         {
-            label: translate.menus.view.editable.cut,
+            label: languageSection.editable.cut,
             icon: !IS_MAC ? getMenuItemIconFromName('cut') : undefined,
             accelerator: Shortcuts.EDIT_CUT,
             enabled: canCut,
             click: () => webContents.cut()
         },
         {
-            label: translate.menus.view.editable.copy,
+            label: languageSection.editable.copy,
             icon: !IS_MAC ? getMenuItemIconFromName('copy') : undefined,
             accelerator: Shortcuts.EDIT_COPY,
             enabled: canCopy,
             click: () => webContents.copy()
         },
         {
-            label: translate.menus.view.editable.paste,
+            label: languageSection.editable.paste,
             icon: !IS_MAC ? getMenuItemIconFromName('paste') : undefined,
             accelerator: Shortcuts.EDIT_PASTE,
             enabled: canPaste,
             click: () => webContents.pasteAndMatchStyle()
         },
         {
-            label: translate.menus.view.editable.pastePlainText,
+            label: languageSection.editable.pastePlainText,
             icon: !IS_MAC ? getMenuItemIconFromName('paste_as_plain_text') : undefined,
             accelerator: Shortcuts.EDIT_PASTE_AS_PLAIN_TEXT,
             enabled: canPaste,
             click: () => webContents.paste()
         },
         {
-            label: translate.menus.view.editable.selectAll,
+            label: languageSection.editable.selectAll,
             icon: !IS_MAC ? getMenuItemIconFromName('select_all') : undefined,
             accelerator: Shortcuts.EDIT_SELECT_ALL,
             enabled: canSelectAll,
@@ -258,7 +259,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
     const developOptions: (MenuItem | MenuItemConstructorOptions)[] = [
         {
-            label: translate.menus.view.devTool,
+            label: languageSection.devTool,
             icon: !IS_MAC ? getMenuItemIconFromName('inspect') : undefined,
             accelerator: Shortcuts.DEVELOPER_TOOLS_1,
             click: onDevToolClick
@@ -273,12 +274,12 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         const mediaOptions: Array<MenuItem | MenuItemConstructorOptions> = mediaType === 'audio' || mediaType === 'video' || webContents.isCurrentlyAudible() ? [
             { type: 'separator' },
             {
-                label: view.isMuted() ? translate.menus.view.media.audioMuteExit : translate.menus.view.media.audioMute,
+                label: view.isMuted() ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
                 icon: !IS_MAC ? getMenuItemIconFromName(`speaker${webContents.audioMuted ? '' : '_muted'}`) : undefined,
                 click: () => view.setMuted(!view.isMuted())
             },
             {
-                label: translate.menus.view.media.pictureInPicture,
+                label: languageSection.media.pictureInPicture,
                 icon: !IS_MAC ? getMenuItemIconFromName('picture_in_picture') : undefined,
                 click: () => {
                     webContents.executeJavaScript('api.togglePictureInPicture()');
@@ -293,21 +294,21 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
         const genericOptions: (MenuItem | MenuItemConstructorOptions)[] = [
             {
-                label: translate.menus.view.back,
+                label: languageSection.back,
                 icon: !IS_MAC ? getMenuItemIconFromName('arrow_left') : undefined,
                 accelerator: Shortcuts.NAVIGATION_BACK,
                 enabled: view.canGoBack(),
                 click: () => view.back()
             },
             {
-                label: translate.menus.view.forward,
+                label: languageSection.forward,
                 icon: !IS_MAC ? getMenuItemIconFromName('arrow_right') : undefined,
                 accelerator: Shortcuts.NAVIGATION_FORWARD,
                 enabled: view.canGoForward(),
                 click: () => view.forward()
             },
             {
-                label: !view.isLoading() ? translate.menus.view.reload : translate.menus.view.stop,
+                label: !view.isLoading() ? languageSection.reload : languageSection.stop,
                 icon: !IS_MAC ? getMenuItemIconFromName(!view.isLoading() ? 'reload' : 'remove') : undefined,
                 accelerator: Shortcuts.NAVIGATION_RELOAD_1,
                 click: () => {
@@ -317,7 +318,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             ...mediaOptions,
             { type: 'separator' },
             {
-                label: translate.menus.view.savePage,
+                label: languageSection.savePage,
                 icon: !IS_MAC ? getMenuItemIconFromName('save_as') : undefined,
                 accelerator: Shortcuts.SAVE_AS,
                 click: () => {
@@ -337,7 +338,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                 }
             },
             {
-                label: translate.menus.view.print,
+                label: languageSection.print,
                 icon: !IS_MAC ? getMenuItemIconFromName('print') : undefined,
                 accelerator: Shortcuts.PRINT,
                 click: () => webContents.print()
@@ -346,7 +347,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             ...extensionOptions,
             { type: 'separator' },
             {
-                label: translate.menus.view.viewSource,
+                label: languageSection.viewSource,
                 icon: !IS_MAC ? getMenuItemIconFromName('view_source') : undefined,
                 accelerator: Shortcuts.VIEW_SOURCE,
                 enabled: !view.getURL().startsWith('view-source:'),
@@ -356,7 +357,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                 }
             },
             {
-                label: translate.menus.view.devTool,
+                label: languageSection.devTool,
                 icon: !IS_MAC ? getMenuItemIconFromName('inspect') : undefined,
                 accelerator: Shortcuts.DEVELOPER_TOOLS_1,
                 click: onDevToolClick
