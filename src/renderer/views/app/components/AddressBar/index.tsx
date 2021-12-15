@@ -43,6 +43,11 @@ export const AddressBar = () => {
         } else if (e.key === 'Escape') {
             const navigationState = getCurrentViewState();
             setAddress(decodeURIComponent(navigationState?.url ?? ''));
+
+            setInputActive(false);
+            e.currentTarget.blur();
+
+            window.getSelection()?.removeAllRanges();
         }
     };
 
@@ -55,6 +60,8 @@ export const AddressBar = () => {
 
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
         setInputActive(false);
+        e.target.blur();
+
         window.getSelection()?.removeAllRanges();
     };
 

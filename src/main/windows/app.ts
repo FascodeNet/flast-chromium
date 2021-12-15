@@ -3,7 +3,7 @@ import { app, BrowserWindow, ipcMain, Menu, nativeImage } from 'electron';
 import { join } from 'path';
 import { AppWindowInitializerOptions } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
-import { IS_DEVELOPMENT } from '../../utils/process';
+import { IS_DEVELOPMENT, IS_MAC } from '../../utils/process';
 import { Main } from '../main';
 import { ViewManager } from '../manager/view';
 import { getApplicationMenu } from '../menus/app';
@@ -19,13 +19,7 @@ export class AppWindow {
 
     public viewManager: ViewManager;
 
-    public constructor(
-        user: IUser,
-        {
-            urls = ['https://www.google.com'],
-            active = true
-        }: AppWindowInitializerOptions
-    ) {
+    public constructor(user: IUser, { urls = ['https://www.google.com'] }: AppWindowInitializerOptions) {
         this.browserWindow = new BrowserWindow({
             frame: false,
             minWidth: 500,
@@ -59,6 +53,7 @@ export class AppWindow {
         urls.forEach((url) => this.viewManager.add(url));
 
         this.applicationMenu = getApplicationMenu(this);
+        Menu.setApplicationMenu(this.applicationMenu);
         this.browserWindow.setMenu(this.applicationMenu);
 
         this.browserWindow.loadFile('build/app.html');
@@ -86,6 +81,7 @@ export class AppWindow {
         if (this.browserWindow.isDestroyed()) return;
 
         this.applicationMenu = getApplicationMenu(this);
+        Menu.setApplicationMenu(this.applicationMenu);
         this.browserWindow.setMenu(this.applicationMenu);
     }
 
@@ -116,6 +112,9 @@ export class AppWindow {
         this.browserWindow.on('closed', onDestroyed);
 
         this.browserWindow.on('focus', () => {
+            if (IS_MAC)
+                this.setApplicationMenu();
+
             Main.windowManager.select(this.id);
             this.setViewBounds();
         });
@@ -131,7 +130,7 @@ export class AppWindow {
     }
 
     private setupIpc() {
-        ipcMain.handle(`window-user-${this.id}`, (e) => {
+        ipcMain.handle(`window-user-${this.id}`, () => {
             return this.user.id;
         });
 
@@ -143,23 +142,23 @@ export class AppWindow {
             });
         });
 
-        ipcMain.handle(`window-minimized-${this.id}`, (e, options) => {
+        ipcMain.handle(`window-minimized-${this.id}`, () => {
             return this.browserWindow.isMinimized();
         });
-        ipcMain.handle(`window-maximized-${this.id}`, (e, options) => {
+        ipcMain.handle(`window-maximized-${this.id}`, () => {
             return this.browserWindow.isMaximized();
         });
 
-        ipcMain.handle(`window-minimize-${this.id}`, (e, options) => {
+        ipcMain.handle(`window-minimize-${this.id}`, () => {
             this.browserWindow.minimize();
         });
-        ipcMain.handle(`window-maximize-${this.id}`, (e, options) => {
+        ipcMain.handle(`window-maximize-${this.id}`, () => {
             if (this.browserWindow.isMaximized())
                 this.browserWindow.unmaximize();
             else
                 this.browserWindow.maximize();
         });
-        ipcMain.handle(`window-close-${this.id}`, (e) => {
+        ipcMain.handle(`window-close-${this.id}`, () => {
             this.close();
         });
     }

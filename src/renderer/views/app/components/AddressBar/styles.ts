@@ -26,7 +26,7 @@ export const StyledAddressBar = styled.div<StyledAddressBarProps>`
   }
 
   ${({ active = false, appearanceStyle }) => (isHorizontal(appearanceStyle) && appearanceStyle !== 'top_double' && active) && css`
-    width: calc(100vw - calc(50px - 1rem) - calc(143px + 1rem));
+    width: calc(100vw - calc(calc(50px - 1rem) + 145px + 1rem + calc(143px + 1rem)));
 
     & browser-action-list {
       display: flex;

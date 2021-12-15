@@ -1,4 +1,5 @@
 import { Divider, useTheme } from '@mui/material';
+import { platform } from 'os';
 import React, { useEffect, useState } from 'react';
 import { WindowsControls } from 'react-windows-controls';
 import { AppearanceStyle } from '../../../../../interfaces/user';
@@ -32,12 +33,14 @@ export const TitleBar = () => {
         };
     }, []);
 
+    const isMac = platform() === 'darwin';
+
     const TitleBarContent = () => {
         switch (style) {
             case 'top_single':
                 return (
                     <StyledContainer appearanceStyle={style}>
-                        <ApplicationMenuButton />
+                        {!isMac && <ApplicationMenuButton />}
                         <NavigationBar />
                         <AddressBar />
                         <Divider flexItem orientation="vertical" variant="middle" sx={{ gridArea: 'divider' }} />
@@ -47,7 +50,7 @@ export const TitleBar = () => {
             case 'top_double':
                 return (
                     <StyledContainer appearanceStyle={style}>
-                        <ApplicationMenuButton />
+                        {!isMac && <ApplicationMenuButton />}
                         <HorizontalTabBar />
                     </StyledContainer>
                 );
@@ -57,7 +60,7 @@ export const TitleBar = () => {
             case 'right':
                 return (
                     <StyledContainer appearanceStyle={style}>
-                        <ApplicationMenuButton />
+                        {!isMac && <ApplicationMenuButton />}
                         <NavigationBar />
                         <AddressBar />
                         <browser-action-list />
@@ -69,14 +72,16 @@ export const TitleBar = () => {
     return (
         <StyledTitleBar appearanceStyle={style}>
             <TitleBarContent />
-            <WindowsControls
-                dark={palette.mode === 'dark'}
-                style={{ appRegion: 'no-drag' }}
-                isMaximized={maximized}
-                onMinimize={() => minimize()}
-                onMaximize={() => maximize()}
-                onClose={() => close()}
-            />
+            {!isMac &&
+                <WindowsControls
+                    dark={palette.mode === 'dark'}
+                    style={{ appRegion: 'no-drag' }}
+                    isMaximized={maximized}
+                    onMinimize={() => minimize()}
+                    onMaximize={() => maximize()}
+                    onClose={() => close()}
+                />
+            }
         </StyledTitleBar>
     );
 };
