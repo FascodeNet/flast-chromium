@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { getColor, MuiLightGlobalStyles } from '../../../../themes';
 
 export const StyledApplicationMenuButton = styled.button`
   aspect-ratio: 1 / 1;
@@ -12,10 +11,9 @@ export const StyledApplicationMenuButton = styled.button`
   place-items: center;
   flex-shrink: 0;
   transition: all .2s ease-out;
-  outline-color: ${({ theme }) => getColor(theme.palette.outline)};
   outline-width: 2px;
-  background-color: transparent;
-  border: solid 1px transparent;
+  border-style: solid;
+  border-width: 1px;
   border-radius: 8px;
   user-select: none;
   app-region: no-drag;
@@ -29,9 +27,6 @@ export const StyledApplicationMenuButton = styled.button`
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.palette.action.hover};
-    border: solid 1px ${({ theme }) => theme.palette.divider};
-    
     & img {
       filter: grayscale(0%);
     }

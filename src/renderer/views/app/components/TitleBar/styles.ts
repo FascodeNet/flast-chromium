@@ -1,7 +1,6 @@
 import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { AppearanceStyle } from '../../../../../interfaces/user';
-import { getColor } from '../../../../themes';
 
 interface StyledProps {
     appearanceStyle: AppearanceStyle;
@@ -12,7 +11,6 @@ export const StyledTitleBar = styled.div<StyledProps>`
   height: ${({ appearanceStyle }) => appearanceStyle === 'top_double' ? '42px' : '50px'};
   display: grid;
   grid-template-columns: ${platform() !== 'darwin' ? '1fr 135px' : '120px 1fr'};
-  background-color: ${({ theme }) => getColor(theme.palette.titleBar)};
   app-region: drag;
 `;
 

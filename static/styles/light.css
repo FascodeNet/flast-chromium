@@ -1,0 +1,101 @@
+*, :root {
+    outline-color: #000;
+    color: #000;
+
+    --active-color: rgba(0, 0, 0, .54);
+    --hover-color: rgba(0, 0, 0, .04);
+    --disabled-color: rgba(0, 0, 0, .26);
+    --disabled-background-color: rgba(0, 0, 0, .12);
+    --divider-color: rgba(0, 0, 0, .12);
+}
+
+body {
+    color: #000;
+}
+
+.title-bar, .tool-bar {
+    background-color: #f2f3f5;
+}
+
+.window-controllers > div > div > div {
+    filter: none !important;
+}
+
+.window-controllers > div > div:last-child > div:hover {
+    filter: invert(100%) !important;
+}
+
+button {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+button svg {
+    transition: none !important;
+}
+
+button:not(:disabled), button:not(:disabled) svg {
+    color: var(--active-color);
+    fill: var(--active-color) !important;
+}
+
+button:disabled, button:disabled svg {
+    color: var(--disabled-color);
+    fill: var(--disabled-color) !important;
+}
+
+button:not(:disabled):hover {
+    background-color: var(--hover-color);
+    border-color: var(--divider-color);
+}
+
+.address-bar, .address-bar-input {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.address-bar-input:hover {
+    border-color: var(--divider-color);
+}
+
+.horizontal-tab-container, .vertical-tab-container {
+    background-color: #f2f3f5;
+}
+
+.horizontal-tab-item, .vertical-tab-item {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.horizontal-tab-item.pinned:not(.active), .vertical-tab-item.pinned:not(.active) {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.horizontal-tab-item.pinned:not(.active):hover, .vertical-tab-item.pinned:not(.active):hover {
+    border-color: #d2d3d5;
+}
+
+.horizontal-tab-item.active, .vertical-tab-item.active {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
+}
+
+.horizontal-tab-item:hover, .vertical-tab-item:hover {
+    border-color: #d2d3d5;
+}
+
+.horizontal-tab-item-close-button:hover, .vertical-tab-item-close-button:hover {
+    background-color: var(--hover-color) !important;
+    border-color: var(--divider-color) !important;
+}
+
+.add-tab-button {
+    background-color: #fff;
+    border-color: #fff;
+}
+
+.add-tab-button:not(:disabled):hover {
+    background-color: var(--hover-color);
+    border-color: var(--divider-color);
+}

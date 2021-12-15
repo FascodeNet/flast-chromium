@@ -7,7 +7,7 @@ export const StyledTable = styled.table`
   grid-template-rows: 60px 1fr;
   grid-template-columns: 1fr;
   overflow: auto;
-  
+
   &::-webkit-scrollbar {
     width: 12px;
     height: 12px;
@@ -47,7 +47,7 @@ export const StyledTableRowHead = styled.th`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  border-right: solid 1px #f2f3f5;
+  border-right: solid 1px ${({ theme }) => theme.palette.divider};
 
   &:not(:first-child) {
     justify-self: flex-end;
@@ -59,7 +59,7 @@ export const StyledTableRowData = styled.td`
   display: flex;
   align-items: center;
   justify-self: flex-end;
-  border-right: solid 1px #f2f3f5;
+  border-right: solid 1px ${({ theme }) => theme.palette.divider};
 `;
 
 export const StyledTableHead = styled.thead`
@@ -67,8 +67,8 @@ export const StyledTableHead = styled.thead`
   height: 60px;
   position: sticky;
   top: 0;
-  background: white;
-  border-bottom: solid 1px #f2f3f5;
+  background: ${({ theme }) => theme.palette.mode === 'light' ? '#fff' : '#181818'};
+  border-bottom: solid 1px ${({ theme }) => theme.palette.divider};
   user-select: none;
 
   & ${StyledTableRow} {
@@ -96,7 +96,7 @@ export const StyledTableSectionRowHead = styled.th`
   display: flex;
   align-items: center;
   text-align: start;
-  border-right: solid 1px #f2f3f5;
+  border-right: solid 1px ${({ theme }) => theme.palette.divider};
 
   & h3 {
     margin: 0;
@@ -110,5 +110,5 @@ export const StyledTableSectionRowData = styled.td`
   display: flex;
   align-items: center;
   justify-self: flex-end;
-  border-right: solid 1px #f2f3f5;
+  border-right: solid 1px ${({ theme }) => theme.palette.divider};
 `;

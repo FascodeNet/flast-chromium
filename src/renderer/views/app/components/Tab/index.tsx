@@ -91,7 +91,14 @@ export const HorizontalTab = (
 
     return (
         <StyledHorizontalTab
-            className={clsx('horizontal-tab-item', `horizontal-tab-item-${id}`)}
+            className={
+                clsx(
+                    'horizontal-tab-item',
+                    id === selectedId && 'active',
+                    isPinned && 'pinned',
+                    `horizontal-tab-item-${id}`
+                )
+            }
             style={{ zIndex: isDragging ? 2 : 'unset' }}
             active={id === selectedId} pinned={isPinned} themeColor={color} tabIndex={0}
             onClick={handleClick} onContextMenu={handleContextMenu}
@@ -101,8 +108,8 @@ export const HorizontalTab = (
         >
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
             {!isPinned && <Fragment>
-                <StyledTabTitle>{title}</StyledTabTitle>
-                <StyledTabCloseButton onClick={() => removeView(id)}>
+                <StyledTabTitle className="horizontal-tab-item-title">{title}</StyledTabTitle>
+                <StyledTabCloseButton className="horizontal-tab-item-close-button" onClick={() => removeView(id)}>
                     <Remove />
                 </StyledTabCloseButton>
             </Fragment>}
@@ -136,7 +143,14 @@ export const VerticalTab = (
     const isExtended = config.appearance.extended_sidebar;
     return (
         <StyledVerticalTab
-            className={clsx('vertical-tab-item', `vertical-tab-item-${id}`)}
+            className={
+                clsx(
+                    'vertical-tab-item',
+                    id === selectedId && 'active',
+                    isPinned && 'pinned',
+                    `vertical-tab-item-${id}`
+                )
+            }
             style={{ zIndex: isDragging ? 2 : 'unset' }}
             active={id === selectedId} pinned={isPinned} themeColor={color} tabIndex={0} extended={isExtended}
             onClick={handleClick} onContextMenu={handleContextMenu}
@@ -145,10 +159,11 @@ export const VerticalTab = (
             onMouseLeave={(e) => onMouseLeave(e, id)}
         >
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
-            {isExtended && <StyledTabTitle>{title}</StyledTabTitle>}
-            {!isPinned && <StyledTabCloseButton onClick={() => removeView(id)}>
-                <Remove />
-            </StyledTabCloseButton>}
+            {isExtended && <StyledTabTitle className="vertical-tab-item-title">{title}</StyledTabTitle>}
+            {!isPinned &&
+                <StyledTabCloseButton className="vertical-tab-item-close-button" onClick={() => removeView(id)}>
+                    <Remove />
+                </StyledTabCloseButton>}
         </StyledVerticalTab>
     );
 };

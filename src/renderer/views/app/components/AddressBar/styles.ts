@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 import { AppearanceStyle, isHorizontal } from '../../../../../interfaces/user';
-import { getColor } from '../../../../themes';
 
 interface StyledAddressBarProps {
     active?: boolean;
@@ -15,7 +14,6 @@ export const StyledAddressBar = styled.div<StyledAddressBarProps>`
   align-items: center;
   flex-shrink: 0;
   gap: 3px;
-  background-color: ${({ theme }) => getColor(theme.palette.addressBar)};
   border-radius: 8px;
   transition: all .4s ease-out;
   z-index: 2;
@@ -59,11 +57,9 @@ export const StyledInput = styled.input`
   margin: 0;
   padding: 3px 8px;
   transition: all .2s ease-out;
-  color: ${({ theme }) => theme.palette.text.primary};
-  outline-color: ${({ theme }) => getColor(theme.palette.outline)};
   outline-width: 2px;
-  background-color: ${({ theme }) => getColor(theme.palette.addressBar)};
-  border: solid 1px ${({ theme }) => getColor(theme.palette.addressBar)};
+  border-style: solid;
+  border-width: 1px;
   border-radius: 8px;
   app-region: no-drag;
 

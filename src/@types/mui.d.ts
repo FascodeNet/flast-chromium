@@ -1,22 +1,29 @@
 import { PaletteColor, PaletteColorOptions } from '@mui/material';
 import { PaletteOptions as MuiPaletteOptions } from '@mui/material/styles';
 
+interface CustomPaletteColor extends PaletteColor {
+    incognito: string;
+}
+
+type CustomPaletteColorOptions = PaletteColorOptions & { incognito: string; }
+
 declare module '@mui/material/styles' {
+
     interface Palette {
-        outline: PaletteColor;
-        titleBar: PaletteColor;
-        addressBar: PaletteColor;
-        tab: PaletteColor;
-        tabBorder: PaletteColor;
-        addTabButton: PaletteColor;
+        outline: CustomPaletteColor;
+        titleBar: CustomPaletteColor;
+        addressBar: CustomPaletteColor;
+        tab: CustomPaletteColor;
+        tabBorder: CustomPaletteColor;
+        addTabButton: CustomPaletteColor;
     }
 
     interface PaletteOptions extends MuiPaletteOptions {
-        outline: PaletteColorOptions;
-        titleBar: PaletteColorOptions;
-        addressBar: PaletteColorOptions;
-        tab: PaletteColorOptions;
-        tabBorder: PaletteColorOptions;
-        addTabButton: PaletteColorOptions;
+        outline: CustomPaletteColorOptions;
+        titleBar: CustomPaletteColorOptions;
+        addressBar: CustomPaletteColorOptions;
+        tab: CustomPaletteColorOptions;
+        tabBorder: CustomPaletteColorOptions;
+        addTabButton: CustomPaletteColorOptions;
     }
 }

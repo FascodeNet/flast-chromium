@@ -1,0 +1,97 @@
+*, :root {
+    outline-color: #fff;
+    color: #fff;
+
+    --active-color: #fff;
+    --hover-color: rgba(255, 255, 255, .08);
+    --disabled-color: rgba(255, 255, 255, .3);
+    --disabled-background-color: rgba(255, 255, 255, .12);
+    --divider-color: rgba(255, 255, 255, .12);
+}
+
+body {
+    color: #fff;
+}
+
+.title-bar, .tool-bar {
+    background-color: #0c113a;
+}
+
+.window-controllers > div > div > div {
+    filter: invert(100%) !important;
+}
+
+button {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+button svg {
+    transition: none !important;
+}
+
+button:not(:disabled), button:not(:disabled) svg {
+    color: var(--active-color);
+    fill: var(--active-color);
+}
+
+button:disabled, button:disabled svg {
+    color: var(--disabled-color);
+    fill: var(--disabled-color) !important;
+}
+
+button:not(:disabled):hover {
+    background-color: var(--hover-color);
+    border-color: var(--divider-color) !important;
+}
+
+.address-bar, .address-bar-input {
+    background-color: #23234f;
+    border-color: #23234f;
+}
+
+.address-bar-input:hover {
+    border-color: var(--divider-color);
+}
+
+.horizontal-tab-container, .vertical-tab-container {
+    background-color: #0c113a;
+}
+
+.horizontal-tab-item, .vertical-tab-item {
+    background-color: #23234f;
+    border-color: #23234f;
+}
+
+.horizontal-tab-item.pinned:not(.active), .vertical-tab-item.pinned:not(.active) {
+    background-color: #23234f;
+    border-color: #23234f;
+}
+
+.horizontal-tab-item.pinned:not(.active):hover, .vertical-tab-item.pinned:not(.active):hover {
+    border-color: #424242;
+}
+
+.horizontal-tab-item.active, .vertical-tab-item.active {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
+}
+
+.horizontal-tab-item:hover, .vertical-tab-item:hover {
+    border-color: #424242;
+}
+
+.horizontal-tab-item-close-button:hover, .vertical-tab-item-close-button:hover {
+    background-color: var(--hover-color) !important;
+    border-color: var(--divider-color) !important;
+}
+
+.add-tab-button {
+    background-color: #23234f;
+    border-color: #23234f;
+}
+
+.add-tab-button:not(:disabled):hover {
+    background-color: var(--hover-color);
+    border-color: var(--divider-color);
+}

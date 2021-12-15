@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { MouseEvent } from 'react';
 import { ArrowLeft, ArrowRight, Home, Reload, Remove } from '../../../../components/Icons';
 import { useViewManagerContext } from '../../../../contexts/view';
@@ -15,8 +16,8 @@ export const BackButton = () => {
     };
 
     return (
-        <StyledButton onClick={handleButtonClick} disabled={!canGoBack}>
-            <ArrowLeft color={canGoBack ? 'action' : 'disabled'} />
+        <StyledButton className={clsx('navigation-button', 'back')} onClick={handleButtonClick} disabled={!canGoBack}>
+            <ArrowLeft />
         </StyledButton>
     );
 };
@@ -32,8 +33,9 @@ export const ForwardButton = () => {
     };
 
     return (
-        <StyledButton onClick={handleButtonClick} disabled={!canGoForward}>
-            <ArrowRight color={canGoForward ? 'action' : 'disabled'} />
+        <StyledButton className={clsx('navigation-button', 'forward')} onClick={handleButtonClick}
+                      disabled={!canGoForward}>
+            <ArrowRight />
         </StyledButton>
     );
 };
@@ -49,21 +51,24 @@ export const ReloadButton = () => {
     };
 
     return (
-        <StyledButton onClick={handleButtonClick}>
-            {!isLoading ? <Reload color="action" /> : <Remove color="action" />}
+        <StyledButton className={clsx('navigation-button', !isLoading ? 'reload' : 'stop')} onClick={handleButtonClick}>
+            {!isLoading ? <Reload /> : <Remove />}
         </StyledButton>
     );
 };
 
 export const HomeButton = () => {
     const { selectedId, getCurrentViewState } = useViewManagerContext();
-    const { isLoading } = getCurrentViewState();
 
-    const { reloadView, stopView } = useElectronAPI();
+    const { loadView } = useElectronAPI();
+
+    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+        loadView(selectedId, 'https://www.google.com');
+    };
 
     return (
-        <StyledButton>
-            <Home color="action" />
+        <StyledButton className={clsx('navigation-button', 'home')} onClick={handleButtonClick}>
+            <Home />
         </StyledButton>
-    )
+    );
 };

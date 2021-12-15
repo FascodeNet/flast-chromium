@@ -8,7 +8,8 @@ export const AppContent = () => {
     const { config } = useUserConfigContext();
 
     return (
-        <StyledContainer appearanceStyle={config.appearance.style} extendedSideBar={config.appearance.extended_sidebar}>
+        <StyledContainer className="app-content" appearanceStyle={config.appearance.style}
+                         extendedSideBar={config.appearance.extended_sidebar}>
             {isVertical(config.appearance.style) && <VerticalTabBar />}
         </StyledContainer>
     );

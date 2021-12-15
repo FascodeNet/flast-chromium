@@ -39,32 +39,38 @@ export const MuiPalette: PaletteOptions = {
     outline: {
         light: '#000',
         main: '#000',
-        dark: '#fff'
+        dark: '#fff',
+        incognito: '#fff'
     },
     titleBar: {
         light: '#f2f3f5',
         main: '#f2f3f5',
-        dark: '#121212'
+        dark: '#121212',
+        incognito: '#0c113a'
     },
     addressBar: {
         light: '#fff',
         main: '#fff',
-        dark: '#242424'
+        dark: '#242424',
+        incognito: '#23234f'
     },
     tab: {
         light: '#fff',
         main: '#fff',
-        dark: '#242424'
+        dark: '#242424',
+        incognito: '#23234f'
     },
     tabBorder: {
         light: '#d2d3d5',
         main: '#d2d3d5',
-        dark: '#424242'
+        dark: '#424242',
+        incognito: '#404076'
     },
     addTabButton: {
         light: '#fff',
         main: '#fff',
-        dark: '#242424'
+        dark: '#242424',
+        incognito: '#23234f'
     }
 };
 
@@ -103,7 +109,6 @@ export const GlobalStyles = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    color: ${({ theme }) => theme.palette.text.primary};
     font-size: .9375rem;
     font-weight: 400;
     line-height: 1.5;

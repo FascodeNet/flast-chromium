@@ -1,6 +1,5 @@
 import Color from 'color';
 import styled, { css } from 'styled-components';
-import { getColor } from '../../../../themes';
 import { TAB_MAX_WIDTH, TAB_PINNED_WIDTH } from '../../../../utils/tab';
 
 interface StyledTabIconProps {
@@ -53,8 +52,6 @@ export const StyledTabCloseButton = styled.button`
   place-items: center;
   flex-shrink: 0;
   transition: all .2s ease-out;
-  color: ${({ theme }) => theme.palette.text.primary};
-  outline-color: ${({ theme }) => getColor(theme.palette.outline)};
   outline-width: 2px;
   background-color: transparent;
   border: solid 1px transparent;
@@ -63,11 +60,6 @@ export const StyledTabCloseButton = styled.button`
   & svg {
     width: 12px;
     height: 12px;
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.palette.action.hover};
-    border: solid 1px ${({ theme }) => theme.palette.divider};
   }
 `;
 
@@ -93,16 +85,16 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
   align-items: center;
   gap: 5px;
   user-select: none;
-  outline-color: ${({ theme }) => getColor(theme.palette.outline)};
   outline-width: 2px;
-  background-color: ${({ theme }) => getColor(theme.palette.tab)};
-  border: solid 2px ${({ theme }) => getColor(theme.palette.tab)};
+  border-style: solid;
+  border-width: 2px;
   border-radius: 8px;
   app-region: no-drag;
 
   &:hover {
     padding: 1px 6px 1px 8px;
-    border: solid 1px ${({ theme }) => getColor(theme.palette.tabBorder)};
+    border-style: solid;
+    border-width: 1px;
 
     & > ${StyledTabCloseButton} {
       display: flex;
@@ -113,39 +105,52 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
     display: none;
   }
 
-  ${({ active = false, pinned = false, themeColor = undefined, theme }) => {
-    const color = themeColor ? Color(themeColor).alpha(.3) : Color(theme.palette.action.hover);
+  ${({ active = false, pinned = false, themeColor = undefined }) => {
+    const color = themeColor ? Color(themeColor).alpha(.3) : undefined;
 
     if (pinned) {
       return active ? css`
         padding: 5px 7px;
-        background-color: ${color.string()};
-        border: solid 2px ${color.string()};
+        ${color && css`
+          background-color: ${color.string()};
+          border-color: ${color.string()};
+        `};
+        border-style: solid;
+        border-width: 2px;
 
         &:hover {
           padding: 5px 7px;
-          border: solid 2px ${color.string()};
+          ${color && css`border-color: ${color.string()};`};
+          border-style: solid;
+          border-width: 2px;
         }
       ` : css`
         padding: 5px 7px;
-        background-color: ${getColor(theme.palette.tab)};
-        border: solid 2px ${getColor(theme.palette.tab)};
+        border-style: solid;
+        border-width: 2px;
 
         &:hover {
           padding: 6px 8px;
-          border: solid 1px #d2d3d5;
+          border-style: solid;
+          border-width: 1px;
         }
       `;
     }
 
     return active && css`
       padding: 0 5px 0 7px;
-      background-color: ${color.string()};
-      border: solid 2px ${color.string()};
+      ${color && css`
+        background-color: ${color.string()};
+        border-color: ${color.string()};
+      `};
+      border-style: solid;
+      border-width: 2px;
 
       &:hover {
         padding: 0 5px 0 7px;
-        border: solid 2px ${color.string()};
+        ${color && css`border-color: ${color.string()};`};
+        border-style: solid;
+        border-width: 2px;
       }
 
       & > ${StyledTabCloseButton} {
@@ -174,19 +179,19 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
   flex-shrink: 0;
   gap: 5px;
   user-select: none;
-  outline-color: ${({ theme }) => getColor(theme.palette.outline)};
   outline-width: 2px;
-  background-color: ${({ theme }) => getColor(theme.palette.tab)};
-  border: solid 2px ${({ theme }) => getColor(theme.palette.tab)};
+  border-style: solid;
+  border-width: 2px;
   border-radius: 8px;
   app-region: no-drag;
-  
+
   &:hover {
     padding: ${({ extended }) => extended ? '4px 8px' : '4px'};
-    border: solid 1px ${({ theme }) => getColor(theme.palette.tabBorder)};
+    border-style: solid;
+    border-width: 1px;
 
     & > ${StyledTabIcon}, & > ${StyledTabProgress}, & > .MuiSvgIcon-root {
-      display: ${({ extended }) => extended ? 'flex' : 'none'};
+      display: ${({ pinned, extended }) => pinned || extended ? 'flex' : 'none'};
     }
 
     & > ${StyledTabCloseButton} {
@@ -202,39 +207,52 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
     display: none;
   }
 
-  ${({ active = false, pinned = false, themeColor = undefined, extended, theme }) => {
-    const color = themeColor ? Color(themeColor).alpha(.3) : Color(theme.palette.action.hover);
+  ${({ active = false, pinned = false, themeColor = undefined, extended }) => {
+    const color = themeColor ? Color(themeColor).alpha(.3) : undefined;
 
     if (pinned) {
       return active ? css`
         padding: ${extended ? '3px 7px' : '3px'};
-        background-color: ${color.string()};
-        border: solid 2px ${color.string()};
+        ${color && css`
+          background-color: ${color.string()};
+          border-color: ${color.string()};
+        `};
+        border-style: solid;
+        border-width: 2px;
 
         &:hover {
           padding: ${extended ? '3px 7px' : '3px'};
-          border: solid 2px ${color.string()};
+          ${color && css`border-color: ${color.string()};`};
+          border-style: solid;
+          border-width: 2px;
         }
       ` : css`
         padding: ${extended ? '3px 7px' : '3px'};
-        background-color: ${getColor(theme.palette.tab)};
-        border: solid 2px ${getColor(theme.palette.tab)};
+        border-style: solid;
+        border-width: 2px;
 
         &:hover {
           padding: ${extended ? '4px 8px' : '4px'};
-          border: solid 1px #d2d3d5;
+          border-style: solid;
+          border-width: 1px;
         }
       `;
     }
 
     return active && css`
       padding: ${extended ? '3px 7px' : '3px'};
-      background-color: ${color.string()};
-      border: solid 2px ${color.string()};
+      ${color && css`
+        background-color: ${color.string()};
+        border-color: ${color.string()};
+      `};
+      border-style: solid;
+      border-width: 2px;
 
       &:hover {
         padding: ${extended ? '3px 7px' : '3px'};
-        border: solid 2px ${color.string()};
+        ${color && css`border-color: ${color.string()}`};
+        border-style: solid;
+        border-width: 2px;
       }
 
       & > ${StyledTabIcon}, & > ${StyledTabProgress}, & > .MuiSvgIcon-root {

@@ -5,7 +5,7 @@ import { StyledToolBar } from './styles';
 
 export const ToolBar = () => {
     return (
-        <StyledToolBar>
+        <StyledToolBar className="tool-bar">
             <NavigationBar />
             <AddressBar />
             <browser-action-list />

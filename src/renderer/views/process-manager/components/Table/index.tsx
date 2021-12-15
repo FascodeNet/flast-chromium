@@ -3,6 +3,7 @@ import { Extension, ProcessMetric, WebContents } from 'electron';
 import filesize from 'filesize';
 import format from 'format-number';
 import React, { ReactNode, useEffect, useState } from 'react';
+import { APPLICATION_NAME } from '../../../../../utils';
 import {
     StyledTable,
     StyledTableBody,
@@ -42,6 +43,7 @@ const TableItem = ({ metric }: TableItemProps) => {
     const getMetricName = () => {
         switch (metric.type) {
             case 'Browser':
+                return APPLICATION_NAME;
             case 'Tab':
                 const contents = webContents.getAllWebContents().find((contents: WebContents) => contents.getOSProcessId() == metric.pid);
                 if (!contents) return metric.name;
@@ -96,6 +98,7 @@ export const Table = () => {
         return contents.getType();
     };
 
+    const browserMetrics = metrics.filter((metric) => metric.type === 'Browser');
     const windowMetrics = metrics.filter((metric) => getMetricType(metric.pid) === 'window');
     const viewMetrics = metrics.filter((metric) => getMetricType(metric.pid) === 'browserView' || getMetricType(metric.pid) === 'webview');
     const extensionMetrics = metrics.filter((metric) => getMetricType(metric.pid) === 'backgroundPage');
@@ -114,6 +117,7 @@ export const Table = () => {
                 </StyledTableRow>
             </StyledTableHead>
             <StyledTableBody>
+                {browserMetrics.map((metric) => (<TableItem key={metric.pid} metric={metric} />))}
                 {windowMetrics.length > 0 && <TableSectionTitle title={`ウィンドウ (${windowMetrics.length})`} />}
                 {windowMetrics.map((metric) => (<TableItem key={metric.pid} metric={metric} />))}
                 {viewMetrics.length > 0 && <TableSectionTitle title={`ビュー (${viewMetrics.length})`} />}

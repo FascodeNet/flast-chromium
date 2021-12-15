@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { getColor } from '../../../../themes';
 
 export const StyledAddTabButton = styled.button`
   width: 32px;
@@ -22,15 +21,9 @@ export const StyledAddTabButton = styled.button`
   place-items: center;
   flex-shrink: 0;
   transition: all .2s ease-out;
-  outline-color: ${({ theme }) => getColor(theme.palette.outline)};
   outline-width: 2px;
-  background-color: ${({ theme }) => getColor(theme.palette.addTabButton)};
-  border: solid 1px ${({ theme }) => getColor(theme.palette.addTabButton)};
+  border-style: solid;
+  border-width: 1px;
   border-radius: 50%;
   app-region: no-drag;
-
-  &:not(:disabled):hover {
-    background-color: ${({ theme }) => theme.palette.action.hover};
-    border: solid 1px ${({ theme }) => theme.palette.divider};
-  }
 `;

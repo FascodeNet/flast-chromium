@@ -1,5 +1,6 @@
 import { enable } from '@electron/remote/main';
-import { app, BrowserWindow, ipcMain, Menu, nativeImage } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, nativeImage, nativeTheme } from 'electron';
+import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { AppWindowInitializerOptions } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
@@ -57,6 +58,7 @@ export class AppWindow {
         this.browserWindow.setMenu(this.applicationMenu);
 
         this.browserWindow.loadFile('build/app.html');
+        this.setStyle();
 
         if (IS_DEVELOPMENT) {
             // 開発モードの場合はデベロッパーツールを開く
@@ -88,6 +90,31 @@ export class AppWindow {
     public close() {
         this.browserWindow.close();
         Main.windowManager.remove(this.id);
+    }
+
+
+    public async setStyle() {
+        if (this.user.type === 'incognito') {
+            const style = await readFile(
+                join(
+                    app.getAppPath(),
+                    'static',
+                    'styles',
+                    'incognito.css'
+                )
+            );
+            this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
+        } else {
+            const style = await readFile(
+                join(
+                    app.getAppPath(),
+                    'static',
+                    'styles',
+                    `${nativeTheme.shouldUseDarkColors ? 'dark' : 'light'}.css`
+                )
+            );
+            this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
+        }
     }
 
 
@@ -127,6 +154,11 @@ export class AppWindow {
         this.browserWindow.on('leave-full-screen', () => this.setViewBounds());
         this.browserWindow.on('enter-html-full-screen', () => this.setViewBounds());
         this.browserWindow.on('leave-html-full-screen', () => this.setViewBounds());
+
+
+        this.browserWindow.webContents.on('did-finish-load', async () => {
+            this.setStyle();
+        });
     }
 
     private setupIpc() {

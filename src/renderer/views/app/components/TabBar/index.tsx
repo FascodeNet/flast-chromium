@@ -96,7 +96,7 @@ export const HorizontalTabBar = () => {
     };
 
     return (
-        <StyledHorizontalTabBar ref={tabContainerRef}>
+        <StyledHorizontalTabBar className="horizontal-tab-container" ref={tabContainerRef}>
             {views.map((view) => {
                 return (
                     <HorizontalTab
@@ -188,7 +188,7 @@ export const VerticalTabBar = () => {
     };
 
     return (
-        <StyledVerticalTabBar ref={tabContainerRef}>
+        <StyledVerticalTabBar className="vertical-tab-container" ref={tabContainerRef}>
             {views.map((view) => {
                 return (
                     <VerticalTab

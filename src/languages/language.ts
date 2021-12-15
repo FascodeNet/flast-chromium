@@ -180,6 +180,13 @@ export interface Language {
             appearance: {
                 title: string;
 
+                theme: {
+                    title: string;
+
+                    system: string;
+                    light: string;
+                    dark: string;
+                }
                 tabPosition: {
                     title: string;
 

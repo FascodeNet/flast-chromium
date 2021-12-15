@@ -39,7 +39,7 @@ export const TitleBar = () => {
         switch (style) {
             case 'top_single':
                 return (
-                    <StyledContainer appearanceStyle={style}>
+                    <StyledContainer className="title-bar-content" appearanceStyle={style}>
                         {!isMac && <ApplicationMenuButton />}
                         <NavigationBar />
                         <AddressBar />
@@ -49,7 +49,7 @@ export const TitleBar = () => {
                 );
             case 'top_double':
                 return (
-                    <StyledContainer appearanceStyle={style}>
+                    <StyledContainer className="title-bar-content" appearanceStyle={style}>
                         {!isMac && <ApplicationMenuButton />}
                         <HorizontalTabBar />
                     </StyledContainer>
@@ -59,7 +59,7 @@ export const TitleBar = () => {
             case 'left':
             case 'right':
                 return (
-                    <StyledContainer appearanceStyle={style}>
+                    <StyledContainer className="title-bar-content" appearanceStyle={style}>
                         {!isMac && <ApplicationMenuButton />}
                         <NavigationBar />
                         <AddressBar />
@@ -70,17 +70,18 @@ export const TitleBar = () => {
     };
 
     return (
-        <StyledTitleBar appearanceStyle={style}>
+        <StyledTitleBar className="title-bar" appearanceStyle={style}>
             <TitleBarContent />
             {!isMac &&
-                <WindowsControls
-                    dark={palette.mode === 'dark'}
-                    style={{ appRegion: 'no-drag' }}
-                    isMaximized={maximized}
-                    onMinimize={() => minimize()}
-                    onMaximize={() => maximize()}
-                    onClose={() => close()}
-                />
+                <div className="window-controllers">
+                    <WindowsControls
+                        style={{ height: '100%', appRegion: 'no-drag' }}
+                        isMaximized={maximized}
+                        onMinimize={() => minimize()}
+                        onMaximize={() => maximize()}
+                        onClose={() => close()}
+                    />
+                </div>
             }
         </StyledTitleBar>
     );

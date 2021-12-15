@@ -169,6 +169,13 @@ export const En: Language = {
             appearance: {
                 title: 'Appearance',
 
+                theme: {
+                    title: 'Theme',
+
+                    system: 'System',
+                    light: 'Light',
+                    dark: 'Dark'
+                },
                 tabPosition: {
                     title: 'Tab Position',
 

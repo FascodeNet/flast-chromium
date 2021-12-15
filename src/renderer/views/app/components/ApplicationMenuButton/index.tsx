@@ -11,7 +11,7 @@ export const ApplicationMenuButton = () => {
     };
 
     return (
-        <StyledApplicationMenuButton onClick={handleButtonClick}>
+        <StyledApplicationMenuButton className="application-menu-button" onClick={handleButtonClick}>
             <img src={Icon} />
         </StyledApplicationMenuButton>
     );

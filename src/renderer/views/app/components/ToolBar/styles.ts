@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { getColor } from '../../../../themes';
 
 export const StyledToolBar = styled.div`
   width: 100%;
@@ -9,5 +8,4 @@ export const StyledToolBar = styled.div`
   grid-template-columns: auto 1fr auto;
   grid-template-areas: 'navigation-bar address-bar extensions';
   gap: 8px;
-  background-color: ${({ theme }) => getColor(theme.palette.titleBar)};
 `;

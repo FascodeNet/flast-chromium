@@ -1,12 +1,9 @@
 import { DescriptionOutlined, PaletteOutlined } from '@mui/icons-material';
 import { Theme } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { DefaultUserConfig, UserConfig } from '../../../../../interfaces/user';
-import { En } from '../../../../../languages/en';
-import { Language } from '../../../../../languages/language';
 import { GlobalNavigationDrawer } from '../../../../components/GlobalNavigationDrawer';
 import { NavigationDrawer } from '../../../../components/NavigationDrawer';
 import { StyledButton } from '../../../../components/NavigationDrawer/styles';

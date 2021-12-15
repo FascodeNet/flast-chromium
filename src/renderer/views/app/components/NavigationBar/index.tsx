@@ -3,7 +3,7 @@ import { BackButton, ForwardButton, HomeButton, ReloadButton } from '../Navigati
 import { StyledContainer } from './styles';
 
 export const NavigationBar = () => (
-    <StyledContainer>
+    <StyledContainer className="navigaton-bar">
         <BackButton />
         <ForwardButton />
         <ReloadButton />

@@ -67,8 +67,8 @@ export const AddressBar = () => {
 
     const style: AppearanceStyle = config.appearance.style;
     return (
-        <StyledAddressBar active={inputActive} appearanceStyle={style}>
-            <StyledInput value={address}
+        <StyledAddressBar className="address-bar" active={inputActive} appearanceStyle={style}>
+            <StyledInput className="address-bar-input" value={address}
                          onChange={(e) => setAddress(e.target.value)} onKeyDown={handleKeyDown}
                          onFocus={handleFocus} onBlur={handleBlur} />
             {isHorizontal(style) && <browser-action-list />}

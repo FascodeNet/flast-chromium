@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { getColor } from '../../../../themes';
 
 export const StyledHorizontalTabBar = styled.div`
   width: 100%;
@@ -27,7 +26,6 @@ export const StyledVerticalTabBar = styled.div`
   align-items: center;
   gap: 8px;
   overflow: hidden auto;
-  background-color: ${({ theme }) => getColor(theme.palette.titleBar)};
 
   &::-webkit-scrollbar {
     display: none;
