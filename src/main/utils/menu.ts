@@ -1,6 +1,9 @@
 import { app, MenuItem, MenuItemConstructorOptions, nativeImage, nativeTheme } from 'electron';
 
-export const joinTo = (itemsArray: ((MenuItem | MenuItemConstructorOptions)[] | undefined)[], sep: MenuItem | MenuItemConstructorOptions = { type: 'separator' }): (MenuItem | MenuItemConstructorOptions)[] => {
+export const joinTo = (
+    itemsArray: (MenuItem | MenuItemConstructorOptions | (MenuItem | MenuItemConstructorOptions)[] | undefined)[],
+    sep: MenuItem | MenuItemConstructorOptions | null = { type: 'separator' }
+): (MenuItem | MenuItemConstructorOptions)[] => {
     const list: (MenuItem | MenuItemConstructorOptions)[] = [];
 
     const length = itemsArray.length;
@@ -8,8 +11,13 @@ export const joinTo = (itemsArray: ((MenuItem | MenuItemConstructorOptions)[] | 
         const items = itemsArray[i];
         if (!items) continue;
 
-        list.push(...items);
-        if (i < (length - 1))
+        if (Array.isArray(items)) {
+            list.push(...items);
+        } else {
+            list.push(items);
+        }
+
+        if (i < (length - 1) && sep)
             list.push(sep);
     }
 

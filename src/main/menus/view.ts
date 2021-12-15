@@ -271,7 +271,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
     } else if (editableOptions) {
         return Menu.buildFromTemplate(joinTo([editableOptions, developOptions]));
     } else {
-        const mediaOptions: Array<MenuItem | MenuItemConstructorOptions> = mediaType === 'audio' || mediaType === 'video' || webContents.isCurrentlyAudible() ? [
+        const mediaOptions: (MenuItem | MenuItemConstructorOptions)[] = mediaType === 'audio' || mediaType === 'video' || webContents.isCurrentlyAudible() ? [
             { type: 'separator' },
             {
                 label: view.isMuted() ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
