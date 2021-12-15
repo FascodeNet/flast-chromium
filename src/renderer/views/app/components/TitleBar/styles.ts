@@ -11,7 +11,7 @@ export const StyledTitleBar = styled.div<StyledProps>`
   height: ${({ appearanceStyle }) => appearanceStyle === 'top_double' ? '42px' : '50px'};
   display: grid;
   grid-template-columns: ${platform() !== 'darwin' ? '1fr 135px' : '76px 1fr'};
-  grid-template-areas: ${platform() !== 'darwin' ? 'title-bar-content window-controls' : 'window-controls title-bar-content'};
+  grid-template-areas: ${platform() !== 'darwin' ? '\'title-bar-content window-controls\'' : '\'window-controls title-bar-content\''};
   app-region: drag;
 `;
 
