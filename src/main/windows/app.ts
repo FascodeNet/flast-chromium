@@ -2,6 +2,7 @@ import { enable } from '@electron/remote/main';
 import { app, BrowserWindow, ipcMain, Menu, nativeImage, nativeTheme } from 'electron';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
+import { isHorizontal } from '../../interfaces/user';
 import { AppWindowInitializerOptions } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
 import { IS_DEVELOPMENT, IS_MAC } from '../../utils/process';
@@ -171,6 +172,18 @@ export class AppWindow {
                 window: this.browserWindow,
                 x: 8,
                 y: 42
+            });
+        });
+        ipcMain.handle(`window-sidebar-${this.id}`, () => {
+            const settings = this.user.settings;
+            if (isHorizontal(settings.config.appearance.style)) return;
+
+            settings.config = { appearance: { extended_sidebar: !settings.config.appearance.extended_sidebar } };
+
+            const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === this.user.id);
+            windows.forEach((window) => {
+                window.webContents.send('settings-update', settings.config);
+                window.viewManager.get()?.setBounds();
             });
         });
 

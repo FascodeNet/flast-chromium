@@ -6,6 +6,7 @@ import { MoveDirection, ViewState } from '../../interfaces/view';
 interface ElectronAPI {
     getWindowId: () => number;
     showApplicationMenu: () => Promise<void>;
+    toggleSidebar: () => Promise<void>;
 
     isMinimized: () => Promise<boolean>;
     isMaximized: () => Promise<boolean>;
@@ -39,6 +40,7 @@ const windowId = getCurrentWindow().id;
 export const useElectronAPI = (): ElectronAPI => ({
     getWindowId: () => getCurrentWindow().id,
     showApplicationMenu: () => ipcRenderer.invoke(`window-menu-${windowId}`),
+    toggleSidebar: () => ipcRenderer.invoke(`window-sidebar-${windowId}`),
 
     isMinimized: () => ipcRenderer.invoke(`window-minimized-${windowId}`),
     isMaximized: () => ipcRenderer.invoke(`window-maximized-${windowId}`),

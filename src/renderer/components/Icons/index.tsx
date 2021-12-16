@@ -29,6 +29,20 @@ export const ArrowRight = (props: SvgIconProps) => (
     </SvgIcon>
 );
 
+export const ChevronLeft = (props: SvgIconProps) => (
+    <SvgIcon {...props} viewBox="0 0 48 48">
+        <path
+            d="M 34.470703 2.9863281 A 1.50015 1.50015 0 0 0 33.439453 3.4394531 L 13.939453 22.939453 A 1.50015 1.50015 0 0 0 13.939453 25.060547 L 33.439453 44.560547 A 1.50015 1.50015 0 1 0 35.560547 42.439453 L 17.121094 24 L 35.560547 5.5605469 A 1.50015 1.50015 0 0 0 34.470703 2.9863281 z" />
+    </SvgIcon>
+);
+
+export const ChevronRight = (props: SvgIconProps) => (
+    <SvgIcon {...props} viewBox="0 0 48 48">
+        <path
+            d="M 18.484375 2.984375 A 1.50015 1.50015 0 0 0 17.439453 5.5605469 L 35.878906 24 L 17.439453 42.439453 A 1.50015 1.50015 0 1 0 19.560547 44.560547 L 39.060547 25.060547 A 1.50015 1.50015 0 0 0 39.060547 22.939453 L 19.560547 3.4394531 A 1.50015 1.50015 0 0 0 18.484375 2.984375 z" />
+    </SvgIcon>
+);
+
 export const Add = (props: SvgIconProps) => (
     <SvgIcon {...props} viewBox="0 0 48 48">
         <path

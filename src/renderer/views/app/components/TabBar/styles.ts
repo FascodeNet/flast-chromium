@@ -18,9 +18,19 @@ export const StyledHorizontalTabBar = styled.div`
 export const StyledVerticalTabBar = styled.div`
   width: 100%;
   height: 100%;
-  padding: 8px;
   // position: relative;
   grid-area: vertical-tab-container;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+`;
+
+export const StyledVerticalTabContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  // position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,7 +47,9 @@ interface StyledVerticalTabBarToolContainerProps {
 }
 
 export const StyledVerticalTabBarToolContainer = styled.div<StyledVerticalTabBarToolContainerProps>`
+  width: ${({ extendedSidebar }) => extendedSidebar ? '100%' : 'fit-content'};
   margin-top: auto;
+  padding: 8px;
   display: flex;
   flex-direction: ${({ extendedSidebar }) => extendedSidebar ? 'row' : 'column'};
   gap: 8px;
