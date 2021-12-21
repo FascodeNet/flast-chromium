@@ -1,4 +1,14 @@
 import styled from 'styled-components';
+import { borderRadius } from '../../../../themes';
+
+export const StyledContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 3px;
+`;
 
 export const StyledButton = styled.button`
   width: 34px;
@@ -13,7 +23,7 @@ export const StyledButton = styled.button`
   outline-width: 2px;
   border-style: solid;
   border-width: 1px;
-  border-radius: 8px;
+  border-radius: ${borderRadius.toUnit()};
   user-select: none;
   app-region: no-drag;
 `;

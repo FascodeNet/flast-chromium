@@ -1,8 +1,12 @@
 import { app } from 'electron';
+import { fileTypeFromBuffer } from 'file-type';
+import * as icojs from 'icojs';
 import Datastore from 'nedb';
 import { join } from 'path';
 import { Favicon } from '../../interfaces/view';
+import { requestURL } from '../../utils/network';
 import { prefixHttp } from '../../utils/url';
+import { Main } from '../main';
 
 export class FaviconManager {
 
@@ -10,7 +14,7 @@ export class FaviconManager {
 
     private _favicons: Favicon[];
 
-    constructor() {
+    public constructor() {
         this._datastore = new Datastore<Favicon>({
             filename: join(app.getPath('userData'), 'favicons.db'),
             autoload: true,
@@ -24,22 +28,34 @@ export class FaviconManager {
         return this._datastore;
     }
 
-    public get(u: string) {
-        const urlString = FaviconManager.toUrl(u);
-        if (!urlString)
-            return Promise.reject('Data not found!');
-
-        const data = this._favicons.find(({ url }) => url === urlString);
-        if (data)
-            return Promise.resolve(data);
-
-        this._datastore.findOne({ url: urlString } as Partial<Favicon>, (err, doc: Favicon) => {
-            if (err)
-                return Promise.reject('Data not found!');
-
-            return Promise.resolve(doc);
-        });
+    public get favicons() {
+        return this._favicons;
     }
+
+    public static async getFavicon(url: string, faviconUrl: string) {
+        const urlString = FaviconManager.toUrl(url);
+        if (!urlString)
+            return Promise.reject('Invalid URL!');
+
+        const data = Main.faviconManager.favicons.find(({ url }) => url === urlString);
+        if (!data) {
+            const res = await requestURL(faviconUrl);
+
+            if (res.statusCode === 404)
+                throw new Error('Favicon not found!');
+
+            let data = Buffer.from(res.data, 'binary');
+
+            const type = await fileTypeFromBuffer(data);
+
+            if (type && type.ext === 'ico')
+                data = Buffer.from(new Uint8Array(await FaviconManager.convertIcoToPng(data)));
+
+            return `data:${(await fileTypeFromBuffer(data))!!.ext};base64,${data.toString('base64')}`;
+        } else {
+            return data.favicon;
+        }
+    };
 
     public add(data: Favicon) {
         this._favicons.push(data);
@@ -56,5 +72,26 @@ export class FaviconManager {
         } catch {
             return undefined;
         }
+    }
+
+    private static async convertIcoToPng(icoData: Buffer) {
+        return (await icojs.parse(icoData, 'image/png'))[0].buffer;
+    }
+
+    public get(u: string) {
+        const urlString = FaviconManager.toUrl(u);
+        if (!urlString)
+            return Promise.reject('Invalid URL!');
+
+        const data = this._favicons.find(({ url }) => url === urlString);
+        if (data)
+            return Promise.resolve(data);
+
+        this._datastore.findOne({ url: urlString } as Partial<Favicon>, (err, doc: Favicon) => {
+            if (err)
+                return Promise.reject('Data not found!');
+
+            return Promise.resolve(doc);
+        });
     }
 }

@@ -9,6 +9,7 @@ export const StyledApp = styled.div`
 `;
 
 export const StyledAppContent = styled.main`
+  max-width: 800px;
   width: 100%;
   height: 100%;
   padding: 3rem 2rem;

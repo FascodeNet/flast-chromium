@@ -5,7 +5,7 @@ export const StyledToolBar = styled.div`
   height: 50px;
   padding: .5rem;
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: 'navigation-bar address-bar extensions';
+  grid-template-columns: auto 1fr auto auto;
+  grid-template-areas: 'navigation-bar address-bar extensions action-bar';
   gap: 8px;
 `;

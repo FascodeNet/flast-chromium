@@ -10,8 +10,7 @@ import {
     APPLICATION_WEB_HISTORY,
     APPLICATION_WEB_SETTINGS
 } from '../../../../../utils';
-import { Bookmarks, Downloads, Extensions, History, Remove, Settings } from '../../../../components/Icons';
-import { useUserConfigContext } from '../../../../contexts/config';
+import { Bookmarks, Downloads, Extensions, Histories, Remove, Settings } from '../../../../components/Icons';
 import { useViewManagerContext } from '../../../../contexts/view';
 import { useElectronAPI } from '../../../../utils/electron';
 import {
@@ -37,7 +36,7 @@ const TabIcon = ({ url: urlString, favicon }: TabIconProps) => {
             case APPLICATION_WEB_BOOKMARKS:
                 return (<Bookmarks sx={sxTheme} />);
             case APPLICATION_WEB_HISTORY:
-                return (<History sx={sxTheme} />);
+                return (<Histories sx={sxTheme} />);
             case APPLICATION_WEB_DOWNLOADS:
                 return (<Downloads sx={sxTheme} />);
             case APPLICATION_WEB_SETTINGS:
@@ -80,7 +79,7 @@ export const HorizontalTab = (
     const { selectedId } = useViewManagerContext();
     const { selectView, removeView, showTabMenu } = useElectronAPI();
 
-    const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    const handleClick = () => {
         if (id === selectedId) return;
         selectView(id);
     };
@@ -117,21 +116,25 @@ export const HorizontalTab = (
     );
 };
 
+interface VerticalTabProps extends TabProps {
+    extended: boolean;
+}
+
 export const VerticalTab = (
     {
         state: { id, title, url, favicon, color, isLoading, isPinned },
         isDragging,
         onMouseDown,
         onMouseEnter,
-        onMouseLeave
-    }: TabProps
+        onMouseLeave,
+        extended
+    }: VerticalTabProps
 ) => {
     const { selectView, removeView, showTabMenu } = useElectronAPI();
 
-    const { config } = useUserConfigContext();
     const { selectedId } = useViewManagerContext();
 
-    const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    const handleClick = () => {
         if (id === selectedId) return;
         selectView(id);
     };
@@ -140,7 +143,6 @@ export const VerticalTab = (
         showTabMenu(id, pageX, pageY);
     };
 
-    const isExtended = config.appearance.extended_sidebar;
     return (
         <StyledVerticalTab
             className={
@@ -152,14 +154,14 @@ export const VerticalTab = (
                 )
             }
             style={{ zIndex: isDragging ? 2 : 'unset' }}
-            active={id === selectedId} pinned={isPinned} themeColor={color} tabIndex={0} extended={isExtended}
+            active={id === selectedId} pinned={isPinned} themeColor={color} tabIndex={0} extended={extended}
             onClick={handleClick} onContextMenu={handleContextMenu}
             onMouseDown={(e) => onMouseDown(e, id)}
             onMouseEnter={(e) => onMouseEnter(e, id)}
             onMouseLeave={(e) => onMouseLeave(e, id)}
         >
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
-            {isExtended && <StyledTabTitle className="vertical-tab-item-title">{title}</StyledTabTitle>}
+            {extended && <StyledTabTitle className="vertical-tab-item-title">{title}</StyledTabTitle>}
             {!isPinned &&
                 <StyledTabCloseButton className="vertical-tab-item-close-button" onClick={() => removeView(id)}>
                     <Remove />

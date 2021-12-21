@@ -84,7 +84,8 @@ export const Preload: Configuration = {
     target: 'electron-preload',
     entry: {
         window: './src/preloads/window.ts',
-        view: './src/preloads/view.ts'
+        view: './src/preloads/view.ts',
+        dialog: './src/preloads/dialog.ts'
     }
 };
 
@@ -96,6 +97,14 @@ export const Renderer: Configuration = {
     plugins: [new MiniCssExtractPlugin()]
 };
 
-applyEntries(Renderer, ['app', 'process-manager', 'settings']);
+applyEntries(
+    Renderer,
+    [
+        'app',
+        'process-manager',
+        'internal-histories',
+        'settings'
+    ]
+);
 
 export default [Main, Preload, Renderer];

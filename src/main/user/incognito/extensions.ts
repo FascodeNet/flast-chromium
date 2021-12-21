@@ -1,11 +1,11 @@
 import { Extension, Session } from 'electron';
-import { IExtensions, IUser } from '../interfaces';
+import { IExtensions, IUser } from '../../interfaces/user';
 
 export class IncognitoExtensions implements IExtensions {
 
     readonly user: IUser;
 
-    constructor(user: IUser) {
+    public constructor(user: IUser) {
         this.user = user;
     }
 

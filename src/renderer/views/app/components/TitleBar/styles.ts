@@ -22,11 +22,11 @@ const getStyle = (style: AppearanceStyle) => {
             return css`
               padding: .5rem 1rem .5rem .5rem;
               ${!isMac ? css`
-                grid-template-columns: calc(50px - 1rem) auto minmax(250px, 25%) 1px 1fr;
-                grid-template-areas: 'application-menu navigation-bar address-bar divider horizontal-tab-container';
+                grid-template-columns: calc(50px - 1rem) auto minmax(250px, 25%) 1px 1fr auto;
+                grid-template-areas: 'application-menu navigation-bar address-bar divider horizontal-tab-container action-bar';
               ` : css`
-                grid-template-columns: auto minmax(250px, 25%) 1px 1fr;
-                grid-template-areas: 'navigation-bar address-bar divider horizontal-tab-container';
+                grid-template-columns: auto minmax(250px, 25%) 1px 1fr auto;
+                grid-template-areas: 'navigation-bar address-bar divider horizontal-tab-container action-bar';
               `};
             `;
         case 'top_double':
@@ -45,22 +45,22 @@ const getStyle = (style: AppearanceStyle) => {
             return css`
               padding: .5rem 1rem .5rem .5rem;
               ${!isMac ? css`
-                grid-template-columns: calc(50px - 1rem) auto 1fr auto;
-                grid-template-areas: 'application-menu navigation-bar address-bar extensions';
+                grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
+                grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
               ` : css`
-                grid-template-columns: auto 1fr auto;
-                grid-template-areas: 'navigation-bar address-bar extensions';
+                grid-template-columns: auto 1fr auto auto;
+                grid-template-areas: 'navigation-bar address-bar extensions action-bar';
               `};
             `;
         default:
             return css`
               padding: .5rem 1rem .5rem .5rem;
               ${!isMac ? css`
-                grid-template-columns: calc(50px - 1rem) auto 1fr auto;
-                grid-template-areas: 'application-menu navigation-bar address-bar extensions';
+                grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
+                grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
               ` : css`
-                grid-template-columns: auto 1fr auto;
-                grid-template-areas: 'navigation-bar address-bar extensions';
+                grid-template-columns: auto 1fr auto auto;
+                grid-template-areas: 'navigation-bar address-bar extensions action-bar';
               `};
             `;
     }

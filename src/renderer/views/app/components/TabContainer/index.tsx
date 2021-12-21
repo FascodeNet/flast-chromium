@@ -1,21 +1,13 @@
-import { IconButton } from '@mui/material';
 import React, { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { MoveDirection } from '../../../../../interfaces/view';
-import { Bookmarks, ChevronLeft, ChevronRight, Downloads, History } from '../../../../components/Icons';
-import { useUserConfigContext } from '../../../../contexts/config';
 import { useViewManagerContext } from '../../../../contexts/view';
 import { useElectronAPI } from '../../../../utils/electron';
 import { setTabsBounds } from '../../../../utils/tab';
 import { AddTabButton } from '../AddTabButton';
 import { HorizontalTab, VerticalTab } from '../Tab';
-import {
-    StyledHorizontalTabBar,
-    StyledVerticalTabBar,
-    StyledVerticalTabBarToolContainer,
-    StyledVerticalTabContainer
-} from './styles';
+import { StyledHorizontalTabContainer, StyledVerticalTabContainer } from './styles';
 
-export const HorizontalTabBar = () => {
+export const HorizontalTabContainer = () => {
     const { views, setTabContainerWidth } = useViewManagerContext();
     const { moveToDirection } = useElectronAPI();
 
@@ -101,7 +93,7 @@ export const HorizontalTabBar = () => {
     };
 
     return (
-        <StyledHorizontalTabBar className="horizontal-tab-container" ref={tabContainerRef}>
+        <StyledHorizontalTabContainer className="horizontal-tab-container" ref={tabContainerRef}>
             {views.map((view) => {
                 return (
                     <HorizontalTab
@@ -115,37 +107,27 @@ export const HorizontalTabBar = () => {
                 );
             })}
             <AddTabButton />
-        </StyledHorizontalTabBar>
+        </StyledHorizontalTabContainer>
     );
 };
 
-export const VerticalTabBar = () => {
-    const { toggleSidebar, moveToDirection } = useElectronAPI();
+interface VerticalTabContainerProps {
+    extended: boolean;
+}
 
-    const { config } = useUserConfigContext();
+export const VerticalTabContainer = ({ extended }: VerticalTabContainerProps) => {
+    const { moveToDirection } = useElectronAPI();
+
     const { views } = useViewManagerContext();
-
-    const handleToggleSidebarClick = () => toggleSidebar();
-
-    const handleMouseWheel = (e: WheelEvent) => {
-        if (e.deltaY === 0) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            tabContainerRef.current?.scrollBy(0, e.deltaX);
-        }
-    };
 
     const tabContainerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         window.addEventListener('mouseup', handleMouseUp);
         window.addEventListener('mousemove', handleMouseMove);
-        tabContainerRef.current?.addEventListener('wheel', handleMouseWheel, { passive: false });
 
         return () => {
             window.removeEventListener('mouseup', handleMouseUp);
             window.removeEventListener('mousemove', handleMouseMove);
-            tabContainerRef.current?.removeEventListener('wheel', handleMouseWheel);
         };
     });
 
@@ -194,45 +176,22 @@ export const VerticalTabBar = () => {
         setMove(e.pageY);
     };
 
-    const { style, extended_sidebar } = config.appearance;
     return (
-        <StyledVerticalTabBar className="vertical-tab-container" ref={tabContainerRef}>
-            <StyledVerticalTabContainer>
-                {views.map((view) => {
-                    return (
-                        <VerticalTab
-                            key={view.id}
-                            state={view}
-                            isDragging={view.id === selectedViewId}
-                            onMouseDown={handleMouseDown}
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
-                        />
-                    );
-                })}
-                <AddTabButton />
-            </StyledVerticalTabContainer>
-            <StyledVerticalTabBarToolContainer extendedSidebar={extended_sidebar}>
-                <IconButton>
-                    <Bookmarks />
-                </IconButton>
-                <IconButton>
-                    <History />
-                </IconButton>
-                <IconButton>
-                    <Downloads />
-                </IconButton>
-                <IconButton
-                    onClick={handleToggleSidebarClick}
-                    sx={{
-                        order: style === 'right' && extended_sidebar ? -1 : 0,
-                        ml: style === 'left' && extended_sidebar ? 'auto' : 0,
-                        mr: style === 'right' && extended_sidebar ? 'auto' : 0
-                    }}>
-                    {style === 'left' && (extended_sidebar ? <ChevronLeft /> : <ChevronRight />)}
-                    {style === 'right' && (extended_sidebar ? <ChevronRight /> : <ChevronLeft />)}
-                </IconButton>
-            </StyledVerticalTabBarToolContainer>
-        </StyledVerticalTabBar>
+        <StyledVerticalTabContainer className="vertical-tab-container" ref={tabContainerRef}>
+            {views.map((view) => {
+                return (
+                    <VerticalTab
+                        key={view.id}
+                        state={view}
+                        isDragging={view.id === selectedViewId}
+                        onMouseDown={handleMouseDown}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        extended={extended}
+                    />
+                );
+            })}
+            <AddTabButton />
+        </StyledVerticalTabContainer>
     );
 };

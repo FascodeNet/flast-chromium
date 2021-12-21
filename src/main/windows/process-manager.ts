@@ -1,5 +1,6 @@
 import { enable } from '@electron/remote/main';
 import { app, BrowserWindow, ipcMain, nativeImage } from 'electron';
+import { join } from 'path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 
 export class ProcessManagerWindow {
@@ -36,7 +37,7 @@ export class ProcessManagerWindow {
 
         this.browserWindow.setMenu(null);
 
-        this.browserWindow.loadFile('build/process-manager.html');
+        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'process-manager.html'));
 
         if (IS_DEVELOPMENT) {
             this.browserWindow.removeMenu();
@@ -62,16 +63,16 @@ export class ProcessManagerWindow {
     }
 
     private setupIpc() {
-        ipcMain.handle(`window-minimize-${this.id}`, (e, options) => {
+        ipcMain.handle(`window-minimize-${this.id}`, () => {
             this.browserWindow.minimize();
         });
-        ipcMain.handle(`window-maximize-${this.id}`, (e, options) => {
+        ipcMain.handle(`window-maximize-${this.id}`, () => {
             if (this.browserWindow.isMaximized())
                 this.browserWindow.unmaximize();
             else
                 this.browserWindow.maximize();
         });
-        ipcMain.handle(`window-close-${this.id}`, (e) => {
+        ipcMain.handle(`window-close-${this.id}`, () => {
             this.browserWindow.close();
         });
     }

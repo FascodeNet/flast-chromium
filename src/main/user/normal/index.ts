@@ -2,7 +2,7 @@ import { app } from 'electron';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { UserType } from '../../../interfaces/user';
-import { IUser } from '../interfaces';
+import { IUser } from '../../interfaces/user';
 import { NormalBookmarks } from './bookmarks';
 import { NormalDownloads } from './downloads';
 import { NormalExtensions } from './extensions';
@@ -29,7 +29,7 @@ export class NormalUser implements IUser {
     private _histories: NormalHistories;
     private _downloads: NormalDownloads;
 
-    constructor(id: string) {
+    public constructor(id: string) {
         this.id = id;
 
         this.path = join(app.getPath('userData'), 'users', id);

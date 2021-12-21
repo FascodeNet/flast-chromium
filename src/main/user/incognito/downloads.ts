@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import Datastore from 'nedb';
 import { join } from 'path';
-import { IDownloads, IUser } from '../interfaces';
+import { IDownloads, IUser } from '../../interfaces/user';
 import { NormalUser } from '../normal';
 
 export class IncognitoDownloads implements IDownloads {
@@ -10,7 +10,7 @@ export class IncognitoDownloads implements IDownloads {
 
     private _datastore: Datastore;
 
-    constructor(user: IUser, fromUser: NormalUser) {
+    public constructor(user: IUser, fromUser: NormalUser) {
         this.user = user;
 
         this._datastore = new Datastore({

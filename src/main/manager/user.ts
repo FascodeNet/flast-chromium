@@ -2,12 +2,13 @@ import { app, ipcMain } from 'electron';
 import { readFile, rmdir, stat, writeFile } from 'fs/promises';
 import { nanoid } from 'nanoid';
 import { join } from 'path';
-import { GlobalConfig } from '../../interfaces/config';
 import { DefaultUserConfig, UserConfig } from '../../interfaces/user';
 import { getTranslate } from '../../languages/language';
+import { DeepPartial } from '../../utils';
+import { GlobalConfig } from '../interfaces/config';
+import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
-import { IUser } from '../user/interfaces';
 import { NormalUser } from '../user/normal';
 
 export class UserManager {
@@ -17,7 +18,7 @@ export class UserManager {
     private _users: Map<string, IUser> = new Map<string, IUser>();
     private _lastUserId?: string;
 
-    constructor() {
+    public constructor() {
         this.setupIpc();
     }
 
@@ -137,7 +138,7 @@ export class UserManager {
         ipcMain.handle('get-user-config', (e, id: string) => {
             return this.get(id)?.settings.config ?? DefaultUserConfig;
         });
-        ipcMain.handle(`set-user-config`, (e, id: string, config: UserConfig | any) => {
+        ipcMain.handle(`set-user-config`, (e, id: string, config: DeepPartial<UserConfig>) => {
             const user = this.get(id);
             if (!user) return;
 
@@ -148,6 +149,8 @@ export class UserManager {
                 window.webContents.send('settings-update', user.settings.config);
                 window.viewManager.get()?.setBounds();
             });
+
+            return user.settings.config;
         });
     }
 }

@@ -1,7 +1,8 @@
-import { app } from 'electron';
+import { app, ipcMain } from 'electron';
 import Datastore from 'nedb';
 import { join } from 'path';
-import { IHistories, IUser } from '../interfaces';
+import { IHistory } from '../../../interfaces/user';
+import { IHistories, IUser } from '../../interfaces/user';
 
 export class NormalHistories implements IHistories {
 
@@ -9,17 +10,74 @@ export class NormalHistories implements IHistories {
 
     private _datastore: Datastore;
 
-    constructor(user: IUser) {
+    public constructor(user: IUser) {
         this.user = user;
 
-        this._datastore = new Datastore({
+        this._datastore = new Datastore<IHistory>({
             filename: join(app.getPath('userData'), 'users', user.id, 'histories.db'),
             autoload: true,
             timestampData: true
         });
+
+        this._datastore.find({}, {}, (err, docs) => {
+            if (err) throw new Error('The data could not be read!');
+            this._histories = docs;
+        });
+
+
+        ipcMain.handle(`histories-${user.id}`, () => {
+            return this.histories;
+        });
+
+        ipcMain.handle(`history-add-${user.id}`, (e, data: IHistory) => {
+            this.add(data);
+        });
+
+        ipcMain.handle(`history-remove-${user.id}`, (e, id: string) => {
+            this.remove(id);
+        });
     }
+
+    private _histories: IHistory[] = [];
 
     public get datastore() {
         return this._datastore;
+    }
+
+    public get histories() {
+        return this._histories.sort((a, b) => a.updatedAt!! < b.updatedAt!! ? 1 : -1);
+    }
+
+    public add(data: IHistory) {
+        const isToday = (date: Date) => {
+            const today = new Date();
+            return date.getDate() == today.getDate() &&
+                date.getMonth() == today.getMonth() &&
+                date.getFullYear() == today.getFullYear();
+        };
+
+        this._datastore.update<IHistory>(
+            {
+                $where: function () {
+                    return this.url == data.url && isToday(this.createdAt);
+                }
+            },
+            data,
+            {
+                upsert: true,
+                returnUpdatedDocs: true
+            },
+            (err, count, doc: IHistory) => {
+                if (err) return;
+
+                this._histories = this._histories.filter((data) => data._id !== doc._id);
+                this._histories.push(doc);
+            }
+        );
+    }
+
+    public remove(id: string) {
+        this._histories = this._histories.filter((data) => data._id !== id);
+        this._datastore.remove({ _id: id });
     }
 }

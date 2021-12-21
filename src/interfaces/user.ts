@@ -3,6 +3,7 @@ export type UserType = 'normal' | 'incognito' | 'guest';
 
 export type AppearanceMode = 'system' | 'light' | 'dark';
 export type AppearanceStyle = 'top_single' | 'top_double' | 'bottom_single' | 'bottom_double' | 'left' | 'right';
+export type AppearanceSidebarState = 'tab_container' | 'bookmarks' | 'histories' | 'downloads';
 
 export type StartupPageMode = 'new_tab' | 'prev_sessions' | 'custom';
 export type HomeButtonPageMode = 'new_tab' | 'custom';
@@ -16,6 +17,10 @@ export interface UserConfig {
         mode: AppearanceMode;
         style: AppearanceStyle;
         extended_sidebar: boolean;
+        sidebar: {
+            extended: boolean;
+            state: AppearanceSidebarState;
+        }
         buttons: {
             home: boolean;
             bookmarks: boolean;
@@ -26,7 +31,7 @@ export interface UserConfig {
     pages: {
         startup: {
             mode: StartupPageMode;
-            pages: string[]
+            pages: string[];
         }
         home_button: {
             mode: HomeButtonPageMode;
@@ -50,6 +55,10 @@ export const DefaultUserConfig: UserConfig = {
         mode: 'system',
         style: 'top_single',
         extended_sidebar: false,
+        sidebar: {
+            extended: false,
+            state: 'tab_container'
+        },
         buttons: {
             home: false,
             bookmarks: false,
@@ -82,16 +91,24 @@ export const DefaultUserConfig: UserConfig = {
 export const isHorizontal = (style: AppearanceStyle) => !isVertical(style);
 export const isVertical = (style: AppearanceStyle) => style === 'left' || style === 'right';
 
-export interface DefaultData {
-    _id: string;
-    updatedAt: string;
-    createdAt: string;
+interface IData {
+    _id?: string;
+    updatedAt?: Date;
+    createdAt?: Date;
 }
 
-export interface HistoryOption {
-    title: string;
-    url: string;
+export type BookmarkType = 'folder' | 'item';
+
+export interface IBookmark extends IData {
+    title?: string;
+    url?: string;
+    favicon?: string;
+    isFolder?: boolean;
+    parent?: string;
 }
 
-export interface History extends DefaultData, HistoryOption {
+export interface IHistory extends IData {
+    title?: string;
+    url?: string;
+    favicon?: string;
 }

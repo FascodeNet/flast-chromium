@@ -1,5 +1,6 @@
 import Color from 'color';
 import styled, { css } from 'styled-components';
+import { borderRadius } from '../../../../themes';
 import { TAB_MAX_WIDTH, TAB_PINNED_WIDTH } from '../../../../utils/tab';
 
 interface StyledTabIconProps {
@@ -88,7 +89,7 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
   outline-width: 2px;
   border-style: solid;
   border-width: 2px;
-  border-radius: 8px;
+  border-radius: ${borderRadius.toUnit()};
   app-region: no-drag;
 
   &:hover {
@@ -182,7 +183,7 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
   outline-width: 2px;
   border-style: solid;
   border-width: 2px;
-  border-radius: 8px;
+  border-radius: ${borderRadius.toUnit()};
   app-region: no-drag;
 
   &:hover {

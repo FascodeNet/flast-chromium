@@ -1,6 +1,6 @@
 import { Divider, IconButton } from '@mui/material';
 import React from 'react';
-import { Bookmarks, Downloads, Extensions, History, Settings } from '../Icons';
+import { Bookmarks, Downloads, Extensions, Histories, Settings } from '../Icons';
 import { StyledDrawer } from './styles';
 
 export const GlobalNavigationDrawer = () => {
@@ -10,7 +10,7 @@ export const GlobalNavigationDrawer = () => {
                 <Bookmarks />
             </IconButton>
             <IconButton>
-                <History />
+                <Histories />
             </IconButton>
             <IconButton>
                 <Downloads />

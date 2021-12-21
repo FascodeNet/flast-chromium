@@ -3,9 +3,9 @@ import { ElectronChromeExtensions } from 'electron-chrome-extensions';
 import { join } from 'path';
 import { parse } from 'url';
 import { APPLICATION_PROTOCOL } from '../../../utils';
+import { ISession, IUser } from '../../interfaces/user';
 import { Main } from '../../main';
 import { IncognitoUser } from '../incognito';
-import { ISession, IUser } from '../interfaces';
 import { NormalUser } from './index';
 
 export class NormalSession implements ISession {
@@ -15,7 +15,7 @@ export class NormalSession implements ISession {
     private readonly _session: ElectronSession;
     private readonly _extensions: ElectronChromeExtensions;
 
-    constructor(user: IUser) {
+    public constructor(user: IUser) {
         this.user = user;
 
         this._session = session.fromPartition(`persist:user_${user.id}`);

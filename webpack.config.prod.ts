@@ -33,6 +33,14 @@ const Renderer: Configuration = {
     devtool: undefined
 };
 
-applyEntries(Renderer, ['app', 'process-manager', 'settings']);
+applyEntries(
+    Renderer,
+    [
+        'app',
+        'process-manager',
+        'internal-histories',
+        'settings'
+    ]
+);
 
 export default [Main, Preload, Renderer];

@@ -3,7 +3,7 @@ import { ElectronChromeExtensions } from 'electron-chrome-extensions';
 import { join } from 'path';
 import { parse } from 'url';
 import { APPLICATION_PROTOCOL } from '../../../utils';
-import { ISession, IUser } from '../interfaces';
+import { ISession, IUser } from '../../interfaces/user';
 
 export class IncognitoSession implements ISession {
 
@@ -11,7 +11,7 @@ export class IncognitoSession implements ISession {
 
     private readonly _session: ElectronSession;
 
-    constructor(user: IUser) {
+    public constructor(user: IUser) {
         this.user = user;
 
         this._session = session.fromPartition(user.id);

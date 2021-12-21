@@ -1,7 +1,8 @@
 import { Extension, Session as ElectronSession } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions';
 import Datastore from 'nedb';
-import { UserConfig, UserType } from '../../interfaces/user';
+import { IBookmark, IHistory, UserConfig, UserType } from '../../interfaces/user';
+import { DeepPartial } from '../../utils';
 
 export interface IUser {
 
@@ -46,7 +47,7 @@ export interface ISettings {
 
     get config(): UserConfig;
 
-    set config(data: UserConfig | any);
+    set config(data: DeepPartial<UserConfig>);
 }
 
 export interface IBookmarks {
@@ -54,6 +55,14 @@ export interface IBookmarks {
     readonly user: IUser;
 
     get datastore(): Datastore;
+
+    get bookmarks(): IBookmark[];
+
+    get folders(): IBookmark[];
+
+    add(data: IBookmark): void;
+
+    remove(id: string): void;
 }
 
 export interface IHistories {
@@ -61,6 +70,12 @@ export interface IHistories {
     readonly user: IUser;
 
     get datastore(): Datastore;
+
+    get histories(): IHistory[];
+
+    add(data: IHistory): void;
+
+    remove(id: string): void;
 }
 
 export interface IDownloads {

@@ -1,16 +1,17 @@
 import React from 'react';
 import { isVertical } from '../../../../../interfaces/user';
 import { useUserConfigContext } from '../../../../contexts/config';
-import { VerticalTabBar } from '../TabBar';
+import { Sidebar } from '../Sidebar';
 import { StyledContainer } from './styles';
 
 export const AppContent = () => {
     const { config } = useUserConfigContext();
 
+    const { style, sidebar: { extended, state } } = config.appearance;
     return (
-        <StyledContainer className="app-content" appearanceStyle={config.appearance.style}
-                         extendedSideBar={config.appearance.extended_sidebar}>
-            {isVertical(config.appearance.style) && <VerticalTabBar />}
+        <StyledContainer className="app-content" appearanceStyle={style} sidebarExtended={extended}
+                         sidebarState={state}>
+            {isVertical(style) && <Sidebar />}
         </StyledContainer>
     );
 };

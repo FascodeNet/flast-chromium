@@ -1,23 +1,25 @@
 import styled, { css } from 'styled-components';
-import { AppearanceStyle } from '../../../../../interfaces/user';
+import { AppearanceSidebarState, AppearanceStyle } from '../../../../../interfaces/user';
+import { WINDOW_EXTENDED_SIDEBAR_WIDTH, WINDOW_EXTENDED_TAB_CONTAINER_WIDTH } from '../../../../../utils';
 
 interface StyledContainerProps {
     appearanceStyle: AppearanceStyle;
-    extendedSideBar: boolean;
+    sidebarExtended: boolean;
+    sidebarState: AppearanceSidebarState;
 }
 
-const getGridStyle = (style: AppearanceStyle, extended: boolean) => {
-    const width = extended ? '300px' : '50px';
+const getGridStyle = (style: AppearanceStyle, extended: boolean, state: AppearanceSidebarState) => {
+    const width = extended ? (state !== 'tab_container' ? `${WINDOW_EXTENDED_SIDEBAR_WIDTH}px` : `${WINDOW_EXTENDED_TAB_CONTAINER_WIDTH}px`) : '50px';
     switch (style) {
         case 'left':
             return css`
               grid-template-columns: ${width} 1fr;
-              grid-template-areas: 'vertical-tab-container content';
+              grid-template-areas: 'sidebar content';
             `;
         case 'right':
             return css`
               grid-template-columns: 1fr ${width};
-              grid-template-areas: 'content vertical-tab-container';
+              grid-template-areas: 'content sidebar';
             `;
         default:
             return css`
@@ -32,5 +34,9 @@ export const StyledContainer = styled.div<StyledContainerProps>`
   height: 100%;
   display: grid;
 
-  ${({ appearanceStyle, extendedSideBar }) => getGridStyle(appearanceStyle, extendedSideBar)};
+  ${({
+       appearanceStyle,
+       sidebarExtended,
+       sidebarState
+     }) => getGridStyle(appearanceStyle, sidebarExtended, sidebarState)};
 `;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ActionBar } from '../ActionBar';
 import { AddressBar } from '../AddressBar';
 import { NavigationBar } from '../NavigationBar';
 import { StyledToolBar } from './styles';
@@ -9,6 +10,7 @@ export const ToolBar = () => {
             <NavigationBar />
             <AddressBar />
             <browser-action-list />
+            <ActionBar />
         </StyledToolBar>
     );
 };

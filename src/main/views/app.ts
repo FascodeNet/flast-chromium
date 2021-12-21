@@ -3,13 +3,12 @@ import { app, BrowserView } from 'electron';
 // @ts-ignore
 import { encodeFromURL } from 'image-data-uri';
 import { join } from 'path';
-import { AppearanceStyle } from '../../interfaces/user';
 import { AppViewInitializerOptions, MediaStatus, ViewState, ZoomLevel, ZoomLevels } from '../../interfaces/view';
-import { APPLICATION_NAME } from '../../utils';
+import { APPLICATION_NAME, WINDOW_EXTENDED_SIDEBAR_WIDTH, WINDOW_EXTENDED_TAB_CONTAINER_WIDTH } from '../../utils';
+import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { FaviconManager } from '../manager/favicon';
 import { getContextMenu } from '../menus/view';
-import { IUser } from '../user/interfaces';
 import { AppWindow } from '../windows/app';
 
 export class AppView {
@@ -209,10 +208,9 @@ export class AppView {
 
         this.browserView.setAutoResize({ width: true, height: true });
 
-        const appearanceStyle: AppearanceStyle = this.user.settings.config.appearance.style;
-        const isExtended = this.user.settings.config.appearance.extended_sidebar;
+        const { style, sidebar: { extended, state } } = this.user.settings.config.appearance;
 
-        const sidebarWidth = isExtended ? 300 : 50;
+        const sidebarWidth = extended ? (state !== 'tab_container' ? WINDOW_EXTENDED_SIDEBAR_WIDTH : WINDOW_EXTENDED_TAB_CONTAINER_WIDTH) : 50;
 
         const baseWidth = isFullScreen || isMaximized ? width : width - 2;
         const baseHeight = isFullScreen ? height : ((isMaximized ? height : height - 1) - 50);
@@ -221,7 +219,7 @@ export class AppView {
 
         const verticalWidth = isFullScreen ? width : (isMaximized ? width - sidebarWidth : width - 1 - sidebarWidth);
 
-        switch (appearanceStyle) {
+        switch (style) {
             case 'top_single':
                 this.browserView.setBounds({
                     width: baseWidth,
@@ -314,16 +312,22 @@ export class AppView {
             if (!isMainFrame) return;
 
             this.updateView();
+
+            if (!this.isLoading())
+                this.user.histories.add({ title: this.getTitle(), url: this.getURL(), favicon: this.getFavicon() });
         });
         webContents.on('did-fail-load', () => {
             this.updateView();
         });
 
-        webContents.on('page-title-updated', (e, title) => {
+        webContents.on('page-title-updated', (_, title) => {
             this.updateView();
+
+            if (!this.isLoading())
+                this.user.histories.add({ title, url: this.getURL(), favicon: this.getFavicon() });
         });
         webContents.on('page-favicon-updated', async (e, favicons) => {
-            const favicon = await encodeFromURL(favicons[0]);
+            const favicon = await FaviconManager.getFavicon(this.getURL(), favicons[0]);
             const faviconUrl = FaviconManager.toUrl(this.getURL());
 
             this.favicon = favicon;
@@ -331,6 +335,9 @@ export class AppView {
                 Main.faviconManager.add({ url: faviconUrl, favicon });
 
             this.updateView();
+
+            if (!this.isLoading())
+                this.user.histories.add({ title: this.getTitle(), url: this.getURL(), favicon: this.getFavicon() });
         });
         webContents.on('did-change-theme-color', (e, color) => {
             this.color = color ?? undefined;

@@ -1,9 +1,9 @@
 import clsx from 'clsx';
-import React, { MouseEvent } from 'react';
+import React from 'react';
 import { ArrowLeft, ArrowRight, Home, Reload, Remove } from '../../../../components/Icons';
 import { useViewManagerContext } from '../../../../contexts/view';
 import { useElectronAPI } from '../../../../utils/electron';
-import { StyledButton } from './styles';
+import { StyledButton } from '../Button/styles';
 
 export const BackButton = () => {
     const { selectedId, getCurrentViewState } = useViewManagerContext();
@@ -11,7 +11,7 @@ export const BackButton = () => {
 
     const { backView } = useElectronAPI();
 
-    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleButtonClick = () => {
         backView(selectedId);
     };
 
@@ -28,7 +28,7 @@ export const ForwardButton = () => {
 
     const { forwardView } = useElectronAPI();
 
-    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleButtonClick = () => {
         forwardView(selectedId);
     };
 
@@ -46,7 +46,7 @@ export const ReloadButton = () => {
 
     const { reloadView, stopView } = useElectronAPI();
 
-    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleButtonClick = () => {
         !isLoading ? reloadView(selectedId) : stopView(selectedId);
     };
 
@@ -58,11 +58,11 @@ export const ReloadButton = () => {
 };
 
 export const HomeButton = () => {
-    const { selectedId, getCurrentViewState } = useViewManagerContext();
+    const { selectedId } = useViewManagerContext();
 
     const { loadView } = useElectronAPI();
 
-    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleButtonClick = () => {
         loadView(selectedId, 'https://www.google.com');
     };
 

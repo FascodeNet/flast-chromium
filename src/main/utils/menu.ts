@@ -1,4 +1,12 @@
-import { app, MenuItem, MenuItemConstructorOptions, nativeImage, nativeTheme } from 'electron';
+import {
+    app,
+    MenuItem,
+    MenuItemConstructorOptions,
+    NativeImage,
+    nativeImage,
+    nativeTheme,
+    ResizeOptions
+} from 'electron';
 
 export const joinTo = (
     itemsArray: (MenuItem | MenuItemConstructorOptions | (MenuItem | MenuItemConstructorOptions)[] | undefined)[],
@@ -24,7 +32,10 @@ export const joinTo = (
     return list;
 };
 
-const emptyMenuItemIcon = nativeImage.createFromPath(`${app.getAppPath()}/static/icons/empty.png`).resize({ height: 24 });
-export const getMenuItemIcon = (path: string) => nativeImage.createFromPath(path).resize({ height: 24 });
+
+export const resizeIcon = (image: NativeImage, options: ResizeOptions = { height: 24 }) => image.resize(options);
+
+const emptyMenuItemIcon = resizeIcon(nativeImage.createFromPath(`${app.getAppPath()}/static/icons/empty.png`));
+export const getMenuItemIcon = (path: string) => resizeIcon(nativeImage.createFromPath(path));
 export const getMenuItemIconFromName = (name: string) => getMenuItemIcon(`${app.getAppPath()}/static/icons/${nativeTheme.shouldUseDarkColors ? 'white' : 'black'}/${name}.png`);
 export const getEmptyMenuItemIcon = () => emptyMenuItemIcon;

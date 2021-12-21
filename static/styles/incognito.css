@@ -13,6 +13,11 @@ body {
     color: #fff;
 }
 
+hr {
+    border-color: var(--divider-color) !important;
+}
+
+
 .title-bar, .tool-bar {
     background-color: #0c113a;
 }
@@ -32,7 +37,7 @@ button svg {
 
 button:not(:disabled), button:not(:disabled) svg {
     color: var(--active-color);
-    fill: var(--active-color);
+    fill: var(--active-color) !important;
 }
 
 button:disabled, button:disabled svg {
@@ -41,7 +46,7 @@ button:disabled, button:disabled svg {
 }
 
 button:not(:disabled):hover {
-    background-color: var(--hover-color);
+    background-color: var(--hover-color) !important;
     border-color: var(--divider-color) !important;
 }
 
@@ -54,7 +59,7 @@ button:not(:disabled):hover {
     border-color: var(--divider-color);
 }
 
-.horizontal-tab-container, .vertical-tab-container {
+.horizontal-tab-container, .vertical-tab-container, .sidebar {
     background-color: #0c113a;
 }
 
@@ -95,3 +100,10 @@ button:not(:disabled):hover {
     background-color: var(--hover-color);
     border-color: var(--divider-color);
 }
+
+
+.history-item:hover {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
+}
+

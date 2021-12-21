@@ -13,6 +13,11 @@ body {
     color: #000;
 }
 
+hr {
+    border-color: var(--divider-color) !important;
+}
+
+
 .title-bar, .tool-bar {
     background-color: #f2f3f5;
 }
@@ -58,7 +63,7 @@ button:not(:disabled):hover {
     border-color: var(--divider-color);
 }
 
-.horizontal-tab-container, .vertical-tab-container {
+.horizontal-tab-container, .vertical-tab-container, .sidebar {
     background-color: #f2f3f5;
 }
 
@@ -98,4 +103,10 @@ button:not(:disabled):hover {
 .add-tab-button:not(:disabled):hover {
     background-color: var(--hover-color);
     border-color: var(--divider-color);
+}
+
+
+.history-item:hover {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
 }

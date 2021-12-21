@@ -1,4 +1,4 @@
-import { app, dialog, Menu, MenuItemConstructorOptions } from 'electron';
+import { app, dialog, Menu, MenuItemConstructorOptions, nativeImage } from 'electron';
 import { isHorizontal } from '../../interfaces/user';
 import { getTranslate } from '../../languages/language';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
@@ -6,7 +6,8 @@ import { IS_MAC } from '../../utils/process';
 import { Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
-import { getEmptyMenuItemIcon, getMenuItemIcon, getMenuItemIconFromName, joinTo } from '../utils/menu';
+import { getEmptyMenuItemIcon, getMenuItemIcon, getMenuItemIconFromName, joinTo, resizeIcon } from '../utils/menu';
+import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
 import { Shortcuts } from './shortcuts';
 
@@ -15,6 +16,23 @@ export const getApplicationMenu = (window: AppWindow) => {
     const languageSection = translate.menus.application;
 
     const viewManager = window.viewManager;
+
+    const getFavicon = (view: AppView) => {
+        let dataURL = view.getFavicon();
+        if (dataURL) {
+            // some favicon data urls have a corrupted base 64 file type descriptor
+            // prefixed with data:png;base64, instead of data:image/png;base64,
+            // see: https://github.com/electron/electron/issues/23369
+            if (!dataURL.split(',')[0].includes('image')) {
+                const split = dataURL.split(':');
+                dataURL = split.join(':image/');
+            }
+
+            return resizeIcon(nativeImage.createFromDataURL(dataURL));
+        } else {
+            return undefined;
+        }
+    };
 
     const applicationOptions: MenuItemConstructorOptions | undefined = IS_MAC ? {
         label: languageSection.app.label,
@@ -312,7 +330,7 @@ export const getApplicationMenu = (window: AppWindow) => {
                     const settings = window.user.settings;
                     if (isHorizontal(settings.config.appearance.style)) return;
 
-                    settings.config = { appearance: { extended_sidebar: !settings.config.appearance.extended_sidebar } };
+                    settings.config = { appearance: { sidebar: { extended: !settings.config.appearance.sidebar.extended } } };
 
                     const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id);
                     windows.forEach((window) => {
@@ -631,7 +649,7 @@ export const getApplicationMenu = (window: AppWindow) => {
             ...(viewManager.getViews().map((view): MenuItemConstructorOptions => (
                 {
                     label: view.getTitle(),
-                    icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                    icon: !IS_MAC ? getFavicon(view) : undefined,
                     // type: 'checkbox',
                     enabled: viewManager.selectedId !== view.id,
                     click: () => viewManager.select(view.id)

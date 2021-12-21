@@ -3,13 +3,14 @@ import { app, BrowserWindow, ipcMain, Menu, nativeImage, nativeTheme } from 'ele
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { isHorizontal } from '../../interfaces/user';
-import { AppWindowInitializerOptions } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
 import { IS_DEVELOPMENT, IS_MAC } from '../../utils/process';
+import { showHistoriesDialog } from '../dialogs/histories';
+import { IUser } from '../interfaces/user';
+import { AppWindowInitializerOptions } from '../interfaces/window';
 import { Main } from '../main';
 import { ViewManager } from '../manager/view';
 import { getApplicationMenu } from '../menus/app';
-import { IUser } from '../user/interfaces';
 
 export class AppWindow {
     public readonly id: number;
@@ -20,6 +21,8 @@ export class AppWindow {
     private applicationMenu: Menu;
 
     public viewManager: ViewManager;
+
+    private _injectedThemeStyleKey?: string = undefined;
 
     public constructor(user: IUser, { urls = ['https://www.google.com'] }: AppWindowInitializerOptions) {
         this.browserWindow = new BrowserWindow({
@@ -58,13 +61,15 @@ export class AppWindow {
         Menu.setApplicationMenu(this.applicationMenu);
         this.browserWindow.setMenu(this.applicationMenu);
 
-        this.browserWindow.loadFile('build/app.html');
+        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'app.html'));
         this.setStyle();
 
-        if (IS_DEVELOPMENT) {
+        this.webContents.once('dom-ready', () => {
+            if (!IS_DEVELOPMENT) return;
+
             // 開発モードの場合はデベロッパーツールを開く
             this.browserWindow.webContents.openDevTools({ mode: 'detach' });
-        }
+        });
     }
 
     public get webContents() {
@@ -95,6 +100,7 @@ export class AppWindow {
 
 
     public async setStyle() {
+        const currentInjectedThemeStyleKey = this._injectedThemeStyleKey;
         if (this.user.type === 'incognito') {
             const style = await readFile(
                 join(
@@ -104,7 +110,7 @@ export class AppWindow {
                     'incognito.css'
                 )
             );
-            this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
+            this._injectedThemeStyleKey = await this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
         } else {
             const style = await readFile(
                 join(
@@ -114,8 +120,11 @@ export class AppWindow {
                     `${nativeTheme.shouldUseDarkColors ? 'dark' : 'light'}.css`
                 )
             );
-            this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
+            this._injectedThemeStyleKey = await this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
         }
+
+        if (currentInjectedThemeStyleKey)
+            await this.webContents.removeInsertedCSS(currentInjectedThemeStyleKey);
     }
 
 
@@ -178,13 +187,17 @@ export class AppWindow {
             const settings = this.user.settings;
             if (isHorizontal(settings.config.appearance.style)) return;
 
-            settings.config = { appearance: { extended_sidebar: !settings.config.appearance.extended_sidebar } };
+            settings.config = { appearance: { sidebar: { extended: !settings.config.appearance.sidebar.extended } } };
 
             const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === this.user.id);
             windows.forEach((window) => {
                 window.webContents.send('settings-update', settings.config);
                 window.viewManager.get()?.setBounds();
             });
+        });
+
+        ipcMain.handle(`window-histories-${this.id}`, (e, x: number, y: number) => {
+            showHistoriesDialog(this.browserWindow, x, y);
         });
 
         ipcMain.handle(`window-minimized-${this.id}`, () => {

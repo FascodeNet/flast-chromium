@@ -1,5 +1,5 @@
 import { nonNullable } from '../../utils/array';
-import { IUser } from '../user/interfaces';
+import { IUser } from '../interfaces/user';
 import { AppWindow } from '../windows/app';
 import { ProcessManagerWindow } from '../windows/process-manager';
 

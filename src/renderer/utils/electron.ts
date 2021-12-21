@@ -1,18 +1,21 @@
 import { getCurrentWebContents, getCurrentWindow } from '@electron/remote';
 import { ipcRenderer } from 'electron';
-import { UserConfig } from '../../interfaces/user';
+import { IBookmark, IHistory, UserConfig } from '../../interfaces/user';
 import { MoveDirection, ViewState } from '../../interfaces/view';
+import { DeepPartial } from '../../utils';
 
 interface ElectronAPI {
     getWindowId: () => number;
     showApplicationMenu: () => Promise<void>;
     toggleSidebar: () => Promise<void>;
+    showHistoriesPopup: (x: number, y: number) => Promise<void>;
 
     isMinimized: () => Promise<boolean>;
     isMaximized: () => Promise<boolean>;
     minimize: () => Promise<void>;
     maximize: () => Promise<void>;
     close: () => Promise<void>;
+
 
     getWebContentsId: () => number;
     getViews: () => Promise<ViewState[]>;
@@ -33,7 +36,15 @@ interface ElectronAPI {
 
     getCurrentUserId: () => Promise<string>;
     getUserConfig: (id: string) => Promise<UserConfig>;
-    setUserConfig: (id: string, config: UserConfig | any) => Promise<void>;
+    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>;
+
+    getBookmarks: (userId: string) => Promise<IBookmark[]>;
+    addBookmark: (userId: string, data: IBookmark) => Promise<void>;
+    removeBookmark: (userId: string, id: string) => Promise<void>;
+
+    getHistories: (userId: string) => Promise<IHistory[]>;
+    addHistory: (userId: string, data: IHistory) => Promise<void>;
+    removeHistory: (userId: string, id: string) => Promise<void>;
 }
 
 const windowId = getCurrentWindow().id;
@@ -41,12 +52,14 @@ export const useElectronAPI = (): ElectronAPI => ({
     getWindowId: () => getCurrentWindow().id,
     showApplicationMenu: () => ipcRenderer.invoke(`window-menu-${windowId}`),
     toggleSidebar: () => ipcRenderer.invoke(`window-sidebar-${windowId}`),
+    showHistoriesPopup: (x: number, y: number) => ipcRenderer.invoke(`window-histories-${windowId}`, x, y),
 
     isMinimized: () => ipcRenderer.invoke(`window-minimized-${windowId}`),
     isMaximized: () => ipcRenderer.invoke(`window-maximized-${windowId}`),
     minimize: () => ipcRenderer.invoke(`window-minimize-${windowId}`),
     maximize: () => ipcRenderer.invoke(`window-maximize-${windowId}`),
     close: () => ipcRenderer.invoke(`window-close-${windowId}`),
+
 
     getWebContentsId: () => getCurrentWebContents().id,
     getViews: () => ipcRenderer.invoke(`views-${windowId}`),
@@ -67,5 +80,13 @@ export const useElectronAPI = (): ElectronAPI => ({
 
     getCurrentUserId: () => ipcRenderer.invoke(`window-user-${windowId}`),
     getUserConfig: (id: string) => ipcRenderer.invoke(`get-user-config`, id),
-    setUserConfig: (id: string, config: UserConfig | any) => ipcRenderer.invoke(`set-user-config`, id, config)
+    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke(`set-user-config`, id, config),
+
+    getBookmarks: (userId: string) => ipcRenderer.invoke(`bookmarks-${userId}`),
+    addBookmark: (userId: string, data: IBookmark) => ipcRenderer.invoke(`bookmark-add-${userId}`, data),
+    removeBookmark: (userId: string, id: string) => ipcRenderer.invoke(`bookmark-remove-${userId}`, id),
+
+    getHistories: (userId: string) => ipcRenderer.invoke(`histories-${userId}`),
+    addHistory: (userId: string, data: IHistory) => ipcRenderer.invoke(`history-add-${userId}`, data),
+    removeHistory: (userId: string, id: string) => ipcRenderer.invoke(`history-remove-${userId}`, id)
 });

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { borderRadius } from '../../../../themes';
 
 export const StyledApplicationMenuButton = styled.button`
   aspect-ratio: 1 / 1;
@@ -14,7 +15,7 @@ export const StyledApplicationMenuButton = styled.button`
   outline-width: 2px;
   border-style: solid;
   border-width: 1px;
-  border-radius: 8px;
+  border-radius: ${borderRadius.toUnit()};
   user-select: none;
   app-region: no-drag;
 

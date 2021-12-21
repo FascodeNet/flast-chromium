@@ -1,21 +1,20 @@
-import { Divider, useTheme } from '@mui/material';
+import { Divider } from '@mui/material';
 import { platform } from 'os';
 import React, { useEffect, useState } from 'react';
 import { WindowsControls } from 'react-windows-controls';
 import { AppearanceStyle } from '../../../../../interfaces/user';
 import { useUserConfigContext } from '../../../../contexts/config';
 import { useElectronAPI } from '../../../../utils/electron';
+import { ActionBar } from '../ActionBar';
 import { AddressBar } from '../AddressBar';
 import { ApplicationMenuButton } from '../ApplicationMenuButton';
 import { NavigationBar } from '../NavigationBar';
-import { HorizontalTabBar } from '../TabBar';
+import { HorizontalTabContainer } from '../TabContainer';
 import { StyledContainer, StyledTitleBar, StyledWindowControls } from './styles';
 
 export const TitleBar = () => {
     const { isMaximized, minimize, maximize, close } = useElectronAPI();
     const { config } = useUserConfigContext();
-
-    const { palette } = useTheme();
 
     const style: AppearanceStyle = config.appearance.style;
 
@@ -44,14 +43,15 @@ export const TitleBar = () => {
                         <NavigationBar />
                         <AddressBar />
                         <Divider flexItem orientation="vertical" variant="middle" sx={{ gridArea: 'divider' }} />
-                        <HorizontalTabBar />
+                        <HorizontalTabContainer />
+                        <ActionBar />
                     </StyledContainer>
                 );
             case 'top_double':
                 return (
                     <StyledContainer className="title-bar-content" appearanceStyle={style}>
                         {!isMac && <ApplicationMenuButton />}
-                        <HorizontalTabBar />
+                        <HorizontalTabContainer />
                     </StyledContainer>
                 );
             case 'bottom_single':
@@ -64,6 +64,7 @@ export const TitleBar = () => {
                         <NavigationBar />
                         <AddressBar />
                         <browser-action-list />
+                        <ActionBar />
                     </StyledContainer>
                 );
         }

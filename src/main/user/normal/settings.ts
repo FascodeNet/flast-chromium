@@ -3,7 +3,8 @@ import { app } from 'electron';
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { DefaultUserConfig, UserConfig } from '../../../interfaces/user';
-import { ISettings, IUser } from '../interfaces';
+import { DeepPartial } from '../../../utils';
+import { ISettings, IUser } from '../../interfaces/user';
 
 export class NormalSettings implements ISettings {
 
@@ -13,7 +14,7 @@ export class NormalSettings implements ISettings {
 
     private _config: UserConfig = DefaultUserConfig;
 
-    constructor(user: IUser) {
+    public constructor(user: IUser) {
         this.user = user;
 
         this.path = join(app.getPath('userData'), 'users', user.id, 'config.json');
@@ -25,12 +26,12 @@ export class NormalSettings implements ISettings {
         });
     }
 
-    public get config() {
+    public get config(): UserConfig {
         return this._config;
     }
 
-    public set config(data: UserConfig | any) {
-        const config = deepmerge(this._config, data);
+    public set config(data: DeepPartial<UserConfig>) {
+        const config = deepmerge(this._config, data as any);
         this._config = config;
         this.setConfig(config);
     }

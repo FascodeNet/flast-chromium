@@ -4,6 +4,34 @@ import { PaletteOptions } from '@mui/material/styles';
 import { TypographyOptions } from '@mui/material/styles/createTypography';
 import { createGlobalStyle } from 'styled-components';
 
+type StyleAbsoluteUnit = 'cm' | 'mm' | 'Q' | 'in' | 'pc' | 'pt' | 'px';
+type StyleRelativeUnit = 'em' | 'ex' | 'ch' | 'rem' | 'lh' | 'vw' | 'vh' | 'vmin' | 'vmax';
+type StyleUnit = StyleAbsoluteUnit | StyleRelativeUnit;
+
+class StyleValue {
+    private readonly _value: number;
+    private readonly _unit: StyleUnit;
+
+    public constructor(value: number, unit: StyleUnit) {
+        this._value = value;
+        this._unit = unit;
+    }
+
+    public get value() {
+        return this._value;
+    }
+
+    public get unit() {
+        return this._unit;
+    }
+
+    public toUnit() {
+        return `${this.value}${this.unit}`;
+    }
+}
+
+export const borderRadius = new StyleValue(4, 'px');
+
 export const MuiPalette: PaletteOptions = {
     primary: {
         light: indigo[300],
@@ -114,12 +142,12 @@ export const GlobalStyles = createGlobalStyle`
     line-height: 1.5;
     overflow: hidden;
   }
-  
+
   body > div#app {
     width: 100vw;
     height: 100vh;
   }
-  
+
   browser-action-list {
     display: flex;
     align-items: center;

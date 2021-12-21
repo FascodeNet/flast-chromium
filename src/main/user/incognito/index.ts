@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { UserType } from '../../../interfaces/user';
-import { IUser } from '../interfaces';
+import { IUser } from '../../interfaces/user';
 import { NormalUser } from '../normal';
 import { IncognitoBookmarks } from './bookmarks';
 import { IncognitoDownloads } from './downloads';
@@ -28,7 +28,7 @@ export class IncognitoUser implements IUser {
     private _histories: IncognitoHistories;
     private _downloads: IncognitoDownloads;
 
-    constructor(fromUser: NormalUser) {
+    public constructor(fromUser: NormalUser) {
         this.id = `incognito_${nanoid()}`;
 
         this.fromUser = fromUser;

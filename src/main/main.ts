@@ -6,6 +6,7 @@ import { UserConfig } from '../interfaces/user';
 import { APPLICATION_PROTOCOL } from '../utils';
 import { IS_DEVELOPMENT, IS_MAC, IS_WINDOWS } from '../utils/process';
 import { isURL, prefixHttp } from '../utils/url';
+import { DialogManager } from './manager/dialog';
 import { FaviconManager } from './manager/favicon';
 import { UserManager } from './manager/user';
 import { WindowManager } from './manager/window';
@@ -23,9 +24,10 @@ class App {
 
     public userManager = new UserManager();
     public windowManager = new WindowManager();
+    public dialogManager = new DialogManager();
     public faviconManager = new FaviconManager();
 
-    constructor() {
+    public constructor() {
         App.setProtocols();
         App.setTasks();
 
@@ -72,6 +74,7 @@ class App {
             windows.forEach((window) => {
                 window.webContents.send('settings-update', settings.config);
                 window.viewManager.get()?.setBounds();
+                window.setStyle();
             });
         });
 
@@ -107,6 +110,13 @@ class App {
             } else {
                 this.windowManager.add(user);
             }
+        });
+
+        nativeTheme.on('updated', () => {
+            this.windowManager.getWindows().forEach((window) => {
+                window.viewManager.get()?.setBounds();
+                window.setStyle();
+            });
         });
 
 
