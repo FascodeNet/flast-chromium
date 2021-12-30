@@ -20,7 +20,7 @@ export const faviconManager = new FaviconManager();
 
 const singleInstance = app.requestSingleInstanceLock();
 
-class App {
+export class App {
 
     public userManager = new UserManager();
     public windowManager = new WindowManager();
@@ -125,7 +125,7 @@ class App {
         });
     }
 
-    private static setTheme(config: UserConfig) {
+    public static setTheme(config: UserConfig) {
         nativeTheme.themeSource = config.appearance.mode;
     }
 

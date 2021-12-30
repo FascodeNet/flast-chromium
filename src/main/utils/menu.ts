@@ -33,9 +33,10 @@ export const joinTo = (
 };
 
 
-export const resizeIcon = (image: NativeImage, options: ResizeOptions = { height: 24 }) => image.resize(options);
+export const resizeIcon = (image: NativeImage, options: ResizeOptions = { height: 22 }) => image.resize(options);
 
-const emptyMenuItemIcon = resizeIcon(nativeImage.createFromPath(`${app.getAppPath()}/static/icons/empty.png`));
 export const getMenuItemIcon = (path: string) => resizeIcon(nativeImage.createFromPath(path));
 export const getMenuItemIconFromName = (name: string) => getMenuItemIcon(`${app.getAppPath()}/static/icons/${nativeTheme.shouldUseDarkColors ? 'white' : 'black'}/${name}.png`);
+
+const emptyMenuItemIcon = getMenuItemIcon(`${app.getAppPath()}/static/icons/empty.png`);
 export const getEmptyMenuItemIcon = () => emptyMenuItemIcon;

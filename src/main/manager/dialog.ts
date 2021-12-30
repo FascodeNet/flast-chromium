@@ -24,6 +24,11 @@ export class DialogManager {
         return dialog;
     }
 
+    public destroy(dialog: Dialog) {
+        dialog.destroy();
+        this._dialogs = this._dialogs.filter((dlg) => dlg.name !== dialog.name);
+    }
+
     public getDynamic(name: string) {
         return this._dialogs.find((dialog) => dialog.name === name);
     }

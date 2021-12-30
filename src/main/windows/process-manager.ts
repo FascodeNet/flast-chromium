@@ -39,10 +39,15 @@ export class ProcessManagerWindow {
 
         this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'process-manager.html'));
 
-        if (IS_DEVELOPMENT) {
+        if (IS_DEVELOPMENT)
             this.browserWindow.removeMenu();
+
+        this.webContents.once('dom-ready', () => {
+            if (!IS_DEVELOPMENT) return;
+
+            // 開発モードの場合はデベロッパーツールを開く
             this.browserWindow.webContents.openDevTools({ mode: 'detach' });
-        }
+        });
     }
 
     public get webContents() {

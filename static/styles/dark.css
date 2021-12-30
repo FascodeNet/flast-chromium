@@ -1,6 +1,7 @@
-*, :root {
-    outline-color: #fff;
-    color: #fff;
+:root {
+    --primary-background-color: #121212;
+    --secondary-background-color: #242424;
+    --primary-foreground-color: #fff;
 
     --active-color: #fff;
     --hover-color: rgba(255, 255, 255, .08);
@@ -9,8 +10,13 @@
     --divider-color: rgba(255, 255, 255, .12);
 }
 
+*, :root {
+    outline-color: var(--primary-foreground-color);
+    color: var(--primary-foreground-color);
+}
+
 body {
-    color: #fff;
+    color: var(--primary-foreground-color);
 }
 
 hr {
@@ -19,7 +25,8 @@ hr {
 
 
 .title-bar, .tool-bar {
-    background-color: #121212;
+    background-color: var(--primary-background-color);
+    border-bottom: solid 1px var(--divider-color);
 }
 
 .window-controllers > div > div > div {
@@ -29,6 +36,7 @@ hr {
 button {
     background-color: transparent;
     border-color: transparent;
+    border: none !important;
 }
 
 button svg {
@@ -48,11 +56,12 @@ button:disabled, button:disabled svg {
 button:not(:disabled):hover {
     background-color: var(--hover-color) !important;
     border-color: var(--divider-color) !important;
+    border: none !important;
 }
 
 .address-bar, .address-bar-input {
-    background-color: #242424;
-    border-color: #242424;
+    background-color: var(--secondary-background-color);
+    border-color: var(--secondary-background-color);
 }
 
 .address-bar-input:hover {
@@ -60,17 +69,17 @@ button:not(:disabled):hover {
 }
 
 .horizontal-tab-container, .vertical-tab-container, .sidebar {
-    background-color: #121212;
+    background-color: var(--primary-background-color);
 }
 
 .horizontal-tab-item, .vertical-tab-item {
-    background-color: #242424;
-    border-color: #242424;
+    background-color: var(--secondary-background-color);
+    border-color: var(--secondary-background-color);
 }
 
 .horizontal-tab-item.pinned:not(.active), .vertical-tab-item.pinned:not(.active) {
-    background-color: #242424;
-    border-color: #242424;
+    background-color: var(--secondary-background-color);
+    border-color: var(--secondary-background-color);
 }
 
 .horizontal-tab-item.pinned:not(.active):hover, .vertical-tab-item.pinned:not(.active):hover {
@@ -92,8 +101,8 @@ button:not(:disabled):hover {
 }
 
 .add-tab-button {
-    background-color: #242424;
-    border-color: #242424;
+    background-color: var(--secondary-background-color);
+    border-color: var(--secondary-background-color);
 }
 
 .add-tab-button:not(:disabled):hover {
@@ -101,6 +110,31 @@ button:not(:disabled):hover {
     border-color: var(--divider-color);
 }
 
+
+.sidebar.left {
+    border-right: solid 1px var(--divider-color);
+}
+
+.sidebar.left > .panel {
+    border-left: solid 1px var(--divider-color);
+}
+
+.sidebar.right {
+    border-left: solid 1px var(--divider-color);
+}
+
+.sidebar.right > .panel {
+    border-right: solid 1px var(--divider-color);
+}
+
+
+.panel {
+    background-color: var(--primary-background-color);
+}
+
+.panel-header {
+    border-bottom-color: var(--divider-color);
+}
 
 .history-item:hover {
     background-color: var(--hover-color);

@@ -170,12 +170,20 @@ export const Ja: Language = {
             appearance: {
                 title: 'デザインと外観',
 
-                theme: {
-                    title: '配色テーマ',
+                mode: {
+                    title: '基本テーマ',
 
                     system: 'システムに合わせる',
                     light: 'ライト',
                     dark: 'ダーク'
+                },
+                theme: {
+                    title: 'テーマ',
+
+                    none: '既定',
+                    morningFog: 'Morning fog',
+                    icyMint: 'Icy mint',
+                    islandGetaway: 'Island getaway'
                 },
                 tabPosition: {
                     title: 'タブとアドレスバーの配置',

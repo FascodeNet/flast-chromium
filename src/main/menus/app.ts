@@ -30,7 +30,7 @@ export const getApplicationMenu = (window: AppWindow) => {
 
             return resizeIcon(nativeImage.createFromDataURL(dataURL));
         } else {
-            return undefined;
+            return getEmptyMenuItemIcon();
         }
     };
 

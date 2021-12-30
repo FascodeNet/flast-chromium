@@ -2,6 +2,7 @@ import { app, ipcMain } from 'electron';
 import Datastore from 'nedb';
 import { join } from 'path';
 import { IHistory } from '../../../interfaces/user';
+import { APPLICATION_PROTOCOL } from '../../../utils';
 import { IHistories, IUser } from '../../interfaces/user';
 
 export class NormalHistories implements IHistories {
@@ -55,6 +56,12 @@ export class NormalHistories implements IHistories {
                 date.getMonth() == today.getMonth() &&
                 date.getFullYear() == today.getFullYear();
         };
+
+        if (data.url) {
+            const url = new URL(data.url);
+            if (url.protocol === `${APPLICATION_PROTOCOL}:`)
+                return;
+        }
 
         this._datastore.update<IHistory>(
             {

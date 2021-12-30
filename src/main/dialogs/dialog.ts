@@ -1,9 +1,13 @@
 import { enable } from '@electron/remote/main';
-import { app, BrowserView, BrowserWindow, ipcMain, Rectangle } from 'electron';
+import { app, BrowserView, BrowserWindow, ipcMain, nativeTheme, Rectangle } from 'electron';
+import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { IDialog } from '../interfaces/dialog';
+import { IUser } from '../interfaces/user';
 
 export class Dialog {
+
+    public readonly user: IUser;
 
     public browserWindow: BrowserWindow;
     public readonly browserView: BrowserView;
@@ -17,16 +21,35 @@ export class Dialog {
         y: 0
     };
 
-    public constructor(window: BrowserWindow, { name, bounds, onWindowBoundsUpdate, webPreferences }: IDialog) {
+    private listeners = {
+        onResize: () => {
+        },
+        onMove: () => {
+        }
+    };
+
+    private _injectedThemeStyleKey?: string = undefined;
+
+    public constructor(user: IUser, window: BrowserWindow, {
+        name,
+        bounds,
+        onWindowBoundsUpdate,
+        onHide = () => {
+        },
+        webPreferences
+    }: IDialog) {
         this.browserView = new BrowserView({
             webPreferences: {
                 preload: join(app.getAppPath(), 'build', 'dialog.js'),
                 nodeIntegration: true,
                 contextIsolation: false,
                 javascript: true,
+                session: user.session.session,
                 ...webPreferences
             }
         });
+
+        this.user = user;
 
         this.browserWindow = window;
 
@@ -35,13 +58,27 @@ export class Dialog {
         this.name = name;
 
         if (onWindowBoundsUpdate) {
-            window.on('resize', () => onWindowBoundsUpdate('resize'));
-            window.on('move', () => onWindowBoundsUpdate('move'));
+            this.listeners.onResize = () => {
+                if (this.webContents.isDestroyed()) return;
+                onWindowBoundsUpdate('resize');
+            };
+            this.listeners.onMove = () => {
+                if (this.webContents.isDestroyed()) return;
+                onWindowBoundsUpdate('move');
+            };
+
+            window.on('resize', this.listeners.onResize);
+            window.on('move', this.listeners.onMove);
         }
 
         enable(this.browserView.webContents);
+        this.setStyle();
 
-        ipcMain.handle(`dialog-hide-${this.browserView.webContents.id}`, () => this.hide());
+        ipcMain.handle(`dialog-hide-${this.browserView.webContents.id}`, onHide);
+    }
+
+    public get webContents() {
+        return this.browserView.webContents;
     }
 
     public show() {
@@ -60,5 +97,38 @@ export class Dialog {
         this.hide();
         // @ts-ignore
         this.browserView.webContents.destroy();
+
+        this.browserWindow.off('resize', this.listeners.onResize);
+        this.browserWindow.off('move', this.listeners.onMove);
+        ipcMain.removeHandler(`dialog-hide-${this.browserView.webContents.id}`);
+    }
+
+
+    public async setStyle() {
+        const currentInjectedThemeStyleKey = this._injectedThemeStyleKey;
+        if (this.user.type === 'incognito') {
+            const style = await readFile(
+                join(
+                    app.getAppPath(),
+                    'static',
+                    'styles',
+                    'incognito.css'
+                )
+            );
+            this._injectedThemeStyleKey = await this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
+        } else {
+            const style = await readFile(
+                join(
+                    app.getAppPath(),
+                    'static',
+                    'styles',
+                    `${nativeTheme.shouldUseDarkColors ? 'dark' : 'light'}.css`
+                )
+            );
+            this._injectedThemeStyleKey = await this.webContents.insertCSS(style.toString('utf-8'), { cssOrigin: 'user' });
+        }
+
+        if (currentInjectedThemeStyleKey)
+            await this.webContents.removeInsertedCSS(currentInjectedThemeStyleKey);
     }
 }

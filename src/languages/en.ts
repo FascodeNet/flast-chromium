@@ -169,12 +169,20 @@ export const En: Language = {
             appearance: {
                 title: 'Appearance',
 
-                theme: {
-                    title: 'Theme',
+                mode: {
+                    title: 'Overall Theme',
 
                     system: 'System',
                     light: 'Light',
                     dark: 'Dark'
+                },
+                theme: {
+                    title: 'Theme',
+
+                    none: 'None',
+                    morningFog: 'Morning fog',
+                    icyMint: 'Icy mint',
+                    islandGetaway: 'Island getaway'
                 },
                 tabPosition: {
                     title: 'Tab Position',

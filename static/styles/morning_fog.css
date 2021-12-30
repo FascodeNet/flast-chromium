@@ -1,23 +1,24 @@
 :root {
-    --primary-background-color: #fff;
-    --secondary-background-color: #f2f2f2;
-    --primary-foreground-color: #000000de;
+    --primary-background-color: #aab0b6;
+    --secondary-background-color: #dddfe2;
+    --accent-color: #fcfcfc;
 
-    /* --active-color: rgba(0, 0, 0, .54); */
-    --active-color: #000000de;
+    /*
+    --active-color: rgba(0, 0, 0, .54);
     --hover-color: rgba(0, 0, 0, .04);
     --disabled-color: rgba(0, 0, 0, .26);
     --disabled-background-color: rgba(0, 0, 0, .12);
     --divider-color: rgba(0, 0, 0, .12);
+    */
 }
 
 *, :root {
-    outline-color: var(--primary-foreground-color);
-    color: var(--primary-foreground-color);
+    outline-color: #000000de;
+    color: #000000de;
 }
 
 body {
-    color: var(--primary-foreground-color);
+    color: #000000de;
 }
 
 hr {
@@ -73,6 +74,10 @@ button:not(:disabled):hover {
     border-color: var(--divider-color);
 }
 
+.address-bar-input:focus {
+    background-color: #fff;
+}
+
 .horizontal-tab-container, .vertical-tab-container, .sidebar {
     background-color: var(--primary-background-color);
 }
@@ -88,7 +93,7 @@ button:not(:disabled):hover {
 }
 
 .horizontal-tab-item.pinned:not(.active):hover, .vertical-tab-item.pinned:not(.active):hover {
-    border-color: #d2d3d5;
+    border-color: var(--accent-color);
 }
 
 .horizontal-tab-item.active, .vertical-tab-item.active {
@@ -97,7 +102,7 @@ button:not(:disabled):hover {
 }
 
 .horizontal-tab-item:hover, .vertical-tab-item:hover {
-    border-color: #d2d3d5;
+    border-color: var(--accent-color);
 }
 
 .horizontal-tab-item-close-button:hover, .vertical-tab-item-close-button:hover {

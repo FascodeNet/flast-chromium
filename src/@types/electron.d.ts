@@ -1,5 +1,6 @@
 import { UserConfig } from '../interfaces/user';
 import { Language } from '../languages/language';
+import { DeepPartial } from '../utils';
 
 export interface IElectronAPI {
     togglePictureInPicture: (index: number) => Promise<void>,
@@ -7,7 +8,8 @@ export interface IElectronAPI {
     getUser: () => Promise<string | undefined>,
     getLanguage: (id: string) => Promise<Language>,
     getUserConfig: (id: string) => Promise<UserConfig>,
-    setUserConfig: (id: string, config: UserConfig | any) => Promise<void>,
+    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>,
+    setTheme: (id: string) => Promise<void>,
 }
 
 declare global {

@@ -1,7 +1,23 @@
 export type UserType = 'normal' | 'incognito' | 'guest';
+export type AppearanceInternalTheme =
+    'morning_fog'
+    | 'icy_mint'
+    | 'island_getaway'
+    | 'cool_breeze'
+    | 'silky_pink'
+    | 'bubblegum'
+    | 'sunny_day'
+    | 'mango_paradise'
+    | 'dark_and_stormy'
+    | 'cool_slate'
+    | 'moonlight_glow'
+    | 'juicy_plum'
+    | 'spicy_red'
+    | 'mystical_forest';
 
 
 export type AppearanceMode = 'system' | 'light' | 'dark';
+export type AppearanceTheme = undefined | AppearanceInternalTheme | string;
 export type AppearanceStyle = 'top_single' | 'top_double' | 'bottom_single' | 'bottom_double' | 'left' | 'right';
 export type AppearanceSidebarState = 'tab_container' | 'bookmarks' | 'histories' | 'downloads';
 
@@ -15,6 +31,7 @@ export type Language = 'ja' | 'en';
 export interface UserConfig {
     appearance: {
         mode: AppearanceMode;
+        theme: AppearanceTheme;
         style: AppearanceStyle;
         extended_sidebar: boolean;
         sidebar: {
@@ -53,6 +70,7 @@ export interface UserConfig {
 export const DefaultUserConfig: UserConfig = {
     appearance: {
         mode: 'system',
+        theme: undefined,
         style: 'top_single',
         extended_sidebar: false,
         sidebar: {

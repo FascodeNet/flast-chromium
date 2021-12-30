@@ -1,17 +1,19 @@
 import { ipcRenderer } from 'electron';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { DefaultUserConfig, UserConfig } from '../../interfaces/user';
+import { DefaultUserConfig, UserConfig, UserType } from '../../interfaces/user';
 import { DeepPartial } from '../../utils';
 import { useElectronAPI } from '../utils/electron';
 
 export interface UserConfigProps {
     userId: string;
+    type: UserType;
     config: UserConfig;
     setConfig: (config: DeepPartial<UserConfig>) => Promise<void>;
 }
 
 export const UserConfigContext = createContext<UserConfigProps>({
     userId: '',
+    type: 'normal',
     config: DefaultUserConfig,
     setConfig: (_) => Promise.resolve()
 });
@@ -26,6 +28,7 @@ export const UserConfigProvider = ({ children }: UserConfigProviderProps) => {
     const context = useContext(UserConfigContext);
 
     const [userId, setUserId] = useState(context.userId);
+    const [type, setType] = useState(context.type);
     const [config, setConfig] = useState(context.config);
 
     const _setConfig = async (config: DeepPartial<UserConfig>) => {
@@ -35,10 +38,13 @@ export const UserConfigProvider = ({ children }: UserConfigProviderProps) => {
     };
 
     useEffect(() => {
-        const { getCurrentUserId, getUserConfig } = useElectronAPI();
+        const { getCurrentUserId, getUserType, getUserConfig } = useElectronAPI();
 
         getCurrentUserId().then(async (id) => {
             setUserId(id);
+
+            const userType = await getUserType(id);
+            setType(userType);
 
             const userConfig = await getUserConfig(id);
             setConfig(userConfig);
@@ -56,7 +62,7 @@ export const UserConfigProvider = ({ children }: UserConfigProviderProps) => {
     }, [config]);
 
 
-    const value: UserConfigProps = { userId, config, setConfig: _setConfig };
+    const value: UserConfigProps = { userId, type, config, setConfig: _setConfig };
 
     return (
         <UserConfigContext.Provider value={value}>

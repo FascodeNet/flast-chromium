@@ -1,10 +1,12 @@
 import { IconButton } from '@mui/material';
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import { AppearanceSidebarState } from '../../../../../interfaces/user';
+import { HistoriesPanel } from '../../../../components/HistoriesPanel';
 import { Bookmarks, ChevronLeft, ChevronRight, Downloads, Histories } from '../../../../components/Icons';
 import { useUserConfigContext } from '../../../../contexts/config';
 import { useElectronAPI } from '../../../../utils/electron';
-import { SidebarBookmarks, SidebarDownloads, SidebarHistories } from '../SidebarContent';
+import { SidebarBookmarks, SidebarDownloads } from '../SidebarContent';
 import { VerticalTabContainer } from '../TabContainer';
 import { StyledSidebar, StyledToolBarContainer } from './styles';
 
@@ -34,10 +36,11 @@ export const Sidebar = () => {
     };
 
     return (
-        <StyledSidebar className="sidebar" appearanceStyle={style} extended={extended} panel={panel}>
+        <StyledSidebar className={clsx('sidebar', style === 'left' ? 'left' : 'right')} appearanceStyle={style}
+                       extended={extended} panel={panel}>
             <VerticalTabContainer extended={extended && panel === 'tab_container'} />
             {panel === 'bookmarks' && <SidebarBookmarks />}
-            {panel === 'histories' && <SidebarHistories />}
+            {panel === 'histories' && <HistoriesPanel type="sidebar" />}
             {panel === 'downloads' && <SidebarDownloads />}
             <StyledToolBarContainer className="tool-bar" extended={extended} panel={panel}>
                 <IconButton onClick={() => handleTogglePanelClick('bookmarks')}>

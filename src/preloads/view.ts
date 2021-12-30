@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld(
         getUser: () => ipcRenderer.invoke('get-user'),
         getLanguage: (id: string) => ipcRenderer.invoke('user-language', id),
         getUserConfig: (id: string) => ipcRenderer.invoke('get-user-config', id),
-        setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke('set-user-config', id, config)
+        setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke('set-user-config', id, config),
+        setTheme: (id: string) => ipcRenderer.invoke('set-theme', id)
     }
 );

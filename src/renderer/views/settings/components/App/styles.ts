@@ -9,12 +9,19 @@ export const StyledApp = styled.div`
 `;
 
 export const StyledAppContent = styled.main`
-  max-width: 800px;
   width: 100%;
   height: 100%;
-  padding: 3rem 2rem;
   grid-area: content;
-`
+  overflow: hidden;
+`;
+
+export const StyledContent = styled.div`
+  max-width: 800px;
+  width: 100%;
+  min-height: 100%;
+  padding: 3rem 2rem;
+  overflow: auto;
+`;
 
 export const StyledTitle = styled.h1`
   width: 100%;

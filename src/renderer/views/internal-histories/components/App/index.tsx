@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react';
+import { HistoriesPanel } from '../../../../components/HistoriesPanel';
 import { UserConfigProvider, useUserConfigContext } from '../../../../contexts/config';
 import { GlobalStyles } from '../../../../themes';
-import { SidebarHistories } from '../../../app/components/SidebarContent';
 import { StyledApp } from './styles';
 
 const Content = () => {
-    const { config } = useUserConfigContext();
+    const { config: _ } = useUserConfigContext();
 
     return (
         <StyledApp>
-            <SidebarHistories />
+            <HistoriesPanel type="popup" />
         </StyledApp>
     );
 };

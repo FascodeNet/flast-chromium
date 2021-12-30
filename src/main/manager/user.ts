@@ -7,7 +7,7 @@ import { getTranslate } from '../../languages/language';
 import { DeepPartial } from '../../utils';
 import { GlobalConfig } from '../interfaces/config';
 import { IUser } from '../interfaces/user';
-import { Main } from '../main';
+import { App, Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
 
@@ -135,6 +135,9 @@ export class UserManager {
             return getTranslate(this.get(id)?.settings.config ?? DefaultUserConfig);
         });
 
+        ipcMain.handle('get-user-type', (e, id: string) => {
+            return this.get(id)?.type;
+        });
         ipcMain.handle('get-user-config', (e, id: string) => {
             return this.get(id)?.settings.config ?? DefaultUserConfig;
         });
@@ -143,14 +146,26 @@ export class UserManager {
             if (!user) return;
 
             user.settings.config = config;
+            App.setTheme(user.settings.config);
 
             const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === user.id);
-            windows.forEach((window) => {
+            windows.forEach(async (window) => {
                 window.webContents.send('settings-update', user.settings.config);
                 window.viewManager.get()?.setBounds();
+                await window.setStyle();
             });
 
             return user.settings.config;
+        });
+
+        ipcMain.handle(`set-theme`, (e, id: string) => {
+            const user = this.get(id);
+            if (!user) return;
+
+            App.setTheme(user.settings.config);
+
+            const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === user.id);
+            windows.forEach(async (window) => await window.setStyle());
         });
     }
 }

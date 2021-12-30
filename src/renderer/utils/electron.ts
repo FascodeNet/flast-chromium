@@ -1,6 +1,6 @@
 import { getCurrentWebContents, getCurrentWindow } from '@electron/remote';
 import { ipcRenderer } from 'electron';
-import { IBookmark, IHistory, UserConfig } from '../../interfaces/user';
+import { IBookmark, IHistory, UserConfig, UserType } from '../../interfaces/user';
 import { MoveDirection, ViewState } from '../../interfaces/view';
 import { DeepPartial } from '../../utils';
 
@@ -35,6 +35,7 @@ interface ElectronAPI {
     loadView: (id: number, url: string) => Promise<void>;
 
     getCurrentUserId: () => Promise<string>;
+    getUserType: (id: string) => Promise<UserType>;
     getUserConfig: (id: string) => Promise<UserConfig>;
     setUserConfig: (id: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>;
 
@@ -79,6 +80,7 @@ export const useElectronAPI = (): ElectronAPI => ({
     loadView: (id: number, url: string) => ipcRenderer.invoke(`view-load-${windowId}`, id, url),
 
     getCurrentUserId: () => ipcRenderer.invoke(`window-user-${windowId}`),
+    getUserType: (id: string) => ipcRenderer.invoke('get-user-type', id),
     getUserConfig: (id: string) => ipcRenderer.invoke(`get-user-config`, id),
     setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke(`set-user-config`, id, config),
 

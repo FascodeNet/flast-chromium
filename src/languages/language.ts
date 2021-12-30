@@ -180,12 +180,20 @@ export interface Language {
             appearance: {
                 title: string;
 
-                theme: {
+                mode: {
                     title: string;
 
                     system: string;
                     light: string;
                     dark: string;
+                }
+                theme: {
+                    title: string;
+
+                    none: string;
+                    morningFog: string;
+                    icyMint: string;
+                    islandGetaway: string;
                 }
                 tabPosition: {
                     title: string;

@@ -11,7 +11,7 @@ import { TranslateProvider, useTranslateContext } from '../../../../contexts/tra
 import { GlobalStyles, MuiLightGlobalStyles } from '../../../../themes';
 import { Appearance } from '../Appearance';
 import { Pages } from '../Pages';
-import { StyledApp, StyledAppContent } from './styles';
+import { StyledApp, StyledAppContent, StyledContent } from './styles';
 
 const Content = () => {
     const [section, setSection] = useState<'appearance' | 'pages'>('appearance');
@@ -38,8 +38,10 @@ const Content = () => {
                 </StyledButton>
             </NavigationDrawer>
             <StyledAppContent>
-                {section === 'appearance' && <Appearance />}
-                {section === 'pages' && <Pages />}
+                <StyledContent>
+                    {section === 'appearance' && <Appearance />}
+                    {section === 'pages' && <Pages />}
+                </StyledContent>
             </StyledAppContent>
         </StyledApp>
     );

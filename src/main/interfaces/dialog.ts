@@ -6,5 +6,6 @@ export interface IDialog {
     name: string;
     bounds?: Partial<Rectangle>;
     onWindowBoundsUpdate?: (disposition: BoundsDisposition) => void;
+    onHide?: () => void;
     webPreferences?: WebPreferences;
 }
