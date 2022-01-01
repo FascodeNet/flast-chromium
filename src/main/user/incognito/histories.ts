@@ -30,14 +30,15 @@ export class IncognitoHistories implements IHistories {
     }
 
     public get histories(): IHistory[] {
-        throw new Error('This user is not allowed to use history!');
+        // throw new Error('This user is not allowed to use history!');
+        return [];
     }
 
     public add(data: IHistory) {
-        throw new Error('This user is not allowed to use history!');
+        // throw new Error('This user is not allowed to use history!');
     }
 
     public remove(id: string) {
-        throw new Error('This user is not allowed to use history!');
+        // throw new Error('This user is not allowed to use history!');
     }
 }

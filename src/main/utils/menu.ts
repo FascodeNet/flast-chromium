@@ -33,7 +33,7 @@ export const joinTo = (
 };
 
 
-export const resizeIcon = (image: NativeImage, options: ResizeOptions = { height: 22 }) => image.resize(options);
+export const resizeIcon = (image: NativeImage, options: ResizeOptions = { height: 20 }) => image.resize(options);
 
 export const getMenuItemIcon = (path: string) => resizeIcon(nativeImage.createFromPath(path));
 export const getMenuItemIconFromName = (name: string) => getMenuItemIcon(`${app.getAppPath()}/static/icons/${nativeTheme.shouldUseDarkColors ? 'white' : 'black'}/${name}.png`);

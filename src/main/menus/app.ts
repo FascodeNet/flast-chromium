@@ -649,7 +649,7 @@ export const getApplicationMenu = (window: AppWindow) => {
             ...(viewManager.getViews().map((view): MenuItemConstructorOptions => (
                 {
                     label: view.getTitle(),
-                    icon: !IS_MAC ? getFavicon(view) : undefined,
+                    icon: !IS_MAC ? (Main.windowManager.selectedId === window.id ? getMenuItemIconFromName('check') : getFavicon(view)) : undefined,
                     // type: 'checkbox',
                     enabled: viewManager.selectedId !== view.id,
                     click: () => viewManager.select(view.id)
@@ -697,12 +697,12 @@ export const getApplicationMenu = (window: AppWindow) => {
             },
             { type: 'separator' },
             ...(Main.windowManager.getWindows().map((window): MenuItemConstructorOptions => {
-                const subLabel = viewManager.views.size - 1 > 0 ? ` とその他 ${viewManager.views.size - 1}つのタブ` : '';
+                const subLabel = window.viewManager.views.size - 1 > 0 ? ` とその他 ${window.viewManager.views.size - 1}つのタブ` : '';
 
                 return (
                     {
-                        label: `${viewManager.get()?.getTitle() ?? window.getTitle()}${subLabel}`,
-                        icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                        label: `${window.viewManager.get()?.getTitle() ?? window.getTitle()}${subLabel}`,
+                        icon: !IS_MAC ? (Main.windowManager.selectedId === window.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
                         // type: 'checkbox',
                         enabled: Main.windowManager.selectedId !== window.id,
                         click: () => Main.windowManager.select(window.id)

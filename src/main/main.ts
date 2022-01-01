@@ -1,5 +1,5 @@
 import { initialize } from '@electron/remote/main';
-import { app, ipcMain, nativeTheme, protocol } from 'electron';
+import { app, dialog, ipcMain, nativeTheme, protocol } from 'electron';
 import { stat } from 'fs/promises';
 import { extname, isAbsolute } from 'path';
 import { UserConfig } from '../interfaces/user';
@@ -79,6 +79,9 @@ export class App {
         });
 
         app.on('second-instance', async (e, argv) => {
+            console.log(argv);
+            dialog.showMessageBox({ message: argv.toString() });
+
             if (!this.userManager.lastUserId) return;
 
             const user = this.userManager.get(this.userManager.lastUserId);

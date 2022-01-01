@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { borderRadius } from '../../themes';
 import { PanelType } from './index';
 
 interface StyledProps {
@@ -14,6 +15,7 @@ export const StyledPanel = styled.div<StyledProps>`
   grid-template-areas:
     'header'
     'content';
+  border-radius: ${({ type }) => type === 'popup' ? borderRadius.value : 0}px;
   overflow: hidden;
   user-select: none;
 `;

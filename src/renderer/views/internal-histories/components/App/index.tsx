@@ -1,16 +1,21 @@
 import React, { Fragment } from 'react';
 import { HistoriesPanel } from '../../../../components/HistoriesPanel';
-import { UserConfigProvider, useUserConfigContext } from '../../../../contexts/config';
+import { UserConfigProvider } from '../../../../contexts/config';
 import { GlobalStyles } from '../../../../themes';
+import { useTheme } from '../../../../utils/theme';
 import { StyledApp } from './styles';
 
 const Content = () => {
-    const { config: _ } = useUserConfigContext();
+    const { mode: { path: modePath }, theme: { value: theme, path: themePath } } = useTheme();
 
     return (
-        <StyledApp>
-            <HistoriesPanel type="popup" />
-        </StyledApp>
+        <Fragment>
+            <link rel="stylesheet" type="text/css" href={modePath} />
+            {theme && <link rel="stylesheet" type="text/css" href={themePath} />}
+            <StyledApp className="popup">
+                <HistoriesPanel type="popup" />
+            </StyledApp>
+        </Fragment>
     );
 };
 

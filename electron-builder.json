@@ -6,7 +6,7 @@
     "installerIcon": "static/icons/app/icon.ico",
     "uninstallerIcon": "static/icons/app/icon.ico"
   },
-  "electronVersion": "16.0.4",
+  "electronVersion": "16.0.5",
   "generateUpdatesFilesForAllChannels": true,
   "asar": true,
   "directories": {
@@ -61,21 +61,51 @@
   "fileAssociations": [
     {
       "name": "Document",
-      "description": "Flast",
-      "role": "Viewer",
-      "ext": "html"
-    },
-    {
-      "name": "Document",
-      "description": "Flast",
+      "description": "Flast HTML Document",
       "role": "Viewer",
       "ext": "htm"
     },
     {
       "name": "Document",
-      "description": "Flast",
+      "description": "Flast HTML Document",
       "role": "Viewer",
-      "ext": "php"
+      "ext": "html"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "shtml"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "xht"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "xhtml"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "webp"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "svg"
+    },
+    {
+      "name": "Document",
+      "description": "Flast PDF Document",
+      "role": "Viewer",
+      "ext": "pdf"
     }
   ]
 }

@@ -71,8 +71,10 @@ interface StyledTabProps {
 }
 
 export const StyledHorizontalTab = styled.div<StyledTabProps>`
-  // width: clamp(72px, 100%, 250px);
-    // min-width: ${TAB_PINNED_WIDTH}px;
+    /*
+  width: clamp(72px, 100%, 250px);
+  min-width: ${TAB_PINNED_WIDTH}px;
+  */
   max-width: ${TAB_MAX_WIDTH}px;
   height: 100%;
   padding: 0 5px 0 7px;
@@ -96,14 +98,10 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
     padding: 1px 6px 1px 8px;
     border-style: solid;
     border-width: 1px;
-
-    & > ${StyledTabCloseButton} {
-      display: flex;
-    }
   }
 
   & > ${StyledTabCloseButton} {
-    display: none;
+    display: flex;
   }
 
   ${({ active = false, pinned = false, themeColor = undefined }) => {
@@ -125,6 +123,10 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
           border-style: solid;
           border-width: 2px;
         }
+
+        & > ${StyledTabCloseButton} {
+          display: none;
+        }
       ` : css`
         padding: 5px 7px;
         border-style: solid;
@@ -134,6 +136,10 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
           padding: 6px 8px;
           border-style: solid;
           border-width: 1px;
+        }
+
+        & > ${StyledTabCloseButton} {
+          display: none;
         }
       `;
     }
@@ -152,10 +158,6 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
         ${color && css`border-color: ${color.string()};`};
         border-style: solid;
         border-width: 2px;
-      }
-
-      & > ${StyledTabCloseButton} {
-        display: flex;
       }
     `;
   }};
@@ -205,7 +207,7 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
   }
 
   & > ${StyledTabCloseButton} {
-    display: none;
+    display: ${({ extended }) => extended ? 'flex' : 'none'};
   }
 
   ${({ active = false, pinned = false, themeColor = undefined, extended }) => {
@@ -227,6 +229,10 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
           border-style: solid;
           border-width: 2px;
         }
+
+        & > ${StyledTabCloseButton} {
+          display: none;
+        }
       ` : css`
         padding: ${extended ? '3px 7px' : '3px'};
         border-style: solid;
@@ -236,6 +242,10 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
           padding: ${extended ? '4px 8px' : '4px'};
           border-style: solid;
           border-width: 1px;
+        }
+
+        & > ${StyledTabCloseButton} {
+          display: none;
         }
       `;
     }

@@ -22,6 +22,7 @@ export const HorizontalTabContainer = () => {
 
     const handleResize = () => {
         const containerWidth = tabContainerRef.current?.offsetWidth ?? 0;
+        if (containerWidth < 1) return;
         setTabContainerWidth(containerWidth);
         setTabsBounds(containerWidth, views, false);
     };
@@ -44,7 +45,10 @@ export const HorizontalTabContainer = () => {
 
     const containerWidth = tabContainerRef.current?.offsetWidth ?? 0;
     useEffect(() => {
+        if (containerWidth < 1) return;
+        console.log('useEffect#TabContainerWidth', containerWidth);
         setTabContainerWidth(containerWidth);
+        setTabsBounds(containerWidth, views, false);
     }, [containerWidth]);
 
 

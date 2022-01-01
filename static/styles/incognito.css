@@ -72,7 +72,7 @@ button:not(:disabled):hover {
     background-color: var(--primary-background-color);
 }
 
-.horizontal-tab-item, .vertical-tab-item {
+.horizontal-tab-item:not(.active), .vertical-tab-item:not(.active) {
     background-color: var(--secondary-background-color);
     border-color: var(--secondary-background-color);
 }
@@ -83,16 +83,16 @@ button:not(:disabled):hover {
 }
 
 .horizontal-tab-item.pinned:not(.active):hover, .vertical-tab-item.pinned:not(.active):hover {
-    border-color: #424242;
+    border-color: #404076;
 }
 
-.horizontal-tab-item.active, .vertical-tab-item.active {
+.horizontal-tab-item.active:not(.colored), .vertical-tab-item.active:not(.colored) {
     background-color: var(--hover-color);
-    border-color: var(--hover-color);
+    border-color: #404076;
 }
 
-.horizontal-tab-item:hover, .vertical-tab-item:hover {
-    border-color: #424242;
+.horizontal-tab-item:not(.active.colored):hover, .vertical-tab-item:not(.active.colored):hover {
+    border-color: #404076 !important;
 }
 
 .horizontal-tab-item-close-button:hover, .vertical-tab-item-close-button:hover {
@@ -128,7 +128,7 @@ button:not(:disabled):hover {
 }
 
 
-.panel {
+.popup, .panel {
     background-color: var(--primary-background-color);
 }
 

@@ -95,6 +95,7 @@ export const HorizontalTab = (
                     'horizontal-tab-item',
                     id === selectedId && 'active',
                     isPinned && 'pinned',
+                    color && 'colored',
                     `horizontal-tab-item-${id}`
                 )
             }
@@ -150,6 +151,7 @@ export const VerticalTab = (
                     'vertical-tab-item',
                     id === selectedId && 'active',
                     isPinned && 'pinned',
+                    color && 'colored',
                     `vertical-tab-item-${id}`
                 )
             }
