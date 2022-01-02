@@ -7,6 +7,7 @@ export class WindowManager {
     public windows = new Map<number, AppWindow>();
 
     public selectedId: number = -1;
+    public lastWindowId: number = -1;
 
     private processManagerWindow: ProcessManagerWindow | undefined;
 
@@ -37,6 +38,7 @@ export class WindowManager {
         if (active) {
             window.browserWindow.once('ready-to-show', () => {
                 this.selectedId = window.id;
+                this.lastWindowId = window.id;
                 window.browserWindow.show();
             });
         }
@@ -75,6 +77,7 @@ export class WindowManager {
         }
 
         this.selectedId = window.id;
+        this.lastWindowId = window.id;
         window.setApplicationMenu();
         window.browserWindow.show();
     }

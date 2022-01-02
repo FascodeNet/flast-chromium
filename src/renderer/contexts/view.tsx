@@ -46,22 +46,12 @@ export const ViewManagerProvider = ({ children }: ViewManagerProviderProps) => {
     const getCurrentViewState = () => getViewState(selectedId) ?? DefaultViewState;
     const getViewState = (id: number) => views.find((view) => view.id === id);
 
-    const handleResize = () => {
-        setTabsBounds(tabContainerWidth, views, false);
-    };
-
     const windowId = getCurrentWindow().id;
     useEffect(() => {
         const { getCurrentView, getViews } = useElectronAPI();
 
         getCurrentView().then((view) => setSelectedId(view.id));
         getViews().then((views) => setViews(views));
-
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
     }, []);
 
     useEffect(() => {

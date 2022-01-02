@@ -1,7 +1,7 @@
 import { initialize } from '@electron/remote/main';
-import { app, dialog, ipcMain, nativeTheme, protocol } from 'electron';
+import { app, ipcMain, nativeTheme, protocol } from 'electron';
 import { stat } from 'fs/promises';
-import { extname, isAbsolute } from 'path';
+import { isAbsolute } from 'path';
 import { UserConfig } from '../interfaces/user';
 import { APPLICATION_PROTOCOL } from '../utils';
 import { IS_DEVELOPMENT, IS_MAC, IS_WINDOWS } from '../utils/process';
@@ -46,15 +46,16 @@ export class App {
 
         initialize();
 
+        const urls = process.argv.length > 1 ? [process.argv[1]] : ['https://www.google.com'];
         if (users.length < 1 || !this.userManager.lastUserId) {
             const user = await this.userManager.create();
             this.userManager.lastUserId = user.id;
             App.setTheme(user.settings.config);
-            this.windowManager.add(user);
+            this.windowManager.add(user, urls);
         } else {
             const user = this.userManager.get(this.userManager.lastUserId)!!;
             App.setTheme(user.settings.config);
-            this.windowManager.add(user);
+            this.windowManager.add(user, urls);
         }
 
 
@@ -80,34 +81,30 @@ export class App {
 
         app.on('second-instance', async (e, argv) => {
             console.log(argv);
-            dialog.showMessageBox({ message: argv.toString() });
 
             if (!this.userManager.lastUserId) return;
 
             const user = this.userManager.get(this.userManager.lastUserId);
             if (!user) return;
 
-            const currentWindow = this.windowManager.get();
+            const currentWindow = this.windowManager.get(this.windowManager.lastWindowId);
 
             const path = argv[argv.length - 1];
 
             if (isAbsolute(path) && (await stat(path)).isFile()) {
                 if (IS_DEVELOPMENT) return;
 
-                const ext = extname(path);
-                if (ext !== '.html' && ext !== '.htm') return;
-
                 if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
-                    this.windowManager.add(user, [`file:///${path}`], false);
+                    this.windowManager.add(user, [`file:///${path}`]);
                 } else {
-                    currentWindow.viewManager.add(`file:///${path}`, false);
+                    currentWindow.viewManager.add(`file:///${path}`);
                     currentWindow.browserWindow.show();
                 }
             } else if (isURL(path)) {
                 if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
-                    this.windowManager.add(user, [prefixHttp(path)], false);
+                    this.windowManager.add(user, [prefixHttp(path)]);
                 } else {
-                    currentWindow.viewManager.add(prefixHttp(path), false);
+                    currentWindow.viewManager.add(prefixHttp(path));
                     currentWindow.browserWindow.show();
                 }
             } else {

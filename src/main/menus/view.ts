@@ -6,7 +6,6 @@ import {
     Menu,
     MenuItem,
     MenuItemConstructorOptions,
-    NativeImage,
     nativeImage
 } from 'electron';
 import { getTranslate } from '../../languages/language';
@@ -15,7 +14,7 @@ import { isURL } from '../../utils/url';
 import { Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
-import { getEmptyMenuItemIcon, getMenuItemIcon, getMenuItemIconFromName, joinTo } from '../utils/menu';
+import { getEmptyMenuItemIcon, getMenuItemIcon, getMenuItemIconFromName, joinTo, resizeIcon } from '../utils/menu';
 import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
 import { Shortcuts } from './shortcuts';
@@ -289,7 +288,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
         const extensionOptions: (MenuItem | MenuItemConstructorOptions)[] = view.user.type === 'normal' ? view.user.session.extensions.getContextMenuItems(view.browserView.webContents, params).map((item) => ({
             ...item,
-            icon: typeof item.icon === 'object' ? (item.icon as NativeImage).resize({ height: 24 }) : (item.icon ? getMenuItemIcon(item.icon) : getEmptyMenuItemIcon())
+            icon: typeof item.icon === 'object' ? resizeIcon(item.icon) : (item.icon ? getMenuItemIcon(item.icon) : getEmptyMenuItemIcon())
         })) : [];
 
         const genericOptions: (MenuItem | MenuItemConstructorOptions)[] = [

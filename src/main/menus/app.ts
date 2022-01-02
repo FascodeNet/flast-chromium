@@ -646,13 +646,13 @@ export const getApplicationMenu = (window: AppWindow) => {
                 }
             },
             { type: 'separator' },
-            ...(viewManager.getViews().map((view): MenuItemConstructorOptions => (
+            ...(viewManager.getViews().map((appView): MenuItemConstructorOptions => (
                 {
-                    label: view.getTitle(),
-                    icon: !IS_MAC ? (Main.windowManager.selectedId === window.id ? getMenuItemIconFromName('check') : getFavicon(view)) : undefined,
+                    label: appView.getTitle(),
+                    icon: !IS_MAC ? (viewManager.selectedId === appView.id ? getMenuItemIconFromName('check') : getFavicon(appView)) : undefined,
                     // type: 'checkbox',
-                    enabled: viewManager.selectedId !== view.id,
-                    click: () => viewManager.select(view.id)
+                    enabled: viewManager.selectedId !== appView.id,
+                    click: () => viewManager.select(appView.id)
                 }
             )))
         ]
@@ -696,16 +696,17 @@ export const getApplicationMenu = (window: AppWindow) => {
                 click: () => window.close()
             },
             { type: 'separator' },
-            ...(Main.windowManager.getWindows().map((window): MenuItemConstructorOptions => {
-                const subLabel = window.viewManager.views.size - 1 > 0 ? ` とその他 ${window.viewManager.views.size - 1}つのタブ` : '';
+            ...(Main.windowManager.getWindows().map((appWindow): MenuItemConstructorOptions => {
+                const windowViewManager = appWindow.viewManager;
+                const subLabel = windowViewManager.views.size - 1 > 0 ? ` とその他 ${windowViewManager.views.size - 1}つのタブ` : '';
 
                 return (
                     {
-                        label: `${window.viewManager.get()?.getTitle() ?? window.getTitle()}${subLabel}`,
-                        icon: !IS_MAC ? (Main.windowManager.selectedId === window.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
+                        label: `${windowViewManager.get()?.getTitle() ?? appWindow.getTitle()}${subLabel}`,
+                        icon: !IS_MAC ? (window.id === appWindow.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
                         // type: 'checkbox',
-                        enabled: Main.windowManager.selectedId !== window.id,
-                        click: () => Main.windowManager.select(window.id)
+                        enabled: window.id !== appWindow.id,
+                        click: () => Main.windowManager.select(appWindow.id)
                     }
                 );
             }))

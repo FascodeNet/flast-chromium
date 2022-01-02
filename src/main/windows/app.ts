@@ -185,6 +185,9 @@ export class AppWindow {
             if (IS_MAC)
                 this.setApplicationMenu();
 
+            Main.windowManager.selectedId = this.id;
+            Main.windowManager.lastWindowId = this.id;
+
             Main.windowManager.select(this.id);
             this.setViewBounds();
         });
