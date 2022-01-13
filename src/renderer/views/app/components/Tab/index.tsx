@@ -11,6 +11,7 @@ import {
     APPLICATION_WEB_SETTINGS
 } from '../../../../../utils';
 import { Bookmarks, Downloads, Extensions, Histories, Remove, Settings } from '../../../../components/Icons';
+import { useUserConfigContext } from '../../../../contexts/config';
 import { useViewManagerContext } from '../../../../contexts/view';
 import { useElectronAPI } from '../../../../utils/electron';
 import {
@@ -28,25 +29,29 @@ interface TabIconProps {
 }
 
 const TabIcon = ({ url: urlString, favicon }: TabIconProps) => {
-    const { protocol, hostname } = new URL(urlString);
-    if (protocol === `${APPLICATION_PROTOCOL}:`) {
-        const sxTheme = { width: 16, height: 16 };
+    try {
+        const { protocol, hostname } = new URL(urlString);
+        if (protocol === `${APPLICATION_PROTOCOL}:`) {
+            const sxTheme = { width: 16, height: 16 };
 
-        switch (hostname) {
-            case APPLICATION_WEB_BOOKMARKS:
-                return (<Bookmarks sx={sxTheme} />);
-            case APPLICATION_WEB_HISTORY:
-                return (<Histories sx={sxTheme} />);
-            case APPLICATION_WEB_DOWNLOADS:
-                return (<Downloads sx={sxTheme} />);
-            case APPLICATION_WEB_SETTINGS:
-                return (<Settings sx={sxTheme} />);
-            case APPLICATION_WEB_EXTENSIONS:
-                return (<Extensions sx={sxTheme} />);
-            default:
-                return (<StyledTabIcon favicon={favicon} />);
+            switch (hostname) {
+                case APPLICATION_WEB_BOOKMARKS:
+                    return (<Bookmarks sx={sxTheme} />);
+                case APPLICATION_WEB_HISTORY:
+                    return (<Histories sx={sxTheme} />);
+                case APPLICATION_WEB_DOWNLOADS:
+                    return (<Downloads sx={sxTheme} />);
+                case APPLICATION_WEB_SETTINGS:
+                    return (<Settings sx={sxTheme} />);
+                case APPLICATION_WEB_EXTENSIONS:
+                    return (<Extensions sx={sxTheme} />);
+                default:
+                    return (<StyledTabIcon favicon={favicon} />);
+            }
+        } else {
+            return (<StyledTabIcon favicon={favicon} />);
         }
-    } else {
+    } catch {
         return (<StyledTabIcon favicon={favicon} />);
     }
 };
@@ -79,6 +84,9 @@ export const HorizontalTab = (
     const { selectedId } = useViewManagerContext();
     const { selectView, removeView, showTabMenu } = useElectronAPI();
 
+    const { config } = useUserConfigContext();
+    const style = config.appearance.style;
+
     const handleClick = () => {
         if (id === selectedId) return;
         selectView(id);
@@ -99,7 +107,7 @@ export const HorizontalTab = (
                     `horizontal-tab-item-${id}`
                 )
             }
-            style={{ zIndex: isDragging ? 2 : 'unset' }}
+            style={{ zIndex: isDragging ? 2 : 'unset' }} appearanceStyle={style}
             active={id === selectedId} pinned={isPinned} themeColor={color} tabIndex={0}
             onClick={handleClick} onContextMenu={handleContextMenu}
             onMouseDown={(e) => onMouseDown(e, id)}

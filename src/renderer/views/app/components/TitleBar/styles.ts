@@ -1,5 +1,6 @@
 import { platform } from 'os';
 import styled, { css } from 'styled-components';
+import { WINDOW_TITLE_BAR_HEIGHT } from '../../../../../constants/design';
 import { AppearanceStyle } from '../../../../../interfaces/user';
 
 interface StyledProps {
@@ -8,12 +9,37 @@ interface StyledProps {
 
 export const StyledTitleBar = styled.div<StyledProps>`
   width: 100%;
-  height: ${({ appearanceStyle }) => appearanceStyle === 'top_double' ? '42px' : '50px'};
+  height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 50 : WINDOW_TITLE_BAR_HEIGHT}px;
+  grid-area: title-bar;
   display: grid;
   grid-template-columns: ${platform() !== 'darwin' ? '1fr 135px' : '76px 1fr'};
   grid-template-areas: ${platform() !== 'darwin' ? '\'title-bar-content window-controls\'' : '\'window-controls title-bar-content\''};
+  align-items: center;
   app-region: drag;
 `;
+
+export const StyledContainer = styled.div<StyledProps>`
+  width: 100%;
+  height: inherit;
+  grid-area: title-bar-content;
+  display: grid;
+  align-items: center;
+  gap: 8px;
+
+  ${({ appearanceStyle }) => getStyle(appearanceStyle)};
+`;
+
+export const StyledWindowControls = styled.div`
+  width: 100%;
+  height: inherit;
+  grid-area: window-controls;
+  app-region: no-drag;
+
+  & > div {
+    height: 100%;
+  }
+`;
+
 
 const getStyle = (style: AppearanceStyle) => {
     const isMac = platform() === 'darwin';
@@ -31,7 +57,7 @@ const getStyle = (style: AppearanceStyle) => {
             `;
         case 'top_double':
             return css`
-              padding: .5rem 1rem 0 .5rem;
+              padding: 0 5rem 0 0;
               ${!isMac ? css`
                 grid-template-columns: calc(50px - 1rem) 1fr;
                 grid-template-areas: 'application-menu horizontal-tab-container';
@@ -65,24 +91,3 @@ const getStyle = (style: AppearanceStyle) => {
             `;
     }
 };
-
-export const StyledContainer = styled.div<StyledProps>`
-  width: 100%;
-  height: inherit;
-  grid-area: title-bar-content;
-  display: grid;
-  gap: 8px;
-
-  ${({ appearanceStyle }) => getStyle(appearanceStyle)};
-`;
-
-export const StyledWindowControls = styled.div`
-  width: 100%;
-  height: inherit;
-  grid-area: window-controls;
-  app-region: no-drag;
-
-  & > div {
-    height: 100%;
-  }
-`;

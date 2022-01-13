@@ -1,6 +1,5 @@
 import { enable } from '@electron/remote/main';
-import { app, BrowserView, BrowserWindow, ipcMain, nativeTheme, Rectangle } from 'electron';
-import { readFile } from 'fs/promises';
+import { app, BrowserView, BrowserWindow, ipcMain, Rectangle } from 'electron';
 import { join } from 'path';
 import { IDialog } from '../interfaces/dialog';
 import { IUser } from '../interfaces/user';
@@ -27,8 +26,6 @@ export class Dialog {
         onMove: () => {
         }
     };
-
-    private _injectedThemeStyleKey?: string = undefined;
 
     public constructor(user: IUser, window: BrowserWindow, {
         name,
@@ -105,6 +102,9 @@ export class Dialog {
 
 
     public async setStyle() {
+        this.webContents.send('theme-update');
+
+        /*
         const currentInjectedThemeStyleKey = this._injectedThemeStyleKey;
         if (this.user.type === 'incognito') {
             const style = await readFile(
@@ -130,5 +130,6 @@ export class Dialog {
 
         if (currentInjectedThemeStyleKey)
             await this.webContents.removeInsertedCSS(currentInjectedThemeStyleKey);
+        */
     }
 }

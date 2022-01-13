@@ -1,5 +1,6 @@
 import Color from 'color';
 import styled, { css } from 'styled-components';
+import { AppearanceStyle } from '../../../../../interfaces/user';
 import { borderRadius } from '../../../../themes';
 import { TAB_MAX_WIDTH, TAB_PINNED_WIDTH } from '../../../../utils/tab';
 
@@ -65,12 +66,16 @@ export const StyledTabCloseButton = styled.button`
 `;
 
 interface StyledTabProps {
-    active?: boolean;
-    pinned?: boolean;
-    themeColor?: string;
+  active?: boolean;
+  pinned?: boolean;
+  themeColor?: string;
 }
 
-export const StyledHorizontalTab = styled.div<StyledTabProps>`
+interface StyledHorizontalTabProps extends StyledTabProps {
+  appearanceStyle: AppearanceStyle;
+}
+
+export const StyledHorizontalTab = styled.div<StyledHorizontalTabProps>`
     /*
   width: clamp(72px, 100%, 250px);
   min-width: ${TAB_PINNED_WIDTH}px;
@@ -91,7 +96,7 @@ export const StyledHorizontalTab = styled.div<StyledTabProps>`
   outline-width: 2px;
   border-style: solid;
   border-width: 2px;
-  border-radius: ${borderRadius.toUnit()};
+  border-radius: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? borderRadius.toUnit() : 0};
   app-region: no-drag;
 
   &:hover {

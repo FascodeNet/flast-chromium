@@ -46,11 +46,6 @@ export const SidebarBookmarks = () => {
     );
 };
 
-interface SortedHistory {
-    date: Date;
-    histories: IHistory[];
-}
-
 interface IDate {
     year: number;
     month: number;

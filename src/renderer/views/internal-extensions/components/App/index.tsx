@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { HistoriesPanel } from '../../../../components/HistoriesPanel';
+import { ExtensionsPanel } from '../../../../components/ExtensionsPanel';
 import { Popup } from '../../../../components/Popup';
 import { UserConfigProvider } from '../../../../contexts/config';
 import { GlobalStyles } from '../../../../themes';
@@ -10,7 +10,7 @@ export const App = () => {
             <GlobalStyles />
             <UserConfigProvider>
                 <Popup>
-                    <HistoriesPanel type="popup" />
+                    <ExtensionsPanel type="popup" />
                 </Popup>
             </UserConfigProvider>
         </Fragment>

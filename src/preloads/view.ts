@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { UserConfig } from '../interfaces/user';
 import { DeepPartial } from '../utils';
+import { injectChromeWebStoreInstallButton } from './chrome-webstore';
 
 export const togglePictureInPicture = async (index: number = 0) => {
     if (!document.pictureInPictureElement) {
@@ -28,3 +29,7 @@ contextBridge.exposeInMainWorld(
         setTheme: (id: string) => ipcRenderer.invoke('set-theme', id)
     }
 );
+
+
+if (window.location.host === 'chrome.google.com')
+    injectChromeWebStoreInstallButton();

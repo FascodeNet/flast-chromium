@@ -1,5 +1,6 @@
 import React, { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { MoveDirection } from '../../../../../interfaces/view';
+import { useUserConfigContext } from '../../../../contexts/config';
 import { useViewManagerContext } from '../../../../contexts/view';
 import { useElectronAPI } from '../../../../utils/electron';
 import { setTabsBounds } from '../../../../utils/tab';
@@ -10,6 +11,9 @@ import { StyledHorizontalTabContainer, StyledVerticalTabContainer } from './styl
 export const HorizontalTabContainer = () => {
     const { views, setTabContainerWidth } = useViewManagerContext();
     const { moveToDirection } = useElectronAPI();
+
+    const { config } = useUserConfigContext();
+    const style = config.appearance.style;
 
     const handleMouseWheel = (e: WheelEvent) => {
         if (e.deltaX === 0) {
@@ -97,7 +101,8 @@ export const HorizontalTabContainer = () => {
     };
 
     return (
-        <StyledHorizontalTabContainer className="horizontal-tab-container" ref={tabContainerRef}>
+        <StyledHorizontalTabContainer className="horizontal-tab-container" ref={tabContainerRef}
+                                      appearanceStyle={style}>
             {views.map((view) => {
                 return (
                     <HorizontalTab

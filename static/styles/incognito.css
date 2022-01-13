@@ -24,14 +24,20 @@ hr {
 }
 
 
-.title-bar, .tool-bar {
+.app:not(.top_double) .title-bar, .tool-bar {
     background-color: var(--primary-background-color);
     border-bottom: solid 1px var(--divider-color);
 }
 
+.app.top_double .title-bar {
+    background-color: var(--secondary-background-color);
+}
+
+
 .window-controllers > div > div > div {
     filter: invert(100%) !important;
 }
+
 
 button {
     background-color: transparent;
@@ -59,6 +65,7 @@ button:not(:disabled):hover {
     border: none !important;
 }
 
+
 .address-bar, .address-bar-input {
     background-color: var(--secondary-background-color);
     border-color: var(--secondary-background-color);
@@ -68,30 +75,31 @@ button:not(:disabled):hover {
     border-color: var(--divider-color);
 }
 
-.horizontal-tab-container, .vertical-tab-container, .sidebar {
+
+.app:not(.top_double) .horizontal-tab-container, .app:not(.top_double) .vertical-tab-container, .sidebar {
     background-color: var(--primary-background-color);
 }
 
-.horizontal-tab-item:not(.active), .vertical-tab-item:not(.active) {
+.app:not(.top_double) .horizontal-tab-item:not(.active), .app:not(.top_double) .vertical-tab-item:not(.active) {
     background-color: var(--secondary-background-color);
     border-color: var(--secondary-background-color);
 }
 
-.horizontal-tab-item.pinned:not(.active), .vertical-tab-item.pinned:not(.active) {
+.app:not(.top_double) .horizontal-tab-item.pinned:not(.active), .app:not(.top_double) .vertical-tab-item.pinned:not(.active) {
     background-color: var(--secondary-background-color);
     border-color: var(--secondary-background-color);
 }
 
-.horizontal-tab-item.pinned:not(.active):hover, .vertical-tab-item.pinned:not(.active):hover {
+.app:not(.top_double) .horizontal-tab-item.pinned:not(.active):hover, .app:not(.top_double) .vertical-tab-item.pinned:not(.active):hover {
     border-color: #404076;
 }
 
-.horizontal-tab-item.active:not(.colored), .vertical-tab-item.active:not(.colored) {
+.horizontal-tab-item.active:not(.colored), .app:not(.top_double) .vertical-tab-item.active:not(.colored) {
     background-color: var(--hover-color);
     border-color: #404076;
 }
 
-.horizontal-tab-item:not(.active.colored):hover, .vertical-tab-item:not(.active.colored):hover {
+.app:not(.top_double) .horizontal-tab-item:not(.active.colored):hover, .app:not(.top_double) .vertical-tab-item:not(.active.colored):hover {
     border-color: #404076 !important;
 }
 
@@ -99,6 +107,40 @@ button:not(:disabled):hover {
     background-color: var(--hover-color) !important;
     border-color: var(--divider-color) !important;
 }
+
+
+.app.top_double .horizontal-tab-container, .app.top_double .vertical-tab-container, .app.top_double .sidebar {
+    background-color: var(--secondary-background-color);
+}
+
+.app.top_double .horizontal-tab-item:not(.active), .app.top_double .vertical-tab-item:not(.active) {
+    background-color: var(--secondary-background-color);
+    border-color: transparent;
+}
+
+.app.top_double .horizontal-tab-item.pinned:not(.active), .app.top_double .vertical-tab-item.pinned:not(.active) {
+    background-color: var(--secondary-background-color);
+    border-color: transparent;
+}
+
+.app.top_double .horizontal-tab-item.pinned:not(.active):hover, .app.top_double .vertical-tab-item.pinned:not(.active):hover {
+    background-color: var(--hover-color) !important;
+}
+
+.app.top_double .horizontal-tab-item.active, .app.top_double .vertical-tab-item.active {
+    background-color: var(--primary-background-color);
+    border-color: transparent;
+}
+
+.app.top_double .horizontal-tab-item:not(.active):hover, .app.top_double .vertical-tab-item:not(.active):hover {
+    background-color: var(--hover-color) !important;
+}
+
+.app.top_double .horizontal-tab-item-close-button:hover, .app.top_double .vertical-tab-item-close-button:hover {
+    background-color: var(--hover-color) !important;
+    border-color: var(--divider-color) !important;
+}
+
 
 .add-tab-button {
     background-color: var(--secondary-background-color);
@@ -109,6 +151,7 @@ button:not(:disabled):hover {
     background-color: var(--hover-color);
     border-color: var(--divider-color);
 }
+
 
 
 .sidebar.left {
@@ -136,7 +179,7 @@ button:not(:disabled):hover {
     border-bottom-color: var(--divider-color);
 }
 
-.history-item:hover {
+.bookmark-item:hover, .history-item:hover, .extension-item:hover {
     background-color: var(--hover-color);
     border-color: var(--hover-color);
 }

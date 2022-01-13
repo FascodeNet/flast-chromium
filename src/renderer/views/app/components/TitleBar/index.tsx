@@ -2,7 +2,6 @@ import { Divider } from '@mui/material';
 import { platform } from 'os';
 import React, { useEffect, useState } from 'react';
 import { WindowsControls } from 'react-windows-controls';
-import { AppearanceStyle } from '../../../../../interfaces/user';
 import { useUserConfigContext } from '../../../../contexts/config';
 import { useElectronAPI } from '../../../../utils/electron';
 import { ActionBar } from '../ActionBar';
@@ -14,9 +13,9 @@ import { StyledContainer, StyledTitleBar, StyledWindowControls } from './styles'
 
 export const TitleBar = () => {
     const { isMaximized, minimize, maximize, close } = useElectronAPI();
-    const { config } = useUserConfigContext();
 
-    const style: AppearanceStyle = config.appearance.style;
+    const { config } = useUserConfigContext();
+    const style = config.appearance.style;
 
     const [maximized, setMaximized] = useState(false);
 

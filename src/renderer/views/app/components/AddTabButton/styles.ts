@@ -1,13 +1,14 @@
 import styled from 'styled-components';
+import { AppearanceStyle } from '../../../../../interfaces/user';
 
-export const StyledAddTabButton = styled.button`
+interface StyledProps {
+    appearanceStyle: AppearanceStyle;
+}
+
+export const StyledAddTabButton = styled.button<StyledProps>`
   width: 32px;
   height: 32px;
-  /*
-  aspect-ratio: 1 / 1;
-  height: 100%;
-  */
-  margin: 0;
+  margin: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? '0' : '0 0 0 4px'};
   padding: 0;
   position: sticky;
   bottom: 0;

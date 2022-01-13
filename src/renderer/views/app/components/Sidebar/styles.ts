@@ -14,7 +14,7 @@ const getStyle = (style: AppearanceStyle, extended: boolean, state: AppearanceSi
                 return css`
                   display: grid;
                   grid-template-columns: 50px 1fr;
-                  grid-template-rows: 1fr 200px;
+                  grid-template-rows: 1fr auto;
                   grid-template-areas:
                     'vertical-tab-container panel'
                     'tool-bar panel';
@@ -23,7 +23,7 @@ const getStyle = (style: AppearanceStyle, extended: boolean, state: AppearanceSi
                 return css`
                   display: grid;
                   grid-template-columns: 1fr 50px;
-                  grid-template-rows: 1fr 200px;
+                  grid-template-rows: 1fr auto;
                   grid-template-areas:
                     'panel vertical-tab-container'
                     'panel tool-bar';

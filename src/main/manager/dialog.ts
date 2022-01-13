@@ -2,10 +2,6 @@ import { Dialog } from '../dialogs/dialog';
 
 export class DialogManager {
 
-    public constructor() {
-
-    }
-
     private _dialogs: Dialog[] = [];
 
     public get dialogs() {

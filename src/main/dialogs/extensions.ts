@@ -5,9 +5,9 @@ import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { Dialog } from './dialog';
 
-const DIALOG_NAME = 'histories';
+const DIALOG_NAME = 'extensions';
 
-export const showHistoriesDialog = (user: IUser, browserWindow: BrowserWindow, x: number, y: number) => {
+export const showExtensionsDialog = (user: IUser, browserWindow: BrowserWindow, x: number, y: number) => {
     const dialogManager = Main.dialogManager;
 
     const bounds = {
@@ -36,7 +36,7 @@ export const showHistoriesDialog = (user: IUser, browserWindow: BrowserWindow, x
             )
         );
 
-        dialog.webContents.loadFile(join(app.getAppPath(), 'build', 'internal-histories.html'));
+        dialog.webContents.loadFile(join(app.getAppPath(), 'build', 'internal-extensions.html'));
         dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {

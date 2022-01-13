@@ -8,7 +8,9 @@ interface ElectronAPI {
     getWindowId: () => number;
     showApplicationMenu: () => Promise<void>;
     toggleSidebar: () => Promise<void>;
+
     showHistoriesPopup: (x: number, y: number) => Promise<void>;
+    showExtensionsPopup: (x: number, y: number) => Promise<void>;
 
     isMinimized: () => Promise<boolean>;
     isMaximized: () => Promise<boolean>;
@@ -53,7 +55,9 @@ export const useElectronAPI = (): ElectronAPI => ({
     getWindowId: () => getCurrentWindow().id,
     showApplicationMenu: () => ipcRenderer.invoke(`window-menu-${windowId}`),
     toggleSidebar: () => ipcRenderer.invoke(`window-sidebar-${windowId}`),
+
     showHistoriesPopup: (x: number, y: number) => ipcRenderer.invoke(`window-histories-${windowId}`, x, y),
+    showExtensionsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-extensions-${windowId}`, x, y),
 
     isMinimized: () => ipcRenderer.invoke(`window-minimized-${windowId}`),
     isMaximized: () => ipcRenderer.invoke(`window-maximized-${windowId}`),

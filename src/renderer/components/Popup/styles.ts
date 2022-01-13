@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { borderRadius } from '../../../../themes';
+import { borderRadius } from '../../themes';
 
-export const StyledApp = styled.div`
+export const StyledPopup = styled.div`
   width: calc(100% - 30px);
   height: calc(100% - 20px);
   margin: 0 15px 20px;

@@ -6,6 +6,7 @@ import { UserConfig } from '../interfaces/user';
 import { APPLICATION_PROTOCOL } from '../utils';
 import { IS_DEVELOPMENT, IS_MAC, IS_WINDOWS } from '../utils/process';
 import { isURL, prefixHttp } from '../utils/url';
+import { IUser } from './interfaces/user';
 import { DialogManager } from './manager/dialog';
 import { FaviconManager } from './manager/favicon';
 import { UserManager } from './manager/user';
@@ -42,11 +43,14 @@ export class App {
     private async initializeApp() {
         const users = await this.userManager.loads();
 
+        app.commandLine.appendSwitch('lang', 'ja-JP');
+
         await app.whenReady();
 
         initialize();
 
-        const urls = process.argv.length > 1 ? [process.argv[1]] : ['https://www.google.com'];
+        console.log(process.argv);
+        const urls = !IS_DEVELOPMENT && process.argv.length > 1 ? [process.argv[1]] : ['https://www.google.com'];
         if (users.length < 1 || !this.userManager.lastUserId) {
             const user = await this.userManager.create();
             this.userManager.lastUserId = user.id;
@@ -91,6 +95,8 @@ export class App {
 
             const path = argv[argv.length - 1];
 
+            await this.addWindow(user, path);
+            /*
             if (isAbsolute(path) && (await stat(path)).isFile()) {
                 if (IS_DEVELOPMENT) return;
 
@@ -110,6 +116,7 @@ export class App {
             } else {
                 this.windowManager.add(user);
             }
+            */
         });
 
         nativeTheme.on('updated', () => {
@@ -127,6 +134,31 @@ export class App {
 
     public static setTheme(config: UserConfig) {
         nativeTheme.themeSource = config.appearance.mode;
+    }
+
+
+    private async addWindow(user: IUser, path: string) {
+        const currentWindow = this.windowManager.get(this.windowManager.lastWindowId);
+
+        if (isAbsolute(path) && (await stat(path)).isFile()) {
+            if (IS_DEVELOPMENT) return;
+
+            if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
+                this.windowManager.add(user, [`file:///${path}`]);
+            } else {
+                currentWindow.viewManager.add(`file:///${path}`);
+                currentWindow.browserWindow.show();
+            }
+        } else if (isURL(path)) {
+            if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
+                this.windowManager.add(user, [prefixHttp(path)]);
+            } else {
+                currentWindow.viewManager.add(prefixHttp(path));
+                currentWindow.browserWindow.show();
+            }
+        } else {
+            this.windowManager.add(user);
+        }
     }
 
     private static setProtocols() {

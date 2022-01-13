@@ -4,6 +4,7 @@ import { join } from 'path';
 import { isHorizontal } from '../../interfaces/user';
 import { APPLICATION_NAME } from '../../utils';
 import { IS_DEVELOPMENT, IS_MAC } from '../../utils/process';
+import { showExtensionsDialog } from '../dialogs/extensions';
 import { showHistoriesDialog } from '../dialogs/histories';
 import { IUser } from '../interfaces/user';
 import { AppWindowInitializerOptions } from '../interfaces/window';
@@ -213,10 +214,12 @@ export class AppWindow {
         });
 
         ipcMain.handle(`window-menu-${this.id}`, () => {
+            const settings = this.user.settings;
+
             this.applicationMenu.popup({
                 window: this.browserWindow,
-                x: 8,
-                y: 42
+                x: settings.config.appearance.style !== 'top_double' ? 8 : 0,
+                y: settings.config.appearance.style !== 'top_double' ? 42 : 36
             });
         });
         ipcMain.handle(`window-sidebar-${this.id}`, () => {
@@ -234,6 +237,9 @@ export class AppWindow {
 
         ipcMain.handle(`window-histories-${this.id}`, (e, x: number, y: number) => {
             showHistoriesDialog(this.user, this.browserWindow, x, y);
+        });
+        ipcMain.handle(`window-extensions-${this.id}`, (e, x: number, y: number) => {
+            showExtensionsDialog(this.user, this.browserWindow, x, y);
         });
 
         ipcMain.handle(`window-minimized-${this.id}`, () => {

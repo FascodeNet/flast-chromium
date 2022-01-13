@@ -103,6 +103,7 @@ applyEntries(
         'app',
         'process-manager',
         'internal-histories',
+        'internal-extensions',
         'settings'
     ]
 );

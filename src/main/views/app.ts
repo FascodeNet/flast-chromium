@@ -3,8 +3,14 @@ import { app, BrowserView } from 'electron';
 // @ts-ignore
 import { encodeFromURL } from 'image-data-uri';
 import { join } from 'path';
+import {
+    WINDOW_EXTENDED_SIDEBAR_WIDTH,
+    WINDOW_EXTENDED_TAB_CONTAINER_WIDTH,
+    WINDOW_TITLE_BAR_HEIGHT,
+    WINDOW_TOOL_BAR_HEIGHT
+} from '../../constants/design';
 import { AppViewInitializerOptions, MediaStatus, ViewState, ZoomLevel, ZoomLevels } from '../../interfaces/view';
-import { APPLICATION_NAME, WINDOW_EXTENDED_SIDEBAR_WIDTH, WINDOW_EXTENDED_TAB_CONTAINER_WIDTH } from '../../utils';
+import { APPLICATION_NAME } from '../../utils';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { FaviconManager } from '../manager/favicon';
@@ -229,14 +235,11 @@ export class AppView {
                 });
                 break;
             case 'top_double':
-                const titleBarHeight = 42;
-                const toolBarHeight = 50;
-
                 this.browserView.setBounds({
                     width: baseWidth,
-                    height: isFullScreen ? height : ((isMaximized ? height : height - 1) - (titleBarHeight + toolBarHeight)),
+                    height: isFullScreen ? height : ((isMaximized ? height : height - 1) - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT)),
                     x: baseX,
-                    y: isFullScreen ? 0 : titleBarHeight + toolBarHeight
+                    y: isFullScreen ? 0 : WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
                 });
                 break;
             case 'left':

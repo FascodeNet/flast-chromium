@@ -2,11 +2,13 @@ import { IconButton } from '@mui/material';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { AppearanceSidebarState } from '../../../../../interfaces/user';
+import { BookmarksPanel } from '../../../../components/BookmarksPanel';
+import { ExtensionsPanel } from '../../../../components/ExtensionsPanel';
 import { HistoriesPanel } from '../../../../components/HistoriesPanel';
-import { Bookmarks, ChevronLeft, ChevronRight, Downloads, Histories } from '../../../../components/Icons';
+import { Bookmarks, ChevronLeft, ChevronRight, Downloads, Extensions, Histories } from '../../../../components/Icons';
 import { useUserConfigContext } from '../../../../contexts/config';
 import { useElectronAPI } from '../../../../utils/electron';
-import { SidebarBookmarks, SidebarDownloads } from '../SidebarContent';
+import { SidebarDownloads } from '../SidebarContent';
 import { VerticalTabContainer } from '../TabContainer';
 import { StyledSidebar, StyledToolBarContainer } from './styles';
 
@@ -39,9 +41,10 @@ export const Sidebar = () => {
         <StyledSidebar className={clsx('sidebar', style === 'left' ? 'left' : 'right')} appearanceStyle={style}
                        extended={extended} panel={panel}>
             <VerticalTabContainer extended={extended && panel === 'tab_container'} />
-            {panel === 'bookmarks' && <SidebarBookmarks />}
+            {panel === 'bookmarks' && <BookmarksPanel type="sidebar" />}
             {panel === 'histories' && <HistoriesPanel type="sidebar" />}
             {panel === 'downloads' && <SidebarDownloads />}
+            {panel === 'extensions' && <ExtensionsPanel type="sidebar" />}
             <StyledToolBarContainer className="tool-bar" extended={extended} panel={panel}>
                 <IconButton onClick={() => handleTogglePanelClick('bookmarks')}>
                     <Bookmarks />
@@ -51,6 +54,9 @@ export const Sidebar = () => {
                 </IconButton>
                 <IconButton onClick={() => handleTogglePanelClick('downloads')}>
                     <Downloads />
+                </IconButton>
+                <IconButton onClick={() => handleTogglePanelClick('extensions')}>
+                    <Extensions />
                 </IconButton>
                 <IconButton
                     onClick={handleToggleSidebarClick}

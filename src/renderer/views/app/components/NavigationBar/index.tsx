@@ -5,13 +5,14 @@ import { StyledContainer } from './styles';
 
 export const NavigationBar = () => {
     const { config } = useUserConfigContext();
+    const { style, buttons: { home } } = config.appearance;
 
     return (
-        <StyledContainer className="navigaton-bar">
+        <StyledContainer className="navigaton-bar" appearanceStyle={style}>
             <BackButton />
             <ForwardButton />
             <ReloadButton />
-            {config.appearance.buttons.home && <HomeButton />}
+            {home && <HomeButton />}
         </StyledContainer>
     );
 };

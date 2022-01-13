@@ -1,13 +1,18 @@
 import styled from 'styled-components';
+import { AppearanceStyle } from '../../../../../interfaces/user';
 
-export const StyledHorizontalTabContainer = styled.div`
+interface StyledProps {
+    appearanceStyle: AppearanceStyle;
+}
+
+export const StyledHorizontalTabContainer = styled.div<StyledProps>`
   width: 100%;
   height: 100%;
   // position: relative;
   grid-area: horizontal-tab-container;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 8 : 0}px;
   overflow: hidden;
 
   &::-webkit-scrollbar {
