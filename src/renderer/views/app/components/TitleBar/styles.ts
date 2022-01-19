@@ -87,14 +87,14 @@ const getStyle = (style: AppearanceStyle) => {
         default:
             return css`
               ${!isMac ? css`
-              padding: .5rem 1rem .5rem .5rem;
-              grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
-              grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
-            ` : css`
-              padding: .5rem;
-              grid-template-columns: auto 1fr auto auto;
-              grid-template-areas: 'navigation-bar address-bar extensions action-bar';
-            `};
+                padding: .5rem 1rem .5rem .5rem;
+                grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
+                grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
+              ` : css`
+                padding: .5rem;
+                grid-template-columns: auto 1fr auto auto;
+                grid-template-areas: 'navigation-bar address-bar extensions action-bar';
+              `};
             `;
     }
 };

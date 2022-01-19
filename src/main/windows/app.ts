@@ -24,6 +24,9 @@ export class AppWindow {
 
     public viewManager: ViewManager;
 
+    private _injectedModeStyleKey?: string = undefined;
+    private _injectedThemeStyleKey?: string = undefined;
+
     public constructor(user: IUser, { urls = ['https://www.google.com'] }: AppWindowInitializerOptions) {
         this.browserWindow = new BrowserWindow({
             frame: false,
@@ -80,9 +83,6 @@ export class AppWindow {
             this.browserWindow.webContents.openDevTools({ mode: 'detach' });
         });
     }
-
-    private _injectedModeStyleKey?: string = undefined;
-    private _injectedThemeStyleKey?: string = undefined;
 
     private _fullScreenState: WindowFullScreenState;
 
