@@ -185,6 +185,8 @@ export const getApplicationMenu = (window: AppWindow) => {
                 label: languageSection.file.quit,
                 icon: !IS_MAC ? getMenuItemIconFromName('remove') : undefined,
                 accelerator: !IS_MAC ? 'Ctrl+Shift+Q' : 'Cmd+Q',
+                enabled: !IS_MAC,
+                visible: !IS_MAC,
                 click: () => window.close()
             }
         ]

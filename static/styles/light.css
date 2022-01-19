@@ -16,8 +16,9 @@
     color: var(--primary-foreground-color);
 }
 
-body {
+body, .app {
     color: var(--primary-foreground-color);
+    background-color: var(--primary-background-color);
 }
 
 hr {

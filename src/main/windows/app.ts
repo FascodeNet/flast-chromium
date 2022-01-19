@@ -1,7 +1,9 @@
 import { enable } from '@electron/remote/main';
+import deepmerge from 'deepmerge';
 import { app, BrowserWindow, ipcMain, Menu, nativeImage } from 'electron';
 import { join } from 'path';
 import { isHorizontal } from '../../interfaces/user';
+import { WindowFullScreenState } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
 import { IS_DEVELOPMENT, IS_MAC } from '../../utils/process';
 import { showExtensionsDialog } from '../dialogs/extensions';
@@ -22,9 +24,6 @@ export class AppWindow {
 
     public viewManager: ViewManager;
 
-    private _injectedModeStyleKey?: string = undefined;
-    private _injectedThemeStyleKey?: string = undefined;
-
     public constructor(user: IUser, { urls = ['https://www.google.com'] }: AppWindowInitializerOptions) {
         this.browserWindow = new BrowserWindow({
             frame: false,
@@ -32,8 +31,12 @@ export class AppWindow {
             minHeight: 450,
             width: 900,
             height: 700,
-            titleBarStyle: 'hiddenInset',
-            backgroundColor: '#ffffff',
+            titleBarStyle: 'hidden',
+            trafficLightPosition: {
+                x: 17,
+                y: 17
+            },
+            backgroundColor: '#ffffffff',
             title: APPLICATION_NAME,
             icon: nativeImage.createFromPath(`${app.getAppPath()}/static/icons/app/icon.png`),
             webPreferences: {
@@ -55,6 +58,11 @@ export class AppWindow {
 
         this.user = user;
 
+        this._fullScreenState = {
+            user: this.browserWindow.isFullScreen(),
+            html: false
+        };
+
         this.viewManager = new ViewManager(this, user.type === 'incognito');
         urls.forEach((url) => this.viewManager.add(url));
 
@@ -73,6 +81,11 @@ export class AppWindow {
         });
     }
 
+    private _injectedModeStyleKey?: string = undefined;
+    private _injectedThemeStyleKey?: string = undefined;
+
+    private _fullScreenState: WindowFullScreenState;
+
     public get webContents() {
         return this.browserWindow.webContents;
     }
@@ -83,6 +96,10 @@ export class AppWindow {
 
     public getURL() {
         return this.webContents.getURL();
+    }
+
+    public get fullScreenState() {
+        return this._fullScreenState;
     }
 
 
@@ -197,10 +214,26 @@ export class AppWindow {
         });
 
         this.browserWindow.on('resize', () => this.setViewBounds());
-        this.browserWindow.on('enter-full-screen', () => this.setViewBounds());
-        this.browserWindow.on('leave-full-screen', () => this.setViewBounds());
-        this.browserWindow.on('enter-html-full-screen', () => this.setViewBounds());
-        this.browserWindow.on('leave-html-full-screen', () => this.setViewBounds());
+        this.browserWindow.on('enter-full-screen', () => {
+            console.log('enter-full-screen');
+            this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { user: true });
+            this.setViewBounds();
+        });
+        this.browserWindow.on('leave-full-screen', () => {
+            console.log('leave-full-screen');
+            this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { user: false });
+            this.setViewBounds();
+        });
+        this.browserWindow.on('enter-html-full-screen', () => {
+            console.log('enter-html-full-screen');
+            this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { html: true });
+            this.setViewBounds();
+        });
+        this.browserWindow.on('leave-html-full-screen', () => {
+            console.log('leave-html-full-screen');
+            this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { html: false });
+            this.setViewBounds();
+        });
 
 
         this.browserWindow.webContents.on('did-finish-load', async () => {
@@ -248,6 +281,9 @@ export class AppWindow {
         ipcMain.handle(`window-maximized-${this.id}`, () => {
             return this.browserWindow.isMaximized();
         });
+        ipcMain.handle(`window-fullscreened-${this.id}`, () => {
+            return this.browserWindow.isFullScreen();
+        });
 
         ipcMain.handle(`window-minimize-${this.id}`, () => {
             this.browserWindow.minimize();
@@ -257,6 +293,9 @@ export class AppWindow {
                 this.browserWindow.unmaximize();
             else
                 this.browserWindow.maximize();
+        });
+        ipcMain.handle(`window-fullscreen-${this.id}`, () => {
+            this.browserWindow.setFullScreen(!this.browserWindow.isFullScreen());
         });
         ipcMain.handle(`window-close-${this.id}`, () => {
             this.close();

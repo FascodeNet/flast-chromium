@@ -42,9 +42,12 @@ export class Dialog {
                 contextIsolation: false,
                 javascript: true,
                 session: user.session.session,
+                // @ts-ignore
+                transparent: true,
                 ...webPreferences
             }
         });
+        this.browserView.setBackgroundColor('#00000000');
 
         this.user = user;
 

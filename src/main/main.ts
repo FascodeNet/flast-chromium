@@ -51,6 +51,7 @@ export class App {
 
         console.log(process.argv);
         const urls = !IS_DEVELOPMENT && process.argv.length > 1 ? [process.argv[1]] : ['https://www.google.com'];
+        /*
         if (users.length < 1 || !this.userManager.lastUserId) {
             const user = await this.userManager.create();
             this.userManager.lastUserId = user.id;
@@ -58,14 +59,33 @@ export class App {
             this.windowManager.add(user, urls);
         } else {
             const user = this.userManager.get(this.userManager.lastUserId)!!;
+            this.userManager.lastUserId = user.id;
             App.setTheme(user.settings.config);
             this.windowManager.add(user, urls);
         }
+        */
+
+        const user = users.length < 1 || !this.userManager.lastUserId ? await this.userManager.create() : await this.userManager.get(this.userManager.lastUserId)!!;
+        this.userManager.lastUserId = user.id;
+        App.setTheme(user.settings.config);
+        this.windowManager.add(user, urls);
 
 
-        app.once('window-all-closed', () => {
+        app.on('window-all-closed', () => {
             if (!IS_MAC)
                 app.quit();
+        });
+
+        app.on('activate', () => {
+            if (this.windowManager.getWindows().length > 0) return;
+
+            const lastUserId = this.userManager.lastUserId;
+            if (!lastUserId) return;
+
+            const user = this.userManager.get(lastUserId);
+            if (!user) return;
+
+            this.windowManager.add(user);
         });
 
         app.on('browser-window-focus', (e, browserWindow) => {
@@ -91,7 +111,7 @@ export class App {
             const user = this.userManager.get(this.userManager.lastUserId);
             if (!user) return;
 
-            const currentWindow = this.windowManager.get(this.windowManager.lastWindowId);
+            // const currentWindow = this.windowManager.get(this.windowManager.lastWindowId);
 
             const path = argv[argv.length - 1];
 

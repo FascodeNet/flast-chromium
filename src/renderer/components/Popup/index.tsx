@@ -1,4 +1,5 @@
 import React, { Fragment, ReactNode } from 'react';
+import { Helmet } from 'react-helmet';
 import { useTheme } from '../../utils/theme';
 import { StyledPopup } from './styles';
 
@@ -11,8 +12,10 @@ export const Popup = ({ children }: PopupProps) => {
 
     return (
         <Fragment>
-            <link rel="stylesheet" type="text/css" href={modePath} />
-            {theme && <link rel="stylesheet" type="text/css" href={themePath} />}
+            <Helmet>
+                <link rel="stylesheet" type="text/css" href={modePath} />
+                {theme && <link rel="stylesheet" type="text/css" href={themePath} />}
+            </Helmet>
             <StyledPopup className="popup">{children}</StyledPopup>
         </Fragment>
     );

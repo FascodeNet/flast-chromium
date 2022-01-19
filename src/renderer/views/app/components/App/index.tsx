@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React, { Fragment } from 'react';
+import { Helmet } from 'react-helmet';
 import { UserConfigProvider, useUserConfigContext } from '../../../../contexts/config';
 import { ViewManagerProvider } from '../../../../contexts/view';
 import { GlobalStyles } from '../../../../themes';
@@ -15,8 +16,10 @@ const Content = () => {
 
     return (
         <Fragment>
-            <link rel="stylesheet" type="text/css" href={modePath} />
-            {theme && <link rel="stylesheet" type="text/css" href={themePath} />}
+            <Helmet>
+                <link rel="stylesheet" type="text/css" href={modePath} />
+                {theme && <link rel="stylesheet" type="text/css" href={themePath} />}
+            </Helmet>
             <StyledApp className={clsx('app', config.appearance.style)} appearanceStyle={config.appearance.style}>
                 <TitleBar />
                 {config.appearance.style === 'top_double' && <ToolBar />}

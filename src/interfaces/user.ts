@@ -33,6 +33,7 @@ export interface UserConfig {
         mode: AppearanceMode;
         theme: AppearanceTheme;
         style: AppearanceStyle;
+        fullscreen_showing_toolbar: boolean;
         extended_sidebar: boolean;
         sidebar: {
             extended: boolean;
@@ -72,6 +73,7 @@ export const DefaultUserConfig: UserConfig = {
         mode: 'system',
         theme: undefined,
         style: 'top_single',
+        fullscreen_showing_toolbar: true,
         extended_sidebar: false,
         sidebar: {
             extended: false,

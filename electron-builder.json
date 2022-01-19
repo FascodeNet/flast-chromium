@@ -6,7 +6,7 @@
     "installerIcon": "static/icons/app/icon.ico",
     "uninstallerIcon": "static/icons/app/icon.ico"
   },
-  "electronVersion": "16.0.5",
+  "electronVersion": "16.0.7",
   "generateUpdatesFilesForAllChannels": true,
   "asar": true,
   "directories": {
@@ -39,7 +39,16 @@
     ]
   },
   "mac": {
-    "category": "public.app-category.navigation"
+    "category": "public.app-category.navigation",
+    "target": [
+      {
+        "target": "default",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
+    ]
   },
   "linux": {
     "category": "Network",

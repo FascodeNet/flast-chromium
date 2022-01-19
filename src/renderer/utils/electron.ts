@@ -14,8 +14,10 @@ interface ElectronAPI {
 
     isMinimized: () => Promise<boolean>;
     isMaximized: () => Promise<boolean>;
+    isFullScreen: () => Promise<boolean>;
     minimize: () => Promise<void>;
     maximize: () => Promise<void>;
+    fullScreen: () => Promise<void>;
     close: () => Promise<void>;
 
 
@@ -61,8 +63,10 @@ export const useElectronAPI = (): ElectronAPI => ({
 
     isMinimized: () => ipcRenderer.invoke(`window-minimized-${windowId}`),
     isMaximized: () => ipcRenderer.invoke(`window-maximized-${windowId}`),
+    isFullScreen: () => ipcRenderer.invoke(`window-fullscreened-${windowId}`),
     minimize: () => ipcRenderer.invoke(`window-minimize-${windowId}`),
     maximize: () => ipcRenderer.invoke(`window-maximize-${windowId}`),
+    fullScreen: () => ipcRenderer.invoke(`window-fullscreen-${windowId}`),
     close: () => ipcRenderer.invoke(`window-close-${windowId}`),
 
 

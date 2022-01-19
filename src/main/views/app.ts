@@ -12,6 +12,7 @@ import {
 import { AppViewInitializerOptions, MediaStatus, ViewState, ZoomLevel, ZoomLevels } from '../../interfaces/view';
 import { APPLICATION_NAME } from '../../utils';
 import { IUser } from '../interfaces/user';
+import { ViewBoundsMapping } from '../interfaces/view';
 import { Main } from '../main';
 import { FaviconManager } from '../manager/favicon';
 import { getContextMenu } from '../menus/view';
@@ -51,6 +52,7 @@ export class AppView {
                 session: userSession.session
             }
         });
+        this.browserView.setBackgroundColor('#ffffffff');
 
         this.window = window;
         // this.setBounds();
@@ -209,19 +211,189 @@ export class AppView {
         if (this.window.viewManager.selectedId !== this.id) return;
 
         const { width, height } = this.window.browserWindow.getContentBounds();
+        const { user: userState, html: htmlState } = this.window.fullScreenState;
         const isFullScreen = this.window.browserWindow.isFullScreen();
         const isMaximized = this.window.browserWindow.isMaximized();
 
         this.browserView.setAutoResize({ width: true, height: true });
 
-        const { style, sidebar: { extended, state } } = this.user.settings.config.appearance;
+        const {
+            style,
+            fullscreen_showing_toolbar: isFullScreenShowingToolbar,
+            sidebar: { extended, state }
+        } = this.user.settings.config.appearance;
 
         const sidebarWidth = extended ? (state !== 'tab_container' ? WINDOW_EXTENDED_SIDEBAR_WIDTH : WINDOW_EXTENDED_TAB_CONTAINER_WIDTH) : 50;
 
+
+        const setBounds = (
+            {
+                default: defaultRect,
+                topSingle,
+                topDouble,
+                bottomSingle,
+                bottomDouble,
+                left,
+                right
+            }: ViewBoundsMapping
+        ) => {
+            switch (style) {
+                case 'top_single':
+                    this.browserView.setBounds(topSingle ?? defaultRect);
+                    break;
+                case 'top_double':
+                    this.browserView.setBounds(topDouble ?? defaultRect);
+                    break;
+                case 'bottom_single':
+                    this.browserView.setBounds(bottomSingle ?? defaultRect);
+                    break;
+                case 'bottom_double':
+                    this.browserView.setBounds(bottomDouble ?? defaultRect);
+                    break;
+                case 'left':
+                    this.browserView.setBounds(left ?? defaultRect);
+                    break;
+                case 'right':
+                    this.browserView.setBounds(right ?? defaultRect);
+                    break;
+                default:
+                    this.browserView.setBounds(defaultRect);
+            }
+        };
+
+
+        if (isFullScreen) {
+            if (htmlState) {
+                setBounds({
+                    default: {
+                        width,
+                        height,
+                        x: 0,
+                        y: 0
+                    }
+                });
+            } else {
+                if (isFullScreenShowingToolbar) {
+                    const vertWidth = width - sidebarWidth;
+                    setBounds({
+                        default: {
+                            width,
+                            height,
+                            x: 0,
+                            y: 0
+                        },
+                        topSingle: {
+                            width,
+                            height: height - 50,
+                            x: 0,
+                            y: 50
+                        },
+                        topDouble: {
+                            width,
+                            height: height - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT),
+                            x: 0,
+                            y: WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
+                        },
+                        left: {
+                            width: vertWidth,
+                            height,
+                            x: sidebarWidth,
+                            y: 50
+                        },
+                        right: {
+                            width: vertWidth,
+                            height,
+                            x: 0,
+                            y: 50
+                        }
+                    });
+                } else {
+                    setBounds({
+                        default: {
+                            width,
+                            height,
+                            x: 0,
+                            y: 0
+                        }
+                    });
+                }
+            }
+        } else if (isMaximized) {
+            const vertWidth = width - sidebarWidth;
+            setBounds({
+                default: {
+                    width,
+                    height,
+                    x: 0,
+                    y: 0
+                },
+                topSingle: {
+                    width,
+                    height: height - 50,
+                    x: 0,
+                    y: 50
+                },
+                topDouble: {
+                    width,
+                    height: height - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT),
+                    x: 0,
+                    y: WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
+                },
+                left: {
+                    width: vertWidth,
+                    height,
+                    x: sidebarWidth,
+                    y: 50
+                },
+                right: {
+                    width: vertWidth,
+                    height,
+                    x: 0,
+                    y: 50
+                }
+            });
+        } else {
+            const hgt = height - 50;
+            const vertWidth = width - sidebarWidth;
+            setBounds({
+                default: {
+                    width,
+                    height,
+                    x: 0,
+                    y: 0
+                },
+                topSingle: {
+                    width,
+                    height: hgt,
+                    x: 0,
+                    y: 50
+                },
+                topDouble: {
+                    width,
+                    height: height - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT),
+                    x: 0,
+                    y: WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
+                },
+                left: {
+                    width: vertWidth,
+                    height: hgt,
+                    x: sidebarWidth,
+                    y: 50
+                },
+                right: {
+                    width: vertWidth,
+                    height: hgt,
+                    x: 0,
+                    y: 50
+                }
+            });
+        }
+
+        /*
         const baseWidth = isFullScreen || isMaximized ? width : width - 2;
-        const baseHeight = isFullScreen ? height : ((isMaximized ? height : height - 1) - 50);
+        const baseHeight = isFullScreen ? (isFullScreenUserByTriggered ? height - 50 : height) : ((isMaximized ? height : height - 1) - 50);
         const baseX = isFullScreen || isMaximized ? 0 : 1;
-        const baseY = isFullScreen ? 0 : 50;
+        const baseY = isFullScreen ? (isFullScreenUserByTriggered ? 50 : 0) : 50;
 
         const verticalWidth = isFullScreen ? width : (isMaximized ? width - sidebarWidth : width - 1 - sidebarWidth);
 
@@ -267,6 +439,7 @@ export class AppView {
                 });
                 break;
         }
+        */
 
         this.window.browserWindow.addBrowserView(this.browserView);
         this.window.browserWindow.setTopBrowserView(this.browserView);

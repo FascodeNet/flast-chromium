@@ -13,7 +13,7 @@ export const StyledHorizontalTabContainer = styled.div<StyledProps>`
   display: flex;
   align-items: center;
   gap: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 8 : 0}px;
-  overflow: hidden;
+  overflow: auto hidden;
 
   &::-webkit-scrollbar {
     display: none;

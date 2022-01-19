@@ -7,13 +7,17 @@ interface StyledProps {
     appearanceStyle: AppearanceStyle;
 }
 
-export const StyledTitleBar = styled.div<StyledProps>`
+interface StyledTitleBarProps extends StyledProps {
+    fullScreen: boolean;
+}
+
+export const StyledTitleBar = styled.div<StyledTitleBarProps>`
   width: 100%;
   height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 50 : WINDOW_TITLE_BAR_HEIGHT}px;
   grid-area: title-bar;
   display: grid;
-  grid-template-columns: ${platform() !== 'darwin' ? '1fr 135px' : '76px 1fr'};
-  grid-template-areas: ${platform() !== 'darwin' ? '\'title-bar-content window-controls\'' : '\'window-controls title-bar-content\''};
+  grid-template-columns: ${({ fullScreen }) => fullScreen ? '1fr' : (platform() !== 'darwin' ? '1fr 135px' : '80px 1fr')};
+  grid-template-areas: ${({ fullScreen }) => fullScreen ? '\'title-bar-content\'' : (platform() !== 'darwin' ? '\'title-bar-content window-controls\'' : '\'window-controls title-bar-content\'')};
   align-items: center;
   app-region: drag;
 `;
@@ -46,11 +50,12 @@ const getStyle = (style: AppearanceStyle) => {
     switch (style) {
         case 'top_single':
             return css`
-              padding: .5rem 1rem .5rem .5rem;
               ${!isMac ? css`
+                padding: .5rem 1rem .5rem .5rem;
                 grid-template-columns: calc(50px - 1rem) auto minmax(250px, 25%) 1px 1fr auto;
                 grid-template-areas: 'application-menu navigation-bar address-bar divider horizontal-tab-container action-bar';
               ` : css`
+                padding: .5rem;
                 grid-template-columns: auto minmax(250px, 25%) 1px 1fr auto;
                 grid-template-areas: 'navigation-bar address-bar divider horizontal-tab-container action-bar';
               `};
@@ -69,25 +74,27 @@ const getStyle = (style: AppearanceStyle) => {
         case 'left':
         case 'right':
             return css`
-              padding: .5rem 1rem .5rem .5rem;
               ${!isMac ? css`
+                padding: .5rem 1rem .5rem .5rem;
                 grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
                 grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
               ` : css`
+                padding: .5rem;
                 grid-template-columns: auto 1fr auto auto;
                 grid-template-areas: 'navigation-bar address-bar extensions action-bar';
               `};
             `;
         default:
             return css`
-              padding: .5rem 1rem .5rem .5rem;
               ${!isMac ? css`
-                grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
-                grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
-              ` : css`
-                grid-template-columns: auto 1fr auto auto;
-                grid-template-areas: 'navigation-bar address-bar extensions action-bar';
-              `};
+              padding: .5rem 1rem .5rem .5rem;
+              grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
+              grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
+            ` : css`
+              padding: .5rem;
+              grid-template-columns: auto 1fr auto auto;
+              grid-template-areas: 'navigation-bar address-bar extensions action-bar';
+            `};
             `;
     }
 };
