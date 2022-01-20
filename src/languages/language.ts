@@ -59,6 +59,7 @@ export interface Language {
                 label: string;
 
                 fullScreen: string;
+                toolbar: string;
                 sidebar: string;
                 zoomIn: string;
                 zoomOut: string;
@@ -92,6 +93,13 @@ export interface Language {
             }
             window: {
                 label: string;
+            }
+            user: {
+                label: string;
+
+                add: string;
+                remove: string;
+                edit: string;
             }
             help: {
                 label: string;

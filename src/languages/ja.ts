@@ -49,6 +49,7 @@ export const Ja: Language = {
                 label: '表示',
 
                 fullScreen: '全画面表示の切り替え',
+                toolbar: 'ツールバーの切り替え',
                 sidebar: 'サイドバーの切り替え',
                 zoomIn: 'ページを拡大',
                 zoomOut: 'ページを縮小',
@@ -82,6 +83,13 @@ export const Ja: Language = {
             },
             window: {
                 label: 'ウィンドウ'
+            },
+            user: {
+                label: 'ユーザー',
+
+                add: 'ユーザーを追加',
+                remove: 'ユーザーを削除',
+                edit: 'ユーザーを編集'
             },
             help: {
                 label: 'ヘルプ',
@@ -123,7 +131,7 @@ export const Ja: Language = {
             },
             fullScreen: {
                 fullScreenExit: '全画面表示を終了',
-                toolBar: 'ツールバー表示の切り替え'
+                toolBar: 'ツールバーの切り替え'
             },
             back: '戻る',
             forward: '進む',

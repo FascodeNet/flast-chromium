@@ -41,6 +41,7 @@ export const Shortcuts = {
     NAVIGATION_HISTORY: !IS_MAC ? 'Ctrl+H' : 'Cmd+Y',
     NAVIGATION_DOWNLOADS: 'CmdOrCtrl+D',
     FULLSCREEN: !IS_MAC ? 'F11' : 'Cmd+Ctrl+F',
+    TOOLBAR: !IS_MAC ? 'Shift+F11' : 'Cmd+Shift+F',
     SIDEBAR: 'Ctrl+Space',
     SAVE_AS: 'CmdOrCtrl+S',
     PRINT: 'CmdOrCtrl+P',

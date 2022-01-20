@@ -9,7 +9,6 @@ import {
     nativeImage
 } from 'electron';
 import { getTranslate } from '../../languages/language';
-import { IS_MAC } from '../../utils/process';
 import { isURL } from '../../utils/url';
 import { Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
@@ -40,6 +39,23 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             icon: getMenuItemIconFromName('fullscreen_exit'),
             accelerator: Shortcuts.FULLSCREEN,
             click: () => window.browserWindow.setFullScreen(false)
+        },
+        {
+            label: languageSection.fullScreen.toolBar,
+            icon: getEmptyMenuItemIcon(),
+            accelerator: Shortcuts.TOOLBAR,
+            enabled: window.browserWindow.isFullScreen() && window.fullScreenState.user && !window.fullScreenState.html,
+            click: () => {
+                const settings = window.user.settings;
+
+                settings.config = { appearance: { fullscreen_showing_toolbar: !settings.config.appearance.fullscreen_showing_toolbar } };
+
+                const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id);
+                windows.forEach((window) => {
+                    window.webContents.send('settings-update', settings.config);
+                    window.viewManager.get()?.setBounds();
+                });
+            }
         },
         { type: 'separator' }
     ] : undefined;
@@ -377,62 +393,62 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
         [
             {
                 label: languageSection.addTab,
-                icon: !IS_MAC ? getMenuItemIconFromName('tab_add') : undefined,
+                icon: getMenuItemIconFromName('tab_add'),
                 accelerator: Shortcuts.TAB_ADD,
                 click: () => viewManager.add()
             },
             {
                 label: languageSection.moveToWindow,
-                icon: !IS_MAC ? getMenuItemIconFromName('tab_move_to_window') : undefined
+                icon: getMenuItemIconFromName('tab_move_to_window')
                 // click: () => view.forward()
             },
             { type: 'separator' },
             {
                 label: !view.isLoading() ? languageSection.reload : languageSection.stop,
-                icon: !IS_MAC ? getMenuItemIconFromName(!view.isLoading() ? 'reload' : 'remove') : undefined,
+                icon: getMenuItemIconFromName(!view.isLoading() ? 'reload' : 'remove'),
                 accelerator: Shortcuts.NAVIGATION_RELOAD_1,
                 click: () => !view.isLoading() ? view.reload() : view.stop()
             },
             {
                 label: languageSection.duplicate,
-                icon: !IS_MAC ? getMenuItemIconFromName('tab_duplicate') : undefined,
+                icon: getMenuItemIconFromName('tab_duplicate'),
                 accelerator: Shortcuts.TAB_DUPLICATE,
                 click: () => viewManager.add(view.getURL())
             },
             {
                 label: !view.isPinned() ? languageSection.pin : languageSection.unpin,
-                icon: !IS_MAC ? getMenuItemIconFromName(!view.isPinned() ? 'pin' : 'unpin') : undefined,
+                icon: getMenuItemIconFromName(!view.isPinned() ? 'pin' : 'unpin'),
                 accelerator: Shortcuts.TAB_PIN,
                 click: () => view.setPinned(!view.isPinned())
             },
             {
                 label: !view.isMuted() ? languageSection.mute : languageSection.unmute,
-                icon: !IS_MAC ? getMenuItemIconFromName(`speaker${view.isMuted() ? '' : '_muted'}`) : undefined,
+                icon: getMenuItemIconFromName(`speaker${view.isMuted() ? '' : '_muted'}`),
                 accelerator: Shortcuts.TAB_MUTE,
                 click: () => view.setMuted(!view.isMuted())
             },
             { type: 'separator' },
             {
                 label: languageSection.removeTab,
-                icon: !IS_MAC ? getMenuItemIconFromName('tab_remove') : undefined,
+                icon: getMenuItemIconFromName('tab_remove'),
                 accelerator: Shortcuts.TAB_REMOVE,
                 click: () => viewManager.remove(view.id)
             },
             {
                 label: languageSection.removeOtherTabs,
-                icon: !IS_MAC ? getMenuItemIconFromName('tab_remove_all') : undefined,
+                icon: getMenuItemIconFromName('tab_remove_all'),
                 enabled: viewManager.getViews().filter((v) => v.id !== view.id).length > 0,
                 click: () => viewManager.removeOthers(view.id)
             },
             {
                 label: languageSection.removeLeftTabs,
-                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                icon: getEmptyMenuItemIcon(),
                 enabled: viewManager.getLeftViews(view.id).length > 0,
                 click: () => viewManager.removeLefts(view.id)
             },
             {
                 label: languageSection.removeRightTabs,
-                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                icon: getEmptyMenuItemIcon(),
                 enabled: viewManager.getRightViews(view.id).length > 0,
                 click: () => viewManager.removeRights(view.id)
             }

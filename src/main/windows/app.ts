@@ -5,7 +5,7 @@ import { join } from 'path';
 import { isHorizontal } from '../../interfaces/user';
 import { WindowFullScreenState } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
-import { IS_DEVELOPMENT, IS_MAC } from '../../utils/process';
+import { IS_DEVELOPMENT } from '../../utils/process';
 import { showExtensionsDialog } from '../dialogs/extensions';
 import { showHistoriesDialog } from '../dialogs/histories';
 import { IUser } from '../interfaces/user';
@@ -13,6 +13,7 @@ import { AppWindowInitializerOptions } from '../interfaces/window';
 import { Main } from '../main';
 import { ViewManager } from '../manager/view';
 import { getApplicationMenu } from '../menus/app';
+import { getWindowMenu } from '../menus/window';
 
 export class AppWindow {
     public readonly id: number;
@@ -69,7 +70,7 @@ export class AppWindow {
         this.viewManager = new ViewManager(this, user.type === 'incognito');
         urls.forEach((url) => this.viewManager.add(url));
 
-        this.applicationMenu = getApplicationMenu(this);
+        this.applicationMenu = getWindowMenu(this);
         Menu.setApplicationMenu(this.applicationMenu);
         this.browserWindow.setMenu(this.applicationMenu);
 
@@ -106,7 +107,7 @@ export class AppWindow {
     public setApplicationMenu() {
         if (this.browserWindow.isDestroyed()) return;
 
-        this.applicationMenu = getApplicationMenu(this);
+        this.applicationMenu = getWindowMenu(this);
         Menu.setApplicationMenu(this.applicationMenu);
         this.browserWindow.setMenu(this.applicationMenu);
     }
@@ -192,16 +193,13 @@ export class AppWindow {
             Main.windowManager.remove(this.id);
             Main.windowManager.windows.delete(this.id);
 
-            const windows = [...Main.windowManager.windows.values()];
-            for (const window of windows)
-                window.setApplicationMenu();
+            Menu.setApplicationMenu(getApplicationMenu(this.user));
         };
         this.browserWindow.webContents.on('destroyed', onDestroyed);
         this.browserWindow.on('closed', onDestroyed);
 
         this.browserWindow.on('focus', () => {
-            if (IS_MAC)
-                this.setApplicationMenu();
+            this.setApplicationMenu();
 
             Main.windowManager.selectedId = this.id;
             Main.windowManager.lastWindowId = this.id;
@@ -217,11 +215,13 @@ export class AppWindow {
         this.browserWindow.on('enter-full-screen', () => {
             console.log('enter-full-screen');
             this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { user: true });
+            this.setApplicationMenu();
             this.setViewBounds();
         });
         this.browserWindow.on('leave-full-screen', () => {
             console.log('leave-full-screen');
             this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { user: false });
+            this.setApplicationMenu();
             this.setViewBounds();
         });
         this.browserWindow.on('enter-html-full-screen', () => {

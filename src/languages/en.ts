@@ -48,6 +48,7 @@ export const En: Language = {
                 label: 'View',
 
                 fullScreen: 'Toggle Full Screen',
+                toolbar: 'Toggle Toolbar',
                 sidebar: 'Toggle Sidebar',
                 zoomIn: 'Zoom in',
                 zoomOut: 'Zoom out',
@@ -81,6 +82,13 @@ export const En: Language = {
             },
             window: {
                 label: 'Window'
+            },
+            user: {
+                label: 'User',
+
+                add: 'Add user',
+                remove: 'Remove user',
+                edit: 'Edit user'
             },
             help: {
                 label: 'Help',
