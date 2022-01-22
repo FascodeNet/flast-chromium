@@ -57,7 +57,7 @@
     "mobx-react-lite": "3.2.2",
     "moment": "2.29.1",
     "moment-timezone": "0.5.34",
-    "nanoid": "3.1.30",
+    "nanoid": "3.1.31",
     "nedb": "1.8.0",
     "node-fetch": "3.1.0",
     "react": "17.0.2",
