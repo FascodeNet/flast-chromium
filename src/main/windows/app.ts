@@ -13,6 +13,7 @@ import { AppWindowInitializerOptions } from '../interfaces/window';
 import { Main } from '../main';
 import { ViewManager } from '../manager/view';
 import { getApplicationMenu } from '../menus/app';
+import { getExtensionMenu } from '../menus/extension';
 import { getWindowMenu } from '../menus/window';
 
 export class AppWindow {
@@ -268,13 +269,6 @@ export class AppWindow {
             });
         });
 
-        ipcMain.handle(`window-histories-${this.id}`, (e, x: number, y: number) => {
-            showHistoriesDialog(this.user, this.browserWindow, x, y);
-        });
-        ipcMain.handle(`window-extensions-${this.id}`, (e, x: number, y: number) => {
-            showExtensionsDialog(this.user, this.browserWindow, x, y);
-        });
-
         ipcMain.handle(`window-minimized-${this.id}`, () => {
             return this.browserWindow.isMinimized();
         });
@@ -299,6 +293,24 @@ export class AppWindow {
         });
         ipcMain.handle(`window-close-${this.id}`, () => {
             this.close();
+        });
+
+
+        ipcMain.handle(`window-histories-${this.id}`, (e, x: number, y: number) => {
+            showHistoriesDialog(this.user, this.browserWindow, x, y);
+        });
+
+        ipcMain.handle(`window-extensions-${this.id}`, (e, x: number, y: number) => {
+            showExtensionsDialog(this.user, this.browserWindow, x, y);
+        });
+        ipcMain.handle(`extension-menu-${this.id}`, (e, id: string, x: number, y: number) => {
+            const extension = this.webContents.session.getExtension(id);
+            if (!extension) return;
+
+            getExtensionMenu(extension, this).popup({
+                window: this.browserWindow,
+                x, y
+            });
         });
     }
 }

@@ -1,5 +1,6 @@
 export const APPLICATION_NAME = 'Flast';
 export const APPLICATION_PROTOCOL = 'flast';
+export const EXTENSION_PROTOCOL = 'chrome-extension';
 
 export const APPLICATION_WEB_BOOKMARKS = 'bookmarks';
 export const APPLICATION_WEB_HISTORY = 'history';

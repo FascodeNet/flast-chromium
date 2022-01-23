@@ -1,7 +1,4 @@
 import { app, BrowserView } from 'electron';
-/// <reference types="../../@types/image-data-uri" />
-// @ts-ignore
-import { encodeFromURL } from 'image-data-uri';
 import { join } from 'path';
 import {
     WINDOW_EXTENDED_SIDEBAR_WIDTH,
@@ -274,6 +271,7 @@ export class AppView {
                 });
             } else {
                 if (isFullScreenShowingToolbar) {
+                    const hgt = height - 50;
                     const vertWidth = width - sidebarWidth;
                     setBounds({
                         default: {
@@ -284,7 +282,7 @@ export class AppView {
                         },
                         topSingle: {
                             width,
-                            height: height - 50,
+                            height: hgt,
                             x: 0,
                             y: 50
                         },
@@ -296,13 +294,13 @@ export class AppView {
                         },
                         left: {
                             width: vertWidth,
-                            height,
+                            height: hgt,
                             x: sidebarWidth,
                             y: 50
                         },
                         right: {
                             width: vertWidth,
-                            height,
+                            height: hgt,
                             x: 0,
                             y: 50
                         }
@@ -319,6 +317,7 @@ export class AppView {
                 }
             }
         } else if (isMaximized) {
+            const hgt = height - 50;
             const vertWidth = width - sidebarWidth;
             setBounds({
                 default: {
@@ -329,7 +328,7 @@ export class AppView {
                 },
                 topSingle: {
                     width,
-                    height: height - 50,
+                    height: hgt,
                     x: 0,
                     y: 50
                 },
@@ -341,13 +340,13 @@ export class AppView {
                 },
                 left: {
                     width: vertWidth,
-                    height,
+                    height: hgt,
                     x: sidebarWidth,
                     y: 50
                 },
                 right: {
                     width: vertWidth,
-                    height,
+                    height: hgt,
                     x: 0,
                     y: 50
                 }

@@ -201,96 +201,115 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.edit.undo,
                 icon: !IS_MAC ? getMenuItemIconFromName('undo') : undefined,
                 accelerator: Shortcuts.EDIT_UNDO,
+                role: 'undo'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.undo();
                 }
+                */
             },
             {
                 label: languageSection.edit.redo,
                 icon: !IS_MAC ? getMenuItemIconFromName('redo') : undefined,
                 accelerator: Shortcuts.EDIT_REDO,
+                role: 'redo'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.redo();
                 }
+                */
             },
             { type: 'separator' },
             {
                 label: languageSection.edit.cut,
                 icon: !IS_MAC ? getMenuItemIconFromName('cut') : undefined,
                 accelerator: Shortcuts.EDIT_CUT,
+                role: 'cut'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.cut();
                 }
+                */
             },
             {
                 label: languageSection.edit.copy,
                 icon: !IS_MAC ? getMenuItemIconFromName('copy') : undefined,
                 accelerator: Shortcuts.EDIT_COPY,
-                // role: 'copy',
+                role: 'copy'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.copy();
                 }
+                */
             },
             {
                 label: languageSection.edit.paste,
                 icon: !IS_MAC ? getMenuItemIconFromName('paste') : undefined,
                 accelerator: Shortcuts.EDIT_PASTE,
-                // role: 'paste',
+                role: 'pasteAndMatchStyle'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.pasteAndMatchStyle();
                 }
+                */
             },
             {
                 label: languageSection.edit.pastePlainText,
                 icon: !IS_MAC ? getMenuItemIconFromName('paste_as_plain_text') : undefined,
                 accelerator: Shortcuts.EDIT_PASTE_AS_PLAIN_TEXT,
-                // role: 'paste',
+                role: 'paste'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.paste();
                 }
+                */
             },
             {
                 label: languageSection.edit.delete,
                 icon: !IS_MAC ? getMenuItemIconFromName('backspace') : undefined,
                 accelerator: Shortcuts.EDIT_DELETE,
-                // role: 'delete',
+                role: 'delete'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.delete();
                 }
+                */
             },
             { type: 'separator' },
             {
                 label: languageSection.edit.selectAll,
                 icon: !IS_MAC ? getMenuItemIconFromName('select_all') : undefined,
                 accelerator: Shortcuts.EDIT_SELECT_ALL,
-                // role: 'selectAll',
+                role: 'selectAll'
+                /*
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     view.webContents.selectAll();
                 }
+                */
             },
             { type: 'separator' },
             {

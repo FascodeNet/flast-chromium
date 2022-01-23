@@ -9,9 +9,6 @@ interface ElectronAPI {
     showApplicationMenu: () => Promise<void>;
     toggleSidebar: () => Promise<void>;
 
-    showHistoriesPopup: (x: number, y: number) => Promise<void>;
-    showExtensionsPopup: (x: number, y: number) => Promise<void>;
-
     isMinimized: () => Promise<boolean>;
     isMaximized: () => Promise<boolean>;
     isFullScreen: () => Promise<boolean>;
@@ -47,9 +44,13 @@ interface ElectronAPI {
     addBookmark: (userId: string, data: IBookmark) => Promise<void>;
     removeBookmark: (userId: string, id: string) => Promise<void>;
 
+    showHistoriesPopup: (x: number, y: number) => Promise<void>;
     getHistories: (userId: string) => Promise<IHistory[]>;
     addHistory: (userId: string, data: IHistory) => Promise<void>;
     removeHistory: (userId: string, id: string) => Promise<void>;
+
+    showExtensionsPopup: (x: number, y: number) => Promise<void>;
+    showExtensionMenu: (id: string, x: number, y: number) => Promise<void>;
 }
 
 const windowId = getCurrentWindow().id;
@@ -57,9 +58,6 @@ export const useElectronAPI = (): ElectronAPI => ({
     getWindowId: () => getCurrentWindow().id,
     showApplicationMenu: () => ipcRenderer.invoke(`window-menu-${windowId}`),
     toggleSidebar: () => ipcRenderer.invoke(`window-sidebar-${windowId}`),
-
-    showHistoriesPopup: (x: number, y: number) => ipcRenderer.invoke(`window-histories-${windowId}`, x, y),
-    showExtensionsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-extensions-${windowId}`, x, y),
 
     isMinimized: () => ipcRenderer.invoke(`window-minimized-${windowId}`),
     isMaximized: () => ipcRenderer.invoke(`window-maximized-${windowId}`),
@@ -96,7 +94,11 @@ export const useElectronAPI = (): ElectronAPI => ({
     addBookmark: (userId: string, data: IBookmark) => ipcRenderer.invoke(`bookmark-add-${userId}`, data),
     removeBookmark: (userId: string, id: string) => ipcRenderer.invoke(`bookmark-remove-${userId}`, id),
 
+    showHistoriesPopup: (x: number, y: number) => ipcRenderer.invoke(`window-histories-${windowId}`, x, y),
     getHistories: (userId: string) => ipcRenderer.invoke(`histories-${userId}`),
     addHistory: (userId: string, data: IHistory) => ipcRenderer.invoke(`history-add-${userId}`, data),
-    removeHistory: (userId: string, id: string) => ipcRenderer.invoke(`history-remove-${userId}`, id)
+    removeHistory: (userId: string, id: string) => ipcRenderer.invoke(`history-remove-${userId}`, id),
+
+    showExtensionsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-extensions-${windowId}`, x, y),
+    showExtensionMenu: (id: string, x: number, y: number) => ipcRenderer.invoke(`extension-menu-${windowId}`, id, x, y)
 });

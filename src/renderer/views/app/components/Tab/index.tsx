@@ -1,6 +1,8 @@
+import { getCurrentWebContents } from '@electron/remote';
 import { CircularProgress } from '@mui/material';
 import clsx from 'clsx';
 import React, { Fragment, MouseEvent } from 'react';
+import { IExtension } from '../../../../../interfaces/extension';
 import { ViewState } from '../../../../../interfaces/view';
 import {
     APPLICATION_PROTOCOL,
@@ -8,7 +10,8 @@ import {
     APPLICATION_WEB_DOWNLOADS,
     APPLICATION_WEB_EXTENSIONS,
     APPLICATION_WEB_HISTORY,
-    APPLICATION_WEB_SETTINGS
+    APPLICATION_WEB_SETTINGS,
+    EXTENSION_PROTOCOL
 } from '../../../../../utils';
 import { Bookmarks, Downloads, Extensions, Histories, Remove, Settings } from '../../../../components/Icons';
 import { useUserConfigContext } from '../../../../contexts/config';
@@ -48,6 +51,14 @@ const TabIcon = ({ url: urlString, favicon }: TabIconProps) => {
                 default:
                     return (<StyledTabIcon favicon={favicon} />);
             }
+        } else if (protocol === `${EXTENSION_PROTOCOL}:`) {
+            const extension: IExtension | null = getCurrentWebContents().session.getExtension(hostname);
+
+            if (!extension)
+                return (<StyledTabIcon favicon={favicon} />);
+
+            const { path, manifest: { icons } } = extension;
+            return (<StyledTabIcon favicon={`${path}/${icons!![64] ?? icons!![32] ?? icons!![128] ?? icons!![16]}`} />);
         } else {
             return (<StyledTabIcon favicon={favicon} />);
         }
