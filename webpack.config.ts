@@ -1,10 +1,10 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import path from 'path';
+import { resolve } from 'path';
 import { Configuration } from 'webpack';
 import { APPLICATION_NAME } from './src/utils';
 
-export const getHtml = (name: string) => new HtmlWebpackPlugin({
+export const getBrowserHtml = (name: string) => new HtmlWebpackPlugin({
     title: APPLICATION_NAME,
     template: './static/index.html',
     filename: `${name}.html`,
@@ -14,10 +14,27 @@ export const getHtml = (name: string) => new HtmlWebpackPlugin({
     minify: false
 });
 
-export const applyEntries = (config: any, entries: string[]) => {
+export const getPageHtml = (name: string) => new HtmlWebpackPlugin({
+    title: APPLICATION_NAME,
+    template: './static/index.html',
+    filename: `${name}.html`,
+    chunks: [name],
+    scriptLoading: 'blocking',
+    inject: 'body',
+    minify: false
+});
+
+export const applyBrowserEntries = (config: any, entries: string[]) => {
+    for (const entry of entries) {
+        config.entry[entry] = `./src/renderer/views/browser/${entry}`;
+        config.plugins.push(getBrowserHtml(entry));
+    }
+};
+
+export const applyPageEntries = (config: any, entries: string[]) => {
     for (const entry of entries) {
         config.entry[entry] = `./src/renderer/views/${entry}`;
-        config.plugins.push(getHtml(entry));
+        config.plugins.push(getPageHtml(entry));
     }
 };
 
@@ -31,7 +48,7 @@ export const BaseConfig: Configuration = {
         extensions: ['.js', '.ts', '.jsx', '.tsx', '.json']
     },
     output: {
-        path: path.resolve(__dirname, 'build'),
+        path: resolve(__dirname, 'build'),
         publicPath: './',
         filename: '[name].js',
         assetModuleFilename: 'assets/[name][ext]'
@@ -89,7 +106,19 @@ export const Preload: Configuration = {
     }
 };
 
-export const Renderer: Configuration = {
+export const BrowserRenderer: Configuration = {
+    ...BaseConfig,
+    output: {
+        ...BaseConfig.output,
+        path: resolve(__dirname, 'build', 'browser')
+    },
+    mode: 'development',
+    target: 'web',
+    entry: {},
+    plugins: [new MiniCssExtractPlugin()]
+};
+
+export const PageRenderer: Configuration = {
     ...BaseConfig,
     mode: 'development',
     target: 'web',
@@ -97,15 +126,22 @@ export const Renderer: Configuration = {
     plugins: [new MiniCssExtractPlugin()]
 };
 
-applyEntries(
-    Renderer,
+applyBrowserEntries(
+    BrowserRenderer,
     [
         'app',
         'process-manager',
-        'internal-histories',
-        'internal-extensions',
+        'find',
+        'histories',
+        'extensions'
+    ]
+);
+
+applyPageEntries(
+    PageRenderer,
+    [
         'settings'
     ]
 );
 
-export default [Main, Preload, Renderer];
+export default [Main, Preload, BrowserRenderer, PageRenderer];

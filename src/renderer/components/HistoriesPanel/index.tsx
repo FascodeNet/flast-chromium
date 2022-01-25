@@ -60,7 +60,7 @@ export const HistoriesPanel = ({ type }: PanelProps) => {
                 {[...histories.entries()].map((data, i) => {
                     const { year, month, day }: IDate = JSON.parse(data[0]);
                     return (
-                        <StyledHistoryGroup key={i}>
+                        <StyledHistoryGroup key={i} className="history-group">
                             <h4>{year}/{month + 1}/{day}</h4>
                             {data[1].map(({ title, url, favicon, updatedAt }, v) => (
                                 <StyledHistoryItem key={v} className="history-item" title={url}>

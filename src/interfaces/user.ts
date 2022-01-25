@@ -108,9 +108,6 @@ export const DefaultUserConfig: UserConfig = {
     }
 };
 
-export const isHorizontal = (style: AppearanceStyle) => !isVertical(style);
-export const isVertical = (style: AppearanceStyle) => style === 'left' || style === 'right';
-
 interface IData {
     _id?: string;
     updatedAt?: Date;

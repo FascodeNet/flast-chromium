@@ -1,9 +1,11 @@
 import { Configuration } from 'webpack';
 import {
-    applyEntries,
+    applyBrowserEntries,
+    applyPageEntries,
+    BrowserRenderer as BrowserRendererConfig,
     Main as MainConfig,
-    Preload as PreloadConfig,
-    Renderer as RendererConfig
+    PageRenderer as PageRendererConfig,
+    Preload as PreloadConfig
 } from './webpack.config';
 
 const Main: Configuration = {
@@ -24,8 +26,8 @@ const Preload: Configuration = {
     devtool: undefined
 };
 
-const Renderer: Configuration = {
-    ...RendererConfig,
+const BrowserRenderer: Configuration = {
+    ...BrowserRendererConfig,
     mode: 'production',
     stats: 'errors-only',
     performance: { hints: false },
@@ -33,15 +35,31 @@ const Renderer: Configuration = {
     devtool: undefined
 };
 
-applyEntries(
-    Renderer,
+const PageRenderer: Configuration = {
+    ...PageRendererConfig,
+    mode: 'production',
+    stats: 'errors-only',
+    performance: { hints: false },
+    optimization: { minimize: true },
+    devtool: undefined
+};
+
+applyBrowserEntries(
+    BrowserRenderer,
     [
         'app',
         'process-manager',
-        'internal-histories',
-        'internal-extensions',
+        'find',
+        'histories',
+        'extensions'
+    ]
+);
+
+applyPageEntries(
+    PageRenderer,
+    [
         'settings'
     ]
 );
 
-export default [Main, Preload, Renderer];
+export default [Main, Preload, BrowserRenderer, PageRenderer];

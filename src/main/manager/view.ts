@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { MoveDirection } from '../../interfaces/view';
 import { nonNullable } from '../../utils/array';
+import { Main } from '../main';
 import { getTabMenu } from '../menus/view';
 import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
@@ -60,7 +61,7 @@ export class ViewManager {
         this.views.set(view.id, view);
         this.sortOrders.push(view.id);
 
-        this.window.browserWindow.webContents.send(`view-${this.window.id}`, view.getState());
+        this.window.browserWindow.webContents.send(`view-${this.window.id}`, view.state);
         if (active)
             this.selectOf(view);
 
@@ -147,7 +148,7 @@ export class ViewManager {
     }
 
     private selectOf(view: AppView) {
-        if (view.webContents && view.webContents.isDestroyed()) {
+        if (!view || view.webContents && view.webContents.isDestroyed()) {
             this.views.delete(view.id);
             return;
         }
@@ -162,7 +163,7 @@ export class ViewManager {
             view.user.session.extensions.selectTab(view.webContents);
 
         this.window.browserWindow.webContents.send(`view-select-${this.window.id}`, view.id);
-        this.window.browserWindow.webContents.send(`view-${this.window.id}`, view.getState());
+        this.window.browserWindow.webContents.send(`view-${this.window.id}`, view.state);
         this.updateViews();
     }
 
@@ -201,18 +202,18 @@ export class ViewManager {
 
     private setupIpc() {
         const id = this.window.id;
-        ipcMain.handle(`views-${id}`, (e, options) => {
-            return this.getViews().map((view) => view.getState());
+        ipcMain.handle(`views-${id}`, () => {
+            return this.getViews().map((view) => view.state);
         });
         ipcMain.handle(`view-${id}`, (e, id: number) => {
             const view = this.views.get(id);
             if (!view) return undefined;
-            return view.getState();
+            return view.state;
         });
-        ipcMain.handle(`view-current-${id}`, (e) => {
+        ipcMain.handle(`view-current-${id}`, () => {
             const view = this.views.get(this._selectedId);
             if (!view) return undefined;
-            return view.getState();
+            return view.state;
         });
         ipcMain.handle(`view-create-${id}`, (e, url: string, active) => {
             const view = this.add(url, active);
@@ -263,13 +264,38 @@ export class ViewManager {
             if (!view || view.webContents.isDestroyed()) return;
             view.load(url);
         });
+
+        ipcMain.handle(`view-find_in_page-${this.window.id}`, (e, id: number, text: string, matchCase: boolean) => {
+            const view = this.views.get(id);
+            if (!view || view.webContents.isDestroyed()) return;
+
+            view.findInPage(text, matchCase);
+            return view.findState;
+        });
+        ipcMain.handle(`view-move_find_in_page-${this.window.id}`, (e, id: number, forward: boolean) => {
+            const view = this.views.get(id);
+            if (!view || view.webContents.isDestroyed()) return;
+
+            view.moveFindInPage(forward);
+            return view.findState;
+        });
+        ipcMain.handle(`view-stop_find_in_page-${this.window.id}`, (e, id: number, hide: boolean) => {
+            const view = this.views.get(id);
+            if (!view || view.webContents.isDestroyed()) return;
+
+            view.stopFindInPage();
+            if (hide && view.findDialog) {
+                Main.dialogManager.destroy(view.findDialog);
+                view.findDialog = undefined;
+            }
+        });
     }
 
     private updateViews() {
         this.window.setApplicationMenu();
         this.window.browserWindow.webContents.send(
             `views-${this.window.id}`,
-            this.getViews().map((view) => view.getState())
+            this.getViews().map((view) => view.state)
         );
     }
 

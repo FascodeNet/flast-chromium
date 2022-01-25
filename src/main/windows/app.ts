@@ -2,9 +2,9 @@ import { enable } from '@electron/remote/main';
 import deepmerge from 'deepmerge';
 import { app, BrowserWindow, ipcMain, Menu, nativeImage } from 'electron';
 import { join } from 'path';
-import { isHorizontal } from '../../interfaces/user';
 import { WindowFullScreenState } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
+import { isHorizontal } from '../../utils/design';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { showExtensionsDialog } from '../dialogs/extensions';
 import { showHistoriesDialog } from '../dialogs/histories';
@@ -17,6 +17,7 @@ import { getExtensionMenu } from '../menus/extension';
 import { getWindowMenu } from '../menus/window';
 
 export class AppWindow {
+
     public readonly id: number;
 
     public readonly user: IUser;
@@ -25,9 +26,6 @@ export class AppWindow {
     private applicationMenu: Menu;
 
     public viewManager: ViewManager;
-
-    private _injectedModeStyleKey?: string = undefined;
-    private _injectedThemeStyleKey?: string = undefined;
 
     public constructor(user: IUser, { urls = ['https://www.google.com'] }: AppWindowInitializerOptions) {
         this.browserWindow = new BrowserWindow({
@@ -75,7 +73,7 @@ export class AppWindow {
         Menu.setApplicationMenu(this.applicationMenu);
         this.browserWindow.setMenu(this.applicationMenu);
 
-        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'app.html'));
+        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'browser', 'app.html'));
         this.setStyle();
 
         this.webContents.once('dom-ready', () => {
@@ -121,63 +119,6 @@ export class AppWindow {
 
     public async setStyle() {
         this.webContents.send('theme-update');
-
-        /*
-        const currentInjectedModeStyleKey = this._injectedModeStyleKey;
-        if (this.user.type === 'incognito') {
-            const style = await readFile(
-                join(
-                    app.getAppPath(),
-                    'static',
-                    'styles',
-                    'incognito.css'
-                )
-            );
-            this._injectedModeStyleKey = await this.webContents.insertCSS(style.toString('utf-8'));
-        } else {
-            const modeStyle = await readFile(
-                join(
-                    app.getAppPath(),
-                    'static',
-                    'styles',
-                    `${nativeTheme.shouldUseDarkColors ? 'dark' : 'light'}.css`
-                )
-            );
-            this._injectedModeStyleKey = await this.webContents.insertCSS(modeStyle.toString('utf-8'));
-
-            const isInternalTheme = (theme: AppearanceTheme): theme is AppearanceInternalTheme => {
-                return true;
-            };
-
-
-            const currentInjectedThemeStyleKey = this._injectedThemeStyleKey;
-            const theme = this.user.settings.config.appearance.theme;
-            if (theme) {
-                const themeStyle = await readFile(
-                    isInternalTheme(theme) ? join(
-                        app.getAppPath(),
-                        'static',
-                        'styles',
-                        `${theme}.css`
-                    ) : join(
-                        app.getPath('userData'),
-                        'theme.css'
-                    )
-                );
-
-                console.log(currentInjectedThemeStyleKey);
-                this._injectedThemeStyleKey = await this.webContents.insertCSS(themeStyle.toString('utf-8'));
-                console.log(currentInjectedThemeStyleKey);
-            }
-
-            console.log(currentInjectedThemeStyleKey);
-            if (currentInjectedThemeStyleKey)
-                await this.webContents.removeInsertedCSS(currentInjectedThemeStyleKey);
-        }
-
-        if (currentInjectedModeStyleKey)
-            await this.webContents.removeInsertedCSS(currentInjectedModeStyleKey);
-        */
     }
 
 
@@ -295,6 +236,16 @@ export class AppWindow {
             this.close();
         });
 
+        ipcMain.handle(`window-find-${this.id}`, () => {
+            const view = this.viewManager.get();
+            if (!view) return;
+
+            view.findInPage(null);
+        });
+
+        ipcMain.handle(`window-bookmarks-${this.id}`, (e, x: number, y: number) => {
+            showHistoriesDialog(this.user, this.browserWindow, x, y);
+        });
 
         ipcMain.handle(`window-histories-${this.id}`, (e, x: number, y: number) => {
             showHistoriesDialog(this.user, this.browserWindow, x, y);
@@ -307,10 +258,22 @@ export class AppWindow {
             const extension = this.webContents.session.getExtension(id);
             if (!extension) return;
 
-            getExtensionMenu(extension, this).popup({
-                window: this.browserWindow,
-                x, y
-            });
+            const menu = getExtensionMenu(extension, this);
+            if (e.sender.getType() === 'browserView') {
+                const dialog = Main.dialogManager.getDynamic('extensions');
+                if (!dialog) return;
+
+                menu.popup({
+                    window: this.browserWindow,
+                    x: dialog.bounds.x + x,
+                    y: dialog.bounds.y + y
+                });
+            } else {
+                menu.popup({
+                    window: this.browserWindow,
+                    x, y
+                });
+            }
         });
     }
 }

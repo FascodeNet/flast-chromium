@@ -37,7 +37,7 @@ export class ProcessManagerWindow {
 
         this.browserWindow.setMenu(null);
 
-        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'process-manager.html'));
+        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'browser', 'process-manager.html'));
 
         if (IS_DEVELOPMENT)
             this.browserWindow.removeMenu();

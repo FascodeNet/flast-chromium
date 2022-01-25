@@ -42,18 +42,18 @@ export class Dialog {
                 contextIsolation: false,
                 javascript: true,
                 session: user.session.session,
-                // @ts-ignore
-                transparent: true,
                 ...webPreferences
             }
         });
-        this.browserView.setBackgroundColor('#00000000');
 
         this.user = user;
 
         this.browserWindow = window;
 
         this.bounds = { ...this.bounds, ...bounds };
+        const { height } = window.getContentBounds();
+        if ((this.bounds.height + this.bounds.y) >= height)
+            this.bounds.height = height - this.bounds.y;
 
         this.name = name;
 
@@ -82,6 +82,8 @@ export class Dialog {
     }
 
     public show() {
+        if (this.webContents.isDestroyed()) return;
+
         this.browserWindow.addBrowserView(this.browserView);
         this.browserWindow.setTopBrowserView(this.browserView);
         this.browserView.setBounds(this.bounds);
@@ -89,6 +91,8 @@ export class Dialog {
     }
 
     public hide() {
+        if (this.webContents.isDestroyed()) return;
+
         this.browserWindow.removeBrowserView(this.browserView);
         this.browserWindow.setTopBrowserView(this.browserWindow.getBrowserViews()[0]);
     }

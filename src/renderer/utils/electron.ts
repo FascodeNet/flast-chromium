@@ -1,7 +1,7 @@
 import { getCurrentWebContents, getCurrentWindow } from '@electron/remote';
 import { ipcRenderer } from 'electron';
 import { IBookmark, IHistory, UserConfig, UserType } from '../../interfaces/user';
-import { MoveDirection, ViewState } from '../../interfaces/view';
+import { FindState, MoveDirection, ViewState } from '../../interfaces/view';
 import { DeepPartial } from '../../utils';
 
 interface ElectronAPI {
@@ -35,11 +35,12 @@ interface ElectronAPI {
     stopView: (id: number) => Promise<void>;
     loadView: (id: number, url: string) => Promise<void>;
 
-    getCurrentUserId: () => Promise<string>;
-    getUserType: (id: string) => Promise<UserType>;
-    getUserConfig: (id: string) => Promise<UserConfig>;
-    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>;
+    showFindPopup: () => Promise<void>;
+    findInPage: (id: number, text: string, matchCase: boolean) => Promise<FindState>;
+    moveFindInPage: (id: number, forward: boolean) => Promise<FindState>;
+    stopFindInPage: (id: number, hide: boolean) => Promise<void>;
 
+    showBookmarksPopup: (x: number, y: number) => Promise<void>;
     getBookmarks: (userId: string) => Promise<IBookmark[]>;
     addBookmark: (userId: string, data: IBookmark) => Promise<void>;
     removeBookmark: (userId: string, id: string) => Promise<void>;
@@ -51,6 +52,12 @@ interface ElectronAPI {
 
     showExtensionsPopup: (x: number, y: number) => Promise<void>;
     showExtensionMenu: (id: string, x: number, y: number) => Promise<void>;
+
+
+    getCurrentUserId: () => Promise<string>;
+    getUserType: (id: string) => Promise<UserType>;
+    getUserConfig: (id: string) => Promise<UserConfig>;
+    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>;
 }
 
 const windowId = getCurrentWindow().id;
@@ -85,11 +92,12 @@ export const useElectronAPI = (): ElectronAPI => ({
     stopView: (id: number) => ipcRenderer.invoke(`view-stop-${windowId}`, id),
     loadView: (id: number, url: string) => ipcRenderer.invoke(`view-load-${windowId}`, id, url),
 
-    getCurrentUserId: () => ipcRenderer.invoke(`window-user-${windowId}`),
-    getUserType: (id: string) => ipcRenderer.invoke('get-user-type', id),
-    getUserConfig: (id: string) => ipcRenderer.invoke(`get-user-config`, id),
-    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke(`set-user-config`, id, config),
+    showFindPopup: () => ipcRenderer.invoke(`window-find-${windowId}`),
+    findInPage: (id: number, text: string, matchCase: boolean) => ipcRenderer.invoke(`view-find_in_page-${windowId}`, id, text, matchCase),
+    moveFindInPage: (id: number, forward: boolean) => ipcRenderer.invoke(`view-move_find_in_page-${windowId}`, id, forward),
+    stopFindInPage: (id: number, hide: boolean) => ipcRenderer.invoke(`view-stop_find_in_page-${windowId}`, id, hide),
 
+    showBookmarksPopup: (x: number, y: number) => ipcRenderer.invoke(`window-bookmarks-${windowId}`, x, y),
     getBookmarks: (userId: string) => ipcRenderer.invoke(`bookmarks-${userId}`),
     addBookmark: (userId: string, data: IBookmark) => ipcRenderer.invoke(`bookmark-add-${userId}`, data),
     removeBookmark: (userId: string, id: string) => ipcRenderer.invoke(`bookmark-remove-${userId}`, id),
@@ -100,5 +108,11 @@ export const useElectronAPI = (): ElectronAPI => ({
     removeHistory: (userId: string, id: string) => ipcRenderer.invoke(`history-remove-${userId}`, id),
 
     showExtensionsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-extensions-${windowId}`, x, y),
-    showExtensionMenu: (id: string, x: number, y: number) => ipcRenderer.invoke(`extension-menu-${windowId}`, id, x, y)
+    showExtensionMenu: (id: string, x: number, y: number) => ipcRenderer.invoke(`extension-menu-${windowId}`, id, x, y),
+
+
+    getCurrentUserId: () => ipcRenderer.invoke(`window-user-${windowId}`),
+    getUserType: (id: string) => ipcRenderer.invoke('get-user-type', id),
+    getUserConfig: (id: string) => ipcRenderer.invoke(`get-user-config`, id),
+    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke(`set-user-config`, id, config)
 });

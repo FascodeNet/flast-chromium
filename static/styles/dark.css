@@ -15,15 +15,15 @@
     color: var(--primary-foreground-color);
 }
 
-body, .app {
-    color: var(--primary-foreground-color);
-    background-color: var(--primary-background-color);
-}
-
 hr {
     border-color: var(--divider-color) !important;
 }
 
+
+.app {
+    color: var(--primary-foreground-color);
+    background-color: var(--primary-background-color);
+}
 
 .app:not(.top_double) .title-bar, .tool-bar {
     background-color: var(--primary-background-color);
@@ -172,7 +172,7 @@ button:not(:disabled):hover {
 }
 
 
-.popup, .panel {
+.panel {
     background-color: var(--primary-background-color);
 }
 
@@ -185,3 +185,6 @@ button:not(:disabled):hover {
     border-color: var(--hover-color);
 }
 
+.history-group h4 {
+    background-color: var(--primary-background-color);
+}

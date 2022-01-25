@@ -9,8 +9,11 @@ export const StyledHistoryGroup = styled.div`
   gap: 4px;
 
   h4 {
+    width: inherit;
     margin: 0;
-    padding: 4px 7px;
+    padding: 4px 8px;
+    position: sticky;
+    top: -9px;
     align-self: flex-start;
   }
 `;

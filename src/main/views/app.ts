@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import { app, BrowserView } from 'electron';
 import { join } from 'path';
 import {
@@ -6,8 +7,19 @@ import {
     WINDOW_TITLE_BAR_HEIGHT,
     WINDOW_TOOL_BAR_HEIGHT
 } from '../../constants/design';
-import { AppViewInitializerOptions, MediaStatus, ViewState, ZoomLevel, ZoomLevels } from '../../interfaces/view';
+import {
+    AppViewInitializerOptions,
+    DefaultFindState,
+    FindState,
+    MediaStatus,
+    ViewState,
+    ZoomLevel,
+    ZoomLevels
+} from '../../interfaces/view';
 import { APPLICATION_NAME } from '../../utils';
+import { getHeight } from '../../utils/design';
+import { Dialog } from '../dialogs/dialog';
+import { showFindDialog } from '../dialogs/find';
 import { IUser } from '../interfaces/user';
 import { ViewBoundsMapping } from '../interfaces/view';
 import { Main } from '../main';
@@ -16,6 +28,7 @@ import { getContextMenu } from '../menus/view';
 import { AppWindow } from '../windows/app';
 
 export class AppView {
+
     public readonly id: number;
 
     public browserView: BrowserView;
@@ -27,6 +40,10 @@ export class AppView {
 
     private mediaStatus: MediaStatus = 'none';
     private pinned: boolean = false;
+
+    public findDialog: Dialog | undefined = undefined;
+
+    private _findState: FindState | undefined = undefined;
 
     public incognito: boolean = false;
 
@@ -139,6 +156,29 @@ export class AppView {
         this.updateView();
     }
 
+    public get findState() {
+        return this._findState;
+    }
+
+    public get state(): ViewState {
+        return {
+            id: this.id,
+            title: this.getTitle(),
+            url: this.getURL(),
+            favicon: this.getFavicon(),
+            color: this.getColor(),
+
+            isLoading: this.isLoading(),
+            canGoBack: this.canGoBack(),
+            canGoForward: this.canGoForward(),
+
+            media: this.getMediaStatus(),
+            isPinned: this.isPinned(),
+
+            findState: this.findState
+        };
+    }
+
 
     public back() {
         if (!this.webContents.canGoBack()) return;
@@ -198,6 +238,43 @@ export class AppView {
         return levels.indexOf(minLevel);
     }
 
+    public findInPage(text: string | null, matchCase: boolean = false) {
+        if (!this.findDialog)
+            this.findDialog = showFindDialog(this.user, this);
+
+        if (!text) {
+            this._findState = DefaultFindState;
+            return;
+        }
+
+        this.webContents.findInPage(text, { forward: true, findNext: true, matchCase });
+        this._findState = {
+            text,
+            matchCase,
+
+            index: 0,
+            matches: 0,
+
+            finalUpdate: false
+        };
+        this.findDialog.webContents.send(`view-find-${this.window.id}`, this.id, this._findState);
+    }
+
+    public moveFindInPage(forward: boolean = true) {
+        if (!this._findState) return;
+
+        const { text, matchCase } = this._findState;
+        if (!text) return;
+        this.webContents.findInPage(text, { forward, findNext: false, matchCase });
+        this.findDialog?.webContents.send(`view-find-${this.window.id}`, this.id, this._findState);
+    }
+
+    public stopFindInPage(action: 'clearSelection' | 'keepSelection' | 'activateSelection' = 'keepSelection') {
+        this.webContents.stopFindInPage(action);
+        this._findState = undefined;
+        this.findDialog?.webContents.send(`view-find-${this.window.id}`, this.id, this._findState);
+    }
+
 
     public setWindowTitle() {
         if (this.window.viewManager.selectedId !== this.id) return;
@@ -208,7 +285,7 @@ export class AppView {
         if (this.window.viewManager.selectedId !== this.id) return;
 
         const { width, height } = this.window.browserWindow.getContentBounds();
-        const { user: userState, html: htmlState } = this.window.fullScreenState;
+        const { html: htmlState } = this.window.fullScreenState;
         const isFullScreen = this.window.browserWindow.isFullScreen();
         const isMaximized = this.window.browserWindow.isMaximized();
 
@@ -442,25 +519,29 @@ export class AppView {
 
         this.window.browserWindow.addBrowserView(this.browserView);
         this.window.browserWindow.setTopBrowserView(this.browserView);
+        const findDialog = this.findDialog;
+        if (findDialog && !findDialog.webContents.isDestroyed()) {
+            findDialog.browserWindow = this.window.browserWindow;
+
+            const { width } = this.window.browserWindow.getContentBounds();
+            findDialog.bounds = {
+                width: 350,
+                height: 70,
+                x: width - 400,
+                y: getHeight(this.user.settings.config.appearance.style)
+            };
+
+            Main.dialogManager.show(findDialog);
+        }
     }
 
-    public getState(): ViewState {
-        return {
-            id: this.id,
-            title: this.getTitle(),
-            url: this.getURL(),
-            favicon: this.getFavicon(),
-            color: this.getColor(),
+    public updateView() {
+        if (this.webContents.isDestroyed()) return;
 
-            isLoading: this.isLoading(),
-            canGoBack: this.canGoBack(),
-            canGoForward: this.canGoForward(),
-
-            media: this.getMediaStatus(),
-            isPinned: this.isPinned()
-        };
+        this.setWindowTitle();
+        this.window.setApplicationMenu();
+        this.window.browserWindow.webContents.send(`view-${this.window.id}`, this.state);
     }
-
 
     private setListeners() {
         const webContents = this.webContents;
@@ -519,18 +600,18 @@ export class AppView {
             this.updateView();
         });
 
+        webContents.on('found-in-page', (e, { activeMatchOrdinal, matches, finalUpdate }) => {
+            this._findState = deepmerge<FindState>(this._findState ?? DefaultFindState, {
+                index: activeMatchOrdinal,
+                matches,
+                finalUpdate
+            });
+            this.findDialog?.webContents.send(`view-find-${this.window.id}`, this.id, this._findState);
+        });
+
         webContents.on('context-menu', (e, params) => {
             const menu = getContextMenu(this.window, this, params);
             menu.popup({ window: this.window.browserWindow });
         });
-    }
-
-
-    public updateView() {
-        if (this.webContents.isDestroyed()) return;
-
-        this.setWindowTitle();
-        this.window.setApplicationMenu();
-        this.window.browserWindow.webContents.send(`view-${this.window.id}`, this.getState());
     }
 }

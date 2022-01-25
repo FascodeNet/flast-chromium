@@ -41,6 +41,8 @@ export interface ViewState {
 
     media: MediaStatus;
     isPinned: boolean;
+
+    findState?: FindState;
 }
 
 export const DefaultViewState: ViewState = {
@@ -55,7 +57,29 @@ export const DefaultViewState: ViewState = {
     canGoForward: false,
 
     media: 'none',
-    isPinned: false
+    isPinned: false,
+
+    findState: undefined
+};
+
+export interface FindState {
+    text: string;
+    matchCase: boolean;
+
+    index: number;
+    matches: number;
+
+    finalUpdate: boolean;
+}
+
+export const DefaultFindState: FindState = {
+    text: '',
+    matchCase: false,
+
+    index: 0,
+    matches: 0,
+
+    finalUpdate: false
 };
 
 

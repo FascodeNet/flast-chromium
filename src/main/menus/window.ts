@@ -1,7 +1,7 @@
 import { app, dialog, Menu, MenuItemConstructorOptions, nativeImage } from 'electron';
-import { isHorizontal } from '../../interfaces/user';
 import { getTranslate } from '../../languages/language';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
+import { isHorizontal } from '../../utils/design';
 import { IS_MAC } from '../../utils/process';
 import { Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
@@ -315,13 +315,25 @@ export const getWindowMenu = (window: AppWindow) => {
             {
                 label: languageSection.edit.find,
                 icon: !IS_MAC ? getMenuItemIconFromName('search') : undefined,
-                accelerator: Shortcuts.FIND_1
+                accelerator: Shortcuts.FIND_1,
+                click: () => {
+                    const view = viewManager.get();
+                    if (!view) return;
+
+                    view.findInPage(null);
+                }
             },
             {
                 label: languageSection.edit.find,
                 icon: !IS_MAC ? getMenuItemIconFromName('search') : undefined,
                 accelerator: Shortcuts.FIND_2,
-                visible: false
+                visible: false,
+                click: () => {
+                    const view = viewManager.get();
+                    if (!view) return;
+
+                    view.findInPage(null);
+                }
             }
         ]
     };
