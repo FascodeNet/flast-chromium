@@ -3,7 +3,7 @@ import { Divider } from '@mui/material';
 import { ipcRenderer } from 'electron';
 import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import { FindState } from '../../../../../../interfaces/view';
-import { ArrowDown, ArrowUp } from '../../../../../components/Icons';
+import { ArrowDown, ArrowUp, Remove } from '../../../../../components/Icons';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledButton, StyledContainer, StyledInput, StyledLabel, StyledPanel } from './styles';
@@ -40,8 +40,7 @@ export const Panel = () => {
         setValue(e.target.value);
 
         if (text === '') {
-            await stopFindInPage(selectedId, false);
-            setState(undefined);
+            await stop(false);
         } else {
             const state = await findInPage(selectedId, text, false);
             setState(state);
@@ -55,15 +54,18 @@ export const Panel = () => {
 
     const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key !== 'Escape') return;
-
-        setValue('');
-        await stopFindInPage(selectedId, true);
-        setState(undefined);
+        await stop(true);
     };
 
     const move = async (forward: boolean) => {
         const state = await moveFindInPage(selectedId, forward);
         setState(state);
+    };
+
+    const stop = async (hide: boolean) => {
+        setValue('');
+        await stopFindInPage(selectedId, hide);
+        setState(undefined);
     };
 
     return (
@@ -81,6 +83,9 @@ export const Panel = () => {
             </StyledButton>
             <StyledButton onClick={() => move(true)}>
                 <ArrowDown />
+            </StyledButton>
+            <StyledButton onClick={() => stop(true)}>
+                <Remove />
             </StyledButton>
         </StyledPanel>
     );

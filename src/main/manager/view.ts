@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, webContents } from 'electron';
 import { MoveDirection } from '../../interfaces/view';
 import { nonNullable } from '../../utils/array';
 import { Main } from '../main';
@@ -61,7 +61,7 @@ export class ViewManager {
         this.views.set(view.id, view);
         this.sortOrders.push(view.id);
 
-        this.window.browserWindow.webContents.send(`view-${this.window.id}`, view.state);
+        webContents.getAllWebContents().forEach((webContents) => webContents.send(`view-${this.window.id}`, view.state));
         if (active)
             this.selectOf(view);
 
@@ -162,8 +162,8 @@ export class ViewManager {
         if (view.user.type === 'normal')
             view.user.session.extensions.selectTab(view.webContents);
 
-        this.window.browserWindow.webContents.send(`view-select-${this.window.id}`, view.id);
-        this.window.browserWindow.webContents.send(`view-${this.window.id}`, view.state);
+        webContents.getAllWebContents().forEach((webContents) => webContents.send(`view-select-${this.window.id}`, view.id));
+        webContents.getAllWebContents().forEach((webContents) => webContents.send(`view-${this.window.id}`, view.state));
         this.updateViews();
     }
 

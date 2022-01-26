@@ -3,6 +3,7 @@ import { app, BrowserView, BrowserWindow, ipcMain, Rectangle } from 'electron';
 import { join } from 'path';
 import { IDialog } from '../interfaces/dialog';
 import { IUser } from '../interfaces/user';
+import { Main } from '../main';
 
 export class Dialog {
 
@@ -75,6 +76,10 @@ export class Dialog {
         this.setStyle();
 
         ipcMain.handle(`dialog-hide-${this.browserView.webContents.id}`, onHide);
+        ipcMain.handle(
+            `dialog-destroy-${this.browserView.webContents.id}`,
+            () => Main.dialogManager.destroy(this)
+        );
     }
 
     public get webContents() {
@@ -105,6 +110,7 @@ export class Dialog {
         this.browserWindow.off('resize', this.listeners.onResize);
         this.browserWindow.off('move', this.listeners.onMove);
         ipcMain.removeHandler(`dialog-hide-${this.browserView.webContents.id}`);
+        ipcMain.removeHandler(`dialog-destroy-${this.browserView.webContents.id}`);
     }
 
 

@@ -35,6 +35,8 @@ interface ElectronAPI {
     stopView: (id: number) => Promise<void>;
     loadView: (id: number, url: string) => Promise<void>;
 
+    destroyDialog: () => Promise<void>;
+
     showFindPopup: () => Promise<void>;
     findInPage: (id: number, text: string, matchCase: boolean) => Promise<FindState>;
     moveFindInPage: (id: number, forward: boolean) => Promise<FindState>;
@@ -61,6 +63,7 @@ interface ElectronAPI {
 }
 
 const windowId = getCurrentWindow().id;
+const webContentsId = getCurrentWebContents().id;
 export const useElectronAPI = (): ElectronAPI => ({
     getWindowId: () => getCurrentWindow().id,
     showApplicationMenu: () => ipcRenderer.invoke(`window-menu-${windowId}`),
@@ -91,6 +94,8 @@ export const useElectronAPI = (): ElectronAPI => ({
     reloadView: (id: number) => ipcRenderer.invoke(`view-reload-${windowId}`, id),
     stopView: (id: number) => ipcRenderer.invoke(`view-stop-${windowId}`, id),
     loadView: (id: number, url: string) => ipcRenderer.invoke(`view-load-${windowId}`, id, url),
+
+    destroyDialog: () => ipcRenderer.invoke(`dialog-destroy-${webContentsId}`),
 
     showFindPopup: () => ipcRenderer.invoke(`window-find-${windowId}`),
     findInPage: (id: number, text: string, matchCase: boolean) => ipcRenderer.invoke(`view-find_in_page-${windowId}`, id, text, matchCase),

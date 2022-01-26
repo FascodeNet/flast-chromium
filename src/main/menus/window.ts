@@ -3,6 +3,7 @@ import { getTranslate } from '../../languages/language';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
 import { isHorizontal } from '../../utils/design';
 import { IS_MAC } from '../../utils/process';
+import { showSearchDialog } from '../dialogs/search';
 import { Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
@@ -13,7 +14,7 @@ import { Shortcuts } from './shortcuts';
 
 export const getWindowMenu = (window: AppWindow) => {
     const translate = getTranslate(window.user.settings.config);
-    const languageSection = translate.menus.application;
+    const languageSection = translate.menus.window;
 
     const viewManager = window.viewManager;
 
@@ -517,6 +518,15 @@ export const getWindowMenu = (window: AppWindow) => {
         icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
         accelerator: 'Alt+N',
         submenu: [
+            {
+                label: languageSection.navigation.intelligentSearch,
+                icon: !IS_MAC ? getMenuItemIconFromName('search') : undefined,
+                accelerator: Shortcuts.NAVIGATION_SEARCH,
+                click: () => {
+                    showSearchDialog(window.user, window);
+                }
+            },
+            { type: 'separator' },
             {
                 label: languageSection.navigation.back,
                 icon: !IS_MAC ? getMenuItemIconFromName('arrow_left') : undefined,

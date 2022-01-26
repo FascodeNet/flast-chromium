@@ -18,7 +18,7 @@ export interface Language {
         openIncognitoWindow: string;
     };
     menus: {
-        application: {
+        window: {
             app: {
                 label: string;
 
@@ -71,6 +71,7 @@ export interface Language {
             navigation: {
                 label: string;
 
+                intelligentSearch: string;
                 back: string;
                 forward: string;
                 reload: string;

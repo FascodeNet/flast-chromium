@@ -8,7 +8,7 @@ export const En: Language = {
         openIncognitoWindow: 'Open Private window'
     },
     menus: {
-        application: {
+        window: {
             app: {
                 label: APPLICATION_NAME,
                 about: `About ${APPLICATION_NAME}`,
@@ -60,6 +60,7 @@ export const En: Language = {
             navigation: {
                 label: 'Navigation',
 
+                intelligentSearch: 'Intelligent Search',
                 back: 'Go back',
                 forward: 'Go forward',
                 reload: 'Reload',

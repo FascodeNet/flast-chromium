@@ -11,7 +11,7 @@ import { Shortcuts } from './shortcuts';
 
 export const getApplicationMenu = (user: IUser) => {
     const translate = getTranslate(user.settings.config);
-    const languageSection = translate.menus.application;
+    const languageSection = translate.menus.window;
 
     const applicationOptions: MenuItemConstructorOptions | undefined = IS_MAC ? {
         label: languageSection.app.label,

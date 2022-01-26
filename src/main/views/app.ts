@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { app, BrowserView } from 'electron';
+import { app, BrowserView, webContents } from 'electron';
 import { join } from 'path';
 import {
     WINDOW_EXTENDED_SIDEBAR_WIDTH,
@@ -7,6 +7,7 @@ import {
     WINDOW_TITLE_BAR_HEIGHT,
     WINDOW_TOOL_BAR_HEIGHT
 } from '../../constants/design';
+import { DIALOG_SEARCH_NAME } from '../../constants/dialog';
 import {
     AppViewInitializerOptions,
     DefaultFindState,
@@ -20,6 +21,7 @@ import { APPLICATION_NAME } from '../../utils';
 import { getHeight } from '../../utils/design';
 import { Dialog } from '../dialogs/dialog';
 import { showFindDialog } from '../dialogs/find';
+import { showSearchDialog } from '../dialogs/search';
 import { IUser } from '../interfaces/user';
 import { ViewBoundsMapping } from '../interfaces/view';
 import { Main } from '../main';
@@ -525,7 +527,7 @@ export class AppView {
 
             const { width } = this.window.browserWindow.getContentBounds();
             findDialog.bounds = {
-                width: 350,
+                width: 380,
                 height: 70,
                 x: width - 400,
                 y: getHeight(this.user.settings.config.appearance.style)
@@ -533,6 +535,10 @@ export class AppView {
 
             Main.dialogManager.show(findDialog);
         }
+
+        const searchDialog = Main.dialogManager.getDynamic(DIALOG_SEARCH_NAME);
+        if (searchDialog && !searchDialog.webContents.isDestroyed())
+            showSearchDialog(this.user, this.window);
     }
 
     public updateView() {
@@ -540,7 +546,7 @@ export class AppView {
 
         this.setWindowTitle();
         this.window.setApplicationMenu();
-        this.window.browserWindow.webContents.send(`view-${this.window.id}`, this.state);
+        webContents.getAllWebContents().forEach((webContents) => webContents.send(`view-${this.window.id}`, this.state));
     }
 
     private setListeners() {

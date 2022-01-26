@@ -8,7 +8,7 @@ export const Ja: Language = {
         openIncognitoWindow: 'プライベート ウィンドウを開く'
     },
     menus: {
-        application: {
+        window: {
             app: {
                 label: APPLICATION_NAME,
 
@@ -61,6 +61,7 @@ export const Ja: Language = {
             navigation: {
                 label: 'ナビゲーション',
 
+                intelligentSearch: 'インテリジェント・サーチ',
                 back: '前のページに戻る',
                 forward: '次のページに進む',
                 reload: '再読み込み',

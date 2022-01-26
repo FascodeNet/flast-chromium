@@ -154,7 +154,6 @@ button:not(:disabled):hover {
 }
 
 
-
 .sidebar.left {
     border-right: solid 1px var(--divider-color);
 }
@@ -180,6 +179,7 @@ button:not(:disabled):hover {
     border-bottom-color: var(--divider-color);
 }
 
+.search-result-item.selected, .search-result-item:hover,
 .bookmark-item:hover, .history-item:hover, .extension-item:hover {
     background-color: var(--hover-color);
     border-color: var(--hover-color);

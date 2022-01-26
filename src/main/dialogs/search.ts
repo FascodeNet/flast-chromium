@@ -1,28 +1,26 @@
 import { app } from 'electron';
 import { join } from 'path';
-import { DIALOG_FIND_NAME } from '../../constants/dialog';
-import { getHeight } from '../../utils/design';
+import { DIALOG_SEARCH_NAME } from '../../constants/dialog';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
-import { AppView } from '../views/app';
+import { AppWindow } from '../windows/app';
 import { Dialog } from './dialog';
 
-export const showFindDialog = (user: IUser, view: AppView): Dialog => {
+export const showSearchDialog = (user: IUser, window: AppWindow): Dialog => {
     const dialogManager = Main.dialogManager;
 
-    const { width } = view.window.browserWindow.getContentBounds();
+    const { width, height } = window.browserWindow.getContentBounds();
     const bounds = {
-        width: 380,
-        height: 70,
-        x: width - 400,
-        y: getHeight(user.settings.config.appearance.style)
+        width: width,
+        height: height,
+        x: 0,
+        y: 0
     };
 
-    const dialogName = `${DIALOG_FIND_NAME}-${view.id}`;
-    const dynamicDialog = dialogManager.getDynamic(dialogName);
+    const dynamicDialog = dialogManager.getDynamic(DIALOG_SEARCH_NAME);
     if (dynamicDialog) {
-        dynamicDialog.browserWindow = view.window.browserWindow;
+        dynamicDialog.browserWindow = window.browserWindow;
         dynamicDialog.bounds = bounds;
         dialogManager.show(dynamicDialog);
         return dynamicDialog;
@@ -30,9 +28,9 @@ export const showFindDialog = (user: IUser, view: AppView): Dialog => {
         const dialog = dialogManager.show(
             new Dialog(
                 user,
-                view.window.browserWindow,
+                window.browserWindow,
                 {
-                    name: dialogName,
+                    name: DIALOG_SEARCH_NAME,
                     bounds
                     // onWindowBoundsUpdate: () => dialogManager.destroy(dialog),
                     // onHide: () => dialogManager.destroy(dialog)
@@ -40,7 +38,7 @@ export const showFindDialog = (user: IUser, view: AppView): Dialog => {
             )
         );
 
-        dialog.webContents.loadFile(join(app.getAppPath(), 'build', 'browser', 'find.html'));
+        dialog.webContents.loadFile(join(app.getAppPath(), 'build', 'browser', 'search.html'));
         dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {

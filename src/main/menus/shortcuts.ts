@@ -31,6 +31,7 @@ export const Shortcuts = {
     DEVELOPER_TOOLS_1: 'CmdOrCtrl+Shift+I',
     DEVELOPER_TOOLS_2: 'F12',
     APPLICATION_DEVELOPER_TOOLS: 'CmdOrCtrl+Shift+F12',
+    NAVIGATION_SEARCH: 'CmdOrCtrl+Shift+S',
     NAVIGATION_BACK: !IS_MAC ? 'Alt+Left' : 'Cmd+[',
     NAVIGATION_FORWARD: !IS_MAC ? 'Alt+Right' : 'Cmd+]',
     NAVIGATION_RELOAD_1: 'CmdOrCtrl+R',

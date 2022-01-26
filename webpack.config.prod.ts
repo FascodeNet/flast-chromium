@@ -49,6 +49,7 @@ applyBrowserEntries(
     [
         'app',
         'process-manager',
+        'search',
         'find',
         'histories',
         'extensions'
