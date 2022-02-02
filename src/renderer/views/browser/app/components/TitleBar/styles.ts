@@ -33,6 +33,17 @@ export const StyledContainer = styled.div<StyledProps>`
   ${({ appearanceStyle }) => getStyle(appearanceStyle)};
 `;
 
+export const StyledWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  grid-area: wrapper;
+  display: grid;
+  grid-template-columns: minmax(250px, 25%) 1px 1fr;
+  grid-template-areas: 'address-bar divider horizontal-tab-container';
+  align-items: center;
+  gap: 8px;
+`;
+
 export const StyledWindowControls = styled.div`
   width: 100%;
   height: inherit;
@@ -52,12 +63,12 @@ const getStyle = (style: AppearanceStyle) => {
             return css`
               ${!isMac ? css`
                 padding: .5rem 1rem .5rem .5rem;
-                grid-template-columns: calc(50px - 1rem) auto minmax(250px, 25%) 1px 1fr auto;
-                grid-template-areas: 'application-menu navigation-bar address-bar divider horizontal-tab-container action-bar';
+                grid-template-columns: calc(50px - 1rem) auto 1fr auto;
+                grid-template-areas: 'application-menu navigation-bar wrapper action-bar';
               ` : css`
                 padding: .5rem;
-                grid-template-columns: auto minmax(250px, 25%) 1px 1fr auto;
-                grid-template-areas: 'navigation-bar address-bar divider horizontal-tab-container action-bar';
+                grid-template-columns: auto 1fr auto;
+                grid-template-areas: 'navigation-bar wrapper action-bar';
               `};
             `;
         case 'top_double':

@@ -3,7 +3,6 @@ import { getTranslate } from '../../languages/language';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
 import { isHorizontal } from '../../utils/design';
 import { IS_MAC } from '../../utils/process';
-import { showSearchDialog } from '../dialogs/search';
 import { Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
@@ -19,7 +18,7 @@ export const getWindowMenu = (window: AppWindow) => {
     const viewManager = window.viewManager;
 
     const getFavicon = (view: AppView) => {
-        let dataURL = view.getFavicon();
+        let dataURL = view.favicon;
         if (dataURL) {
             // some favicon data urls have a corrupted base 64 file type descriptor
             // prefixed with data:png;base64, instead of data:image/png;base64,
@@ -116,7 +115,7 @@ export const getWindowMenu = (window: AppWindow) => {
                     if (!view) return;
 
                     dialog.showSaveDialog({
-                        defaultPath: `${app.getPath('downloads')}/${view.getTitle()}`,
+                        defaultPath: `${app.getPath('downloads')}/${view.title}`,
                         filters: [
                             { name: 'Web ページ', extensions: ['html'] }
                         ]
@@ -156,7 +155,7 @@ export const getWindowMenu = (window: AppWindow) => {
                         return;
                     }
 
-                    if (new URL(view.getURL()).protocol === `${APPLICATION_PROTOCOL}:`) {
+                    if (new URL(view.url).protocol === `${APPLICATION_PROTOCOL}:`) {
                         view.load(url);
                     } else {
                         viewManager.add(url);
@@ -465,13 +464,13 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.view.viewSource,
                 icon: !IS_MAC ? getMenuItemIconFromName('view_source') : undefined,
                 accelerator: Shortcuts.VIEW_SOURCE,
-                enabled: !viewManager.get()?.getURL().startsWith('view-source:'),
+                enabled: !viewManager.get()?.url.startsWith('view-source:'),
                 click: () => {
                     const view = viewManager.get();
                     if (!view) return;
 
                     const appView = viewManager.add('about:blank');
-                    appView.load(`view-source:${view.getURL()}`);
+                    appView.load(`view-source:${view.url}`);
                 }
             },
             {
@@ -523,7 +522,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('search') : undefined,
                 accelerator: Shortcuts.NAVIGATION_SEARCH,
                 click: () => {
-                    showSearchDialog(window.user, window);
+                    // showSearchDialog(window.user, window);
                 }
             },
             { type: 'separator' },
@@ -558,7 +557,7 @@ export const getWindowMenu = (window: AppWindow) => {
                     const view = viewManager.get();
                     if (!view) return;
 
-                    !view.isLoading() ? view.reload() : view.stop();
+                    !view.isLoading ? view.reload() : view.stop();
                 }
             },
             {
@@ -570,7 +569,7 @@ export const getWindowMenu = (window: AppWindow) => {
                     const view = viewManager.get();
                     if (!view) return;
 
-                    !view.isLoading() ? view.reload() : view.stop();
+                    !view.isLoading ? view.reload() : view.stop();
                 }
             },
             {
@@ -581,7 +580,7 @@ export const getWindowMenu = (window: AppWindow) => {
                     const view = viewManager.get();
                     if (!view) return;
 
-                    !view.isLoading() ? view.reload(true) : view.stop();
+                    !view.isLoading ? view.reload(true) : view.stop();
                 }
             },
             { type: 'separator' },
@@ -708,7 +707,7 @@ export const getWindowMenu = (window: AppWindow) => {
             { type: 'separator' },
             ...(viewManager.getViews().map((appView): MenuItemConstructorOptions => (
                 {
-                    label: appView.getTitle(),
+                    label: appView.title,
                     icon: !IS_MAC ? (viewManager.selectedId === appView.id ? getMenuItemIconFromName('check') : getFavicon(appView)) : undefined,
                     // type: 'checkbox',
                     enabled: viewManager.selectedId !== appView.id,
@@ -762,7 +761,7 @@ export const getWindowMenu = (window: AppWindow) => {
 
                 return (
                     {
-                        label: `${windowViewManager.get()?.getTitle() ?? appWindow.getTitle()}${subLabel}`,
+                        label: `${windowViewManager.get()?.title ?? appWindow.title}${subLabel}`,
                         icon: !IS_MAC ? (window.id === appWindow.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
                         // type: 'checkbox',
                         enabled: window.id !== appWindow.id,

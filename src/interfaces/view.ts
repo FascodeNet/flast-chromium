@@ -1,3 +1,5 @@
+import { RequestState } from '../main/utils/request';
+
 export interface AppViewInitializerOptions {
     url: string;
     incognito: boolean;
@@ -35,6 +37,8 @@ export interface ViewState {
     favicon?: string;
     color?: string;
 
+    requestState?: RequestState;
+
     isLoading: boolean;
     canGoBack: boolean;
     canGoForward: boolean;
@@ -51,6 +55,8 @@ export const DefaultViewState: ViewState = {
     url: '',
     favicon: undefined,
     color: undefined,
+
+    requestState: undefined,
 
     isLoading: false,
     canGoBack: false,

@@ -312,22 +312,22 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                 label: languageSection.back,
                 icon: getMenuItemIconFromName('arrow_left'),
                 accelerator: Shortcuts.NAVIGATION_BACK,
-                enabled: view.canGoBack(),
+                enabled: view.canGoBack,
                 click: () => view.back()
             },
             {
                 label: languageSection.forward,
                 icon: getMenuItemIconFromName('arrow_right'),
                 accelerator: Shortcuts.NAVIGATION_FORWARD,
-                enabled: view.canGoForward(),
+                enabled: view.canGoForward,
                 click: () => view.forward()
             },
             {
-                label: !view.isLoading() ? languageSection.reload : languageSection.stop,
-                icon: getMenuItemIconFromName(!view.isLoading() ? 'reload' : 'remove'),
+                label: !view.isLoading ? languageSection.reload : languageSection.stop,
+                icon: getMenuItemIconFromName(!view.isLoading ? 'reload' : 'remove'),
                 accelerator: Shortcuts.NAVIGATION_RELOAD_1,
                 click: () => {
-                    !view.isLoading() ? webContents.reload() : webContents.stop();
+                    !view.isLoading ? webContents.reload() : webContents.stop();
                 }
             },
             ...mediaOptions,
@@ -365,10 +365,10 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                 label: languageSection.viewSource,
                 icon: getMenuItemIconFromName('view_source'),
                 accelerator: Shortcuts.VIEW_SOURCE,
-                enabled: !view.getURL().startsWith('view-source:'),
+                enabled: !view.url.startsWith('view-source:'),
                 click: () => {
                     const appView = window.viewManager.add('about:blank');
-                    appView.load(`view-source:${view.getURL()}`);
+                    appView.load(`view-source:${view.url}`);
                 }
             },
             {
@@ -404,16 +404,16 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
             },
             { type: 'separator' },
             {
-                label: !view.isLoading() ? languageSection.reload : languageSection.stop,
-                icon: getMenuItemIconFromName(!view.isLoading() ? 'reload' : 'remove'),
+                label: !view.isLoading ? languageSection.reload : languageSection.stop,
+                icon: getMenuItemIconFromName(!view.isLoading ? 'reload' : 'remove'),
                 accelerator: Shortcuts.NAVIGATION_RELOAD_1,
-                click: () => !view.isLoading() ? view.reload() : view.stop()
+                click: () => !view.isLoading ? view.reload() : view.stop()
             },
             {
                 label: languageSection.duplicate,
                 icon: getMenuItemIconFromName('tab_duplicate'),
                 accelerator: Shortcuts.TAB_DUPLICATE,
-                click: () => viewManager.add(view.getURL())
+                click: () => viewManager.add(view.url)
             },
             {
                 label: !view.isPinned() ? languageSection.pin : languageSection.unpin,

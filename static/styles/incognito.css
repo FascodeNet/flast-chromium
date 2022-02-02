@@ -72,6 +72,26 @@ button:not(:disabled):hover {
     border-color: var(--secondary-background-color);
 }
 
+.address-bar .hostname {
+    color: inherit;
+}
+
+.address-bar .path {
+    color: #696a6c;
+}
+
+.address-bar.secure .protocol {
+    color: #188038;
+}
+
+.address-bar.insecure .protocol {
+    color: #c5221f;
+}
+
+.address-bar.internal .protocol, .address-bar.file .protocol {
+    color: #696a6c;
+}
+
 .address-bar-input:hover {
     border-color: var(--divider-color);
 }
@@ -153,6 +173,11 @@ button:not(:disabled):hover {
     border-color: var(--divider-color);
 }
 
+
+.popup.search > .panel.search-bar,
+.popup.search > .panel.search-result {
+    background-color: var(--secondary-background-color);
+}
 
 
 .sidebar.left {

@@ -8,6 +8,7 @@ import { isHorizontal } from '../../utils/design';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { showExtensionsDialog } from '../dialogs/extensions';
 import { showHistoriesDialog } from '../dialogs/histories';
+import { showSearchDialog } from '../dialogs/search';
 import { IUser } from '../interfaces/user';
 import { AppWindowInitializerOptions } from '../interfaces/window';
 import { Main } from '../main';
@@ -90,11 +91,11 @@ export class AppWindow {
         return this.browserWindow.webContents;
     }
 
-    public getTitle() {
+    public get title() {
         return this.browserWindow.getTitle();
     }
 
-    public getURL() {
+    public get url() {
         return this.webContents.getURL();
     }
 
@@ -234,6 +235,10 @@ export class AppWindow {
         });
         ipcMain.handle(`window-close-${this.id}`, () => {
             this.close();
+        });
+
+        ipcMain.handle(`window-show_search-${this.id}`, (e, x: number, y: number, width: number) => {
+            showSearchDialog(this.user, this, x, y, width);
         });
 
         ipcMain.handle(`window-find-${this.id}`, () => {

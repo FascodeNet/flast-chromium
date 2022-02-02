@@ -13,8 +13,9 @@ export const Container = ({ children }: Props) => {
 
     const { mode: { path: modePath }, theme: { value: theme, path: themePath } } = useTheme();
 
-    const handleClick = async (e: MouseEvent<HTMLDivElement>) => {
-        if (!(e.target as EventTarget & HTMLDivElement).classList.contains('dialog-container')) return;
+    const handlePopupClick = async (e: MouseEvent<HTMLDivElement>) => {
+        console.log(e.target, e.currentTarget);
+        if (e.target !== e.currentTarget) return;
         await destroyDialog();
     };
 
@@ -24,7 +25,7 @@ export const Container = ({ children }: Props) => {
                 <link rel="stylesheet" type="text/css" href={modePath} />
                 {theme && <link rel="stylesheet" type="text/css" href={themePath} />}
             </Helmet>
-            <StyledContainer className="dialog-container" onClick={handleClick}>
+            <StyledContainer className="popup search" onClick={handlePopupClick}>
                 {children}
             </StyledContainer>
         </Fragment>

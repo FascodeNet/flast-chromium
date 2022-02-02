@@ -9,10 +9,10 @@ import { AddressBar } from '../AddressBar';
 import { ApplicationMenuButton } from '../ApplicationMenuButton';
 import { NavigationBar } from '../NavigationBar';
 import { HorizontalTabContainer } from '../TabContainer';
-import { StyledContainer, StyledTitleBar, StyledWindowControls } from './styles';
+import { StyledContainer, StyledTitleBar, StyledWindowControls, StyledWrapper } from './styles';
 
 export const TitleBar = () => {
-    const { isMaximized, isFullScreen, minimize, maximize, fullScreen, close } = useElectronAPI();
+    const { isMaximized, isFullScreen, minimize, maximize, close } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
@@ -42,9 +42,11 @@ export const TitleBar = () => {
                     <StyledContainer className="title-bar-content" appearanceStyle={style}>
                         {!isMac && <ApplicationMenuButton />}
                         <NavigationBar />
-                        <AddressBar />
-                        <Divider flexItem orientation="vertical" variant="middle" sx={{ gridArea: 'divider' }} />
-                        <HorizontalTabContainer />
+                        <StyledWrapper>
+                            <AddressBar />
+                            <Divider flexItem orientation="vertical" variant="middle" sx={{ gridArea: 'divider' }} />
+                            <HorizontalTabContainer />
+                        </StyledWrapper>
                         <ActionBar />
                     </StyledContainer>
                 );

@@ -8,7 +8,7 @@ interface Props {
 
 export const ResultPanel = ({ children }: Props) => {
     return (
-        <StyledPanel className="popup panel search-result">
+        <StyledPanel className="panel search-result">
             {children}
         </StyledPanel>
     );

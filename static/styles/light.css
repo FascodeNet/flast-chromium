@@ -74,8 +74,28 @@ button:not(:disabled):hover {
 
 
 .address-bar, .address-bar-input {
-    background-color: var(--secondary-background-color);
+    background-color: #edf0f1;
     border-color: var(--secondary-background-color);
+}
+
+.address-bar .hostname {
+    color: inherit;
+}
+
+.address-bar .path {
+    color: #909192;
+}
+
+.address-bar.secure .protocol {
+    color: #81c995;
+}
+
+.address-bar.insecure .protocol {
+    color: #f28b82;
+}
+
+.address-bar.internal .protocol, .address-bar.file .protocol {
+    color: #909192;
 }
 
 .address-bar-input:hover {
@@ -159,6 +179,11 @@ button:not(:disabled):hover {
     border-color: var(--divider-color);
 }
 
+
+.popup.search > .panel.search-bar,
+.popup.search > .panel.search-result {
+    background-color: var(--primary-background-color);
+}
 
 
 .sidebar.left {

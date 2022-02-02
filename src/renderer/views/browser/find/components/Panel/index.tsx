@@ -1,7 +1,7 @@
 import { getCurrentWindow } from '@electron/remote';
 import { Divider } from '@mui/material';
 import { ipcRenderer } from 'electron';
-import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { FindState } from '../../../../../../interfaces/view';
 import { ArrowDown, ArrowUp, Remove } from '../../../../../components/Icons';
 import { useViewManagerContext } from '../../../../../contexts/view';
@@ -68,11 +68,16 @@ export const Panel = () => {
         setState(undefined);
     };
 
+    const ref = useRef<HTMLInputElement>(null);
+    useEffect(() => {
+        ref.current?.focus();
+    }, []);
+
     return (
         <StyledPanel className="panel">
             <StyledContainer>
                 <StyledInput
-                    type="text" value={value}
+                    ref={ref} type="text" value={value}
                     onChange={handleChange} onKeyPress={handleKeyPress} onKeyDown={handleKeyDown}
                 />
                 <StyledLabel>{state ? `${state.index} / ${state.matches}` : '0 / 0'}</StyledLabel>

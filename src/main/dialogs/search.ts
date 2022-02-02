@@ -7,15 +7,15 @@ import { Main } from '../main';
 import { AppWindow } from '../windows/app';
 import { Dialog } from './dialog';
 
-export const showSearchDialog = (user: IUser, window: AppWindow): Dialog => {
+export const showSearchDialog = (user: IUser, window: AppWindow, x: number, y: number, width: number): Dialog => {
     const dialogManager = Main.dialogManager;
 
-    const { width, height } = window.browserWindow.getContentBounds();
+    const { height } = window.browserWindow.getContentBounds();
     const bounds = {
         width: width,
         height: height,
-        x: 0,
-        y: 0
+        x: x,
+        y: y
     };
 
     const dynamicDialog = dialogManager.getDynamic(DIALOG_SEARCH_NAME);
@@ -31,9 +31,15 @@ export const showSearchDialog = (user: IUser, window: AppWindow): Dialog => {
                 window.browserWindow,
                 {
                     name: DIALOG_SEARCH_NAME,
-                    bounds
-                    // onWindowBoundsUpdate: () => dialogManager.destroy(dialog),
-                    // onHide: () => dialogManager.destroy(dialog)
+                    bounds,
+                    onWindowBoundsUpdate: () => {
+                        // dialogManager.destroy(dialog);
+                        window.webContents.send(`window-hide_search-${window.id}`);
+                    },
+                    onHide: () => {
+                        dialogManager.destroy(dialog);
+                        window.webContents.send(`window-hide_search-${window.id}`);
+                    }
                 }
             )
         );

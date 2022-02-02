@@ -1,78 +1,78 @@
-import React, { FocusEvent, KeyboardEvent, useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { ipcRenderer } from 'electron';
+import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
-import { APPLICATION_PROTOCOL } from '../../../../../../utils';
-import { isHorizontal } from '../../../../../../utils/design';
-import { isURL } from '../../../../../../utils/url';
+import { ViewState } from '../../../../../../interfaces/view';
+import { isURL, prefixHttp } from '../../../../../../utils/url';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { StyledAddressBar, StyledInput } from './styles';
+import { StyledAddressBar } from './styles';
 
 export const AddressBar = () => {
-    const { loadView } = useElectronAPI();
+    const { getWindowId, showSearchPopup } = useElectronAPI();
 
     const { selectedId, getCurrentViewState } = useViewManagerContext();
     const { config } = useUserConfigContext();
 
+    const [state, setState] = useState<ViewState>(getCurrentViewState());
     const [address, setAddress] = useState('');
-    const [inputActive, setInputActive] = useState(false);
+    const [active, setActive] = useState(false);
+
+    const windowId = getWindowId();
+    useEffect(() => {
+        ipcRenderer.on(`window-hide_search-${windowId}`, () => {
+            setActive(false);
+        });
+
+        return () => {
+            ipcRenderer.removeAllListeners(`window-hide_search-${windowId}`);
+        };
+    }, []);
 
     const navigationState = getCurrentViewState();
     useEffect(() => {
-        if (inputActive) return;
+        console.log(navigationState);
+        setState(navigationState);
         setAddress(decodeURIComponent(navigationState?.url ?? ''));
-    }, [navigationState]);
+    }, [selectedId, navigationState]);
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            if (isURL(address) && !address.includes('://')) {
-                const url = `http://${address}`;
-                loadView(selectedId, url);
-                setAddress(decodeURIComponent(url));
-            } else if (address.toLowerCase().startsWith('about:')) {
-                const url = address.toLowerCase().includes('blank') ? address : address.replace('about:', `${APPLICATION_PROTOCOL}:`);
-                loadView(selectedId, url);
-                setAddress(decodeURIComponent(url));
-            } else if (!address.includes('://')) {
-                const url = 'https://www.google.com/search?q=%s'.replace('%s', encodeURIComponent(address));
-                loadView(selectedId, url);
-                setAddress(decodeURIComponent(url));
-            } else {
-                loadView(selectedId, address);
-                setAddress(decodeURIComponent(address));
-            }
-        } else if (e.key === 'Escape') {
-            const navigationState = getCurrentViewState();
-            setAddress(decodeURIComponent(navigationState?.url ?? ''));
+    const ref = useRef<HTMLDivElement>(null);
 
-            setInputActive(false);
-            e.currentTarget.blur();
-
-            window.getSelection()?.removeAllRanges();
-        }
-    };
-
-    const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
-        setInputActive(true);
+    const handleClick = (_: MouseEvent<HTMLDivElement>) => {
+        setActive(true);
         setTimeout(() => {
-            e.target.select();
-        }, 100);
-    };
-
-    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-        setInputActive(false);
-        e.target.blur();
-
-        window.getSelection()?.removeAllRanges();
+            const { x, y, width } = ref.current!!.getBoundingClientRect();
+            showSearchPopup(x - 15 - 4, y, width + (15 * 2) + (4 * 2));
+        });
     };
 
     const style: AppearanceStyle = config.appearance.style;
-    return (
-        <StyledAddressBar className="address-bar" active={inputActive} appearanceStyle={style}>
-            <StyledInput className="address-bar-input" value={address}
-                         onChange={(e) => setAddress(e.target.value)} onKeyDown={handleKeyDown}
-                         onFocus={handleFocus} onBlur={handleBlur} />
-            {isHorizontal(style) && <browser-action-list />}
-        </StyledAddressBar>
-    );
+    try {
+        const {
+            protocol,
+            hostname,
+            port,
+            pathname,
+            search,
+            hash
+        } = new URL(isURL(address) && !address.includes('://') ? prefixHttp(address) : address);
+
+        return (
+            <StyledAddressBar ref={ref} className={clsx('address-bar', state.requestState?.type)}
+                              active={active} appearanceStyle={style} onClick={handleClick}>
+                <span className="protocol">{protocol}//</span>
+                <span className="hostname">{hostname}</span>
+                <span
+                    className="path">{decodeURIComponent(`${port !== '' ? `:${port}` : ''}${pathname}${search}${hash}`)}</span>
+            </StyledAddressBar>
+        );
+    } catch (e) {
+        return (
+            <StyledAddressBar ref={ref} className="address-bar" active={active} appearanceStyle={style}
+                              onClick={handleClick}>
+                <span>{address}</span>
+            </StyledAddressBar>
+        );
+    }
 };

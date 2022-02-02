@@ -7,7 +7,6 @@ import {
     WINDOW_TITLE_BAR_HEIGHT,
     WINDOW_TOOL_BAR_HEIGHT
 } from '../../constants/design';
-import { DIALOG_SEARCH_NAME } from '../../constants/dialog';
 import {
     AppViewInitializerOptions,
     DefaultFindState,
@@ -21,12 +20,12 @@ import { APPLICATION_NAME } from '../../utils';
 import { getHeight } from '../../utils/design';
 import { Dialog } from '../dialogs/dialog';
 import { showFindDialog } from '../dialogs/find';
-import { showSearchDialog } from '../dialogs/search';
 import { IUser } from '../interfaces/user';
 import { ViewBoundsMapping } from '../interfaces/view';
 import { Main } from '../main';
 import { FaviconManager } from '../manager/favicon';
 import { getContextMenu } from '../menus/view';
+import { getRequestState, RequestState } from '../utils/request';
 import { AppWindow } from '../windows/app';
 
 export class AppView {
@@ -37,15 +36,22 @@ export class AppView {
 
     public window: AppWindow;
 
-    private favicon?: string;
-    private color?: string;
+    public findDialog?: Dialog;
+    private _findState?: FindState;
 
-    private mediaStatus: MediaStatus = 'none';
+    private _favicon?: string;
+
+    public get favicon() {
+        return this._favicon;
+    }
+
     private pinned: boolean = false;
 
-    public findDialog: Dialog | undefined = undefined;
+    private _color?: string;
 
-    private _findState: FindState | undefined = undefined;
+    public get color() {
+        return this._color;
+    }
 
     public incognito: boolean = false;
 
@@ -108,36 +114,36 @@ export class AppView {
         return this.browserView.webContents;
     }
 
-    public isLoading() {
+    private _requestState?: RequestState;
+
+    public get requestState() {
+        return this._requestState;
+    }
+
+    private _mediaStatus: MediaStatus = 'none';
+
+    public get mediaStatus() {
+        return this._mediaStatus;
+    }
+
+    public get isLoading() {
         return this.webContents.isLoadingMainFrame();
     }
 
-    public canGoBack() {
+    public get canGoBack() {
         return this.webContents.canGoBack();
     }
 
-    public canGoForward() {
+    public get canGoForward() {
         return this.webContents.canGoForward();
     }
 
-    public getTitle() {
+    public get title() {
         return this.webContents.getTitle();
     }
 
-    public getURL() {
+    public get url() {
         return this.webContents.getURL();
-    }
-
-    public getFavicon() {
-        return this.favicon;
-    }
-
-    public getColor() {
-        return this.color;
-    }
-
-    public getMediaStatus() {
-        return this.mediaStatus;
     }
 
     public isMuted() {
@@ -165,16 +171,18 @@ export class AppView {
     public get state(): ViewState {
         return {
             id: this.id,
-            title: this.getTitle(),
-            url: this.getURL(),
-            favicon: this.getFavicon(),
-            color: this.getColor(),
+            title: this.title,
+            url: this.url,
+            favicon: this.favicon,
+            color: this.color,
 
-            isLoading: this.isLoading(),
-            canGoBack: this.canGoBack(),
-            canGoForward: this.canGoForward(),
+            requestState: this.requestState,
 
-            media: this.getMediaStatus(),
+            isLoading: this.isLoading,
+            canGoBack: this.canGoBack,
+            canGoForward: this.canGoForward,
+
+            media: this.mediaStatus,
             isPinned: this.isPinned(),
 
             findState: this.findState
@@ -280,7 +288,7 @@ export class AppView {
 
     public setWindowTitle() {
         if (this.window.viewManager.selectedId !== this.id) return;
-        this.window.browserWindow.setTitle(`${this.getTitle()} - ${APPLICATION_NAME}`);
+        this.window.browserWindow.setTitle(`${this.title} - ${APPLICATION_NAME}`);
     }
 
     public setBounds() {
@@ -536,9 +544,11 @@ export class AppView {
             Main.dialogManager.show(findDialog);
         }
 
+        /*
         const searchDialog = Main.dialogManager.getDynamic(DIALOG_SEARCH_NAME);
         if (searchDialog && !searchDialog.webContents.isDestroyed())
             showSearchDialog(this.user, this.window);
+        */
     }
 
     public updateView() {
@@ -558,25 +568,29 @@ export class AppView {
         });
 
         webContents.on('did-start-loading', async () => {
-            const faviconUrl = FaviconManager.toUrl(this.getURL());
+            const faviconUrl = FaviconManager.toUrl(this.url);
             if (faviconUrl)
-                this.favicon = (await Main.faviconManager.get(faviconUrl))?.favicon;
+                this._favicon = (await Main.faviconManager.get(faviconUrl))?.favicon;
 
+            this._requestState = undefined;
             this.updateView();
         });
         webContents.on('did-stop-loading', () => {
             this.updateView();
         });
+        webContents.on('did-navigate', async (_, url) => {
+            this._requestState = await getRequestState(url);
+        });
         webContents.on('did-finish-load', () => {
             this.updateView();
         });
-        webContents.on('did-frame-finish-load', (e, isMainFrame) => {
+        webContents.on('did-frame-finish-load', (_, isMainFrame) => {
             if (!isMainFrame) return;
 
             this.updateView();
 
-            if (!this.isLoading())
-                this.user.histories.add({ title: this.getTitle(), url: this.getURL(), favicon: this.getFavicon() });
+            if (!this.isLoading)
+                this.user.histories.add({ title: this.title, url: this.url, favicon: this.favicon });
         });
         webContents.on('did-fail-load', () => {
             this.updateView();
@@ -585,24 +599,24 @@ export class AppView {
         webContents.on('page-title-updated', (_, title) => {
             this.updateView();
 
-            if (!this.isLoading())
-                this.user.histories.add({ title, url: this.getURL(), favicon: this.getFavicon() });
+            if (!this.isLoading)
+                this.user.histories.add({ title, url: this.url, favicon: this.favicon });
         });
         webContents.on('page-favicon-updated', async (e, favicons) => {
-            const favicon = await FaviconManager.getFavicon(this.getURL(), favicons[0]);
-            const faviconUrl = FaviconManager.toUrl(this.getURL());
+            const favicon = await FaviconManager.getFavicon(this.url, favicons[0]);
+            const faviconUrl = FaviconManager.toUrl(this.url);
 
-            this.favicon = favicon;
+            this._favicon = favicon;
             if (favicon && faviconUrl)
                 Main.faviconManager.add({ url: faviconUrl, favicon });
 
             this.updateView();
 
-            if (!this.isLoading())
-                this.user.histories.add({ title: this.getTitle(), url: this.getURL(), favicon: this.getFavicon() });
+            if (!this.isLoading)
+                this.user.histories.add({ title: this.title, url: this.url, favicon: this.favicon });
         });
-        webContents.on('did-change-theme-color', (e, color) => {
-            this.color = color ?? undefined;
+        webContents.on('did-change-theme-color', (_, color) => {
+            this._color = color ?? undefined;
             this.updateView();
         });
 

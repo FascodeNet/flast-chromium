@@ -1,9 +1,11 @@
 import { PublicOutlined, SearchOutlined } from '@mui/icons-material';
-import React, { ChangeEvent, KeyboardEvent, useEffect, useRef } from 'react';
-import { StyledContainer, StyledIcon, StyledInput, StyledLabel, StyledPanel } from './styles';
+import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { prefixHttp } from '../../../../../../utils/url';
+import { ResultType } from '../../interface';
+import { StyledIcon, StyledImage, StyledInput, StyledPanel } from './styles';
 
 interface Props {
-    type: 'search' | 'address';
+    type: ResultType;
     value: string;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -15,16 +17,39 @@ export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
         ref.current?.focus();
     }, []);
 
+    const [icon, setIcon] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        if (type === 'address') {
+            (async () => {
+                try {
+                    const url = new URL(prefixHttp(value));
+
+                    // const documentRes = await fetch(url.href);
+                    // const document = documentRes.ok ? new DOMParser().parseFromString(await documentRes.text(), 'text/html') : undefined;
+
+                    const faviconUrl = `https://www.google.com/s2/favicons?domain=${url.hostname}`;
+                    const faviconRes = await fetch(faviconUrl);
+
+                    setIcon(faviconRes.ok ? faviconUrl : undefined);
+                } catch (e) {
+                    setIcon(undefined);
+                }
+            })();
+        } else {
+            setIcon(undefined);
+        }
+    }, [type, value]);
+
     return (
-        <StyledPanel className="popup panel search-bar">
+        <StyledPanel className="panel search-bar">
             <StyledIcon>
-                {type === 'search' ? <SearchOutlined /> : <PublicOutlined />}
+                {icon ? (<StyledImage src={icon} />) : (type === 'suggest' ?
+                    <SearchOutlined sx={{ width: 'inherit', height: 'inherit' }} /> :
+                    <PublicOutlined sx={{ width: 'inherit', height: 'inherit' }} />)}
             </StyledIcon>
-            <StyledContainer>
-                <StyledInput ref={ref} type="text" placeholder="なんでも検索…"
-                             value={value} onChange={onChange} onKeyDown={onKeyDown} />
-                <StyledLabel>[Shift] + [Enter] で新規タブで開きます。</StyledLabel>
-            </StyledContainer>
+            <StyledInput ref={ref} type="text" placeholder="なんでも検索…"
+                         value={value} onChange={onChange} onKeyDown={onKeyDown} />
         </StyledPanel>
     );
 };
