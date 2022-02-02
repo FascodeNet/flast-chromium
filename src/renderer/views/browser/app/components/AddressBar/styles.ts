@@ -22,6 +22,7 @@ export const StyledAddressBar = styled.div<StyledAddressBarProps>`
   border-style: solid;
   border-width: 1px;
   border-radius: ${borderRadius.toUnit()};
+  app-region: no-drag;
 
   & span {
     margin: -2px 0 0;
