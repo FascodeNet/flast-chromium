@@ -36,21 +36,17 @@ export class AppView {
 
     public window: AppWindow;
 
-    public findDialog?: Dialog;
-    private _findState?: FindState;
-
     private _favicon?: string;
-
-    public get favicon() {
-        return this._favicon;
-    }
-
-    private pinned: boolean = false;
-
     private _color?: string;
 
-    public get color() {
-        return this._color;
+    public findDialog: Dialog | undefined = undefined;
+    private pinned: boolean = false;
+    private _findState: FindState | undefined = undefined;
+
+    private _requestState?: RequestState;
+
+    public get requestState() {
+        return this._requestState;
     }
 
     public incognito: boolean = false;
@@ -114,18 +110,6 @@ export class AppView {
         return this.browserView.webContents;
     }
 
-    private _requestState?: RequestState;
-
-    public get requestState() {
-        return this._requestState;
-    }
-
-    private _mediaStatus: MediaStatus = 'none';
-
-    public get mediaStatus() {
-        return this._mediaStatus;
-    }
-
     public get isLoading() {
         return this.webContents.isLoadingMainFrame();
     }
@@ -146,8 +130,14 @@ export class AppView {
         return this.webContents.getURL();
     }
 
-    public isMuted() {
-        return this.webContents.isAudioMuted();
+    private _mediaStatus: MediaStatus = 'none';
+
+    public get mediaStatus() {
+        return this._mediaStatus;
+    }
+
+    public get favicon() {
+        return this._favicon;
     }
 
     public setMuted(muted: boolean) {
@@ -155,13 +145,21 @@ export class AppView {
         this.updateView();
     }
 
-    public isPinned() {
-        return this.pinned;
+    public get color() {
+        return this._color;
     }
 
     public setPinned(pinned: boolean) {
         this.pinned = pinned;
         this.updateView();
+    }
+
+    public get isMuted() {
+        return this.webContents.isAudioMuted();
+    }
+
+    public get isPinned() {
+        return this.pinned;
     }
 
     public get findState() {
@@ -183,7 +181,7 @@ export class AppView {
             canGoForward: this.canGoForward,
 
             media: this.mediaStatus,
-            isPinned: this.isPinned(),
+            isPinned: this.isPinned,
 
             findState: this.findState
         };

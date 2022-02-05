@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { MouseEvent } from 'react';
-import { Bookmarks, Downloads, Extensions, Histories } from '../../../../../components/Icons';
+import { Bookmarks, Download, Extension, History } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledButton } from '../Button/styles';
@@ -9,7 +9,7 @@ export const BookmarksButton = () => {
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
-    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleButtonClick = (_: MouseEvent<HTMLButtonElement>) => {
 
     };
 
@@ -35,7 +35,7 @@ export const HistoriesButton = () => {
     return (
         <StyledButton className={clsx('action-button', 'histories')} appearanceStyle={style}
                       onClick={handleButtonClick}>
-            <Histories />
+            <History />
         </StyledButton>
     );
 };
@@ -44,13 +44,13 @@ export const DownloadsButton = () => {
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
-    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    const handleButtonClick = (_: MouseEvent<HTMLButtonElement>) => {
     };
 
     return (
         <StyledButton className={clsx('action-button', 'downloads')} appearanceStyle={style}
                       onClick={handleButtonClick}>
-            <Downloads />
+            <Download />
         </StyledButton>
     );
 };
@@ -69,7 +69,7 @@ export const ExtensionsButton = () => {
     return (
         <StyledButton className={clsx('action-button', 'extensions')} appearanceStyle={style}
                       onClick={handleButtonClick}>
-            <Extensions />
+            <Extension />
         </StyledButton>
     );
 };

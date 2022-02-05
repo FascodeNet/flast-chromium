@@ -14,17 +14,19 @@ const suggest = require('node-suggest');
 
 export const Popup = () => {
 
-    const { hideDialog, addView, loadView } = useElectronAPI();
-    const { selectedId, getCurrentViewState } = useViewManagerContext();
+    const { hideDialog, addView, loadView, getCurrentView } = useElectronAPI();
+    const { selectedId } = useViewManagerContext();
 
     const [value, setValue] = useState('');
     const [type, setType] = useState<ResultType>('suggest');
     const [results, setResults] = useState<Result[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
-    const navigationState = getCurrentViewState();
+    const viewState = getCurrentView();
     useEffect(() => {
-        setValue(decodeURIComponent(navigationState?.url ?? ''));
+        (async () => {
+            setValue(decodeURIComponent((await viewState)?.url ?? ''));
+        })();
     }, []);
 
     const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +76,7 @@ export const Popup = () => {
                 return;
             case 'ArrowUp':
                 e.preventDefault();
-                if (value.length < 1) return;
+                if (value.length < 1 || results.length < 1) return;
                 setSelectedIndex((index) => {
                     const i = index > 0 ? index - 1 : results.length - 1;
                     const result = results[i];
@@ -84,7 +86,7 @@ export const Popup = () => {
                 return;
             case 'ArrowDown':
                 e.preventDefault();
-                if (value.length < 1) return;
+                if (value.length < 1 || results.length < 1) return;
                 setSelectedIndex((index) => {
                     const i = index < results.length - 1 ? index + 1 : 0;
                     const result = results[i];

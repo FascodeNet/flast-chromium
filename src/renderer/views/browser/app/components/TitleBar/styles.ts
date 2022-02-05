@@ -42,6 +42,10 @@ export const StyledWrapper = styled.div`
   grid-template-areas: 'address-bar divider horizontal-tab-container';
   align-items: center;
   gap: 8px;
+
+  @media screen and (min-width: 1000px) {
+    grid-template-columns: minmax(300px, 30%) 1px 1fr;
+  }
 `;
 
 export const StyledWindowControls = styled.div`

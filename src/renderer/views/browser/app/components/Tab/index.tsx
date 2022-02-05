@@ -13,7 +13,7 @@ import {
     APPLICATION_WEB_SETTINGS,
     EXTENSION_PROTOCOL
 } from '../../../../../../utils';
-import { Bookmarks, Downloads, Extensions, Histories, Remove, Settings } from '../../../../../components/Icons';
+import { Bookmarks, Download, Extension, History, Remove, Settings } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
@@ -41,13 +41,13 @@ const TabIcon = ({ url: urlString, favicon }: TabIconProps) => {
                 case APPLICATION_WEB_BOOKMARKS:
                     return (<Bookmarks sx={sxTheme} />);
                 case APPLICATION_WEB_HISTORY:
-                    return (<Histories sx={sxTheme} />);
+                    return (<History sx={sxTheme} />);
                 case APPLICATION_WEB_DOWNLOADS:
-                    return (<Downloads sx={sxTheme} />);
+                    return (<Download sx={sxTheme} />);
                 case APPLICATION_WEB_SETTINGS:
                     return (<Settings sx={sxTheme} />);
                 case APPLICATION_WEB_EXTENSIONS:
-                    return (<Extensions sx={sxTheme} />);
+                    return (<Extension sx={sxTheme} />);
                 default:
                     return (<StyledTabIcon favicon={favicon} />);
             }

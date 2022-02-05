@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { MouseEvent } from 'react';
-import { Extensions } from '../../../../../components/Icons';
+import { Extension } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledButton } from '../Button/styles';
@@ -19,7 +19,7 @@ export const FindButton = () => {
     return (
         <StyledButton className={clsx('address-bar-button', 'extensions')} appearanceStyle={style}
                       onClick={handleButtonClick}>
-            <Extensions />
+            <Extension />
         </StyledButton>
     );
 };

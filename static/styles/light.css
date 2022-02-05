@@ -82,7 +82,8 @@ button:not(:disabled):hover {
     color: inherit;
 }
 
-.address-bar .path {
+.address-bar span, .address-bar .protocol, .address-bar .path,
+.address-bar.internal .protocol, .address-bar.file .protocol {
     color: #909192;
 }
 
@@ -92,10 +93,6 @@ button:not(:disabled):hover {
 
 .address-bar.insecure .protocol {
     color: #f28b82;
-}
-
-.address-bar.internal .protocol, .address-bar.file .protocol {
-    color: #909192;
 }
 
 .address-bar-input:hover {

@@ -6,7 +6,7 @@
     "installerIcon": "static/icons/app/icon.ico",
     "uninstallerIcon": "static/icons/app/icon.ico"
   },
-  "electronVersion": "16.0.7",
+  "electronVersion": "16.0.8",
   "generateUpdatesFilesForAllChannels": true,
   "asar": true,
   "directories": {

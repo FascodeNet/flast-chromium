@@ -1,8 +1,8 @@
 import https from 'https';
 import { PeerCertificate, TLSSocket } from 'tls';
-import { APPLICATION_PROTOCOL } from '../../utils';
+import { APPLICATION_PROTOCOL, EXTENSION_PROTOCOL } from '../../utils';
 
-export type RequestType = 'secure' | 'insecure' | 'file' | 'source' | 'search' | 'internal';
+export type RequestType = 'secure' | 'insecure' | 'file' | 'source' | 'search' | 'internal' | 'extension';
 
 export interface RequestState {
     type: RequestType;
@@ -56,6 +56,8 @@ export const getRequestState = (url: string): Promise<RequestState> => new Promi
                 return resolve({ type: 'source' });
             case `${APPLICATION_PROTOCOL}:`:
                 return resolve({ type: 'internal' });
+            case `${EXTENSION_PROTOCOL}:`:
+                return resolve({ type: 'extension' });
         }
     } catch {
         return resolve({ type: 'insecure' });

@@ -5,14 +5,7 @@ import { AppearanceSidebarState } from '../../../../../../interfaces/user';
 import { BookmarksPanel } from '../../../../../components/BookmarksPanel';
 import { ExtensionsPanel } from '../../../../../components/ExtensionsPanel';
 import { HistoriesPanel } from '../../../../../components/HistoriesPanel';
-import {
-    Bookmarks,
-    ChevronLeft,
-    ChevronRight,
-    Downloads,
-    Extensions,
-    Histories
-} from '../../../../../components/Icons';
+import { Bookmarks, ChevronLeft, ChevronRight, Download, Extension, History } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { SidebarDownloads } from '../SidebarContent';
@@ -57,13 +50,13 @@ export const Sidebar = () => {
                     <Bookmarks />
                 </IconButton>
                 <IconButton onClick={() => handleTogglePanelClick('histories')}>
-                    <Histories />
+                    <History />
                 </IconButton>
                 <IconButton onClick={() => handleTogglePanelClick('downloads')}>
-                    <Downloads />
+                    <Download />
                 </IconButton>
                 <IconButton onClick={() => handleTogglePanelClick('extensions')}>
-                    <Extensions />
+                    <Extension />
                 </IconButton>
                 <IconButton
                     onClick={handleToggleSidebarClick}

@@ -1,13 +1,4 @@
-import {
-    app,
-    clipboard,
-    ContextMenuParams,
-    dialog,
-    Menu,
-    MenuItem,
-    MenuItemConstructorOptions,
-    nativeImage
-} from 'electron';
+import { app, clipboard, ContextMenuParams, dialog, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
 import { getTranslate } from '../../languages/language';
 import { isURL } from '../../utils/url';
 import { Main } from '../main';
@@ -23,6 +14,8 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
     const languageSection = translate.menus.view;
 
     const {
+        x,
+        y,
         linkURL,
         srcURL,
         hasImageContents,
@@ -140,12 +133,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         {
             label: languageSection.image.copyImage,
             icon: getMenuItemIconFromName('copy_image'),
-            click: () => {
-                const img = nativeImage.createFromDataURL(srcURL);
-
-                clipboard.clear();
-                clipboard.writeImage(img);
-            }
+            click: () => webContents.copyImageAt(x, y)
         },
         {
             label: languageSection.image.copyLink,
@@ -289,9 +277,9 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         const mediaOptions: (MenuItem | MenuItemConstructorOptions)[] = mediaType === 'audio' || mediaType === 'video' || webContents.isCurrentlyAudible() ? [
             { type: 'separator' },
             {
-                label: view.isMuted() ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
+                label: view.isMuted ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
                 icon: getMenuItemIconFromName(`speaker${webContents.audioMuted ? '' : '_muted'}`),
-                click: () => view.setMuted(!view.isMuted())
+                click: () => view.setMuted(!view.isMuted)
             },
             {
                 label: languageSection.media.pictureInPicture,
@@ -416,16 +404,16 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 click: () => viewManager.add(view.url)
             },
             {
-                label: !view.isPinned() ? languageSection.pin : languageSection.unpin,
-                icon: getMenuItemIconFromName(!view.isPinned() ? 'pin' : 'unpin'),
+                label: !view.isPinned ? languageSection.pin : languageSection.unpin,
+                icon: getMenuItemIconFromName(!view.isPinned ? 'pin' : 'unpin'),
                 accelerator: Shortcuts.TAB_PIN,
-                click: () => view.setPinned(!view.isPinned())
+                click: () => view.setPinned(!view.isPinned)
             },
             {
-                label: !view.isMuted() ? languageSection.mute : languageSection.unmute,
-                icon: getMenuItemIconFromName(`speaker${view.isMuted() ? '' : '_muted'}`),
+                label: !view.isMuted ? languageSection.mute : languageSection.unmute,
+                icon: getMenuItemIconFromName(`speaker${view.isMuted ? '' : '_muted'}`),
                 accelerator: Shortcuts.TAB_MUTE,
-                click: () => view.setMuted(!view.isMuted())
+                click: () => view.setMuted(!view.isMuted)
             },
             { type: 'separator' },
             {
