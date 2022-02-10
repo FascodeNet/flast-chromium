@@ -45,6 +45,8 @@ interface ElectronAPI {
     moveFindInPage: (id: number, forward: boolean) => Promise<FindState>;
     stopFindInPage: (id: number, hide: boolean) => Promise<void>;
 
+    showInformationPopup: (x: number, y: number) => Promise<void>;
+
     showBookmarksPopup: (x: number, y: number) => Promise<void>;
     getBookmarks: (userId: string) => Promise<IBookmark[]>;
     addBookmark: (userId: string, data: IBookmark) => Promise<void>;
@@ -107,6 +109,8 @@ export const useElectronAPI = (): ElectronAPI => ({
     findInPage: (id: number, text: string, matchCase: boolean) => ipcRenderer.invoke(`view-find_in_page-${windowId}`, id, text, matchCase),
     moveFindInPage: (id: number, forward: boolean) => ipcRenderer.invoke(`view-move_find_in_page-${windowId}`, id, forward),
     stopFindInPage: (id: number, hide: boolean) => ipcRenderer.invoke(`view-stop_find_in_page-${windowId}`, id, hide),
+
+    showInformationPopup: (x: number, y: number) => ipcRenderer.invoke(`window-information-${windowId}`, x, y),
 
     showBookmarksPopup: (x: number, y: number) => ipcRenderer.invoke(`window-bookmarks-${windowId}`, x, y),
     getBookmarks: (userId: string) => ipcRenderer.invoke(`bookmarks-${userId}`),

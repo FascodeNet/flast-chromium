@@ -1,6 +1,6 @@
 import { enable } from '@electron/remote/main';
 import deepmerge from 'deepmerge';
-import { app, BrowserWindow, ipcMain, Menu, nativeImage } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, TouchBar } from 'electron';
 import { join } from 'path';
 import { WindowFullScreenState } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
@@ -8,6 +8,7 @@ import { isHorizontal } from '../../utils/design';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { showExtensionsDialog } from '../dialogs/extensions';
 import { showHistoriesDialog } from '../dialogs/histories';
+import { showInformationDialog } from '../dialogs/information';
 import { showSearchDialog } from '../dialogs/search';
 import { IUser } from '../interfaces/user';
 import { AppWindowInitializerOptions } from '../interfaces/window';
@@ -16,6 +17,12 @@ import { ViewManager } from '../manager/view';
 import { getApplicationMenu } from '../menus/app';
 import { getExtensionMenu } from '../menus/extension';
 import { getWindowMenu } from '../menus/window';
+import { IncognitoUser } from '../user/incognito';
+import { NormalUser } from '../user/normal';
+import { getEmptyMenuItemIcon } from '../utils/menu';
+import { AppView } from '../views/app';
+
+const { TouchBarButton, TouchBarPopover, TouchBarSpacer } = TouchBar;
 
 export class AppWindow {
 
@@ -73,6 +80,7 @@ export class AppWindow {
         this.applicationMenu = getWindowMenu(this);
         Menu.setApplicationMenu(this.applicationMenu);
         this.browserWindow.setMenu(this.applicationMenu);
+        this.setTouchBar();
 
         this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'browser', 'app.html'));
         this.setStyle();
@@ -112,6 +120,165 @@ export class AppWindow {
         this.browserWindow.setMenu(this.applicationMenu);
     }
 
+    public async setTouchBar() {
+        const view = this.viewManager.get();
+
+        const resizeImage = (image: NativeImage) => image.resize({
+            width: 20,
+            height: 20
+        });
+
+        const getIcon = (name: string) => resizeImage(nativeImage.createFromPath(join(app.getAppPath(), 'static', 'icons', 'white', `${name}.png`)));
+
+        const getFavicon = (view: AppView) => {
+            let dataURL = view.favicon;
+            if (dataURL) {
+                if (!dataURL.split(',')[0].includes('image')) {
+                    const split = dataURL.split(':');
+                    dataURL = split.join(':image/');
+                }
+
+                return resizeImage(nativeImage.createFromDataURL(dataURL));
+            } else {
+                return getEmptyMenuItemIcon();
+            }
+        };
+
+        const backButton = new TouchBarButton({
+            icon: getIcon('arrow_left'),
+            enabled: view != null && view.canGoBack,
+            click: () => {
+                if (!view || !view.canGoBack) return;
+                view.back();
+            }
+        });
+        const forwardButton = new TouchBarButton({
+            icon: getIcon('arrow_right'),
+            enabled: view != null && view.canGoForward,
+            click: () => {
+                if (!view || !view.canGoForward) return;
+                view.forward();
+            }
+        });
+        const reloadButton = new TouchBarButton({
+            icon: getIcon(view == null || !view.isLoading ? 'reload' : 'remove'),
+            enabled: view != null,
+            click: () => {
+                if (!view) return;
+                !view.isLoading ? view.reload() : view.stop();
+            }
+        });
+
+        const searchButton = new TouchBarButton({
+            icon: getIcon('search'),
+            click: () => {
+            }
+        });
+
+        /*
+        let items: ScrubberItem[] = [];
+        for (const view of this.viewManager.getViews()) {
+            const image = view.captureImage?.resize({ width: 50 });
+            items.push({ label: view.title, icon: getFavicon(view) });
+        }
+
+        const scrubber = new TouchBarScrubber({
+            items: items,
+            mode: 'fixed',
+            // selectedStyle: 'outline',
+            overlayStyle: 'outline',
+            continuous: false,
+            select: (index: number) => {
+                console.log(index);
+            }
+        });
+        */
+
+        const tabManagePopup = new TouchBarPopover({
+            label: 'タブの管理',
+            showCloseButton: true,
+            items: new TouchBar({
+                items: [
+                    new TouchBarButton({
+                        icon: getIcon('tab_add'),
+                        label: '新しいタブ',
+                        iconPosition: 'left',
+                        click: () => {
+                            this.viewManager.add();
+                        }
+                    }),
+                    new TouchBarButton({
+                        icon: getIcon('tab_remove'),
+                        label: 'タブを閉じる',
+                        iconPosition: 'left',
+                        enabled: view != null,
+                        click: () => {
+                            if (!view) return;
+                            this.viewManager.remove(view.id);
+                        }
+                    })
+                ]
+            })
+        });
+        const windowManagePopup = new TouchBarPopover({
+            label: 'ウィンドウの管理',
+            showCloseButton: true,
+            items: new TouchBar({
+                items: [
+                    new TouchBarButton({
+                        icon: getIcon('window_add'),
+                        label: '新しいウィンドウ',
+                        iconPosition: 'left',
+                        click: () => {
+                            if (this.user instanceof NormalUser) {
+                                Main.windowManager.add(this.user);
+                            } else if (this.user instanceof IncognitoUser) {
+                                Main.windowManager.add(this.user.fromUser);
+                            }
+                        }
+                    }),
+                    new TouchBarButton({
+                        icon: getIcon('window_incognito'),
+                        label: 'プライベート ウィンドウを開く',
+                        iconPosition: 'left',
+                        click: () => {
+                            if (this.user instanceof NormalUser) {
+                                const incognitoUser = Main.userManager.add(new IncognitoUser(this.user));
+                                Main.windowManager.add(incognitoUser, undefined);
+                            } else if (this.user instanceof IncognitoUser) {
+                                const incognitoUser = Main.userManager.add(new IncognitoUser(this.user.fromUser));
+                                Main.windowManager.add(incognitoUser, undefined);
+                            }
+                        }
+                    }),
+                    new TouchBarButton({
+                        icon: getIcon('tab_remove'),
+                        label: 'ウィンドウを閉じる',
+                        iconPosition: 'left',
+                        click: () => {
+                            Main.windowManager.remove(this.id);
+                        }
+                    })
+                ]
+            })
+        });
+
+        const touchBar = new TouchBar({
+            items: [
+                backButton,
+                forwardButton,
+                reloadButton,
+                new TouchBarSpacer({ size: 'small' }),
+                searchButton,
+                new TouchBarSpacer({ size: 'large' }),
+                tabManagePopup,
+                windowManagePopup
+            ]
+        });
+
+        this.browserWindow.setTouchBar(touchBar);
+    }
+
     public close() {
         this.browserWindow.close();
         Main.windowManager.remove(this.id);
@@ -143,6 +310,7 @@ export class AppWindow {
 
         this.browserWindow.on('focus', () => {
             this.setApplicationMenu();
+            this.setTouchBar();
 
             Main.windowManager.selectedId = this.id;
             Main.windowManager.lastWindowId = this.id;
@@ -159,12 +327,14 @@ export class AppWindow {
             console.log('enter-full-screen');
             this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { user: true });
             this.setApplicationMenu();
+            this.setTouchBar();
             this.setViewBounds();
         });
         this.browserWindow.on('leave-full-screen', () => {
             console.log('leave-full-screen');
             this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { user: false });
             this.setApplicationMenu();
+            this.setTouchBar();
             this.setViewBounds();
         });
         this.browserWindow.on('enter-html-full-screen', () => {
@@ -246,6 +416,10 @@ export class AppWindow {
             if (!view) return;
 
             view.findInPage(null);
+        });
+
+        ipcMain.handle(`window-information-${this.id}`, (e, x: number, y: number) => {
+            showInformationDialog(this.user, this.browserWindow, x, y);
         });
 
         ipcMain.handle(`window-bookmarks-${this.id}`, (e, x: number, y: number) => {

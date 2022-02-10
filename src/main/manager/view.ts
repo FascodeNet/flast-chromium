@@ -293,6 +293,7 @@ export class ViewManager {
 
     private updateViews() {
         this.window.setApplicationMenu();
+        this.window.setTouchBar();
         this.window.browserWindow.webContents.send(
             `views-${this.window.id}`,
             this.getViews().map((view) => view.state)

@@ -32,6 +32,14 @@ export const StyledAddressBar = styled.div<StyledAddressBarProps>`
     grid-row: 1 / 2;
     grid-column: 1 / 4;
   `};
+
+  ${({ appearanceStyle }) => (appearanceStyle === 'top_double') && css`
+    ${StyledButton} {
+      min-width: 28px;
+      height: 28px;
+      padding: 4px;
+    }
+  `};
 `;
 
 export const StyledTextContainer = styled.div`

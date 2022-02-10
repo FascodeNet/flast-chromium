@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { app, BrowserView, webContents } from 'electron';
+import { app, BrowserView, NativeImage, webContents } from 'electron';
 import { join } from 'path';
 import {
     WINDOW_EXTENDED_SIDEBAR_WIDTH,
@@ -32,6 +32,8 @@ export class AppView {
 
     public readonly id: number;
 
+    public readonly user: IUser;
+
     public browserView: BrowserView;
 
     public window: AppWindow;
@@ -39,19 +41,18 @@ export class AppView {
     private _favicon?: string;
     private _color?: string;
 
-    public findDialog: Dialog | undefined = undefined;
     private pinned: boolean = false;
-    private _findState: FindState | undefined = undefined;
+
+    private _mediaStatus: MediaStatus = 'none';
 
     private _requestState?: RequestState;
 
-    public get requestState() {
-        return this._requestState;
-    }
+    public findDialog: Dialog | undefined = undefined;
+    private _findState: FindState | undefined = undefined;
+
+    private _captureImage: NativeImage | undefined = undefined;
 
     public incognito: boolean = false;
-
-    public readonly user: IUser;
 
     public constructor(window: AppWindow, { url, incognito = false }: AppViewInitializerOptions) {
         const userSession = window.user.session;
@@ -130,14 +131,24 @@ export class AppView {
         return this.webContents.getURL();
     }
 
-    private _mediaStatus: MediaStatus = 'none';
+    public get favicon() {
+        return this._favicon;
+    }
+
+    public get color() {
+        return this._color;
+    }
 
     public get mediaStatus() {
         return this._mediaStatus;
     }
 
-    public get favicon() {
-        return this._favicon;
+    public get requestState() {
+        return this._requestState;
+    }
+
+    public get isMuted() {
+        return this.webContents.isAudioMuted();
     }
 
     public setMuted(muted: boolean) {
@@ -145,21 +156,13 @@ export class AppView {
         this.updateView();
     }
 
-    public get color() {
-        return this._color;
+    public get isPinned() {
+        return this.pinned;
     }
 
     public setPinned(pinned: boolean) {
         this.pinned = pinned;
         this.updateView();
-    }
-
-    public get isMuted() {
-        return this.webContents.isAudioMuted();
-    }
-
-    public get isPinned() {
-        return this.pinned;
     }
 
     public get findState() {
@@ -185,6 +188,10 @@ export class AppView {
 
             findState: this.findState
         };
+    }
+
+    public get captureImage() {
+        return this._captureImage;
     }
 
 
@@ -245,6 +252,7 @@ export class AppView {
         const minLevel = Math.min(...levels);
         return levels.indexOf(minLevel);
     }
+
 
     public findInPage(text: string | null, matchCase: boolean = false) {
         if (!this.findDialog)
@@ -554,8 +562,10 @@ export class AppView {
 
         this.setWindowTitle();
         this.window.setApplicationMenu();
+        this.window.setTouchBar();
         webContents.getAllWebContents().forEach((webContents) => webContents.send(`view-${this.window.id}`, this.state));
     }
+
 
     private setListeners() {
         const webContents = this.webContents;
@@ -570,21 +580,28 @@ export class AppView {
             if (faviconUrl)
                 this._favicon = (await Main.faviconManager.get(faviconUrl))?.favicon;
 
-            this._requestState = undefined;
             this.updateView();
         });
         webContents.on('did-stop-loading', () => {
             this.updateView();
         });
+        webContents.on('did-start-navigation', (e, url, isInPlace, isMainFrame) => {
+            if (isInPlace || !isMainFrame) return;
+
+            this._requestState = undefined;
+            this.updateView();
+        });
         webContents.on('did-navigate', async (_, url) => {
+            console.log('did-navigate');
             this._requestState = await getRequestState(url);
         });
         webContents.on('did-finish-load', () => {
             this.updateView();
         });
-        webContents.on('did-frame-finish-load', (_, isMainFrame) => {
+        webContents.on('did-frame-finish-load', async (_, isMainFrame) => {
             if (!isMainFrame) return;
 
+            this._requestState = await getRequestState(this.url);
             this.updateView();
 
             if (!this.isLoading)
@@ -592,6 +609,12 @@ export class AppView {
         });
         webContents.on('did-fail-load', () => {
             this.updateView();
+        });
+
+        webContents.on('dom-ready', async () => {
+            const { width, height } = this.browserView.getBounds();
+            this._captureImage = await this.webContents.capturePage({ width, height, x: 0, y: 0 });
+            await this.window.setTouchBar();
         });
 
         webContents.on('page-title-updated', (_, title) => {

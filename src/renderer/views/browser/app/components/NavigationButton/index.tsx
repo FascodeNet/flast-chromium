@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
-import { ArrowLeft, ArrowRight, Home, Reload, Remove } from '../../../../../components/Icons';
+import { Home, Reload, Remove } from '../../../../../components/Icons';
+import { ArrowLeft, ArrowRight } from '../../../../../components/Icons/arrow';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';

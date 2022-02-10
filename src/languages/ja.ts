@@ -166,7 +166,38 @@ export const Ja: Language = {
     },
     windows: {
         app: {
-            title: APPLICATION_NAME
+            title: APPLICATION_NAME,
+
+            pageInformation: {
+                label: 'ページ情報',
+
+                certificate: {
+                    secure: {
+                        label: 'この接続は保護されています',
+                        description: 'あなたがこのサイトに送信した情報（パスワード、クレジットカード情報など）が第三者に見られる事はありません。'
+                    },
+                    inSecure: {
+                        label: 'このサイトへの接続は保護されていません',
+                        description: 'このサイトでは機密情報（パスワード、クレジットカード情報など）を入力しないでください。悪意のあるユーザーに情報が盗まれる恐れがあります。'
+                    },
+                    file: {
+                        label: 'ローカル ファイルを表示しています',
+                        description: ''
+                    },
+                    source: {
+                        label: 'ページのソースを表示しています',
+                        description: ''
+                    },
+                    internal: {
+                        label: `保護された ${APPLICATION_NAME} ページを表示しています`,
+                        description: ''
+                    },
+                    extension: {
+                        label: '拡張機能のページを表示しています',
+                        description: ''
+                    }
+                }
+            }
         },
         processManager: {
             title: 'プロセス マネージャー'

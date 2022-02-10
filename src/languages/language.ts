@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { UserConfig } from '../interfaces/user';
 import { En } from './en';
 import { Ja } from './ja';
@@ -10,6 +11,11 @@ export const getTranslate = (config: UserConfig): Language => {
             return En;
     }
 };
+
+interface CertificateTranslate {
+    label: ReactNode;
+    description: ReactNode;
+}
 
 export interface Language {
     tasks: {
@@ -177,6 +183,19 @@ export interface Language {
     windows: {
         app: {
             title: string;
+
+            pageInformation: {
+                label: string;
+
+                certificate: {
+                    secure: CertificateTranslate
+                    inSecure: CertificateTranslate,
+                    file: CertificateTranslate,
+                    source: CertificateTranslate,
+                    internal: CertificateTranslate,
+                    extension: CertificateTranslate
+                }
+            }
         };
         processManager: {
             title: string;

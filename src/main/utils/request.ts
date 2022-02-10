@@ -38,12 +38,10 @@ export const getRequestState = (url: string): Promise<RequestState> => new Promi
                     method: 'GET'
                 };
 
-                let req = https.request(options, async (res) => {
+                let req = https.request(options, (res) => {
                     let certificate = (res.socket as TLSSocket).getPeerCertificate();
                     if (!certificate.subject)
                         return resolve({ type: 'insecure' });
-
-                    console.log(certificate);
 
                     return resolve({ type: 'secure', certificate });
                 });

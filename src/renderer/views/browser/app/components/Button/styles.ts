@@ -16,8 +16,8 @@ export const StyledContainer = styled.div<StyledProps>`
 `;
 
 export const StyledButton = styled.button<StyledProps>`
-  width: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 30}px;
-  height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 30}px;
+  width: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 32}px;
+  height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 32}px;
   margin: 0;
   padding: 0;
   display: flex;

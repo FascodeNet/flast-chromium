@@ -1,8 +1,9 @@
-import { CalculateOutlined, PublicOutlined, SearchOutlined } from '@mui/icons-material';
+import { CalculateOutlined, PublicOutlined } from '@mui/icons-material';
 import { Avatar } from '@mui/material';
 import React, { ChangeEvent, Fragment, KeyboardEvent, useEffect, useState } from 'react';
 import { APPLICATION_PROTOCOL } from '../../../../../../utils';
 import { isURL } from '../../../../../../utils/url';
+import { Search } from '../../../../../components/Icons';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { Result, ResultType, SuggestData } from '../../interface';
@@ -147,7 +148,7 @@ export const Popup = () => {
                                 <ResultItem
                                     key={i}
                                     selected={selectedIndex === i}
-                                    icon={<SearchOutlined sx={{ width: 'inherit', height: 'inherit' }} />}
+                                    icon={<Search sx={{ width: 'inherit', height: 'inherit' }} />}
                                     label={
                                         text.startsWith(inputtedText) ? <Fragment>
                                             <b>{inputtedText}</b>{suggestedText}

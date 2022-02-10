@@ -1,7 +1,12 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { borderRadius } from '../../../../../themes';
 
-export const StyledPanel = styled.div`
+interface StyledPanelProps {
+    appearanceStyle: AppearanceStyle;
+}
+
+export const StyledPanel = styled.div<StyledPanelProps>`
   width: 100%;
   height: 34px;
   margin: 0;
@@ -14,6 +19,14 @@ export const StyledPanel = styled.div`
   // box-shadow: 0 12px 16px rgba(0, 0, 0, .12), 0 8px 10px rgba(0, 0, 0, .16);
   overflow: hidden;
   user-select: none;
+
+  ${({ appearanceStyle }) => (appearanceStyle !== 'top_double') ? css`
+    height: 34px;
+    padding: 4px 12px;
+  ` : css`
+    height: 32px;
+    padding: 3px 12px;
+  `};
 `;
 
 export const StyledIcon = styled.div`

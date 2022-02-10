@@ -1,6 +1,8 @@
-import { PublicOutlined, SearchOutlined } from '@mui/icons-material';
+import { PublicOutlined } from '@mui/icons-material';
 import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { prefixHttp } from '../../../../../../utils/url';
+import { Search } from '../../../../../components/Icons';
+import { useUserConfigContext } from '../../../../../contexts/config';
 import { ResultType } from '../../interface';
 import { StyledIcon, StyledImage, StyledInput, StyledPanel } from './styles';
 
@@ -12,9 +14,12 @@ interface Props {
 }
 
 export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
+    const { config } = useUserConfigContext();
+
     const ref = useRef<HTMLInputElement>(null);
     useEffect(() => {
         ref.current?.focus();
+        ref.current?.select();
     }, []);
 
     const [icon, setIcon] = useState<string | undefined>(undefined);
@@ -42,10 +47,10 @@ export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
     }, [type, value]);
 
     return (
-        <StyledPanel className="panel search-bar">
+        <StyledPanel className="panel search-bar" appearanceStyle={config.appearance.style}>
             <StyledIcon>
                 {icon ? (<StyledImage src={icon} />) : (type === 'suggest' ?
-                    <SearchOutlined sx={{ width: 'inherit', height: 'inherit' }} /> :
+                    <Search sx={{ width: 'inherit', height: 'inherit' }} /> :
                     <PublicOutlined sx={{ width: 'inherit', height: 'inherit' }} />)}
             </StyledIcon>
             <StyledInput ref={ref} type="text" placeholder="なんでも検索…"

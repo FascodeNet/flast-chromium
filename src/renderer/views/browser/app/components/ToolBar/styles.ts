@@ -7,7 +7,7 @@ interface StyledProps {
 
 export const StyledToolBar = styled.div<StyledProps>`
   width: 100%;
-  padding: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? '.5rem' : '5px'};
+  padding: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? '.5rem' : '4px 5px 3px'};
   grid-area: tool-bar;
   display: grid;
   grid-template-columns: auto 1fr auto auto;

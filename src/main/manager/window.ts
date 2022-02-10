@@ -34,6 +34,7 @@ export class WindowManager {
 
         this.windows.set(window.id, window);
         window.setApplicationMenu();
+        window.setTouchBar();
 
         if (active) {
             window.browserWindow.once('ready-to-show', () => {
@@ -60,8 +61,10 @@ export class WindowManager {
         }
 
         const windows = [...this.windows.values()];
-        for (const window of windows)
+        for (const window of windows) {
             window.setApplicationMenu();
+            window.setTouchBar();
+        }
     }
 
     public select(id: number) {
@@ -79,6 +82,7 @@ export class WindowManager {
         this.selectedId = window.id;
         this.lastWindowId = window.id;
         window.setApplicationMenu();
+        window.setTouchBar();
         window.browserWindow.show();
     }
 
