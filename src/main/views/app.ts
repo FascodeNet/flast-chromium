@@ -222,32 +222,32 @@ export class AppView {
     }
 
 
-    public getZoomLevel(): ZoomLevel {
+    public get zoomLevel(): ZoomLevel {
         return this.webContents.getZoomFactor() as ZoomLevel;
     }
 
-    public setZoomLevel(level: ZoomLevel) {
+    public set zoomLevel(level: ZoomLevel) {
         this.webContents.setZoomFactor(level);
     }
 
     public zoomIn() {
         const index = this.getZoomLevelIndex();
         if (index >= (ZoomLevels.length - 1)) return;
-        this.setZoomLevel(ZoomLevels[index + 1]);
+        this.zoomLevel = ZoomLevels[index + 1];
     }
 
     public zoomOut() {
         const index = this.getZoomLevelIndex();
         if (index <= 0) return;
-        this.setZoomLevel(ZoomLevels[index - 1]);
+        this.zoomLevel = ZoomLevels[index - 1];
     }
 
     public zoomReset() {
-        this.setZoomLevel(1.00);
+        this.zoomLevel = 1.00;
     }
 
     private getZoomLevelIndex() {
-        const level = this.getZoomLevel();
+        const level = this.zoomLevel;
         const levels = ZoomLevels.map((zoomLevel) => Math.abs(zoomLevel - level));
         const minLevel = Math.min(...levels);
         return levels.indexOf(minLevel);

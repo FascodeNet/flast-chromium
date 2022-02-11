@@ -12,13 +12,6 @@ import { FaviconManager } from './manager/favicon';
 import { UserManager } from './manager/user';
 import { WindowManager } from './manager/window';
 
-/*
-export const userManager = new UserManager();
-export const windowManager = new WindowManager();
-export const faviconManager = new FaviconManager();
-*/
-
-
 const singleInstance = app.requestSingleInstanceLock();
 
 export class App {
@@ -51,19 +44,6 @@ export class App {
 
         console.log(process.argv);
         const urls = !IS_DEVELOPMENT && process.argv.length > 1 ? [process.argv[1]] : ['https://www.google.com'];
-        /*
-        if (users.length < 1 || !this.userManager.lastUserId) {
-            const user = await this.userManager.create();
-            this.userManager.lastUserId = user.id;
-            App.setTheme(user.settings.config);
-            this.windowManager.add(user, urls);
-        } else {
-            const user = this.userManager.get(this.userManager.lastUserId)!!;
-            this.userManager.lastUserId = user.id;
-            App.setTheme(user.settings.config);
-            this.windowManager.add(user, urls);
-        }
-        */
 
         const user = users.length < 1 || !this.userManager.lastUserId ? await this.userManager.create() : await this.userManager.get(this.userManager.lastUserId)!!;
         this.userManager.lastUserId = user.id;
@@ -111,32 +91,9 @@ export class App {
             const user = this.userManager.get(this.userManager.lastUserId);
             if (!user) return;
 
-            // const currentWindow = this.windowManager.get(this.windowManager.lastWindowId);
-
             const path = argv[argv.length - 1];
 
             await this.addWindow(user, path);
-            /*
-            if (isAbsolute(path) && (await stat(path)).isFile()) {
-                if (IS_DEVELOPMENT) return;
-
-                if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
-                    this.windowManager.add(user, [`file:///${path}`]);
-                } else {
-                    currentWindow.viewManager.add(`file:///${path}`);
-                    currentWindow.browserWindow.show();
-                }
-            } else if (isURL(path)) {
-                if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
-                    this.windowManager.add(user, [prefixHttp(path)]);
-                } else {
-                    currentWindow.viewManager.add(prefixHttp(path));
-                    currentWindow.browserWindow.show();
-                }
-            } else {
-                this.windowManager.add(user);
-            }
-            */
         });
 
         nativeTheme.on('updated', () => {
@@ -221,79 +178,5 @@ export class App {
         ]);
     }
 }
-
-/*
-protocol.registerSchemesAsPrivileged([
-    {
-        scheme: APPLICATION_PROTOCOL,
-        privileges: {
-            standard: true,
-            secure: true,
-            bypassCSP: true,
-            supportFetchAPI: true,
-            allowServiceWorkers: true,
-            corsEnabled: false
-        }
-    },
-    { scheme: 'chrome-extension', privileges: { standard: true, secure: true, bypassCSP: true } }
-]);
-
-app.setUserTasks([
-    {
-        program: process.execPath,
-        arguments: '--new-window',
-        iconPath: `${app.getAppPath()}/static/icons/${nativeTheme.shouldUseDarkColors ? 'white' : 'black'}/window_add.png`,
-        iconIndex: 0,
-        title: 'New Window',
-        description: 'Create a new window'
-    },
-    {
-        program: process.execPath,
-        arguments: '--new-incognito-window',
-        iconPath: `${app.getAppPath()}/static/icons/${nativeTheme.shouldUseDarkColors ? 'white' : 'black'}/window_incognito.png`,
-        iconIndex: 0,
-        title: 'New Incognito Window',
-        description: 'Create a new incognito window'
-    }
-]);
-
-app.whenReady().then(async () => {
-    initialize();
-
-    const users = await userManager.loads();
-
-    if (users.length < 1 || !userManager.lastUserId) {
-        const user = await userManager.create();
-        userManager.lastUserId = user.id;
-        windowManager.add(user);
-    } else {
-        const user = userManager.get(userManager.lastUserId)!!;
-        windowManager.add(user);
-    }
-});
-
-app.once('window-all-closed', () => {
-    if (!IS_MAC)
-        app.quit();
-});
-
-app.on('browser-window-focus', (e, browserWindow) => {
-    const window = windowManager.get(browserWindow.id);
-    if (!window) return;
-
-    const settings = window.user.settings;
-    nativeTheme.themeSource = settings.config.appearance.mode;
-
-    const windows = windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id && appWindow.id !== browserWindow.id);
-    windows.forEach((window) => {
-        window.webContents.send('settings-update', settings.config);
-        window.viewManager.get()?.setBounds();
-    });
-});
-
-ipcMain.on('get-webcontents-id', (e) => {
-    e.returnValue = e.sender.id;
-});
-*/
 
 export const Main = new App();

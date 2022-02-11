@@ -4,10 +4,17 @@ import { DeepPartial } from '../utils';
 import { injectChromeWebStoreInstallButton } from './chrome-webstore';
 
 export const togglePictureInPicture = async (index: number = 0) => {
+    if (!document.pictureInPictureEnabled)
+        throw Error('Picture in Picture is disabled!');
+
     if (!document.pictureInPictureElement) {
         const elements = document.querySelectorAll('video');
-        if (elements.length > 0 && elements.length > index && elements[index]) {
-            await elements[index].requestPictureInPicture();
+        if (elements.length > 0 && elements.length > index && index >= 0 && elements[index]) {
+            const element = elements[index];
+            if (element.disablePictureInPicture)
+                throw Error('Picture in Picture is disabled!');
+
+            await element.requestPictureInPicture();
             return;
         } else {
             throw Error('Video Element Not found.');

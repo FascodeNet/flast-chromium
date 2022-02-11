@@ -168,6 +168,13 @@ export class AppWindow {
                 !view.isLoading ? view.reload() : view.stop();
             }
         });
+        const homeButton = new TouchBarButton({
+            icon: getIcon('home'),
+            click: () => {
+                if (!view) return;
+                view.load('https://www.google.com');
+            }
+        });
 
         const searchButton = new TouchBarButton({
             icon: getIcon('search'),
@@ -263,12 +270,18 @@ export class AppWindow {
             })
         });
 
+        const { home } = this.user.settings.config.appearance.buttons;
         const touchBar = new TouchBar({
             items: [
                 backButton,
                 forwardButton,
                 reloadButton,
-                new TouchBarSpacer({ size: 'small' }),
+                ...(home ? [
+                    homeButton,
+                    new TouchBarSpacer({ size: 'small' })
+                ] : [
+                    new TouchBarSpacer({ size: 'small' })
+                ]),
                 searchButton,
                 new TouchBarSpacer({ size: 'large' }),
                 tabManagePopup,
