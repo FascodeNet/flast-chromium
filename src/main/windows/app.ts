@@ -36,6 +36,8 @@ export class AppWindow {
 
     public viewManager: ViewManager;
 
+    private _fullScreenState: WindowFullScreenState;
+
     public constructor(user: IUser, { urls = ['https://www.google.com'] }: AppWindowInitializerOptions) {
         this.browserWindow = new BrowserWindow({
             frame: false,
@@ -93,8 +95,6 @@ export class AppWindow {
             this.browserWindow.webContents.openDevTools({ mode: 'detach' });
         });
     }
-
-    private _fullScreenState: WindowFullScreenState;
 
     public get webContents() {
         return this.browserWindow.webContents;
@@ -293,14 +293,13 @@ export class AppWindow {
         this.browserWindow.setTouchBar(touchBar);
     }
 
+    public async setStyle() {
+        this.webContents.send('theme-update');
+    }
+
     public close() {
         this.browserWindow.close();
         Main.windowManager.remove(this.id);
-    }
-
-
-    public async setStyle() {
-        this.webContents.send('theme-update');
     }
 
 
@@ -309,7 +308,6 @@ export class AppWindow {
         if (!view) return;
         view.setBounds();
     }
-
 
     private setListeners() {
         const onDestroyed = () => {
