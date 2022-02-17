@@ -15,8 +15,6 @@ export class IncognitoUser implements IUser {
 
     public readonly fromUser: NormalUser;
 
-    public readonly name: string = 'Incognito';
-    public readonly avatar?: string = undefined;
     public readonly type: UserType = 'incognito';
 
     private _extensions: IncognitoExtensions;
@@ -43,6 +41,16 @@ export class IncognitoUser implements IUser {
         this._downloads = new IncognitoDownloads(this, fromUser);
     }
 
+
+    public get name() {
+        return 'Incognito';
+    }
+
+    public get avatar() {
+        return undefined;
+    }
+
+
     public get extensions() {
         return this._extensions;
     }
@@ -51,9 +59,11 @@ export class IncognitoUser implements IUser {
         return this._session;
     }
 
+
     public get settings() {
         return this._settings;
     }
+
 
     public get bookmarks() {
         return this._bookmarks;

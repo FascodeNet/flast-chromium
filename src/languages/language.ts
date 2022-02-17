@@ -24,6 +24,27 @@ export interface Language {
         openIncognitoWindow: string;
     };
     menus: {
+        application: {
+            newTab: string;
+            newWindow: string;
+            openIncognitoWindow: string;
+
+            bookmarks: string;
+            histories: string;
+            downloads: string;
+            applications: string;
+            extensions: string;
+
+            print: string;
+            find: string;
+            share: string;
+
+            settings: string;
+            help: {
+                label: string;
+            }
+            close: string;
+        }
         window: {
             app: {
                 label: string;
@@ -122,6 +143,7 @@ export interface Language {
                 newTab: string;
                 newWindow: string;
                 openIncognitoWindow: string;
+                openAsAnotherUser: string;
                 saveLink: string;
                 copyLink: string;
             };

@@ -38,14 +38,16 @@ interface ElectronAPI {
     hideDialog: () => Promise<void>;
     destroyDialog: () => Promise<void>;
 
+    showMenuPopup: (x: number, y: number) => Promise<void>;
+
+    showInformationPopup: (x: number, y: number) => Promise<void>;
+
     showSearchPopup: (x: number, y: number, width: number) => Promise<void>;
 
     showFindPopup: () => Promise<void>;
     findInPage: (id: number, text: string, matchCase: boolean) => Promise<FindState>;
     moveFindInPage: (id: number, forward: boolean) => Promise<FindState>;
     stopFindInPage: (id: number, hide: boolean) => Promise<void>;
-
-    showInformationPopup: (x: number, y: number) => Promise<void>;
 
     showBookmarksPopup: (x: number, y: number) => Promise<void>;
     getBookmarks: (userId: string) => Promise<IBookmark[]>;
@@ -71,7 +73,7 @@ const windowId = getCurrentWindow().id;
 const webContentsId = getCurrentWebContents().id;
 export const useElectronAPI = (): ElectronAPI => ({
     getWindowId: () => getCurrentWindow().id,
-    showApplicationMenu: () => ipcRenderer.invoke(`window-menu-${windowId}`),
+    showApplicationMenu: () => ipcRenderer.invoke(`window-application_menu-${windowId}`),
     toggleSidebar: () => ipcRenderer.invoke(`window-sidebar-${windowId}`),
 
     isMinimized: () => ipcRenderer.invoke(`window-minimized-${windowId}`),
@@ -103,14 +105,16 @@ export const useElectronAPI = (): ElectronAPI => ({
     hideDialog: () => ipcRenderer.invoke(`dialog-hide-${webContentsId}`),
     destroyDialog: () => ipcRenderer.invoke(`dialog-destroy-${webContentsId}`),
 
+    showMenuPopup: (x: number, y: number) => ipcRenderer.invoke(`window-menu-${windowId}`, x, y),
+
+    showInformationPopup: (x: number, y: number) => ipcRenderer.invoke(`window-information-${windowId}`, x, y),
+
     showSearchPopup: (x: number, y: number, width: number) => ipcRenderer.invoke(`window-show_search-${windowId}`, x, y, width),
 
     showFindPopup: () => ipcRenderer.invoke(`window-find-${windowId}`),
     findInPage: (id: number, text: string, matchCase: boolean) => ipcRenderer.invoke(`view-find_in_page-${windowId}`, id, text, matchCase),
     moveFindInPage: (id: number, forward: boolean) => ipcRenderer.invoke(`view-move_find_in_page-${windowId}`, id, forward),
     stopFindInPage: (id: number, hide: boolean) => ipcRenderer.invoke(`view-stop_find_in_page-${windowId}`, id, hide),
-
-    showInformationPopup: (x: number, y: number) => ipcRenderer.invoke(`window-information-${windowId}`, x, y),
 
     showBookmarksPopup: (x: number, y: number) => ipcRenderer.invoke(`window-bookmarks-${windowId}`, x, y),
     getBookmarks: (userId: string) => ipcRenderer.invoke(`bookmarks-${userId}`),

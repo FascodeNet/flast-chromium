@@ -4,6 +4,7 @@ import { AppWindow } from '../windows/app';
 import { ProcessManagerWindow } from '../windows/process-manager';
 
 export class WindowManager {
+
     public windows = new Map<number, AppWindow>();
 
     public selectedId: number = -1;
@@ -15,8 +16,9 @@ export class WindowManager {
 
     }
 
-    public getWindows(): AppWindow[] {
-        return [...this.windows.values()].filter(nonNullable).filter((window: AppWindow) => !window.browserWindow.isDestroyed());
+    public getWindows(user: IUser | undefined = undefined): AppWindow[] {
+        const windows: AppWindow[] = [...this.windows.values()].filter(nonNullable).filter((window: AppWindow) => !window.browserWindow.isDestroyed());
+        return user ? windows.filter((window) => window.user.id === user.id) : windows;
     }
 
     public get(id: number = this.selectedId) {

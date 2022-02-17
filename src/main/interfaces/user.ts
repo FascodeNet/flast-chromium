@@ -8,9 +8,11 @@ export interface IUser {
 
     readonly id: string;
 
-    name: string;
-    avatar?: string;
     readonly type: UserType;
+
+    get name(): string;
+
+    get avatar(): string | undefined;
 
     get extensions(): IExtensions;
 

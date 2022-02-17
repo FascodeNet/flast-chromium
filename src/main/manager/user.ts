@@ -68,10 +68,21 @@ export class UserManager {
         return user;
     }
 
+    /**
+     * ユーザーを新規作成します。
+     *
+     * @returns {Promise<IUser>}
+     */
     public async create() {
         return this.add(await UserManager.load(nanoid()));
     }
 
+    /**
+     * 存在するユーザーを削除します。
+     *
+     * @param {string} id
+     * @returns {Promise<boolean>}
+     */
     public async delete(id: string) {
         if (!this._users.has(id))
             return false;
@@ -91,6 +102,11 @@ export class UserManager {
         }
     }
 
+    /**
+     * 存在するユーザーをすべて読み込みます。
+     *
+     * @returns {Promise<IUser[]>}
+     */
     public async loads(): Promise<IUser[]> {
         try {
             const { users, lastUser } = await UserManager.getConfig();
@@ -148,7 +164,7 @@ export class UserManager {
             user.settings.config = config;
             App.setTheme(user.settings.config);
 
-            const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === user.id);
+            const windows = Main.windowManager.getWindows(user);
             windows.forEach(async (window) => {
                 window.webContents.send('settings-update', user.settings.config);
                 window.viewManager.get()?.setBounds();
@@ -164,7 +180,7 @@ export class UserManager {
 
             App.setTheme(user.settings.config);
 
-            const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === user.id);
+            const windows = Main.windowManager.getWindows(user);
             windows.forEach(async (window) => await window.setStyle());
         });
     }

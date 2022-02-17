@@ -9,6 +9,7 @@ import { IS_DEVELOPMENT } from '../../utils/process';
 import { showExtensionsDialog } from '../dialogs/extensions';
 import { showHistoriesDialog } from '../dialogs/histories';
 import { showInformationDialog } from '../dialogs/information';
+import { showMenuDialog } from '../dialogs/menu';
 import { showSearchDialog } from '../dialogs/search';
 import { IUser } from '../interfaces/user';
 import { AppWindowInitializerOptions } from '../interfaces/window';
@@ -201,7 +202,7 @@ export class AppWindow {
         });
         */
 
-        const tabManagePopup = new TouchBarPopover({
+        const tabManagePopover = new TouchBarPopover({
             label: 'タブの管理',
             showCloseButton: true,
             items: new TouchBar({
@@ -227,7 +228,7 @@ export class AppWindow {
                 ]
             })
         });
-        const windowManagePopup = new TouchBarPopover({
+        const windowManagePopover = new TouchBarPopover({
             label: 'ウィンドウの管理',
             showCloseButton: true,
             items: new TouchBar({
@@ -284,8 +285,8 @@ export class AppWindow {
                 ]),
                 searchButton,
                 new TouchBarSpacer({ size: 'large' }),
-                tabManagePopup,
-                windowManagePopup
+                tabManagePopover,
+                windowManagePopover
             ]
         });
 
@@ -372,7 +373,7 @@ export class AppWindow {
             return this.user.id;
         });
 
-        ipcMain.handle(`window-menu-${this.id}`, () => {
+        ipcMain.handle(`window-application_menu-${this.id}`, () => {
             const settings = this.user.settings;
 
             this.applicationMenu.popup({
@@ -387,7 +388,7 @@ export class AppWindow {
 
             settings.config = { appearance: { sidebar: { extended: !settings.config.appearance.sidebar.extended } } };
 
-            const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === this.user.id);
+            const windows = Main.windowManager.getWindows(this.user);
             windows.forEach((window) => {
                 window.webContents.send('settings-update', settings.config);
                 window.viewManager.get()?.setBounds();
@@ -420,6 +421,15 @@ export class AppWindow {
             this.close();
         });
 
+
+        ipcMain.handle(`window-menu-${this.id}`, (e, x: number, y: number) => {
+            showMenuDialog(this.user, this.browserWindow, x, y);
+        });
+
+        ipcMain.handle(`window-information-${this.id}`, (e, x: number, y: number) => {
+            showInformationDialog(this.user, this.browserWindow, x, y);
+        });
+
         ipcMain.handle(`window-show_search-${this.id}`, (e, x: number, y: number, width: number) => {
             showSearchDialog(this.user, this, x, y, width);
         });
@@ -429,10 +439,6 @@ export class AppWindow {
             if (!view) return;
 
             view.findInPage(null);
-        });
-
-        ipcMain.handle(`window-information-${this.id}`, (e, x: number, y: number) => {
-            showInformationDialog(this.user, this.browserWindow, x, y);
         });
 
         ipcMain.handle(`window-bookmarks-${this.id}`, (e, x: number, y: number) => {

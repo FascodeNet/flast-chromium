@@ -1,7 +1,7 @@
 import { getCurrentWebContents } from '@electron/remote';
 import React from 'react';
 import { useUserConfigContext } from '../../../../../contexts/config';
-import { BookmarksButton, DownloadsButton, ExtensionsButton, HistoriesButton } from '../ActionButton';
+import { BookmarksButton, DownloadsButton, ExtensionsButton, HistoriesButton, MenuButton } from '../ActionButton';
 import { StyledContainer } from './styles';
 
 export const ActionBar = () => {
@@ -16,6 +16,7 @@ export const ActionBar = () => {
             <HistoriesButton />
             <DownloadsButton />
             {extensions.length > 0 && <ExtensionsButton />}
+            <MenuButton />
         </StyledContainer>
     );
 };

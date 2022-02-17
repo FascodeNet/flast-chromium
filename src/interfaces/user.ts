@@ -29,6 +29,10 @@ export type Language = 'ja' | 'en';
 
 
 export interface UserConfig {
+    profile: {
+        name: string;
+        avatar?: string;
+    };
     appearance: {
         mode: AppearanceMode;
         theme: AppearanceTheme;
@@ -69,6 +73,10 @@ export interface UserConfig {
 }
 
 export const DefaultUserConfig: UserConfig = {
+    profile: {
+        name: 'New user',
+        avatar: undefined
+    },
     appearance: {
         mode: 'system',
         theme: undefined,

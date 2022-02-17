@@ -1,7 +1,7 @@
 import { app, clipboard, ContextMenuParams, dialog, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
 import { getTranslate } from '../../languages/language';
 import { isURL } from '../../utils/url';
-import { Main } from '../main';
+import { App, Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
 import { getEmptyMenuItemIcon, getMenuItemIcon, getMenuItemIconFromName, joinTo, resizeIcon } from '../utils/menu';
@@ -43,7 +43,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
                 settings.config = { appearance: { fullscreen_showing_toolbar: !settings.config.appearance.fullscreen_showing_toolbar } };
 
-                const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id);
+                const windows = Main.windowManager.getWindows(window.user);
                 windows.forEach((window) => {
                     window.webContents.send('settings-update', settings.config);
                     window.viewManager.get()?.setBounds();
@@ -60,6 +60,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         (webContents.isDevToolsOpened() && webContents.devToolsWebContents) ? webContents.devToolsWebContents.focus() : webContents.openDevTools();
     };
 
+    const normalUsers = Main.userManager.normalUsers.filter((user) => window.user.id !== user.id);
     const linkOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = linkURL !== '' ? [
         {
             label: languageSection.link.newTab,
@@ -77,6 +78,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.link.openIncognitoWindow,
             icon: getMenuItemIconFromName('window_incognito'),
             accelerator: Shortcuts.WINDOW_INCOGNITO,
+            enabled: window.user.type === 'normal',
             click: () => {
                 if (window.user instanceof NormalUser) {
                     const incognitoUser = Main.userManager.add(new IncognitoUser(window.user));
@@ -86,6 +88,33 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                     Main.windowManager.add(incognitoUser, [linkURL]);
                 }
             }
+        },
+        {
+            label: languageSection.link.openAsAnotherUser,
+            icon: getEmptyMenuItemIcon(),
+            visible: window.user.type === 'normal' && normalUsers.length > 0,
+            enabled: window.user.type === 'normal' && normalUsers.length > 0,
+            submenu: [
+                ...(normalUsers.map((user): MenuItemConstructorOptions => (
+                    {
+                        label: user.name,
+                        icon: user.avatar ? getEmptyMenuItemIcon() : getMenuItemIconFromName('user'),
+                        click: () => {
+                            Main.userManager.lastUserId = user.id;
+                            App.setTheme(user.settings.config);
+
+                            const windows = Main.windowManager.getWindows(user);
+                            if (windows.length > 0) {
+                                const window = windows[0];
+                                window.viewManager.add(linkURL);
+                                Main.windowManager.select(window.id);
+                            } else {
+                                Main.windowManager.add(user, [linkURL]);
+                            }
+                        }
+                    }
+                )))
+            ]
         },
         { type: 'separator' },
         {

@@ -1,9 +1,10 @@
+import faker from '@faker-js/faker';
 import { app, dialog, Menu, MenuItemConstructorOptions, nativeImage } from 'electron';
 import { getTranslate } from '../../languages/language';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
 import { isHorizontal } from '../../utils/design';
 import { IS_MAC } from '../../utils/process';
-import { Main } from '../main';
+import { App, Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
 import { getEmptyMenuItemIcon, getMenuItemIcon, getMenuItemIconFromName, joinTo, resizeIcon } from '../utils/menu';
@@ -364,7 +365,7 @@ export const getWindowMenu = (window: AppWindow) => {
 
                     settings.config = { appearance: { fullscreen_showing_toolbar: !settings.config.appearance.fullscreen_showing_toolbar } };
 
-                    const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id);
+                    const windows = Main.windowManager.getWindows(window.user);
                     windows.forEach((window) => {
                         window.webContents.send('settings-update', settings.config);
                         window.viewManager.get()?.setBounds();
@@ -382,7 +383,7 @@ export const getWindowMenu = (window: AppWindow) => {
 
                     settings.config = { appearance: { sidebar: { extended: !settings.config.appearance.sidebar.extended } } };
 
-                    const windows = Main.windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id);
+                    const windows = Main.windowManager.getWindows(window.user);
                     windows.forEach((window) => {
                         window.webContents.send('settings-update', settings.config);
                         window.viewManager.get()?.setBounds();
@@ -779,41 +780,46 @@ export const getWindowMenu = (window: AppWindow) => {
         submenu: [
             {
                 label: languageSection.user.add,
-                icon: !IS_MAC ? getMenuItemIconFromName('window_add') : undefined,
-                click: () => {
-                    if (window.user instanceof NormalUser) {
-                        Main.windowManager.add(window.user);
-                    } else if (window.user instanceof IncognitoUser) {
-                        Main.windowManager.add(window.user.fromUser);
-                    }
+                icon: !IS_MAC ? getMenuItemIconFromName('user_add') : undefined,
+                click: async () => {
+                    const user = await Main.userManager.create();
+                    faker.locale = 'ja';
+                    user.settings.config = { profile: { name: `${faker.name.lastName()} ${faker.name.firstName()}` } };
+                    Main.userManager.lastUserId = user.id;
+                    App.setTheme(user.settings.config);
+                    Main.windowManager.add(user);
                 }
             },
             {
                 label: languageSection.user.remove,
-                icon: !IS_MAC ? getMenuItemIconFromName('window_incognito') : undefined,
+                icon: !IS_MAC ? getMenuItemIconFromName('user_remove') : undefined,
                 click: () => {
-                    if (window.user instanceof NormalUser) {
-                        const incognitoUser = Main.userManager.add(new IncognitoUser(window.user));
-                        Main.windowManager.add(incognitoUser, undefined);
-                    } else if (window.user instanceof IncognitoUser) {
-                        const incognitoUser = Main.userManager.add(new IncognitoUser(window.user.fromUser));
-                        Main.windowManager.add(incognitoUser, undefined);
-                    }
                 }
             },
             {
                 label: languageSection.user.edit,
-                icon: !IS_MAC ? getMenuItemIconFromName('window_remove') : undefined,
-                click: () => window.close()
+                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                click: () => {
+                }
             },
             { type: 'separator' },
             ...(Main.userManager.normalUsers.map((user): MenuItemConstructorOptions => (
                 {
                     label: user.name,
-                    icon: !IS_MAC ? (window.user.id === user.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
-                    // type: 'checkbox',
+                    icon: !IS_MAC ? (window.user.id === user.id ? getMenuItemIconFromName('check') : (user.avatar ? getEmptyMenuItemIcon() : getMenuItemIconFromName('user'))) : undefined,
+                    type: !IS_MAC ? 'normal' : 'checkbox',
+                    checked: window.user.id === user.id,
                     enabled: window.user.id !== user.id,
                     click: () => {
+                        Main.userManager.lastUserId = user.id;
+                        App.setTheme(user.settings.config);
+
+                        const windows = Main.windowManager.getWindows(user);
+                        if (windows.length > 0) {
+                            Main.windowManager.select(windows[0].id);
+                        } else {
+                            Main.windowManager.add(user);
+                        }
                     }
                 }
             )))

@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React, { MouseEvent } from 'react';
-import { Bookmarks, Download, Extension, History } from '../../../../../components/Icons';
+import { Bookmarks, Download, Extension, History, Menu } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledButton } from '../Button/styles';
@@ -70,6 +70,25 @@ export const ExtensionsButton = () => {
         <StyledButton className={clsx('action-button', 'extensions')} appearanceStyle={style}
                       onClick={handleButtonClick}>
             <Extension />
+        </StyledButton>
+    );
+};
+
+export const MenuButton = () => {
+    const { showMenuPopup } = useElectronAPI();
+
+    const { config } = useUserConfigContext();
+    const style = config.appearance.style;
+
+    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+        const { x, y, height } = e.currentTarget.getBoundingClientRect();
+        showMenuPopup(x, y + height);
+    };
+
+    return (
+        <StyledButton className={clsx('action-button', 'menu')} appearanceStyle={style}
+                      onClick={handleButtonClick}>
+            <Menu />
         </StyledButton>
     );
 };

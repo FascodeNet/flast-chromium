@@ -8,6 +8,27 @@ export const Ja: Language = {
         openIncognitoWindow: 'プライベート ウィンドウを開く'
     },
     menus: {
+        application: {
+            newTab: '新しいタブ',
+            newWindow: '新しいウィンドウ',
+            openIncognitoWindow: 'プライベート ウィンドウを開く',
+
+            bookmarks: 'ブックマーク',
+            histories: '履歴',
+            downloads: 'ダウンロード',
+            applications: 'アプリ',
+            extensions: '拡張機能',
+
+            print: '印刷',
+            find: 'ページ内検索',
+            share: '共有',
+
+            settings: '設定',
+            help: {
+                label: 'ヘルプ'
+            },
+            close: '閉じる'
+        },
         window: {
             app: {
                 label: APPLICATION_NAME,
@@ -105,7 +126,8 @@ export const Ja: Language = {
             link: {
                 newTab: '新しいタブで開く',
                 newWindow: '新しいウィンドウで開く',
-                openIncognitoWindow: 'プライベート ウィンドウで開く',
+                openIncognitoWindow: 'プライベート ウィンドウでリンクを開く',
+                openAsAnotherUser: 'ほかのユーザーとしてリンクを開く',
                 saveLink: '名前を付けてリンク先を保存',
                 copyLink: 'リンクのアドレスをコピー'
             },

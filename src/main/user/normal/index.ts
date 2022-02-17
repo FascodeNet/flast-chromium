@@ -14,8 +14,6 @@ export class NormalUser implements IUser {
 
     public readonly id: string;
 
-    public name: string = 'New user';
-    public avatar?: string = undefined;
     public readonly type: UserType = 'normal';
 
     private readonly path: string;
@@ -45,6 +43,16 @@ export class NormalUser implements IUser {
         this._downloads = new NormalDownloads(this);
     }
 
+
+    public get name() {
+        return this._settings.config.profile.name;
+    }
+
+    public get avatar() {
+        return this._settings.config.profile.avatar;
+    }
+
+
     public get extensions() {
         return this._extensions;
     }
@@ -53,9 +61,11 @@ export class NormalUser implements IUser {
         return this._session;
     }
 
+
     public get settings() {
         return this._settings;
     }
+
 
     public get bookmarks() {
         return this._bookmarks;

@@ -49,6 +49,8 @@ applyBrowserEntries(
     [
         'app',
         'process-manager',
+
+        'menu',
         'information',
         'search',
         'find',

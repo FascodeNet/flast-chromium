@@ -8,6 +8,27 @@ export const En: Language = {
         openIncognitoWindow: 'Open Private window'
     },
     menus: {
+        application: {
+            newTab: 'New tab',
+            newWindow: 'New window',
+            openIncognitoWindow: 'Open Private window',
+
+            bookmarks: 'Bookmarks',
+            histories: 'Histories',
+            downloads: 'Downloads',
+            applications: 'Applications',
+            extensions: 'Extensions',
+
+            print: 'Print',
+            find: 'Find',
+            share: 'Share',
+
+            settings: 'Settings',
+            help: {
+                label: 'Help'
+            },
+            close: 'Close'
+        },
         window: {
             app: {
                 label: APPLICATION_NAME,
@@ -105,6 +126,7 @@ export const En: Language = {
                 newTab: 'Open link in new tab',
                 newWindow: 'Open link in new window',
                 openIncognitoWindow: 'Open link in private window',
+                openAsAnotherUser: 'Open a link as another user',
                 saveLink: 'Save link as',
                 copyLink: 'Copy link'
             },
