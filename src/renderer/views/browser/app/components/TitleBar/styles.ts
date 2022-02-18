@@ -38,10 +38,14 @@ export const StyledWrapper = styled.div`
   height: 100%;
   grid-area: wrapper;
   display: grid;
-  grid-template-columns: minmax(250px, 25%) 1px 1fr;
+  grid-template-columns: auto 1px 1fr;
   grid-template-areas: 'address-bar divider horizontal-tab-container';
   align-items: center;
   gap: 8px;
+
+  @media screen and (min-width: 850px) {
+    grid-template-columns: minmax(250px, 25%) 1px 1fr;
+  }
 
   @media screen and (min-width: 1000px) {
     grid-template-columns: minmax(300px, 30%) 1px 1fr;

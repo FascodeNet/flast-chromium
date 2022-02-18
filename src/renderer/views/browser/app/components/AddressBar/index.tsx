@@ -12,6 +12,7 @@ import { Information, Lock, Warning } from '../../../../../components/Icons/stat
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
+import { StyledButton as Button } from '../Button/styles';
 import { StyledAddressBar, StyledButton, StyledButtonContainer, StyledText, StyledTextContainer } from './styles';
 
 export const AddressBar = () => {
@@ -58,12 +59,13 @@ export const AddressBar = () => {
 
     const ref = useRef<HTMLDivElement>(null);
 
-    const handleClick = (_: MouseEvent<HTMLDivElement>) => {
+    const handleClick = () => {
         setActive(true);
         setTimeout(() => {
             const { x, y, width } = ref.current!!.getBoundingClientRect();
             showSearchPopup(x - 15 - 4, y, width + (15 * 2) + (4 * 2));
         });
+        setTimeout(() => setActive(false), 500);
     };
 
     const handleInformationButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -106,46 +108,55 @@ export const AddressBar = () => {
     };
 
     const style: AppearanceStyle = config.appearance.style;
-    try {
-        const {
-            protocol,
-            hostname,
-            port,
-            pathname,
-            search,
-            hash
-        } = new URL(isURL(address) && !address.includes('://') ? prefixHttp(address) : address);
+    if (window.outerWidth >= 850 || style !== 'top_single' || active) {
+        try {
+            const {
+                protocol,
+                hostname,
+                port,
+                pathname,
+                search,
+                hash
+            } = new URL(isURL(address) && !address.includes('://') ? prefixHttp(address) : address);
 
+            return (
+                <StyledAddressBar ref={ref} className={clsx('address-bar', state.requestState?.type)}
+                                  active={active} appearanceStyle={style} onClick={handleClick}>
+                    <StyledButtonContainer className="address-bar-container">
+                        <StyledButton text={statusButtonText} onClick={handleInformationButtonClick}>
+                            <StatusIcon />
+                        </StyledButton>
+                    </StyledButtonContainer>
+                    <StyledTextContainer className="address">
+                        <StyledText className="protocol">{protocol}//</StyledText>
+                        <StyledText className="hostname">{hostname}</StyledText>
+                        <StyledText className="path">
+                            {decodeURIComponent(`${port !== '' ? `:${port}` : ''}${pathname}${search}${hash}`)}
+                        </StyledText>
+                    </StyledTextContainer>
+                </StyledAddressBar>
+            );
+        } catch (e) {
+            return (
+                <StyledAddressBar ref={ref} className="address-bar" active={active} appearanceStyle={style}
+                                  onClick={handleClick}>
+                    <StyledButtonContainer className="address-bar-container">
+                        <StyledButton text={statusButtonText}>
+                            <StatusIcon />
+                        </StyledButton>
+                    </StyledButtonContainer>
+                    <StyledTextContainer className="address">
+                        <StyledText>{address}</StyledText>
+                    </StyledTextContainer>
+                </StyledAddressBar>
+            );
+        }
+    } else {
         return (
-            <StyledAddressBar ref={ref} className={clsx('address-bar', state.requestState?.type)}
-                              active={active} appearanceStyle={style} onClick={handleClick}>
-                <StyledButtonContainer>
-                    <StyledButton text={statusButtonText} onClick={handleInformationButtonClick}>
-                        <StatusIcon />
-                    </StyledButton>
-                </StyledButtonContainer>
-                <StyledTextContainer className="address">
-                    <StyledText className="protocol">{protocol}//</StyledText>
-                    <StyledText className="hostname">{hostname}</StyledText>
-                    <StyledText className="path">
-                        {decodeURIComponent(`${port !== '' ? `:${port}` : ''}${pathname}${search}${hash}`)}
-                    </StyledText>
-                </StyledTextContainer>
-            </StyledAddressBar>
-        );
-    } catch (e) {
-        return (
-            <StyledAddressBar ref={ref} className="address-bar" active={active} appearanceStyle={style}
-                              onClick={handleClick}>
-                <StyledButtonContainer>
-                    <StyledButton text={statusButtonText}>
-                        <StatusIcon />
-                    </StyledButton>
-                </StyledButtonContainer>
-                <StyledTextContainer className="address">
-                    <StyledText>{address}</StyledText>
-                </StyledTextContainer>
-            </StyledAddressBar>
+            <Button className={clsx('address-bar-button', 'search')} appearanceStyle={style}
+                    onClick={handleClick}>
+                <Search />
+            </Button>
         );
     }
 };
