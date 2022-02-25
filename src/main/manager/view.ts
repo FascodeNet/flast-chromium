@@ -97,15 +97,15 @@ export class ViewManager {
         this.updateViews();
     }
 
-    public removeOthers(id: number) {
-        const views: AppView[] = this.getViews().filter((view) => view.id !== id);
+    public removeOthers(id: number = this._selectedId) {
+        const views = this.getViews().filter((view) => view.id !== id);
         views.forEach((view) => this.removeOf(view));
 
         this.updateViews();
     }
 
-    public removeLefts(id: number) {
-        const views: AppView[] = this.getViews();
+    public removeLefts(id: number = this._selectedId) {
+        const views = this.getViews();
         const viewIndex = views.findIndex((view) => view.id === id);
         const selectedViewIndex = views.findIndex((view) => view.id === this._selectedId);
 
@@ -117,8 +117,8 @@ export class ViewManager {
         this.updateViews();
     }
 
-    public removeRights(id: number) {
-        const views: AppView[] = this.getViews();
+    public removeRights(id: number = this._selectedId) {
+        const views = this.getViews();
         const viewIndex = views.findIndex((view) => view.id === id);
         const selectedViewIndex = views.findIndex((view) => view.id === this._selectedId);
 

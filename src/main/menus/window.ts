@@ -17,6 +17,7 @@ export const getWindowMenu = (window: AppWindow) => {
     const languageSection = translate.menus.window;
 
     const viewManager = window.viewManager;
+    const view = viewManager.get();
 
     const getFavicon = (view: AppView) => {
         let dataURL = view.favicon;
@@ -348,12 +349,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.view.fullScreen,
                 icon: !IS_MAC ? getMenuItemIconFromName('fullscreen') : undefined,
                 accelerator: Shortcuts.FULLSCREEN,
-                click: () => {
-                    const window = Main.windowManager.get();
-                    if (!window) return;
-
-                    window.browserWindow.setFullScreen(!window.browserWindow.fullScreen);
-                }
+                click: () => window.browserWindow.setFullScreen(!window.browserWindow.fullScreen)
             },
             {
                 label: languageSection.view.toolbar,
@@ -504,11 +500,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.APPLICATION_DEVELOPER_TOOLS,
                 visible: false,
-                click: () => {
-                    const window = Main.windowManager.get();
-                    if (!window) return;
-                    window.browserWindow.webContents.openDevTools({ mode: 'detach' });
-                }
+                click: () => window.browserWindow.webContents.openDevTools({ mode: 'detach' })
             }
         ]
     };
@@ -682,6 +674,34 @@ export const getWindowMenu = (window: AppWindow) => {
             },
             { type: 'separator' },
             {
+                label: languageSection.tab.duplicateTab,
+                icon: !IS_MAC ? getMenuItemIconFromName('tab_duplicate') : undefined,
+                accelerator: Shortcuts.TAB_DUPLICATE,
+                click: () => {
+                    if (!view) return;
+                    viewManager.add(view.url);
+                }
+            },
+            {
+                label: !view || !view.isPinned ? languageSection.tab.pinTab : languageSection.tab.unpinTab,
+                icon: !IS_MAC ? getMenuItemIconFromName(!view || !view.isPinned ? 'pin' : 'unpin') : undefined,
+                accelerator: Shortcuts.TAB_PIN,
+                click: () => {
+                    if (!view) return;
+                    view.setPinned(!view.isPinned);
+                }
+            },
+            {
+                label: !view || !view.isMuted ? languageSection.tab.muteTab : languageSection.tab.unmuteTab,
+                icon: !IS_MAC ? getMenuItemIconFromName(`speaker${!view || view.isMuted ? '' : '_muted'}`) : undefined,
+                accelerator: Shortcuts.TAB_MUTE,
+                click: () => {
+                    if (!view) return;
+                    view.setMuted(!view.isMuted);
+                }
+            },
+            { type: 'separator' },
+            {
                 label: languageSection.tab.prevTab,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.TAB_PREVIOUS,
@@ -710,7 +730,8 @@ export const getWindowMenu = (window: AppWindow) => {
                 {
                     label: appView.title,
                     icon: !IS_MAC ? (viewManager.selectedId === appView.id ? getMenuItemIconFromName('check') : getFavicon(appView)) : undefined,
-                    // type: 'checkbox',
+                    type: !IS_MAC ? 'normal' : 'checkbox',
+                    checked: viewManager.selectedId === appView.id,
                     enabled: viewManager.selectedId !== appView.id,
                     click: () => viewManager.select(appView.id)
                 }
@@ -724,7 +745,7 @@ export const getWindowMenu = (window: AppWindow) => {
         accelerator: 'Alt+W',
         submenu: [
             {
-                label: languageSection.file.newWindow,
+                label: languageSection.window.addWindow,
                 icon: !IS_MAC ? getMenuItemIconFromName('window_add') : undefined,
                 accelerator: Shortcuts.WINDOW_ADD,
                 click: () => {
@@ -736,7 +757,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 }
             },
             {
-                label: languageSection.file.openIncognitoWindow,
+                label: languageSection.window.openIncognitoWindow,
                 icon: !IS_MAC ? getMenuItemIconFromName('window_incognito') : undefined,
                 accelerator: Shortcuts.WINDOW_INCOGNITO,
                 click: () => {
@@ -750,10 +771,42 @@ export const getWindowMenu = (window: AppWindow) => {
                 }
             },
             {
-                label: languageSection.file.closeWindow,
+                label: languageSection.window.removeWindow,
                 icon: !IS_MAC ? getMenuItemIconFromName('window_remove') : undefined,
                 accelerator: Shortcuts.WINDOW_REMOVE,
                 click: () => window.close()
+            },
+            {
+                label: languageSection.window.removeOtherWindows,
+                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                enabled: Main.windowManager.getWindows(window.user).filter((appWindow) => appWindow.id !== window.id).length > 0,
+                click: () => Main.windowManager.removeOthers(window.id)
+            },
+            { type: 'separator' },
+            {
+                label: languageSection.window.minimizeWindow,
+                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                enabled: !window.browserWindow.isFullScreen(),
+                click: () => window.browserWindow.minimize()
+            },
+            {
+                label: !window.browserWindow.isMaximized() ? languageSection.window.maximizeWindow : languageSection.window.unmaximizeWindow,
+                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                enabled: !window.browserWindow.isFullScreen(),
+                click: () => !window.browserWindow.isMaximized() ? window.browserWindow.maximize() : window.browserWindow.unmaximize()
+            },
+            {
+                label: languageSection.window.toggleFullScreen,
+                icon: !IS_MAC ? getMenuItemIconFromName('fullscreen') : undefined,
+                accelerator: Shortcuts.FULLSCREEN,
+                click: () => window.browserWindow.setFullScreen(!window.browserWindow.fullScreen)
+            },
+            { type: 'separator' },
+            {
+                label: languageSection.window.openProcessManager,
+                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                accelerator: Shortcuts.OPEN_PROCESS_MANAGER,
+                click: () => Main.windowManager.openProcessManagerWindow()
             },
             { type: 'separator' },
             ...(Main.windowManager.getWindows().map((appWindow): MenuItemConstructorOptions => {
@@ -764,7 +817,8 @@ export const getWindowMenu = (window: AppWindow) => {
                     {
                         label: `${windowViewManager.get()?.title ?? appWindow.title}${subLabel}`,
                         icon: !IS_MAC ? (window.id === appWindow.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
-                        // type: 'checkbox',
+                        type: !IS_MAC ? 'normal' : 'checkbox',
+                        checked: window.id === appWindow.id,
                         enabled: window.id !== appWindow.id,
                         click: () => Main.windowManager.select(appWindow.id)
                     }
@@ -779,7 +833,7 @@ export const getWindowMenu = (window: AppWindow) => {
         accelerator: 'Alt+U',
         submenu: [
             {
-                label: languageSection.user.add,
+                label: languageSection.user.addUser,
                 icon: !IS_MAC ? getMenuItemIconFromName('user_add') : undefined,
                 click: async () => {
                     const user = await Main.userManager.create();
@@ -791,13 +845,13 @@ export const getWindowMenu = (window: AppWindow) => {
                 }
             },
             {
-                label: languageSection.user.remove,
+                label: languageSection.user.removeUser,
                 icon: !IS_MAC ? getMenuItemIconFromName('user_remove') : undefined,
                 click: () => {
                 }
             },
             {
-                label: languageSection.user.edit,
+                label: languageSection.user.editUser,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 click: () => {
                 }

@@ -95,22 +95,37 @@ export const En: Language = {
                 label: 'Tab',
 
                 addTab: '新しいタブを開く',
-                prevTab: '前のタブを表示',
-                nextTab: '次のタブを表示',
                 removeTab: 'タブを閉じる',
                 removeOtherTabs: '他のタブを閉じる',
                 removeLeftTabs: '左側のタブを閉じる',
-                removeRightTabs: '右側のタブを閉じる'
+                removeRightTabs: '右側のタブを閉じる',
+                duplicateTab: 'タブを複製',
+                pinTab: 'タブをピン留め',
+                unpinTab: 'タブのピン留めを解除',
+                muteTab: 'タブのミュート',
+                unmuteTab: 'タブのミュートを解除',
+                prevTab: '前のタブを表示',
+                nextTab: '次のタブを表示'
             },
             window: {
-                label: 'Window'
+                label: 'Window',
+
+                addWindow: '新しいウィンドウを開く',
+                openIncognitoWindow: 'プライベート ウィンドウを開く',
+                removeWindow: 'ウィンドウを閉じる',
+                removeOtherWindows: '他のウィンドウを閉じる',
+                minimizeWindow: 'ウィンドウを最小化',
+                maximizeWindow: 'ウィンドウを最大化',
+                unmaximizeWindow: 'ウィンドウを元に戻す',
+                toggleFullScreen: 'ウィンドウを全画面表示',
+                openProcessManager: 'Open Process manager'
             },
             user: {
                 label: 'User',
 
-                add: 'Add user',
-                remove: 'Remove user',
-                edit: 'Edit user'
+                addUser: 'Add user',
+                removeUser: 'Remove user',
+                editUser: 'Edit user'
             },
             help: {
                 label: 'Help',
@@ -153,7 +168,7 @@ export const En: Language = {
             },
             fullScreen: {
                 fullScreenExit: 'Exit full screen',
-                toolBar: 'Toggle toolbar',
+                toolBar: 'Toggle toolbar'
             },
             back: 'Back',
             forward: 'Forward',
@@ -174,11 +189,11 @@ export const En: Language = {
             moveToWindow: 'このタブを新しいウィンドウに移動',
             reload: '再読み込み',
             stop: '中止',
-            duplicate: 'タブを複製',
-            pin: 'タブをピン留め',
-            unpin: 'タブのピン留めを解除',
-            mute: 'タブのミュート',
-            unmute: 'タブのミュートを解除',
+            duplicateTab: 'タブを複製',
+            pinTab: 'タブをピン留め',
+            unpinTab: 'タブのピン留めを解除',
+            muteTab: 'タブのミュート',
+            unmuteTab: 'タブのミュートを解除',
             removeTab: 'タブを閉じる',
             removeOtherTabs: '他のタブを閉じる',
             removeLeftTabs: '左側のタブを閉じる',

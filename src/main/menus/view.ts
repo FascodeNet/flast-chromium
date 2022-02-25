@@ -427,19 +427,19 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 click: () => !view.isLoading ? view.reload() : view.stop()
             },
             {
-                label: languageSection.duplicate,
+                label: languageSection.duplicateTab,
                 icon: getMenuItemIconFromName('tab_duplicate'),
                 accelerator: Shortcuts.TAB_DUPLICATE,
                 click: () => viewManager.add(view.url)
             },
             {
-                label: !view.isPinned ? languageSection.pin : languageSection.unpin,
+                label: !view.isPinned ? languageSection.pinTab : languageSection.unpinTab,
                 icon: getMenuItemIconFromName(!view.isPinned ? 'pin' : 'unpin'),
                 accelerator: Shortcuts.TAB_PIN,
                 click: () => view.setPinned(!view.isPinned)
             },
             {
-                label: !view.isMuted ? languageSection.mute : languageSection.unmute,
+                label: !view.isMuted ? languageSection.muteTab : languageSection.unmuteTab,
                 icon: getMenuItemIconFromName(`speaker${view.isMuted ? '' : '_muted'}`),
                 accelerator: Shortcuts.TAB_MUTE,
                 click: () => view.setMuted(!view.isMuted)

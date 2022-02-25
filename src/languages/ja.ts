@@ -43,8 +43,8 @@ export const Ja: Language = {
             file: {
                 label: 'ファイル',
 
-                newTab: '新しいタブ',
-                newWindow: '新しいウィンドウ',
+                newTab: '新しいタブを開く',
+                newWindow: '新しいウィンドウを開く',
                 openIncognitoWindow: 'プライベート ウィンドウを開く',
                 savePage: 'ページの保存',
                 print: '印刷',
@@ -96,22 +96,37 @@ export const Ja: Language = {
                 label: 'タブ',
 
                 addTab: '新しいタブを開く',
-                prevTab: '前のタブを表示',
-                nextTab: '次のタブを表示',
                 removeTab: 'タブを閉じる',
                 removeOtherTabs: '他のタブを閉じる',
                 removeLeftTabs: '左側のタブを閉じる',
-                removeRightTabs: '右側のタブを閉じる'
+                removeRightTabs: '右側のタブを閉じる',
+                duplicateTab: 'タブを複製',
+                pinTab: 'タブをピン留め',
+                unpinTab: 'タブのピン留めを解除',
+                muteTab: 'タブのミュート',
+                unmuteTab: 'タブのミュートを解除',
+                prevTab: '前のタブを表示',
+                nextTab: '次のタブを表示'
             },
             window: {
-                label: 'ウィンドウ'
+                label: 'ウィンドウ',
+
+                addWindow: '新しいウィンドウを開く',
+                openIncognitoWindow: 'プライベート ウィンドウを開く',
+                removeWindow: 'ウィンドウを閉じる',
+                removeOtherWindows: '他のウィンドウを閉じる',
+                minimizeWindow: 'ウィンドウを最小化',
+                maximizeWindow: 'ウィンドウを最大化',
+                unmaximizeWindow: 'ウィンドウを元に戻す',
+                toggleFullScreen: '全画面表示の切り替え',
+                openProcessManager: 'プロセス マネージャーを開く'
             },
             user: {
                 label: 'ユーザー',
 
-                add: 'ユーザーを追加',
-                remove: 'ユーザーを削除',
-                edit: 'ユーザーを編集'
+                addUser: 'ユーザーを追加',
+                removeUser: 'ユーザーを削除',
+                editUser: 'ユーザーを編集'
             },
             help: {
                 label: 'ヘルプ',
@@ -175,11 +190,11 @@ export const Ja: Language = {
             moveToWindow: 'このタブを新しいウィンドウに移動',
             reload: '再読み込み',
             stop: '中止',
-            duplicate: 'タブを複製',
-            pin: 'タブをピン留め',
-            unpin: 'タブのピン留めを解除',
-            mute: 'タブのミュート',
-            unmute: 'タブのミュートを解除',
+            duplicateTab: 'タブを複製',
+            pinTab: 'タブをピン留め',
+            unpinTab: 'タブのピン留めを解除',
+            muteTab: 'タブのミュート',
+            unmuteTab: 'タブのミュートを解除',
             removeTab: 'タブを閉じる',
             removeOtherTabs: '他のタブを閉じる',
             removeLeftTabs: '左側のタブを閉じる',

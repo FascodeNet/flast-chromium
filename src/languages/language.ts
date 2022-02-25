@@ -116,18 +116,33 @@ export interface Language {
                 removeOtherTabs: string;
                 removeLeftTabs: string;
                 removeRightTabs: string;
+                duplicateTab: string;
+                pinTab: string;
+                unpinTab: string;
+                muteTab: string;
+                unmuteTab: string;
                 prevTab: string;
                 nextTab: string;
             }
             window: {
                 label: string;
+
+                addWindow: string;
+                openIncognitoWindow: string;
+                removeWindow: string;
+                removeOtherWindows: string;
+                minimizeWindow: string;
+                maximizeWindow: string;
+                unmaximizeWindow: string;
+                toggleFullScreen: string;
+                openProcessManager: string;
             }
             user: {
                 label: string;
 
-                add: string;
-                remove: string;
-                edit: string;
+                addUser: string;
+                removeUser: string;
+                editUser: string;
             }
             help: {
                 label: string;
@@ -191,11 +206,11 @@ export interface Language {
             moveToWindow: string;
             reload: string;
             stop: string;
-            duplicate: string;
-            pin: string;
-            unpin: string;
-            mute: string;
-            unmute: string;
+            duplicateTab: string;
+            pinTab: string;
+            unpinTab: string;
+            muteTab: string;
+            unmuteTab: string;
             removeTab: string;
             removeOtherTabs: string;
             removeLeftTabs: string;

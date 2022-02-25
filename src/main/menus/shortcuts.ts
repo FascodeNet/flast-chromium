@@ -3,7 +3,7 @@ import { IS_LINUX, IS_MAC, IS_WINDOWS } from '../../utils/process';
 export const Shortcuts = {
     TAB_ADD: 'CmdOrCtrl+T',
     TAB_REMOVE: 'CmdOrCtrl+W',
-    TAB_DUPLICATE: 'CmdOrCtrl+Shift+K',
+    TAB_DUPLICATE: 'CmdOrCtrl+Shift+D',
     TAB_RESTORE: 'CmdOrCtrl+Shift+T',
     TAB_PREVIOUS: 'Ctrl+Shift+Tab',
     TAB_NEXT: 'Ctrl+Tab',

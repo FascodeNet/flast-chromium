@@ -51,21 +51,37 @@ export class WindowManager {
 
     public remove(id: number = this.selectedId) {
         const window = this.windows.get(id);
-        // const windowIndex = [...this.windows.keys()].findIndex((window) => window === id);
-        // const windows = [...this.windows.values()];
+        if (!window) return;
 
-        this.windows.delete(id);
-
-        if (window && !window.browserWindow.isDestroyed()) {
-            window.viewManager.clear();
-            window.browserWindow.close();
-            window.browserWindow.destroy();
-        }
+        this.removeOf(window);
 
         const windows = [...this.windows.values()];
         for (const window of windows) {
             window.setApplicationMenu();
             window.setTouchBar();
+        }
+    }
+
+    public removeOthers(id: number = this.selectedId) {
+        const window = this.windows.get(id);
+        if (!window) return;
+
+        const windows = this.getWindows(window.user).filter((view) => view.id !== id);
+        windows.forEach((window) => this.removeOf(window));
+
+        setTimeout(() => {
+            window.setApplicationMenu();
+            window.setTouchBar();
+        });
+    }
+
+    private removeOf(window: AppWindow) {
+        this.windows.delete(window.id);
+
+        if (window && !window.browserWindow.isDestroyed()) {
+            window.viewManager.clear();
+            window.browserWindow.close();
+            window.browserWindow.destroy();
         }
     }
 
