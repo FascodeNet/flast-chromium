@@ -4,4 +4,5 @@ import { StyledPopup as StyledBasePopup } from '../../../../../components/Popup/
 export const StyledPopup = styled(StyledBasePopup)`
   height: unset;
   max-height: calc(100% - 30px);
+  overflow: auto;
 `;

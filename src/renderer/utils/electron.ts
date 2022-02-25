@@ -2,6 +2,7 @@ import { getCurrentWebContents, getCurrentWindow } from '@electron/remote';
 import { ipcRenderer } from 'electron';
 import { IBookmark, IHistory, UserConfig, UserType } from '../../interfaces/user';
 import { FindState, MoveDirection, ViewState } from '../../interfaces/view';
+import { SearchResult } from '../../main/utils/search';
 import { DeepPartial } from '../../utils';
 
 interface ElectronAPI {
@@ -43,6 +44,7 @@ interface ElectronAPI {
     showInformationPopup: (x: number, y: number) => Promise<void>;
 
     showSearchPopup: (x: number, y: number, width: number) => Promise<void>;
+    search: (keyword: string) => Promise<SearchResult>;
 
     showFindPopup: () => Promise<void>;
     findInPage: (id: number, text: string, matchCase: boolean) => Promise<FindState>;
@@ -110,6 +112,7 @@ export const useElectronAPI = (): ElectronAPI => ({
     showInformationPopup: (x: number, y: number) => ipcRenderer.invoke(`window-information-${windowId}`, x, y),
 
     showSearchPopup: (x: number, y: number, width: number) => ipcRenderer.invoke(`window-show_search-${windowId}`, x, y, width),
+    search: (keyword) => ipcRenderer.invoke(`window-search-${windowId}`, keyword),
 
     showFindPopup: () => ipcRenderer.invoke(`window-find-${windowId}`),
     findInPage: (id: number, text: string, matchCase: boolean) => ipcRenderer.invoke(`view-find_in_page-${windowId}`, id, text, matchCase),

@@ -20,8 +20,7 @@ import { getExtensionMenu } from '../menus/extension';
 import { getWindowMenu } from '../menus/window';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
-import { getEmptyMenuItemIcon } from '../utils/menu';
-import { AppView } from '../views/app';
+import { search } from '../utils/search';
 
 const { TouchBarButton, TouchBarPopover, TouchBarSpacer } = TouchBar;
 
@@ -131,20 +130,6 @@ export class AppWindow {
 
         const getIcon = (name: string) => resizeImage(nativeImage.createFromPath(join(app.getAppPath(), 'static', 'icons', 'white', `${name}.png`)));
 
-        const getFavicon = (view: AppView) => {
-            let dataURL = view.favicon;
-            if (dataURL) {
-                if (!dataURL.split(',')[0].includes('image')) {
-                    const split = dataURL.split(':');
-                    dataURL = split.join(':image/');
-                }
-
-                return resizeImage(nativeImage.createFromDataURL(dataURL));
-            } else {
-                return getEmptyMenuItemIcon();
-            }
-        };
-
         const backButton = new TouchBarButton({
             icon: getIcon('arrow_left'),
             enabled: view != null && view.canGoBack,
@@ -182,25 +167,6 @@ export class AppWindow {
             click: () => {
             }
         });
-
-        /*
-        let items: ScrubberItem[] = [];
-        for (const view of this.viewManager.getViews()) {
-            const image = view.captureImage?.resize({ width: 50 });
-            items.push({ label: view.title, icon: getFavicon(view) });
-        }
-
-        const scrubber = new TouchBarScrubber({
-            items: items,
-            mode: 'fixed',
-            // selectedStyle: 'outline',
-            overlayStyle: 'outline',
-            continuous: false,
-            select: (index: number) => {
-                console.log(index);
-            }
-        });
-        */
 
         const tabManagePopover = new TouchBarPopover({
             label: 'タブの管理',
@@ -430,6 +396,9 @@ export class AppWindow {
 
         ipcMain.handle(`window-show_search-${this.id}`, (e, x: number, y: number, width: number) => {
             showSearchDialog(this.user, this, x, y, width);
+        });
+        ipcMain.handle(`window-search-${this.id}`, async (e, keyword: string) => {
+            return await search(keyword, this.user);
         });
 
         ipcMain.handle(`window-find-${this.id}`, () => {

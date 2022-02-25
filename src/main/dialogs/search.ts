@@ -33,7 +33,7 @@ export const showSearchDialog = (user: IUser, window: AppWindow, x: number, y: n
                     name: DIALOG_SEARCH_NAME,
                     bounds,
                     onWindowBoundsUpdate: () => {
-                        // dialogManager.destroy(dialog);
+                        dialogManager.destroy(dialog);
                         window.webContents.send(`window-hide_search-${window.id}`);
                     },
                     onHide: () => {

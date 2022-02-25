@@ -16,11 +16,12 @@ export const StyledPanel = styled.div`
 
 interface StyledItemProps {
     selected: boolean;
+    subLabel: boolean;
 }
 
 export const StyledItem = styled.div<StyledItemProps>`
   width: 100%;
-  height: 36px;
+  height: ${({ subLabel }) => subLabel ? 48 : 36}px;
   margin: 0;
   padding: 4px 12px;
   display: grid;
@@ -39,10 +40,31 @@ export const StyledItemIcon = styled.div`
   place-items: center;
 `;
 
+export const StyledItemLabelContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+`;
+
 export const StyledItemLabel = styled.span`
   width: 100%;
   display: block;
   flex-shrink: 0;
   font-size: 13px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const StyledItemSubLabel = styled.span`
+  width: 100%;
+  display: block;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  font-weight: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;

@@ -231,10 +231,10 @@
     global-agent "^3.0.0"
     global-tunnel-ng "^2.7.1"
 
-"@electron/remote@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-2.0.4.tgz#c3dae436aed79d1b8adcefc5a4963c06750ad5d8"
-  integrity sha512-8m2P/d2RH986PmMW5lKygbPEjEYJ7RgCe37Y8DQ1wujKMH6VjmLIB+Y+DP2SA611svCZc58TRSd8FraGvcfGZw==
+"@electron/remote@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-2.0.5.tgz#d38bcd2ad2825cca42c5ea4c92efafa99720c52a"
+  integrity sha512-Ot8VsYCwAJ+9DgqRuYCiAobS8TVKvnXJMncR14/28ORso1iWFG0X6geyk3hc13N48Oc/WJnPYlYI3o7g5Ja2Qg==
 
 "@electron/universal@1.0.5":
   version "1.0.5"
@@ -2063,10 +2063,10 @@ electron-to-chromium@^1.4.17:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.51.tgz#a432f5a5d983ace79278a33057300cf949627e63"
   integrity sha512-JNEmcYl3mk1tGQmy0EvL5eik/CKSBuzAyGP0QFdG6LIgxQe3II0BL1m2zKc2MZMf3uGqHWE1TFddJML0RpjSHQ==
 
-electron@16.0.9:
-  version "16.0.9"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-16.0.9.tgz#051bdc318549ecb88e11be6e36834e5b2ff9b855"
-  integrity sha512-Kh2fc2g5Me0g8B1X2LMEDDtSNWsGGAmngh7adZpuJ8uI5TlR5GHDTcz37zwJid53S0BQ5d+Nz/NQ8s1DlKAAMA==
+electron@16.0.10:
+  version "16.0.10"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-16.0.10.tgz#300fe18c0f8096d337e241a2503522011429326b"
+  integrity sha512-QSxkVpvSpLzhSVlPRVOoJc/O/ZsbZm64qvSJeXsYfaH4rQjqBJwAFPuHhbhxzrBDWjH6FrBiNNzWZufSoTz1QQ==
   dependencies:
     "@electron/get" "^1.13.0"
     "@types/node" "^14.6.2"

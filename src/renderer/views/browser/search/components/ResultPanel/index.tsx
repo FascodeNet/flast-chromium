@@ -1,6 +1,13 @@
 import clsx from 'clsx';
-import React, { ReactNode } from 'react';
-import { StyledItem, StyledItemIcon, StyledItemLabel, StyledPanel } from './styles';
+import React, { MouseEvent, ReactNode } from 'react';
+import {
+    StyledItem,
+    StyledItemIcon,
+    StyledItemLabel,
+    StyledItemLabelContainer,
+    StyledItemSubLabel,
+    StyledPanel
+} from './styles';
 
 interface Props {
     children: ReactNode;
@@ -17,14 +24,22 @@ export const ResultPanel = ({ children }: Props) => {
 interface ItemProps {
     icon: ReactNode;
     label: ReactNode;
+    subLabel?: ReactNode;
     selected: boolean;
+    onClick?: (e: MouseEvent<HTMLDivElement>) => void;
 }
 
-export const ResultItem = ({ icon, label, selected }: ItemProps) => {
+export const ResultItem = ({ icon, label, subLabel, selected, onClick }: ItemProps) => {
     return (
-        <StyledItem className={clsx('search-result-item', selected && 'selected')} selected={selected}>
+        <StyledItem className={clsx('search-result-item', selected && 'selected')}
+                    selected={selected} subLabel={subLabel !== undefined} onClick={onClick}>
             <StyledItemIcon className="search-result-item-icon">{icon}</StyledItemIcon>
-            <StyledItemLabel className="search-result-item-label">{label}</StyledItemLabel>
+            <StyledItemLabelContainer>
+                <StyledItemLabel className="search-result-item-label">{label}</StyledItemLabel>
+                {subLabel && <StyledItemSubLabel className="search-result-item-sublabel">
+                    {subLabel}
+                </StyledItemSubLabel>}
+            </StyledItemLabelContainer>
         </StyledItem>
     );
 };
