@@ -3,6 +3,7 @@ import { IBookmark, IHistory } from '../../interfaces/user';
 import { SuggestData } from '../../renderer/views/browser/search/interface';
 import { isURL } from '../../utils/url';
 import { IUser } from '../interfaces/user';
+import { IncognitoUser } from '../user/incognito';
 
 export interface SearchResult {
     suggests: ResultData[];
@@ -29,9 +30,20 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
     const bookmarks = user.type !== 'guest' ? map(filter(user.bookmarks.bookmarks.filter(({ title, url }) => {
         return title && url && (contains(title, value) || contains(url, value));
     })), 'bookmark') : [];
-    const histories = user.type !== 'guest' ? map(filter(user.histories.histories.filter(({ title, url }) => {
+    const histories = user.type !== 'guest' ? map(filter((user instanceof IncognitoUser ? user.fromUser : user).histories.histories.filter(({
+                                                                                                                                                title,
+                                                                                                                                                url
+                                                                                                                                            }) => {
         return title && url && (contains(title, value) || contains(url, value));
     })), 'history') : [];
+
+    if (user.type === 'incognito') {
+        return {
+            suggests: [],
+            bookmarks,
+            histories
+        };
+    }
 
     try {
         const result = await fetch(`https://google.com/complete/search?client=chrome&hl=ja&ie=utf_8&oe=utf_8&q=${encodeURIComponent(value)}`);
@@ -45,14 +57,14 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
         for (let i = 0; i < values.length; i++)
             suggestDatas.push({ value: values[i], type: types[i] });
 
-        const suggests = user.type !== 'incognito' ? suggestDatas.map(({ value }): ResultData => {
+        const suggests = suggestDatas.map(({ value }): ResultData => {
             const isValueUrl = isUrl(value);
             return ({
                 type: isValueUrl ? 'address' : 'search',
                 title: value,
                 url: isValueUrl ? value : 'https://www.google.com/search?q=%s'.replace('%s', encodeURIComponent(value))
             });
-        }) : [];
+        });
 
         return {
             suggests,
@@ -73,7 +85,7 @@ const isUrl = (value: string) => isURL(value) || value.includes('://') || value.
 const contains = (value: string | undefined, keyword: string) => {
     const encodedValue = encodeURIComponent(value ?? '');
     const encodedKeyword = encodeURIComponent(keyword);
-    return (value ?? '').includes(keyword) || encodedValue.includes(encodedKeyword);
+    return (value ?? '').toLowerCase().includes(keyword.toLowerCase()) || encodedValue.toLowerCase().includes(encodedKeyword.toLowerCase());
 };
 
 const filter = (array: (IBookmark | IHistory)[]) => array.filter((data, i) => array.findIndex(
