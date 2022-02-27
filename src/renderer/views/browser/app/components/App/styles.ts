@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { WINDOW_TITLE_BAR_HEIGHT, WINDOW_TOOL_BAR_HEIGHT } from '../../../../../../constants/design';
+import { WINDOW_DOUBLE_TITLE_BAR_HEIGHT, WINDOW_DOUBLE_TOOL_BAR_HEIGHT } from '../../../../../../constants/design';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
 
 interface StyledAppProps {
@@ -18,7 +18,7 @@ const getGridStyle = (style: AppearanceStyle) => {
     switch (style) {
         case 'top_double':
             return css`
-              grid-template-rows: ${WINDOW_TITLE_BAR_HEIGHT}px ${WINDOW_TOOL_BAR_HEIGHT}px calc(100% - ${WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT}px);
+              grid-template-rows: ${WINDOW_DOUBLE_TITLE_BAR_HEIGHT}px ${WINDOW_DOUBLE_TOOL_BAR_HEIGHT}px calc(100% - ${WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT}px);
               grid-template-areas:
                     'title-bar'
                     'tool-bar'

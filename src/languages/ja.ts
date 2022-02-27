@@ -103,7 +103,7 @@ export const Ja: Language = {
                 duplicateTab: 'タブを複製',
                 pinTab: 'タブをピン留め',
                 unpinTab: 'タブのピン留めを解除',
-                muteTab: 'タブのミュート',
+                muteTab: 'タブをミュート',
                 unmuteTab: 'タブのミュートを解除',
                 prevTab: '前のタブを表示',
                 nextTab: '次のタブを表示'
@@ -193,7 +193,7 @@ export const Ja: Language = {
             duplicateTab: 'タブを複製',
             pinTab: 'タブをピン留め',
             unpinTab: 'タブのピン留めを解除',
-            muteTab: 'タブのミュート',
+            muteTab: 'タブをミュート',
             unmuteTab: 'タブのミュートを解除',
             removeTab: 'タブを閉じる',
             removeOtherTabs: '他のタブを閉じる',

@@ -1,6 +1,7 @@
 import Color from 'color';
 import styled, { css } from 'styled-components';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
+import { isSingle } from '../../../../../../utils/design';
 import { borderRadius } from '../../../../../themes';
 import { TAB_MAX_WIDTH, TAB_PINNED_WIDTH } from '../../../../../utils/tab';
 
@@ -96,8 +97,13 @@ export const StyledHorizontalTab = styled.div<StyledHorizontalTabProps>`
   outline-width: 2px;
   border-style: solid;
   border-width: 2px;
-  border-radius: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? borderRadius.toUnit() : 0};
   app-region: no-drag;
+
+  ${({ appearanceStyle }) => isSingle(appearanceStyle) ? css`
+    border-radius: ${borderRadius.toUnit()};
+  ` : css`
+    border-radius: ${appearanceStyle === 'top_double' ? `${borderRadius.toUnit()} ${borderRadius.toUnit()} 0 0` : `0 0 ${borderRadius.toUnit()} ${borderRadius.toUnit()}`};
+  `};
 
   &:hover {
     padding: 1px 6px 1px 8px;

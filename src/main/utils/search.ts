@@ -30,10 +30,12 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
     const bookmarks = user.type !== 'guest' ? map(filter(user.bookmarks.bookmarks.filter(({ title, url }) => {
         return title && url && (contains(title, value) || contains(url, value));
     })), 'bookmark') : [];
-    const histories = user.type !== 'guest' ? map(filter((user instanceof IncognitoUser ? user.fromUser : user).histories.histories.filter(({
-                                                                                                                                                title,
-                                                                                                                                                url
-                                                                                                                                            }) => {
+    const histories = user.type !== 'guest' ? map(filter((user instanceof IncognitoUser ? user.fromUser : user).histories.histories.filter((
+        {
+            title,
+            url
+        }
+    ) => {
         return title && url && (contains(title, value) || contains(url, value));
     })), 'history') : [];
 

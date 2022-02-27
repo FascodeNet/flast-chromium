@@ -2,10 +2,11 @@ import deepmerge from 'deepmerge';
 import { app, BrowserView, NativeImage, webContents } from 'electron';
 import { join } from 'path';
 import {
+    WINDOW_DOUBLE_TITLE_BAR_HEIGHT,
+    WINDOW_DOUBLE_TOOL_BAR_HEIGHT,
     WINDOW_EXTENDED_SIDEBAR_WIDTH,
     WINDOW_EXTENDED_TAB_CONTAINER_WIDTH,
-    WINDOW_TITLE_BAR_HEIGHT,
-    WINDOW_TOOL_BAR_HEIGHT
+    WINDOW_SINGLE_LENGTH
 } from '../../constants/design';
 import {
     AppViewInitializerOptions,
@@ -313,7 +314,7 @@ export class AppView {
             sidebar: { extended, state }
         } = this.user.settings.config.appearance;
 
-        const sidebarWidth = extended ? (state !== 'tab_container' ? WINDOW_EXTENDED_SIDEBAR_WIDTH : WINDOW_EXTENDED_TAB_CONTAINER_WIDTH) : 50;
+        const sidebarWidth = extended ? (state !== 'tab_container' ? WINDOW_EXTENDED_SIDEBAR_WIDTH : WINDOW_EXTENDED_TAB_CONTAINER_WIDTH) : WINDOW_SINGLE_LENGTH;
 
 
         const setBounds = (
@@ -364,7 +365,7 @@ export class AppView {
                 });
             } else {
                 if (isFullScreenShowingToolbar) {
-                    const hgt = height - 50;
+                    const hgt = height - WINDOW_SINGLE_LENGTH;
                     const vertWidth = width - sidebarWidth;
                     setBounds({
                         default: {
@@ -377,25 +378,25 @@ export class AppView {
                             width,
                             height: hgt,
                             x: 0,
-                            y: 50
+                            y: WINDOW_SINGLE_LENGTH
                         },
                         topDouble: {
                             width,
-                            height: height - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT),
+                            height: height - (WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT),
                             x: 0,
-                            y: WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
+                            y: WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT
                         },
                         left: {
                             width: vertWidth,
                             height: hgt,
                             x: sidebarWidth,
-                            y: 50
+                            y: WINDOW_SINGLE_LENGTH
                         },
                         right: {
                             width: vertWidth,
                             height: hgt,
                             x: 0,
-                            y: 50
+                            y: WINDOW_SINGLE_LENGTH
                         }
                     });
                 } else {
@@ -410,7 +411,7 @@ export class AppView {
                 }
             }
         } else if (isMaximized) {
-            const hgt = height - 50;
+            const hgt = height - WINDOW_SINGLE_LENGTH;
             const vertWidth = width - sidebarWidth;
             setBounds({
                 default: {
@@ -423,29 +424,29 @@ export class AppView {
                     width,
                     height: hgt,
                     x: 0,
-                    y: 50
+                    y: WINDOW_SINGLE_LENGTH
                 },
                 topDouble: {
                     width,
-                    height: height - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT),
+                    height: height - (WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT),
                     x: 0,
-                    y: WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
+                    y: WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT
                 },
                 left: {
                     width: vertWidth,
                     height: hgt,
                     x: sidebarWidth,
-                    y: 50
+                    y: WINDOW_SINGLE_LENGTH
                 },
                 right: {
                     width: vertWidth,
                     height: hgt,
                     x: 0,
-                    y: 50
+                    y: WINDOW_SINGLE_LENGTH
                 }
             });
         } else {
-            const hgt = height - 50;
+            const hgt = height - WINDOW_SINGLE_LENGTH;
             const vertWidth = width - sidebarWidth;
             setBounds({
                 default: {
@@ -458,80 +459,28 @@ export class AppView {
                     width,
                     height: hgt,
                     x: 0,
-                    y: 50
+                    y: WINDOW_SINGLE_LENGTH
                 },
                 topDouble: {
                     width,
-                    height: height - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT),
+                    height: height - (WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT),
                     x: 0,
-                    y: WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
+                    y: WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT
                 },
                 left: {
                     width: vertWidth,
                     height: hgt,
                     x: sidebarWidth,
-                    y: 50
+                    y: WINDOW_SINGLE_LENGTH
                 },
                 right: {
                     width: vertWidth,
                     height: hgt,
                     x: 0,
-                    y: 50
+                    y: WINDOW_SINGLE_LENGTH
                 }
             });
         }
-
-        /*
-        const baseWidth = isFullScreen || isMaximized ? width : width - 2;
-        const baseHeight = isFullScreen ? (isFullScreenUserByTriggered ? height - 50 : height) : ((isMaximized ? height : height - 1) - 50);
-        const baseX = isFullScreen || isMaximized ? 0 : 1;
-        const baseY = isFullScreen ? (isFullScreenUserByTriggered ? 50 : 0) : 50;
-
-        const verticalWidth = isFullScreen ? width : (isMaximized ? width - sidebarWidth : width - 1 - sidebarWidth);
-
-        switch (style) {
-            case 'top_single':
-                this.browserView.setBounds({
-                    width: baseWidth,
-                    height: baseHeight,
-                    x: baseX,
-                    y: baseY
-                });
-                break;
-            case 'top_double':
-                this.browserView.setBounds({
-                    width: baseWidth,
-                    height: isFullScreen ? height : ((isMaximized ? height : height - 1) - (WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT)),
-                    x: baseX,
-                    y: isFullScreen ? 0 : WINDOW_TITLE_BAR_HEIGHT + WINDOW_TOOL_BAR_HEIGHT
-                });
-                break;
-            case 'left':
-                this.browserView.setBounds({
-                    width: verticalWidth,
-                    height: baseHeight,
-                    x: isFullScreen ? 0 : sidebarWidth,
-                    y: baseY
-                });
-                break;
-            case 'right':
-                this.browserView.setBounds({
-                    width: verticalWidth,
-                    height: baseHeight,
-                    x: baseX,
-                    y: baseY
-                });
-                break;
-            default:
-                this.browserView.setBounds({
-                    width: baseWidth,
-                    height: baseHeight,
-                    x: baseX,
-                    y: baseY
-                });
-                break;
-        }
-        */
 
         this.window.browserWindow.addBrowserView(this.browserView);
         this.window.browserWindow.setTopBrowserView(this.browserView);

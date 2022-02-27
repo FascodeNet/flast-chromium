@@ -726,10 +726,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 }
             },
             { type: 'separator' },
-            ...(viewManager.getViews().map((appView): MenuItemConstructorOptions => (
+            ...(viewManager.getViews().map((appView, i): MenuItemConstructorOptions => (
                 {
                     label: appView.title,
                     icon: !IS_MAC ? (viewManager.selectedId === appView.id ? getMenuItemIconFromName('check') : getFavicon(appView)) : undefined,
+                    accelerator: i < 9 ? `CmdOrCtrl+${i + 1}` : undefined,
                     type: !IS_MAC ? 'normal' : 'checkbox',
                     checked: viewManager.selectedId === appView.id,
                     enabled: viewManager.selectedId !== appView.id,
@@ -809,7 +810,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => Main.windowManager.openProcessManagerWindow()
             },
             { type: 'separator' },
-            ...(Main.windowManager.getWindows().map((appWindow): MenuItemConstructorOptions => {
+            ...(Main.windowManager.getWindows().map((appWindow, i): MenuItemConstructorOptions => {
                 const windowViewManager = appWindow.viewManager;
                 const subLabel = windowViewManager.views.size - 1 > 0 ? ` とその他 ${windowViewManager.views.size - 1}つのタブ` : '';
 
@@ -817,6 +818,7 @@ export const getWindowMenu = (window: AppWindow) => {
                     {
                         label: `${windowViewManager.get()?.title ?? appWindow.title}${subLabel}`,
                         icon: !IS_MAC ? (window.id === appWindow.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
+                        accelerator: i < 9 ? `CmdOrCtrl+Shift+${i + 1}` : undefined,
                         type: !IS_MAC ? 'normal' : 'checkbox',
                         checked: window.id === appWindow.id,
                         enabled: window.id !== appWindow.id,
