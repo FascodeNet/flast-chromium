@@ -75,7 +75,7 @@ export const ExtensionsButton = () => {
 };
 
 export const MenuButton = () => {
-    const { showMenuPopup } = useElectronAPI();
+    const { showMenuPopup, showApplicationMenu } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
@@ -85,9 +85,13 @@ export const MenuButton = () => {
         showMenuPopup(x, y + height);
     };
 
+    const handleButtonContextMenu = async (e: MouseEvent<HTMLButtonElement>) => {
+        await showApplicationMenu();
+    };
+
     return (
         <StyledButton className={clsx('action-button', 'menu')} appearanceStyle={style}
-                      onClick={handleButtonClick}>
+                      onClick={handleButtonClick} onContextMenu={handleButtonContextMenu}>
             <Menu />
         </StyledButton>
     );

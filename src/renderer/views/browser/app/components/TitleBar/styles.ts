@@ -69,26 +69,15 @@ const getStyle = (style: AppearanceStyle) => {
     switch (style) {
         case 'top_single':
             return css`
-              ${!isMac ? css`
-                padding: .5rem 1rem .5rem .5rem;
-                grid-template-columns: calc(50px - 1rem) auto 1fr auto;
-                grid-template-areas: 'application-menu navigation-bar wrapper action-bar';
-              ` : css`
-                padding: .5rem;
-                grid-template-columns: auto 1fr auto;
-                grid-template-areas: 'navigation-bar wrapper action-bar';
-              `};
+              padding: ${!isMac ? '.5rem 1rem .5rem .5rem' : '.5rem'};
+              grid-template-columns: auto 1fr auto;
+              grid-template-areas: 'navigation-bar wrapper action-bar';
             `;
         case 'top_double':
             return css`
               padding: 6px 5rem 0 6px;
-              ${!isMac ? css`
-                grid-template-columns: calc(50px - 1rem) 1fr;
-                grid-template-areas: 'application-menu horizontal-tab-container';
-              ` : css`
-                grid-template-columns: 1fr;
-                grid-template-areas: 'horizontal-tab-container';
-              `};
+              grid-template-columns: 1fr;
+              grid-template-areas: 'horizontal-tab-container';
             `;
         case 'left':
         case 'right':

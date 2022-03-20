@@ -40,7 +40,6 @@ export const TitleBar = () => {
             case 'top_single':
                 return (
                     <StyledContainer className="title-bar-content" appearanceStyle={style}>
-                        {!isMac && <ApplicationMenuButton />}
                         <NavigationBar />
                         <StyledWrapper>
                             <AddressBar />
@@ -53,7 +52,6 @@ export const TitleBar = () => {
             case 'top_double':
                 return (
                     <StyledContainer className="title-bar-content" appearanceStyle={style}>
-                        {!isMac && <ApplicationMenuButton />}
                         <HorizontalTabContainer />
                     </StyledContainer>
                 );
