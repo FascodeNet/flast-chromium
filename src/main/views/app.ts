@@ -293,11 +293,6 @@ export class AppView {
     }
 
 
-    public setWindowTitle() {
-        if (this.window.viewManager.selectedId !== this.id) return;
-        this.window.browserWindow.setTitle(`${this.title} - ${APPLICATION_NAME}`);
-    }
-
     public setBounds() {
         if (this.window.viewManager.selectedId !== this.id) return;
 
@@ -319,7 +314,12 @@ export class AppView {
 
         const setBounds = (
             {
-                default: defaultRect,
+                default: defaultRect = {
+                    width,
+                    height,
+                    x: 0,
+                    y: 0
+                },
                 topSingle,
                 topDouble,
                 bottomSingle,
@@ -484,6 +484,7 @@ export class AppView {
 
         this.window.browserWindow.addBrowserView(this.browserView);
         this.window.browserWindow.setTopBrowserView(this.browserView);
+
         const findDialog = this.findDialog;
         if (findDialog && !findDialog.webContents.isDestroyed()) {
             findDialog.browserWindow = this.window.browserWindow;
@@ -504,6 +505,34 @@ export class AppView {
         if (searchDialog && !searchDialog.webContents.isDestroyed())
             showSearchDialog(this.user, this.window);
         */
+    }
+
+    public setDialogs() {
+        if (this.window.viewManager.selectedId !== this.id) return;
+
+        this.window.browserWindow.addBrowserView(this.browserView);
+        this.window.browserWindow.setTopBrowserView(this.browserView);
+
+        const findDialog = this.findDialog;
+        if (findDialog && !findDialog.webContents.isDestroyed()) {
+            findDialog.browserWindow = this.window.browserWindow;
+
+            const { width } = this.window.browserWindow.getContentBounds();
+            findDialog.bounds = {
+                width: 380,
+                height: 70,
+                x: width - 400,
+                y: getHeight(this.user.settings.config.appearance.style)
+            };
+
+            Main.dialogManager.show(findDialog);
+        }
+    }
+
+
+    public setWindowTitle() {
+        if (this.window.viewManager.selectedId !== this.id) return;
+        this.window.browserWindow.setTitle(`${this.title} - ${APPLICATION_NAME}`);
     }
 
     public updateView() {

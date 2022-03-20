@@ -132,7 +132,7 @@ export class AppWindow {
 
         const backButton = new TouchBarButton({
             icon: getIcon('arrow_left'),
-            enabled: view != null && view.canGoBack,
+            enabled: view && view.canGoBack,
             click: () => {
                 if (!view || !view.canGoBack) return;
                 view.back();
@@ -140,14 +140,14 @@ export class AppWindow {
         });
         const forwardButton = new TouchBarButton({
             icon: getIcon('arrow_right'),
-            enabled: view != null && view.canGoForward,
+            enabled: view && view.canGoForward,
             click: () => {
                 if (!view || !view.canGoForward) return;
                 view.forward();
             }
         });
         const reloadButton = new TouchBarButton({
-            icon: getIcon(view == null || !view.isLoading ? 'reload' : 'remove'),
+            icon: getIcon(!view || !view.isLoading ? 'reload' : 'remove'),
             enabled: view != null,
             click: () => {
                 if (!view) return;
@@ -300,7 +300,11 @@ export class AppWindow {
             Main.windowManager.selectedId = -1;
         });
 
-        this.browserWindow.on('resize', () => this.setViewBounds());
+        this.browserWindow.on('resize', () => {
+            const view = this.viewManager.get();
+            if (!view) return;
+            view.setDialogs();
+        });
         this.browserWindow.on('enter-full-screen', () => {
             console.log('enter-full-screen');
             this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { user: true });
