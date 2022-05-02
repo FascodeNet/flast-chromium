@@ -16,6 +16,10 @@ export class ProcessManagerWindow {
             width: 600,
             height: 550,
             titleBarStyle: 'hiddenInset',
+            trafficLightPosition: {
+                x: 15,
+                y: 13
+            },
             backgroundColor: '#ffffff',
             title: 'Process Manager',
             icon: nativeImage.createFromPath(`${app.getAppPath()}/static/icons/app/icon.png`),

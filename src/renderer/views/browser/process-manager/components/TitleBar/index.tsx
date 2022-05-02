@@ -1,4 +1,5 @@
 import { useTheme } from '@mui/material';
+import { platform } from 'os';
 import React from 'react';
 import { WindowsControls } from 'react-windows-controls';
 import Icon from '../../../../../../assets/icon.png';
@@ -10,19 +11,23 @@ export const TitleBar = () => {
 
     const { palette } = useTheme();
 
+    const isMac = platform() === 'darwin';
+
     return (
         <StyledTitleBar>
             <StyledContainer>
-                <img src={Icon} />
+                {!isMac && <img src={Icon} />}
                 <span>プロセス マネージャー</span>
             </StyledContainer>
-            <WindowsControls
-                dark={palette.mode === 'dark'}
-                style={{ appRegion: 'no-drag' }}
-                onMinimize={() => minimize()}
-                onMaximize={() => maximize()}
-                onClose={() => close()}
-            />
+            {!isMac &&
+                <WindowsControls
+                    dark={palette.mode === 'dark'}
+                    style={{ appRegion: 'no-drag' }}
+                    onMinimize={() => minimize()}
+                    onMaximize={() => maximize()}
+                    onClose={() => close()}
+                />
+            }
         </StyledTitleBar>
     );
 };

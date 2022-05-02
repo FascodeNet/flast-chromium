@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled from 'styled-components';
 import { getColor } from '../../../../../themes';
 
@@ -15,6 +16,7 @@ export const StyledTitleBar = styled.div`
 export const StyledContainer = styled.div`
   width: 100%;
   height: inherit;
+  margin-left: ${platform() === 'darwin' ? 70 : 0}px;
   padding: 8px;
   display: flex;
   align-items: center;
