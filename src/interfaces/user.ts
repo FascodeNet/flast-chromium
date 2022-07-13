@@ -19,7 +19,13 @@ export type AppearanceInternalTheme =
 export type AppearanceMode = 'system' | 'light' | 'dark';
 export type AppearanceTheme = undefined | AppearanceInternalTheme | string;
 export type AppearanceStyle = 'top_single' | 'top_double' | 'bottom_single' | 'bottom_double' | 'left' | 'right';
-export type AppearanceSidebarState = 'tab_container' | 'bookmarks' | 'histories' | 'downloads' | 'extensions';
+export type AppearanceSidebarState =
+    'tab_container'
+    | 'bookmarks'
+    | 'histories'
+    | 'downloads'
+    | 'applications'
+    | 'extensions';
 
 export type StartupPageMode = 'new_tab' | 'prev_sessions' | 'custom';
 export type HomeButtonPageMode = 'new_tab' | 'custom';

@@ -1,8 +1,8 @@
 import { getCurrentWebContents } from '@electron/remote';
-import { LanguageOutlined } from '@mui/icons-material';
 import clsx from 'clsx';
 import { ipcRenderer } from 'electron';
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
+import Icon from '../../../../../../assets/icon.png';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { EXTENSION_PROTOCOL } from '../../../../../../utils';
@@ -89,7 +89,7 @@ export const AddressBar = () => {
             case 'file':
                 return (<File />);
             case 'internal':
-                return (<LanguageOutlined />);
+                return (<img src={Icon} style={{ filter: 'grayscale(1)' }} />);
             case 'extension':
                 try {
                     const { protocol, hostname } = new URL(address);

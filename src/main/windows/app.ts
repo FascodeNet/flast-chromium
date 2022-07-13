@@ -6,6 +6,8 @@ import { WindowFullScreenState } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
 import { isHorizontal } from '../../utils/design';
 import { IS_DEVELOPMENT } from '../../utils/process';
+import { showBookmarksDialog } from '../dialogs/bookmarks';
+import { showDownloadsDialog } from '../dialogs/downloads';
 import { showExtensionsDialog } from '../dialogs/extensions';
 import { showHistoriesDialog } from '../dialogs/histories';
 import { showInformationDialog } from '../dialogs/information';
@@ -413,11 +415,15 @@ export class AppWindow {
         });
 
         ipcMain.handle(`window-bookmarks-${this.id}`, (e, x: number, y: number) => {
-            showHistoriesDialog(this.user, this.browserWindow, x, y);
+            showBookmarksDialog(this.user, this.browserWindow, x, y);
         });
 
         ipcMain.handle(`window-histories-${this.id}`, (e, x: number, y: number) => {
             showHistoriesDialog(this.user, this.browserWindow, x, y);
+        });
+
+        ipcMain.handle(`window-downloads-${this.id}`, (e, x: number, y: number) => {
+            showDownloadsDialog(this.user, this.browserWindow, x, y);
         });
 
         ipcMain.handle(`window-extensions-${this.id}`, (e, x: number, y: number) => {

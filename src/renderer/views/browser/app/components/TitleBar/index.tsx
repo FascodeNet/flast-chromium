@@ -64,7 +64,6 @@ export const TitleBar = () => {
                         {!isMac && <ApplicationMenuButton />}
                         <NavigationBar />
                         <AddressBar />
-                        <browser-action-list />
                         <ActionBar />
                     </StyledContainer>
                 );

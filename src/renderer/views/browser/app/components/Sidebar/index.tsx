@@ -3,13 +3,12 @@ import clsx from 'clsx';
 import React, { useState } from 'react';
 import { AppearanceSidebarState } from '../../../../../../interfaces/user';
 import { BookmarksPanel } from '../../../../../components/BookmarksPanel';
-import { ExtensionsPanel } from '../../../../../components/ExtensionsPanel';
+import { DownloadsPanel } from '../../../../../components/DownloadsPanel';
 import { HistoriesPanel } from '../../../../../components/HistoriesPanel';
-import { Bookmarks, Download, Extension, History } from '../../../../../components/Icons';
+import { Bookmarks, Download, History } from '../../../../../components/Icons';
 import { ChevronLeft, ChevronRight } from '../../../../../components/Icons/arrow';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { SidebarDownloads } from '../SidebarContent';
 import { VerticalTabContainer } from '../TabContainer';
 import { StyledSidebar, StyledToolBarContainer } from './styles';
 
@@ -44,8 +43,7 @@ export const Sidebar = () => {
             <VerticalTabContainer extended={extended && panel === 'tab_container'} />
             {panel === 'bookmarks' && <BookmarksPanel type="sidebar" />}
             {panel === 'histories' && <HistoriesPanel type="sidebar" />}
-            {panel === 'downloads' && <SidebarDownloads />}
-            {panel === 'extensions' && <ExtensionsPanel type="sidebar" />}
+            {panel === 'downloads' && <DownloadsPanel type="sidebar" />}
             <StyledToolBarContainer className="tool-bar" extended={extended} panel={panel}>
                 <IconButton onClick={() => handleTogglePanelClick('bookmarks')}>
                     <Bookmarks />
@@ -55,9 +53,6 @@ export const Sidebar = () => {
                 </IconButton>
                 <IconButton onClick={() => handleTogglePanelClick('downloads')}>
                     <Download />
-                </IconButton>
-                <IconButton onClick={() => handleTogglePanelClick('extensions')}>
-                    <Extension />
                 </IconButton>
                 <IconButton
                     onClick={handleToggleSidebarClick}

@@ -84,24 +84,24 @@ const getStyle = (style: AppearanceStyle) => {
             return css`
               ${!isMac ? css`
                 padding: .5rem 1rem .5rem .5rem;
-                grid-template-columns: calc(50px - 1rem) auto 1fr auto auto;
-                grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
+                grid-template-columns: calc(50px - 1rem) auto 1fr auto;
+                grid-template-areas: 'application-menu navigation-bar address-bar action-bar';
               ` : css`
                 padding: .5rem;
-                grid-template-columns: auto 1fr auto auto;
-                grid-template-areas: 'navigation-bar address-bar extensions action-bar';
+                grid-template-columns: auto 1fr auto;
+                grid-template-areas: 'navigation-bar address-bar action-bar';
               `};
             `;
         default:
             return css`
               ${!isMac ? css`
                 padding: .5rem 1rem .5rem .5rem;
-                grid-template-columns: calc(${WINDOW_SINGLE_LENGTH}px - 1rem) auto 1fr auto auto;
-                grid-template-areas: 'application-menu navigation-bar address-bar extensions action-bar';
+                grid-template-columns: calc(${WINDOW_SINGLE_LENGTH}px - 1rem) auto 1fr auto;
+                grid-template-areas: 'application-menu navigation-bar address-bar action-bar';
               ` : css`
                 padding: .5rem;
-                grid-template-columns: auto 1fr auto auto;
-                grid-template-areas: 'navigation-bar address-bar extensions action-bar';
+                grid-template-columns: auto 1fr auto;
+                grid-template-areas: 'navigation-bar address-bar action-bar';
               `};
             `;
     }

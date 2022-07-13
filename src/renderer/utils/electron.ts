@@ -61,6 +61,8 @@ interface ElectronAPI {
     addHistory: (userId: string, data: IHistory) => Promise<void>;
     removeHistory: (userId: string, id: string) => Promise<void>;
 
+    showDownloadsPopup: (x: number, y: number) => Promise<void>;
+
     showExtensionsPopup: (x: number, y: number) => Promise<void>;
     showExtensionMenu: (id: string, x: number, y: number) => Promise<void>;
 
@@ -128,6 +130,8 @@ export const useElectronAPI = (): ElectronAPI => ({
     getHistories: (userId: string) => ipcRenderer.invoke(`histories-${userId}`),
     addHistory: (userId: string, data: IHistory) => ipcRenderer.invoke(`history-add-${userId}`, data),
     removeHistory: (userId: string, id: string) => ipcRenderer.invoke(`history-remove-${userId}`, id),
+
+    showDownloadsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-downloads-${windowId}`, x, y),
 
     showExtensionsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-extensions-${windowId}`, x, y),
     showExtensionMenu: (id: string, x: number, y: number) => ipcRenderer.invoke(`extension-menu-${windowId}`, id, x, y),

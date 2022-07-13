@@ -10,8 +10,8 @@ export const StyledToolBar = styled.div<StyledProps>`
   padding: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? '.5rem' : '4px 5px 3px'};
   grid-area: tool-bar;
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  grid-template-areas: 'navigation-bar address-bar extensions action-bar';
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'navigation-bar address-bar action-bar';
   align-items: center;
   gap: 8px;
 `;

@@ -6,11 +6,14 @@ import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledButton } from '../Button/styles';
 
 export const BookmarksButton = () => {
+    const { showBookmarksPopup } = useElectronAPI();
+
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
-    const handleButtonClick = (_: MouseEvent<HTMLButtonElement>) => {
-
+    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+        const { x, y, height } = e.currentTarget.getBoundingClientRect();
+        showBookmarksPopup(x, y + height);
     };
 
     return (
@@ -41,10 +44,14 @@ export const HistoriesButton = () => {
 };
 
 export const DownloadsButton = () => {
+    const { showDownloadsPopup } = useElectronAPI();
+
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
-    const handleButtonClick = (_: MouseEvent<HTMLButtonElement>) => {
+    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+        const { x, y, height } = e.currentTarget.getBoundingClientRect();
+        showDownloadsPopup(x, y + height);
     };
 
     return (

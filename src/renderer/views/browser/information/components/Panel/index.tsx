@@ -1,6 +1,6 @@
-import { LanguageOutlined } from '@mui/icons-material';
 import moment from 'moment';
 import React, { Fragment, useEffect, useState } from 'react';
+import Icon from '../../../../../../assets/icon.png';
 import { UserConfig } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { getTranslate } from '../../../../../../languages/language';
@@ -81,7 +81,7 @@ const StatusIcon = ({ state }: StatusIconProps): JSX.Element => {
         case 'file':
             return (<File />);
         case 'internal':
-            return (<LanguageOutlined />);
+            return (<img src={Icon} width={24} height={24} />);
         case 'extension':
             return (<Extension />);
     }

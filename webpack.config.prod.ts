@@ -54,7 +54,9 @@ applyBrowserEntries(
         'information',
         'search',
         'find',
+        'bookmarks',
         'histories',
+        'downloads',
         'extensions'
     ]
 );

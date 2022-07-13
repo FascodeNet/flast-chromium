@@ -5,7 +5,6 @@ import {
     Applications,
     Bookmarks,
     Download,
-    Extension,
     Find,
     History,
     Print,
@@ -47,7 +46,6 @@ export const Panel = () => {
                 <Item icon={<History />} label={translate.menus.application.histories} />
                 <Item icon={<Download />} label={translate.menus.application.downloads} />
                 <Item icon={<Applications />} label={translate.menus.application.applications} />
-                <Item icon={<Extension />} label={translate.menus.application.extensions} />
                 <Divider flexItem sx={{ my: .5 }} />
                 <Item icon={<Print />} label={translate.menus.application.print} />
                 <Item icon={<Find />} label={translate.menus.application.find} />

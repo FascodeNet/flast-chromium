@@ -13,7 +13,6 @@ export const ToolBar = () => {
         <StyledToolBar className="tool-bar" appearanceStyle={style}>
             <NavigationBar />
             <AddressBar />
-            <browser-action-list />
             <ActionBar />
         </StyledToolBar>
     );

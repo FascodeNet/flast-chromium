@@ -15,6 +15,7 @@ export const StyledHistoryGroup = styled.div`
     position: sticky;
     top: -9px;
     align-self: flex-start;
+    font-weight: 400;
   }
 `;
 

@@ -37,6 +37,7 @@ export const StyledPanelHeader = styled.header<StyledProps>`
 
 export const StyledPanelTitle = styled.h3`
   margin: 0;
+  font-weight: 400;
 `;
 
 export const StyledPanelContainer = styled.div`
