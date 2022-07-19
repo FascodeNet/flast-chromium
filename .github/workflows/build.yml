@@ -33,7 +33,7 @@ jobs:
       - name: Compile Windows
         if: matrix.os == 'windows-latest'
         run: |
-          export NODE_OPTIONS="--max_old_space_size=4096"
+          set NODE_OPTIONS="--max-old-space-size=4096"
           npm run ci-compile:win32
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -41,7 +41,7 @@ jobs:
       - name: Compile macOS
         if: matrix.os == 'macos-latest'
         run: |
-          export NODE_OPTIONS="--max_old_space_size=4096"
+          export NODE_OPTIONS="--max-old-space-size=4096"
           npm run ci-compile:darwin
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
       - name: Compile Linux
         if: matrix.os == 'ubuntu-latest'
         run: |
-          export NODE_OPTIONS="--max_old_space_size=4096"
+          export NODE_OPTIONS="--max-old-space-size=4096"
           npm run ci-compile:linux
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
