@@ -3,11 +3,11 @@ import clsx from 'clsx';
 import { ipcRenderer } from 'electron';
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import Icon from '../../../../../../assets/icon.png';
-import { AppearanceStyle } from '../../../../../../interfaces/user';
+import { AppearanceStyle, IBookmark } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { EXTENSION_PROTOCOL } from '../../../../../../utils';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
-import { Extension, File, Search } from '../../../../../components/Icons';
+import { Extension, File, Search, Star, StarFilled } from '../../../../../components/Icons';
 import { Information, Lock, Warning } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
@@ -16,15 +16,23 @@ import { StyledButton as Button } from '../Button/styles';
 import { StyledAddressBar, StyledButton, StyledButtonContainer, StyledText, StyledTextContainer } from './styles';
 
 export const AddressBar = () => {
-    const { getWindowId, showSearchPopup, showInformationPopup } = useElectronAPI();
+    const {
+        getWindowId,
+        showSearchPopup,
+        showInformationPopup,
+        getBookmarks,
+        addBookmark,
+        removeBookmark
+    } = useElectronAPI();
 
     const { selectedId, getCurrentViewState } = useViewManagerContext();
-    const { config } = useUserConfigContext();
+    const { userId, config } = useUserConfigContext();
 
     const [state, setState] = useState<ViewState>(getCurrentViewState());
     const [statusButtonText, setStatusButtonText] = useState<string | undefined>(undefined);
     const [address, setAddress] = useState('');
     const [active, setActive] = useState(false);
+    const [bookmark, setBookmark] = useState<IBookmark | undefined>(undefined);
 
     const windowId = getWindowId();
     useEffect(() => {
@@ -42,6 +50,11 @@ export const AddressBar = () => {
         const url = decodeURIComponent(navigationState?.url ?? '');
         setState(navigationState);
         setAddress(url);
+
+        (async () => {
+            const bookmarks = await getBookmarks(userId);
+            setBookmark(bookmarks.find((data) => data.url === navigationState.url));
+        })();
 
         try {
             const { protocol, hostname } = new URL(url);
@@ -72,6 +85,27 @@ export const AddressBar = () => {
         e.stopPropagation();
         const { x, y, height } = e.currentTarget.getBoundingClientRect();
         showInformationPopup(x, y + height);
+    };
+
+    const handleBookmarkButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+
+        if (bookmark) {
+            await removeBookmark(userId, bookmark._id!!);
+        } else {
+            await addBookmark(
+                userId,
+                {
+                    title: state.title,
+                    url: state.url,
+                    favicon: state.favicon,
+                    isFolder: false
+                }
+            );
+        }
+
+        const bookmarks = await getBookmarks(userId);
+        setBookmark(bookmarks.find((data) => data.url === navigationState.url));
     };
 
     const StatusIcon = (): JSX.Element => {
@@ -134,6 +168,11 @@ export const AddressBar = () => {
                             {decodeURIComponent(`${port !== '' ? `:${port}` : ''}${pathname}${search}${hash}`)}
                         </StyledText>
                     </StyledTextContainer>
+                    <StyledButtonContainer className="address-bar-container">
+                        <StyledButton onClick={handleBookmarkButtonClick}>
+                            {bookmark ? <StarFilled /> : <Star />}
+                        </StyledButton>
+                    </StyledButtonContainer>
                 </StyledAddressBar>
             );
         } catch (e) {

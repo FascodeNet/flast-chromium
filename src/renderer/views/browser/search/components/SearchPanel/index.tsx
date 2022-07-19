@@ -1,8 +1,13 @@
 import { PublicOutlined } from '@mui/icons-material';
-import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
+import { IBookmark } from '../../../../../../interfaces/user';
+import { ViewState } from '../../../../../../interfaces/view';
 import { prefixHttp } from '../../../../../../utils/url';
-import { Search } from '../../../../../components/Icons';
+import { Search, Share, Star, StarFilled } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
+import { useViewManagerContext } from '../../../../../contexts/view';
+import { useElectronAPI } from '../../../../../utils/electron';
+import { StyledButton, StyledButtonContainer } from '../../../app/components/AddressBar/styles';
 import { ResultType } from '../../interface';
 import { StyledIcon, StyledImage, StyledInput, StyledPanel } from './styles';
 
@@ -14,7 +19,10 @@ interface Props {
 }
 
 export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
-    const { config } = useUserConfigContext();
+    const { getBookmarks, addBookmark, removeBookmark } = useElectronAPI();
+
+    const { selectedId, getCurrentViewState } = useViewManagerContext();
+    const { userId, config } = useUserConfigContext();
 
     const ref = useRef<HTMLInputElement>(null);
     useEffect(() => {
@@ -22,7 +30,39 @@ export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
         ref.current?.select();
     }, []);
 
+    const [state, setState] = useState<ViewState>(getCurrentViewState());
     const [icon, setIcon] = useState<string | undefined>(undefined);
+    const [bookmark, setBookmark] = useState<IBookmark | undefined>(undefined);
+
+    const navigationState = getCurrentViewState();
+    useEffect(() => {
+        setState(navigationState);
+        (async () => {
+            const bookmarks = await getBookmarks(userId);
+            setBookmark(bookmarks.find((data) => data.url === navigationState.url));
+        })();
+    }, [selectedId, navigationState]);
+
+    const handleBookmarkButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+
+        if (bookmark) {
+            await removeBookmark(userId, bookmark._id!!);
+        } else {
+            await addBookmark(
+                userId,
+                {
+                    title: state.title,
+                    url: state.url,
+                    favicon: state.favicon,
+                    isFolder: false
+                }
+            );
+        }
+
+        const bookmarks = await getBookmarks(userId);
+        setBookmark(bookmarks.find((data) => data.url === navigationState.url));
+    };
 
     useEffect(() => {
         if (type === 'address') {
@@ -55,6 +95,14 @@ export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
             </StyledIcon>
             <StyledInput ref={ref} type="text" placeholder="なんでも検索…"
                          value={value} onChange={onChange} onKeyDown={onKeyDown} />
+            <StyledButtonContainer>
+                <StyledButton>
+                    <Share />
+                </StyledButton>
+                <StyledButton onClick={handleBookmarkButtonClick}>
+                    {bookmark ? <StarFilled /> : <Star />}
+                </StyledButton>
+            </StyledButtonContainer>
         </StyledPanel>
     );
 };

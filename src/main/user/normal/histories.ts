@@ -30,7 +30,7 @@ export class NormalHistories implements IHistories {
             return this.histories;
         });
 
-        ipcMain.handle(`history-add-${user.id}`, (e, data: IHistory) => {
+        ipcMain.handle(`history-add-${user.id}`, (e, data: Omit<IHistory, '_id' | 'updatedAt' | 'createdAt'>) => {
             this.add(data);
         });
 
@@ -52,9 +52,9 @@ export class NormalHistories implements IHistories {
     public add(data: IHistory) {
         const isToday = (date: Date) => {
             const today = new Date();
-            return date.getDate() == today.getDate() &&
-                date.getMonth() == today.getMonth() &&
-                date.getFullYear() == today.getFullYear();
+            return date.getDate() === today.getDate() &&
+                date.getMonth() === today.getMonth() &&
+                date.getFullYear() === today.getFullYear();
         };
 
         if (data.url) {
@@ -65,8 +65,8 @@ export class NormalHistories implements IHistories {
 
         this._datastore.update<IHistory>(
             {
-                $where: function () {
-                    return this.url == data.url && isToday(this.createdAt);
+                $where() {
+                    return this.url === data.url && isToday(this.createdAt);
                 }
             },
             data,
@@ -77,6 +77,7 @@ export class NormalHistories implements IHistories {
             (err, count, doc: IHistory) => {
                 if (err) return;
 
+                // tslint:disable-next-line:no-shadowed-variable
                 this._histories = this._histories.filter((data) => data._id !== doc._id);
                 this._histories.push(doc);
             }

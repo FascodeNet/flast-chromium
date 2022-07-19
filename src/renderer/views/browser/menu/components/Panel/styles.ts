@@ -99,7 +99,7 @@ export const StyledItemLabelContainer = styled.div`
 `;
 
 export const StyledItemLabel = styled.span`
-  margin: 2px 0 0;
+  margin: 0;
   font-size: 13px;
   white-space: nowrap;
   overflow: hidden;

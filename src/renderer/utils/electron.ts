@@ -53,12 +53,12 @@ interface ElectronAPI {
 
     showBookmarksPopup: (x: number, y: number) => Promise<void>;
     getBookmarks: (userId: string) => Promise<IBookmark[]>;
-    addBookmark: (userId: string, data: IBookmark) => Promise<void>;
+    addBookmark: (userId: string, data: Omit<IBookmark, '_id' | 'updatedAt' | 'createdAt'>) => Promise<void>;
     removeBookmark: (userId: string, id: string) => Promise<void>;
 
     showHistoriesPopup: (x: number, y: number) => Promise<void>;
     getHistories: (userId: string) => Promise<IHistory[]>;
-    addHistory: (userId: string, data: IHistory) => Promise<void>;
+    addHistory: (userId: string, data: Omit<IHistory, '_id' | 'updatedAt' | 'createdAt'>) => Promise<void>;
     removeHistory: (userId: string, id: string) => Promise<void>;
 
     showDownloadsPopup: (x: number, y: number) => Promise<void>;
@@ -122,13 +122,22 @@ export const useElectronAPI = (): ElectronAPI => ({
     stopFindInPage: (id: number, hide: boolean) => ipcRenderer.invoke(`view-stop_find_in_page-${windowId}`, id, hide),
 
     showBookmarksPopup: (x: number, y: number) => ipcRenderer.invoke(`window-bookmarks-${windowId}`, x, y),
-    getBookmarks: (userId: string) => ipcRenderer.invoke(`bookmarks-${userId}`),
-    addBookmark: (userId: string, data: IBookmark) => ipcRenderer.invoke(`bookmark-add-${userId}`, data),
-    removeBookmark: (userId: string, id: string) => ipcRenderer.invoke(`bookmark-remove-${userId}`, id),
+    getBookmarks: (userId: string): Promise<IBookmark[]> => {
+        if (!userId) return Promise.resolve([]);
+        return ipcRenderer.invoke(`bookmarks-${userId}`);
+    },
+    addBookmark: (userId: string, data: Omit<IBookmark, '_id' | 'updatedAt' | 'createdAt'>) => {
+        if (!userId) return Promise.resolve();
+        return ipcRenderer.invoke(`bookmark-add-${userId}`, data);
+    },
+    removeBookmark: (userId: string, id: string) => {
+        if (!userId) return Promise.resolve();
+        return ipcRenderer.invoke(`bookmark-remove-${userId}`, id);
+    },
 
     showHistoriesPopup: (x: number, y: number) => ipcRenderer.invoke(`window-histories-${windowId}`, x, y),
     getHistories: (userId: string) => ipcRenderer.invoke(`histories-${userId}`),
-    addHistory: (userId: string, data: IHistory) => ipcRenderer.invoke(`history-add-${userId}`, data),
+    addHistory: (userId: string, data: Omit<IHistory, '_id' | 'updatedAt' | 'createdAt'>) => ipcRenderer.invoke(`history-add-${userId}`, data),
     removeHistory: (userId: string, id: string) => ipcRenderer.invoke(`history-remove-${userId}`, id),
 
     showDownloadsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-downloads-${windowId}`, x, y),

@@ -82,12 +82,14 @@ export class AppView {
         this.id = this.browserView.webContents.id;
         this.incognito = incognito;
 
+        // tslint:disable-next-line:no-shadowed-variable
         const webContents = this.webContents;
 
         if (window.user.type === 'normal')
             userSession.extensions.addTab(this.browserView.webContents, window.browserWindow);
 
         this.setListeners();
+        // tslint:disable-next-line:no-shadowed-variable
         webContents.setWindowOpenHandler(({ url, frameName, disposition }) => {
             if (disposition === 'new-window') {
                 if (frameName === '_self') {
@@ -489,6 +491,7 @@ export class AppView {
         if (findDialog && !findDialog.webContents.isDestroyed()) {
             findDialog.browserWindow = this.window.browserWindow;
 
+            // tslint:disable-next-line:no-shadowed-variable
             const { width } = this.window.browserWindow.getContentBounds();
             findDialog.bounds = {
                 width: 380,
@@ -541,11 +544,13 @@ export class AppView {
         this.setWindowTitle();
         this.window.setApplicationMenu();
         this.window.setTouchBar();
+        // tslint:disable-next-line:no-shadowed-variable
         webContents.getAllWebContents().forEach((webContents) => webContents.send(`view-${this.window.id}`, this.state));
     }
 
 
     private setListeners() {
+        // tslint:disable-next-line:no-shadowed-variable
         const webContents = this.webContents;
         webContents.on('destroyed', () => {
             const viewManager = this.window.viewManager;
@@ -570,6 +575,7 @@ export class AppView {
             this.updateView();
         });
         webContents.on('did-navigate', async (_, url) => {
+            // tslint:disable-next-line:no-console
             console.log('did-navigate');
             this._requestState = await getRequestState(url);
         });
@@ -590,6 +596,8 @@ export class AppView {
         });
 
         webContents.on('dom-ready', async () => {
+            await webContents.setVisualZoomLevelLimits(1, 3);
+
             const { width, height } = this.browserView.getBounds();
             this._captureImage = await this.webContents.capturePage({ width, height, x: 0, y: 0 });
             await this.window.setTouchBar();

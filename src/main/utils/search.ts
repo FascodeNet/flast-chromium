@@ -20,7 +20,7 @@ export const DefaultSearchResult: SearchResult = {
 export type ResultType = 'search' | 'address' | 'bookmark' | 'history';
 
 export interface ResultData {
-    type: ResultType;
+    resultType: ResultType;
     title: string;
     url: string;
     favicon?: string;
@@ -62,7 +62,7 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
         const suggests = suggestDatas.map(({ value }): ResultData => {
             const isValueUrl = isUrl(value);
             return ({
-                type: isValueUrl ? 'address' : 'search',
+                resultType: isValueUrl ? 'address' : 'search',
                 title: value,
                 url: isValueUrl ? value : 'https://www.google.com/search?q=%s'.replace('%s', encodeURIComponent(value))
             });
@@ -101,7 +101,7 @@ const map = (array: (IBookmark | IHistory)[], type: ResultType): ResultData[] =>
         favicon
     }
 ): ResultData => ({
-    type,
+    resultType: type,
     title: title!!,
     url: url!!,
     favicon: favicon

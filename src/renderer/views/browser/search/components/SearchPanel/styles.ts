@@ -10,9 +10,9 @@ export const StyledPanel = styled.div<StyledPanelProps>`
   width: 100%;
   height: 34px;
   margin: 0;
-  padding: 4px 12px;
+  padding: 4px 0 4px 12px;
   display: grid;
-  grid-template-columns: 20px 1fr;
+  grid-template-columns: 20px 1fr auto;
   align-items: center;
   gap: 12px;
   border-radius: ${borderRadius.toUnit()};
@@ -22,10 +22,10 @@ export const StyledPanel = styled.div<StyledPanelProps>`
 
   ${({ appearanceStyle }) => (appearanceStyle !== 'top_double') ? css`
     height: 34px;
-    padding: 4px 12px;
+    padding: 4px 0 4px 12px;
   ` : css`
     height: 32px;
-    padding: 3px 12px;
+    padding: 3px 0 3px 12px;
   `};
 `;
 

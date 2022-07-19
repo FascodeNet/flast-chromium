@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/flast.iml" filepath="$PROJECT_DIR$/.idea/flast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/flast-chromium.iml" filepath="$PROJECT_DIR$/.idea/flast-chromium.iml" />
     </modules>
   </component>
 </project>

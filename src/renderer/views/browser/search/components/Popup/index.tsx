@@ -31,15 +31,16 @@ export const Popup = () => {
     }, []);
 
     const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.currentTarget.value;
-        const type = isURL(value) || value.includes('://') || value.toLowerCase().startsWith('about:') ? 'address' : 'suggest';
+        const inputValue = e.currentTarget.value;
+        const resultType = isURL(inputValue) || inputValue.includes('://') || inputValue.toLowerCase().startsWith('about:') ? 'address' : 'suggest';
 
-        setValue(value);
-        setType(type);
+        setValue(inputValue);
+        setType(resultType);
         setSelectedIndex(-1);
 
-        if (value.length > 0) {
-            const searchResult = await search(value);
+        if (inputValue.length > 0) {
+            const searchResult = await search(inputValue);
+            // tslint:disable-next-line:no-console
             console.log(searchResult);
             const bookmarks = split(searchResult.bookmarks, 3);
             const histories = split(searchResult.histories, 3);
@@ -63,7 +64,7 @@ export const Popup = () => {
                 setSelectedIndex((index) => {
                     const i = index > 0 ? index - 1 : results.length - 1;
                     const result = results[i];
-                    setValue(result.type === 'search' ? result.title : result.url);
+                    setValue(result.resultType === 'search' ? result.title : result.url);
                     return i;
                 });
                 return;
@@ -73,7 +74,7 @@ export const Popup = () => {
                 setSelectedIndex((index) => {
                     const i = index < results.length - 1 ? index + 1 : 0;
                     const result = results[i];
-                    setValue(result.type === 'search' ? result.title : result.url);
+                    setValue(result.resultType === 'search' ? result.title : result.url);
                     return i;
                 });
                 return;
@@ -116,25 +117,25 @@ export const Popup = () => {
     };
 
     const handleClick = async (e: MouseEvent<HTMLDivElement>, i: number) => {
-        const value = results[i].url;
-        if (isURL(value) && !value.includes('://')) {
-            const url = `http://${value}`;
+        const resultValue = results[i].url;
+        if (isURL(resultValue) && !resultValue.includes('://')) {
+            const url = `http://${resultValue}`;
             if (e.shiftKey) {
                 await addView(url, true);
             } else {
                 await loadView(selectedId, url);
             }
             await hideDialog();
-        } else if (value.toLowerCase().startsWith('about:')) {
-            const url = value.toLowerCase().includes('blank') ? value : value.replace('about:', `${APPLICATION_PROTOCOL}:`);
+        } else if (resultValue.toLowerCase().startsWith('about:')) {
+            const url = resultValue.toLowerCase().includes('blank') ? resultValue : resultValue.replace('about:', `${APPLICATION_PROTOCOL}:`);
             if (e.shiftKey) {
                 await addView(url, true);
             } else {
                 await loadView(selectedId, url);
             }
             await hideDialog();
-        } else if (!value.includes('://')) {
-            const url = 'https://www.google.com/search?q=%s'.replace('%s', encodeURIComponent(value));
+        } else if (!resultValue.includes('://')) {
+            const url = 'https://www.google.com/search?q=%s'.replace('%s', encodeURIComponent(resultValue));
             if (e.shiftKey) {
                 await addView(url, true);
             } else {
@@ -143,9 +144,9 @@ export const Popup = () => {
             await hideDialog();
         } else {
             if (e.shiftKey) {
-                await addView(value, true);
+                await addView(resultValue, true);
             } else {
-                await loadView(selectedId, value);
+                await loadView(selectedId, resultValue);
             }
             await hideDialog();
         }
@@ -155,12 +156,12 @@ export const Popup = () => {
         <StyledContainer>
             <SearchPanel type={type} value={value} onChange={handleChange} onKeyDown={handleKeyDown} />
             {results.length > 0 && <ResultPanel>
-                {results.map(({ type, title, url, favicon }, i) => {
+                {results.map(({ resultType, title, url, favicon }, i) => {
                     const text = title.toLowerCase();
                     const inputtedText = value.toLowerCase();
                     const suggestedText = text.replace(inputtedText, '');
 
-                    switch (type) {
+                    switch (resultType) {
                         case 'search':
                             return (
                                 <ResultItem
@@ -185,7 +186,7 @@ export const Popup = () => {
                                         <Avatar src={favicon} sx={{ width: 'inherit', height: 'inherit' }} /> :
                                         <PublicOutlined sx={{ width: 'inherit', height: 'inherit' }} />}
                                     label={title}
-                                    subLabel={type !== 'address' ? decodeURIComponent(url) : undefined}
+                                    subLabel={resultType !== 'address' ? decodeURIComponent(url) : undefined}
                                 />
                             );
                     }

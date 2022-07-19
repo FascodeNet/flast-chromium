@@ -29,7 +29,7 @@ export class NormalBookmarks implements IBookmarks {
             return this.bookmarks;
         });
 
-        ipcMain.handle(`bookmark-add-${user.id}`, (e, data: IBookmark) => {
+        ipcMain.handle(`bookmark-add-${user.id}`, (e, data: Omit<IBookmark, '_id' | 'updatedAt' | 'createdAt'>) => {
             this.add(data);
         });
 
@@ -53,8 +53,10 @@ export class NormalBookmarks implements IBookmarks {
     }
 
     public add(data: IBookmark) {
-        this._bookmarks.push(data);
-        this._datastore.insert(data);
+        this._datastore.insert(data, (err, doc) => {
+            if (err) return;
+            this._bookmarks.push(doc);
+        });
     }
 
     public remove(id: string) {

@@ -64,6 +64,7 @@ export const StyledButtonContainer = styled.div`
   padding: 1px;
   display: flex;
   align-items: center;
+  gap: 1px;
   cursor: default;
 `;
 
