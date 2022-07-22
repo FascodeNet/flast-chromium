@@ -2,7 +2,7 @@ import { app, Session as ElectronSession, session } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions';
 import { join } from 'path';
 import { parse } from 'url';
-import { APPLICATION_PROTOCOL } from '../../../utils';
+import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../../utils';
 import { ISession, IUser } from '../../interfaces/user';
 
 export class IncognitoSession implements ISession {
@@ -16,7 +16,7 @@ export class IncognitoSession implements ISession {
 
         this._session = session.fromPartition(user.id);
 
-        const userAgent = this._session.getUserAgent().replace(/\sElectron\/\S+/, '').replace(/\sChrome\/\S+/g, '').replace(new RegExp(`\\s${app.getName()}/\\S+`), '');
+        const userAgent = this._session.getUserAgent().replace(/\sElectron\/\S+/, '').replace(app.getName(), APPLICATION_NAME);
         this._session.setUserAgent(userAgent);
 
         this._session.protocol.registerFileProtocol(
