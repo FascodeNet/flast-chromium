@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         # os: [ windows-latest, macos-latest ]
-        os: [ windows-latest, macos-latest, ubuntu-latest ]
+        os: [ macos-latest, ubuntu-latest ]
 
     steps:
       - name: Check out Git repository
@@ -26,11 +26,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install gcc-multilib g++-multilib
-
-      - name: Set Swap Space
-        uses: pierotofy/set-swap-space@master
-        with:
-          swap-size-gb: 10
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
