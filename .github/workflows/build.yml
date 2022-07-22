@@ -27,6 +27,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install gcc-multilib g++-multilib
 
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
+
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
