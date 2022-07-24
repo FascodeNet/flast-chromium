@@ -1,5 +1,6 @@
+import { Typography } from '@mui/material';
 import React, { ReactNode } from 'react';
-import { StyledDrawer, StyledTitle } from './styles';
+import { StyledDrawer } from './styles';
 
 interface Props {
     title: ReactNode;
@@ -9,7 +10,7 @@ interface Props {
 export const NavigationDrawer = ({ title, children }: Props) => {
     return (
         <StyledDrawer>
-            <StyledTitle>{title}</StyledTitle>
+            <Typography variant="h4" sx={{ width: '100%', mb: 1, fontWeight: 100 }}>{title}</Typography>
             {children}
         </StyledDrawer>
     );

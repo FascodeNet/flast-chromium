@@ -7,8 +7,10 @@ import StyleTopDouble from '../../../../../assets/Appearance_Style_Top_Double.sv
 import StyleTopSingle from '../../../../../assets/Appearance_Style_Top_Single.svg';
 import { DefaultUserConfig, UserConfig } from '../../../../../interfaces/user';
 import { DeepPartial } from '../../../../../utils';
+import { Applications, Bookmarks, Download, Extension, History, Home } from '../../../../components/Icons';
 import { useTranslateContext } from '../../../../contexts/translate';
-import { StyledSubTitle, StyledTitle } from '../App/styles';
+import { Section, SwitchItem } from '../App/components';
+import { StyledItemContainer, StyledSubTitle, StyledTitle } from '../App/styles';
 import { StyledStyleDetail, StyledStyleSelectButton } from './styles';
 
 export const Appearance = () => {
@@ -17,6 +19,8 @@ export const Appearance = () => {
 
     const { translate } = useTranslateContext();
     const translateSection = translate.pages.settings.appearance;
+
+    const [checked, setChecked] = useState(false);
 
     useEffect(() => {
         window.api.getUser().then(async (id) => {
@@ -161,6 +165,47 @@ export const Appearance = () => {
                     </StyledStyleDetail>
                 </StyledStyleSelectButton>
             </div>
+            <Section>
+                <StyledSubTitle>{translateSection.button.title}</StyledSubTitle>
+                <StyledItemContainer>
+                    <SwitchItem
+                        icon={<Home />}
+                        primary={translateSection.button.home}
+                        checked={config.appearance.buttons.home}
+                        setChecked={(checked) => setUserConfig({ appearance: { buttons: { home: checked } } })}
+                    />
+                    <SwitchItem
+                        icon={<Bookmarks />}
+                        primary={translateSection.button.bookmarks}
+                        checked={config.appearance.buttons.bookmarks}
+                        setChecked={(checked) => setUserConfig({ appearance: { buttons: { bookmarks: checked } } })}
+                    />
+                    <SwitchItem
+                        icon={<History />}
+                        primary={translateSection.button.histories}
+                        checked={config.appearance.buttons.histories}
+                        setChecked={(checked) => setUserConfig({ appearance: { buttons: { histories: checked } } })}
+                    />
+                    <SwitchItem
+                        icon={<Download />}
+                        primary={translateSection.button.downloads}
+                        checked={config.appearance.buttons.downloads}
+                        setChecked={(checked) => setUserConfig({ appearance: { buttons: { downloads: checked } } })}
+                    />
+                    <SwitchItem
+                        icon={<Applications />}
+                        primary={translateSection.button.applications}
+                        checked={config.appearance.buttons.applications}
+                        setChecked={(checked) => setUserConfig({ appearance: { buttons: { applications: checked } } })}
+                    />
+                    <SwitchItem
+                        icon={<Extension />}
+                        primary={translateSection.button.extensions}
+                        checked={config.appearance.buttons.extensions}
+                        setChecked={(checked) => setUserConfig({ appearance: { buttons: { extensions: checked } } })}
+                    />
+                </StyledItemContainer>
+            </Section>
         </Fragment>
     );
 };

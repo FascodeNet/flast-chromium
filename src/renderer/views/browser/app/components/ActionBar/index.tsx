@@ -5,17 +5,23 @@ import { BookmarksButton, DownloadsButton, ExtensionsButton, HistoriesButton, Me
 import { StyledContainer } from './styles';
 
 export const ActionBar = () => {
-    const { config } = useUserConfigContext();
-    const style = config.appearance.style;
+    const {
+        config: {
+            appearance: {
+                style,
+                buttons: { bookmarks, histories, downloads, applications, extensions }
+            }
+        }
+    } = useUserConfigContext();
 
-    const extensions = getCurrentWebContents().session.getAllExtensions();
+    const allExtensions = getCurrentWebContents().session.getAllExtensions();
 
     return (
         <StyledContainer className="action-bar" appearanceStyle={style}>
-            <BookmarksButton />
-            <HistoriesButton />
-            <DownloadsButton />
-            {extensions.length > 0 && <ExtensionsButton />}
+            {bookmarks && <BookmarksButton />}
+            {histories && <HistoriesButton />}
+            {downloads && <DownloadsButton />}
+            {allExtensions.length > 0 && <ExtensionsButton />}
             <MenuButton />
         </StyledContainer>
     );

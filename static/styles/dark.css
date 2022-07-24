@@ -198,6 +198,10 @@ button:not(:disabled):hover {
     background-color: var(--primary-background-color);
 }
 
+.popup > .panel {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12));
+}
+
 .panel-header {
     border-bottom-color: var(--divider-color);
 }
@@ -211,4 +215,8 @@ button:not(:disabled):hover {
 
 .history-group h4 {
     background-color: var(--primary-background-color);
+}
+
+.popup .history-group h4 {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12));
 }
