@@ -67,6 +67,7 @@ export class AppView {
                 plugins: false,
                 experimentalFeatures: false,
                 sandbox: false,
+                scrollBounce: true,
                 safeDialogs: true,
                 safeDialogsMessage: '今後このページではダイアログを表示しない',
                 session: userSession.session
@@ -553,9 +554,7 @@ export class AppView {
         // tslint:disable-next-line:no-shadowed-variable
         const webContents = this.webContents;
         webContents.on('destroyed', () => {
-            const viewManager = this.window.viewManager;
-            viewManager.views.delete(this.id);
-            viewManager.sortOrders = viewManager.sortOrders.filter((sortId) => sortId !== this.id);
+            this.window.viewManager.remove(this.id);
         });
 
         webContents.on('did-start-loading', async () => {

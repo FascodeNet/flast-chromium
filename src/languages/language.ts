@@ -105,8 +105,10 @@ export interface Language {
                 reloadIgnoringCache: string;
                 home: string;
                 bookmarks: string;
-                history: string;
+                histories: string;
                 downloads: string;
+                applications: string;
+                extensions: string;
             }
             tab: {
                 label: string;
@@ -144,6 +146,7 @@ export interface Language {
                 removeUser: string;
                 editUser: string;
             }
+
             help: {
                 label: string;
 
@@ -267,6 +270,16 @@ export interface Language {
                     topDouble: string;
                     left: string;
                     right: string;
+                }
+                button: {
+                    title: string;
+
+                    home: string;
+                    bookmarks: string;
+                    histories: string;
+                    downloads: string;
+                    applications: string;
+                    extensions: string;
                 }
             }
         };

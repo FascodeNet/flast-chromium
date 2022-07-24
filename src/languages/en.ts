@@ -87,9 +87,11 @@ export const En: Language = {
                 reload: 'Reload',
                 reloadIgnoringCache: 'Reload (Clear Cache)',
                 home: 'Home page',
-                history: 'History',
+                bookmarks: 'Bookmarks',
+                histories: 'Histories',
                 downloads: 'Downloads',
-                bookmarks: 'Bookmarks'
+                applications: 'Applications',
+                extensions: 'Extensions'
             },
             tab: {
                 label: 'Tab',
@@ -268,6 +270,16 @@ export const En: Language = {
                     topDouble: 'Top (2 Rows)',
                     left: 'Left',
                     right: 'Right'
+                },
+                button: {
+                    title: '表示するボタンの選択',
+
+                    home: 'Home',
+                    bookmarks: 'Bookmarks',
+                    histories: 'Histories',
+                    downloads: 'Downloads',
+                    applications: 'Applications',
+                    extensions: 'Extensions'
                 }
             }
         }

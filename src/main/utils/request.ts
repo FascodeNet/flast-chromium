@@ -32,14 +32,14 @@ export const getRequestState = (url: string): Promise<RequestState> => new Promi
             case 'https:':
                 const domain = getDomain(url);
 
-                let options = {
+                const options = {
                     host: domain,
                     port: 443,
                     method: 'GET'
                 };
 
-                let req = https.request(options, (res) => {
-                    let certificate = (res.socket as TLSSocket).getPeerCertificate();
+                const req = https.request(options, (res) => {
+                    const certificate = (res.socket as TLSSocket).getPeerCertificate();
                     if (!certificate.subject)
                         return resolve({ type: 'insecure' });
 

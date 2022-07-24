@@ -16,7 +16,7 @@ export const Ja: Language = {
             bookmarks: 'ブックマーク',
             histories: '履歴',
             downloads: 'ダウンロード',
-            applications: 'アプリ',
+            applications: 'アプリケーション',
             extensions: '拡張機能',
 
             print: '印刷',
@@ -88,9 +88,11 @@ export const Ja: Language = {
                 reload: '再読み込み',
                 reloadIgnoringCache: '再読み込み (キャッシュの削除)',
                 home: 'ホームページに移動',
-                history: '履歴',
+                bookmarks: 'ブックマーク',
+                histories: '履歴',
                 downloads: 'ダウンロード',
-                bookmarks: 'ブックマーク'
+                applications: 'アプリケーション',
+                extensions: '拡張機能'
             },
             tab: {
                 label: 'タブ',
@@ -269,6 +271,16 @@ export const Ja: Language = {
                     topDouble: '上 (2行)',
                     left: '左',
                     right: '右'
+                },
+                button: {
+                    title: '表示するボタンの選択',
+
+                    home: 'ホーム',
+                    bookmarks: 'ブックマーク',
+                    histories: '履歴',
+                    downloads: 'ダウンロード',
+                    applications: 'アプリケーション',
+                    extensions: '拡張機能'
                 }
             }
         }

@@ -454,7 +454,7 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
             {
                 label: languageSection.removeOtherTabs,
                 icon: getMenuItemIconFromName('tab_remove_all'),
-                enabled: viewManager.getViews().filter((v) => v.id !== view.id).length > 0,
+                enabled: viewManager.views.filter((appView) => appView.id !== view.id).length > 0,
                 click: () => viewManager.removeOthers(view.id)
             },
             {

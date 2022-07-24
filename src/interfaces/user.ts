@@ -54,6 +54,8 @@ export interface UserConfig {
             bookmarks: boolean;
             histories: boolean;
             downloads: boolean;
+            applications: boolean;
+            extensions: boolean;
         }
     };
     pages: {
@@ -97,7 +99,9 @@ export const DefaultUserConfig: UserConfig = {
             home: false,
             bookmarks: false,
             histories: false,
-            downloads: false
+            downloads: false,
+            applications: false,
+            extensions: false
         }
     },
     pages: {

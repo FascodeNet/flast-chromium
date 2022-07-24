@@ -1,7 +1,17 @@
 import faker from '@faker-js/faker';
 import { app, dialog, Menu, MenuItemConstructorOptions, nativeImage } from 'electron';
+import { author } from '../../../package.json';
 import { getTranslate } from '../../languages/language';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
+import {
+    APPLICATION_NAME,
+    APPLICATION_PROTOCOL,
+    APPLICATION_WEB_APPLICATIONS,
+    APPLICATION_WEB_BOOKMARKS,
+    APPLICATION_WEB_DOWNLOADS,
+    APPLICATION_WEB_EXTENSIONS,
+    APPLICATION_WEB_HISTORY,
+    APPLICATION_WEB_SETTINGS
+} from '../../utils';
 import { isHorizontal } from '../../utils/design';
 import { IS_MAC } from '../../utils/process';
 import { App, Main } from '../main';
@@ -19,8 +29,8 @@ export const getWindowMenu = (window: AppWindow) => {
     const viewManager = window.viewManager;
     const view = viewManager.get();
 
-    const getFavicon = (view: AppView) => {
-        let dataURL = view.favicon;
+    const getFavicon = (appView: AppView) => {
+        let dataURL = appView.favicon;
         if (dataURL) {
             // some favicon data urls have a corrupted base 64 file type descriptor
             // prefixed with data:png;base64, instead of data:image/png;base64,
@@ -36,13 +46,23 @@ export const getWindowMenu = (window: AppWindow) => {
         }
     };
 
+    const showAboutPanel = () => {
+        dialog.showMessageBox({
+            title: languageSection.help.about,
+            message: APPLICATION_NAME,
+            detail: `バージョン: ${app.getVersion()}\n© ${new Date().getFullYear()} ${author.name}. All rights reserved.`,
+            buttons: [],
+            icon: nativeImage.createFromPath(`${app.getAppPath()}/static/icons/app/icon.png`)
+        });
+    };
+
     const applicationOptions: MenuItemConstructorOptions | undefined = IS_MAC ? {
         label: languageSection.app.label,
         icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
         submenu: [
             {
                 label: languageSection.app.about,
-                role: 'about'
+                click: () => showAboutPanel()
             },
             { type: 'separator' },
             {
@@ -113,7 +133,6 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('save_as') : undefined,
                 accelerator: Shortcuts.SAVE_AS,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
 
                     dialog.showSaveDialog({
@@ -137,9 +156,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('print') : undefined,
                 accelerator: Shortcuts.PRINT,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.webContents.print();
                 }
             },
@@ -151,14 +168,9 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => {
                     const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_SETTINGS}`;
 
-                    const view = viewManager.get();
-                    if (!view) {
-                        viewManager.add(url);
-                        return;
-                    }
-
-                    if (new URL(view.url).protocol === `${APPLICATION_PROTOCOL}:`) {
-                        view.load(url);
+                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    if (pageView) {
+                        viewManager.select(pageView.id);
                     } else {
                         viewManager.add(url);
                     }
@@ -169,13 +181,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.file.closeTab,
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_remove') : undefined,
                 accelerator: Shortcuts.TAB_REMOVE,
-                click: () => {
-                    if (viewManager.views.size > 1) {
-                        viewManager.remove();
-                    } else {
-                        window.close();
-                    }
-                }
+                click: () => viewManager.remove()
             },
             {
                 label: languageSection.file.closeWindow,
@@ -204,28 +210,12 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('undo') : undefined,
                 accelerator: Shortcuts.EDIT_UNDO,
                 role: 'undo'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.undo();
-                }
-                */
             },
             {
                 label: languageSection.edit.redo,
                 icon: !IS_MAC ? getMenuItemIconFromName('redo') : undefined,
                 accelerator: Shortcuts.EDIT_REDO,
                 role: 'redo'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.redo();
-                }
-                */
             },
             { type: 'separator' },
             {
@@ -233,70 +223,30 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('cut') : undefined,
                 accelerator: Shortcuts.EDIT_CUT,
                 role: 'cut'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.cut();
-                }
-                */
             },
             {
                 label: languageSection.edit.copy,
                 icon: !IS_MAC ? getMenuItemIconFromName('copy') : undefined,
                 accelerator: Shortcuts.EDIT_COPY,
                 role: 'copy'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.copy();
-                }
-                */
             },
             {
                 label: languageSection.edit.paste,
                 icon: !IS_MAC ? getMenuItemIconFromName('paste') : undefined,
                 accelerator: Shortcuts.EDIT_PASTE,
                 role: 'pasteAndMatchStyle'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.pasteAndMatchStyle();
-                }
-                */
             },
             {
                 label: languageSection.edit.pastePlainText,
                 icon: !IS_MAC ? getMenuItemIconFromName('paste_as_plain_text') : undefined,
                 accelerator: Shortcuts.EDIT_PASTE_AS_PLAIN_TEXT,
                 role: 'paste'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.paste();
-                }
-                */
             },
             {
                 label: languageSection.edit.delete,
                 icon: !IS_MAC ? getMenuItemIconFromName('backspace') : undefined,
                 accelerator: Shortcuts.EDIT_DELETE,
                 role: 'delete'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.delete();
-                }
-                */
             },
             { type: 'separator' },
             {
@@ -304,14 +254,6 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('select_all') : undefined,
                 accelerator: Shortcuts.EDIT_SELECT_ALL,
                 role: 'selectAll'
-                /*
-                click: () => {
-                    const view = viewManager.get();
-                    if (!view) return;
-
-                    view.webContents.selectAll();
-                }
-                */
             },
             { type: 'separator' },
             {
@@ -319,9 +261,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('search') : undefined,
                 accelerator: Shortcuts.FIND_1,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.findInPage(null);
                 }
             },
@@ -331,9 +271,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.FIND_2,
                 visible: false,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.findInPage(null);
                 }
             }
@@ -362,9 +300,9 @@ export const getWindowMenu = (window: AppWindow) => {
                     settings.config = { appearance: { fullscreen_showing_toolbar: !settings.config.appearance.fullscreen_showing_toolbar } };
 
                     const windows = Main.windowManager.getWindows(window.user);
-                    windows.forEach((window) => {
-                        window.webContents.send('settings-update', settings.config);
-                        window.viewManager.get()?.setBounds();
+                    windows.forEach((appWindow) => {
+                        appWindow.webContents.send('settings-update', settings.config);
+                        appWindow.viewManager.get()?.setBounds();
                     });
                 }
             },
@@ -380,9 +318,9 @@ export const getWindowMenu = (window: AppWindow) => {
                     settings.config = { appearance: { sidebar: { extended: !settings.config.appearance.sidebar.extended } } };
 
                     const windows = Main.windowManager.getWindows(window.user);
-                    windows.forEach((window) => {
-                        window.webContents.send('settings-update', settings.config);
-                        window.viewManager.get()?.setBounds();
+                    windows.forEach((appWindow) => {
+                        appWindow.webContents.send('settings-update', settings.config);
+                        appWindow.viewManager.get()?.setBounds();
                     });
                 }
             },
@@ -392,9 +330,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('zoom_in') : undefined,
                 accelerator: Shortcuts.ZOOM_IN_1,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.zoomIn();
                 }
             },
@@ -404,9 +340,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.ZOOM_IN_2,
                 visible: false,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.zoomIn();
                 }
             },
@@ -415,9 +349,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('zoom_out') : undefined,
                 accelerator: Shortcuts.ZOOM_OUT_1,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.zoomOut();
                 }
             },
@@ -427,9 +359,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.ZOOM_OUT_2,
                 visible: false,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.zoomOut();
                 }
             },
@@ -438,9 +368,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.ZOOM_RESET_1,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.zoomReset();
                 }
             },
@@ -450,9 +378,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.ZOOM_RESET_2,
                 visible: false,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.zoomReset();
                 }
             },
@@ -463,7 +389,6 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.VIEW_SOURCE,
                 enabled: !viewManager.get()?.url.startsWith('view-source:'),
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
 
                     const appView = viewManager.add('about:blank');
@@ -475,7 +400,6 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('inspect') : undefined,
                 accelerator: Shortcuts.DEVELOPER_TOOLS_1,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
 
                     const webContents = view.webContents;
@@ -488,7 +412,6 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.DEVELOPER_TOOLS_2,
                 visible: false,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
 
                     const webContents = view.webContents;
@@ -524,9 +447,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('arrow_left') : undefined,
                 accelerator: Shortcuts.NAVIGATION_BACK,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.back();
                 }
             },
@@ -535,9 +456,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('arrow_right') : undefined,
                 accelerator: Shortcuts.NAVIGATION_FORWARD,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.forward();
                 }
             },
@@ -547,9 +466,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('reload') : undefined,
                 accelerator: Shortcuts.NAVIGATION_RELOAD_1,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     !view.isLoading ? view.reload() : view.stop();
                 }
             },
@@ -559,9 +476,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.NAVIGATION_RELOAD_2,
                 visible: false,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     !view.isLoading ? view.reload() : view.stop();
                 }
             },
@@ -570,9 +485,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.NAVIGATION_RELOAD_IGNORING_CACHE,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     !view.isLoading ? view.reload(true) : view.stop();
                 }
             },
@@ -582,9 +495,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('home') : undefined,
                 accelerator: Shortcuts.NAVIGATION_HOME,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     view.load('https://www.google.com');
                 }
             },
@@ -594,13 +505,29 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('bookmarks') : undefined,
                 accelerator: Shortcuts.NAVIGATION_BOOKMARKS,
                 click: () => {
+                    const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_BOOKMARKS}`;
+
+                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    if (pageView) {
+                        viewManager.select(pageView.id);
+                    } else {
+                        viewManager.add(url);
+                    }
                 }
             },
             {
-                label: languageSection.navigation.history,
+                label: languageSection.navigation.histories,
                 icon: !IS_MAC ? getMenuItemIconFromName('history') : undefined,
                 accelerator: Shortcuts.NAVIGATION_HISTORY,
                 click: () => {
+                    const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HISTORY}`;
+
+                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    if (pageView) {
+                        viewManager.select(pageView.id);
+                    } else {
+                        viewManager.add(url);
+                    }
                 }
             },
             {
@@ -608,6 +535,42 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('downloads') : undefined,
                 accelerator: Shortcuts.NAVIGATION_DOWNLOADS,
                 click: () => {
+                    const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_DOWNLOADS}`;
+
+                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    if (pageView) {
+                        viewManager.select(pageView.id);
+                    } else {
+                        viewManager.add(url);
+                    }
+                }
+            },
+            {
+                label: languageSection.navigation.applications,
+                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                click: () => {
+                    const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_APPLICATIONS}`;
+
+                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    if (pageView) {
+                        viewManager.select(pageView.id);
+                    } else {
+                        viewManager.add(url);
+                    }
+                }
+            },
+            {
+                label: languageSection.navigation.extensions,
+                icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
+                click: () => {
+                    const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_EXTENSIONS}`;
+
+                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    if (pageView) {
+                        viewManager.select(pageView.id);
+                    } else {
+                        viewManager.add(url);
+                    }
                 }
             }
         ]
@@ -623,30 +586,22 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_add') : undefined,
                 accelerator: Shortcuts.TAB_ADD,
                 click: () => {
-                    const view = viewManager.add();
-                    viewManager.select(view.id);
+                    const appView = viewManager.add();
+                    viewManager.select(appView.id);
                 }
             },
             {
                 label: languageSection.tab.removeTab,
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_remove') : undefined,
                 accelerator: Shortcuts.TAB_REMOVE,
-                click: () => {
-                    if (viewManager.views.size > 1) {
-                        viewManager.remove();
-                    } else {
-                        window.close();
-                    }
-                }
+                click: () => viewManager.remove()
             },
             {
                 label: languageSection.tab.removeOtherTabs,
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_remove_all') : undefined,
-                enabled: viewManager.getViews().filter((v) => v.id !== viewManager.selectedId).length > 0,
+                enabled: viewManager.views.filter((v) => v.id !== viewManager.selectedId).length > 0,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     viewManager.removeOthers(view.id);
                 }
             },
@@ -655,9 +610,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 enabled: viewManager.getLeftViews(viewManager.selectedId).length > 0,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     viewManager.removeLefts(view.id);
                 }
             },
@@ -666,9 +619,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 enabled: viewManager.getRightViews(viewManager.selectedId).length > 0,
                 click: () => {
-                    const view = viewManager.get();
                     if (!view) return;
-
                     viewManager.removeRights(view.id);
                 }
             },
@@ -705,11 +656,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.tab.prevTab,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.TAB_PREVIOUS,
-                enabled: viewManager.views.size > 0,
+                enabled: viewManager.views.length > 0,
                 click: () => {
-                    const views = [...viewManager.getViews()];
+                    const views = viewManager.views;
 
-                    const index = views.findIndex((view) => view.id === viewManager.selectedId);
+                    const index = views.findIndex((appView) => appView.id === viewManager.selectedId);
                     viewManager.select(views[index > 0 ? index - 1 : views.length - 1].id);
                 }
             },
@@ -717,16 +668,16 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.tab.nextTab,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.TAB_NEXT,
-                enabled: viewManager.views.size > 0,
+                enabled: viewManager.views.length > 0,
                 click: () => {
-                    const views = [...viewManager.getViews()];
+                    const views = viewManager.views;
 
-                    const index = views.findIndex((view) => view.id === viewManager.selectedId);
+                    const index = views.findIndex((appView) => appView.id === viewManager.selectedId);
                     viewManager.select(views[index < (views.length - 1) ? index + 1 : 0].id);
                 }
             },
             { type: 'separator' },
-            ...(viewManager.getViews().map((appView, i): MenuItemConstructorOptions => (
+            ...(viewManager.views.map((appView, i): MenuItemConstructorOptions => (
                 {
                     label: appView.title,
                     icon: !IS_MAC ? (viewManager.selectedId === appView.id ? getMenuItemIconFromName('check') : getFavicon(appView)) : undefined,
@@ -812,7 +763,7 @@ export const getWindowMenu = (window: AppWindow) => {
             { type: 'separator' },
             ...(Main.windowManager.getWindows().map((appWindow, i): MenuItemConstructorOptions => {
                 const windowViewManager = appWindow.viewManager;
-                const subLabel = windowViewManager.views.size - 1 > 0 ? ` とその他 ${windowViewManager.views.size - 1}つのタブ` : '';
+                const subLabel = windowViewManager.views.length - 1 > 0 ? ` とその他 ${windowViewManager.views.length - 1}つのタブ` : '';
 
                 return (
                     {
@@ -914,8 +865,7 @@ export const getWindowMenu = (window: AppWindow) => {
             {
                 label: languageSection.help.about,
                 icon: !IS_MAC ? getMenuItemIcon(`${app.getAppPath()}/static/icons/app/icon.png`) : undefined,
-                click: () => {
-                }
+                click: () => showAboutPanel()
             }
         ]
     };
