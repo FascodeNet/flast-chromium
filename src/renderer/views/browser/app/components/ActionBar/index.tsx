@@ -1,5 +1,6 @@
 import { getCurrentWebContents } from '@electron/remote';
 import React from 'react';
+import { isHorizontal } from '../../../../../../utils/design';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { BookmarksButton, DownloadsButton, ExtensionsButton, HistoriesButton, MenuButton } from '../ActionButton';
 import { StyledContainer } from './styles';
@@ -18,9 +19,9 @@ export const ActionBar = () => {
 
     return (
         <StyledContainer className="action-bar" appearanceStyle={style}>
-            {bookmarks && <BookmarksButton />}
-            {histories && <HistoriesButton />}
-            {downloads && <DownloadsButton />}
+            {isHorizontal(style) && bookmarks && <BookmarksButton />}
+            {isHorizontal(style) && histories && <HistoriesButton />}
+            {isHorizontal(style) && downloads && <DownloadsButton />}
             {allExtensions.length > 0 && <ExtensionsButton />}
             <MenuButton />
         </StyledContainer>

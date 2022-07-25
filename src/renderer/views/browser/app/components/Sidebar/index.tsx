@@ -20,9 +20,9 @@ export const Sidebar = () => {
 
     const [panel, setPanel] = useState<AppearanceSidebarState>(state);
 
-    const handleTogglePanelClick = (state: AppearanceSidebarState) => {
+    const handleTogglePanelClick = (sidebarState: AppearanceSidebarState) => {
         const prevState = panel;
-        const newState = prevState !== state ? state : 'tab_container';
+        const newState = prevState !== sidebarState ? sidebarState : 'tab_container';
         setPanel(newState);
         setConfig({ appearance: { sidebar: { state: newState } } });
         if (!extended && prevState === 'tab_container')

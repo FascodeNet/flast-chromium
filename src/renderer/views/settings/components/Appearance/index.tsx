@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { AppearanceMode, AppearanceStyle, DefaultUserConfig, UserConfig } from '../../../../../interfaces/user';
 import { DeepPartial } from '../../../../../utils';
+import { isVertical } from '../../../../../utils/design';
 import { Applications, Bookmarks, Download, Extension, History, Home } from '../../../../components/Icons';
 import { PageTitle, RadioItem, Section, SectionContent, SectionTitle, SwitchItem } from '../../../../components/Page';
 import { useTranslateContext } from '../../../../contexts/translate';
@@ -106,18 +107,21 @@ export const Appearance = () => {
                         primary={translateSection.button.bookmarks}
                         checked={config.appearance.buttons.bookmarks}
                         setChecked={(bookmarks) => setUserConfig({ appearance: { buttons: { bookmarks } } })}
+                        disabled={isVertical(config.appearance.style)}
                     />
                     <SwitchItem
                         icon={<History />}
                         primary={translateSection.button.histories}
                         checked={config.appearance.buttons.histories}
                         setChecked={(histories) => setUserConfig({ appearance: { buttons: { histories } } })}
+                        disabled={isVertical(config.appearance.style)}
                     />
                     <SwitchItem
                         icon={<Download />}
                         primary={translateSection.button.downloads}
                         checked={config.appearance.buttons.downloads}
                         setChecked={(downloads) => setUserConfig({ appearance: { buttons: { downloads } } })}
+                        disabled={isVertical(config.appearance.style)}
                     />
                     <SwitchItem
                         icon={<Applications />}
