@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { IHistory } from '../../../interfaces/user';
 import { useElectronAPI } from '../../utils/electron';
@@ -49,8 +49,6 @@ export const HistoriesPanel = ({ type }: PanelProps) => {
         });
     }, []);
 
-    console.log(histories);
-
     return (
         <StyledPanel className="panel" type={type}>
             <StyledPanelHeader className="panel-header" type={type}>
@@ -69,7 +67,7 @@ export const HistoriesPanel = ({ type }: PanelProps) => {
                                         {title}
                                     </StyledHistoryItemLabel>
                                     <StyledHistoryItemDate className="history-item-date">
-                                        {moment(updatedAt).format('HH:mm')}
+                                        {format(updatedAt!!, 'HH:mm')}
                                     </StyledHistoryItemDate>
                                 </StyledHistoryItem>
                             ))}

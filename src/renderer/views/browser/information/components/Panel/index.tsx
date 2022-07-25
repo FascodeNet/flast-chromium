@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { format } from 'date-fns';
 import React, { Fragment, useEffect, useState } from 'react';
 import Icon from '../../../../../../assets/icon.png';
 import { UserConfig } from '../../../../../../interfaces/user';
@@ -152,8 +152,8 @@ const CertificatePanel = ({ state, config, setType }: PanelProps) => {
                         </section>
                         <section>
                             <StyledItemSubLabel>有効期間</StyledItemSubLabel>
-                            {moment(certificate.valid_from).format('YYYY/MM/DD HH:mm:ss')} から<br />
-                            {moment(certificate.valid_to).format('YYYY/MM/DD HH:mm:ss')} まで
+                            {format(Date.parse(certificate.valid_from!!), 'yyyy/MM/dd HH:mm:ss')} から<br />
+                            {format(Date.parse(certificate.valid_to!!), 'yyyy/MM/dd HH:mm:ss')} まで
                         </section>
                     </StyledItemDescription>
                 </StyledItemLabelContainer>
