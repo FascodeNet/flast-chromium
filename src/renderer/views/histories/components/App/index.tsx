@@ -1,4 +1,3 @@
-import { DescriptionOutlined, PaletteOutlined } from '@mui/icons-material';
 import { Theme } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import React, { useEffect, useState } from 'react';
@@ -6,19 +5,22 @@ import { Helmet } from 'react-helmet';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { DefaultUserConfig, UserConfig } from '../../../../../interfaces/user';
 import { GlobalNavigationDrawer } from '../../../../components/GlobalNavigationDrawer';
+import { Applications } from '../../../../components/Icons';
 import { NavigationDrawer } from '../../../../components/NavigationDrawer';
 import { StyledButton } from '../../../../components/NavigationDrawer/styles';
 import { Page, PageContainer, PageContent } from '../../../../components/Page';
 import { TranslateProvider, useTranslateContext } from '../../../../contexts/translate';
 import { GlobalStyles, MuiDarkGlobalStyles, MuiLightGlobalStyles } from '../../../../themes';
-import { Appearance } from '../Appearance';
-import { Pages } from '../Pages';
+import { HistoryProvider } from '../../contexts/history';
+import { All } from '../All';
+import { Today } from '../Today';
+import { Yesterday } from '../Yesterday';
 
 const Content = () => {
-    const [section, setSection] = useState<'appearance' | 'pages'>('appearance');
+    const [section, setSection] = useState<'all' | 'today' | 'yesterday' | 'lastWeek' | 'before'>('all');
 
     const { translate } = useTranslateContext();
-    const translateSection = translate.pages.settings;
+    const translateSection = translate.pages.histories;
 
     return (
         <Page>
@@ -26,24 +28,46 @@ const Content = () => {
             <GlobalNavigationDrawer />
             <NavigationDrawer title={translateSection.title}>
                 <StyledButton
-                    onClick={() => setSection('appearance')}
-                    active={section === 'appearance'}
-                    startIcon={<PaletteOutlined color={section === 'appearance' ? 'primary' : 'action'} />}
+                    onClick={() => setSection('all')}
+                    active={section === 'all'}
+                    startIcon={<Applications />}
                 >
-                    {translateSection.appearance.title}
+                    {translateSection.all}
                 </StyledButton>
                 <StyledButton
-                    onClick={() => setSection('pages')}
-                    active={section === 'pages'}
-                    startIcon={<DescriptionOutlined color={section === 'pages' ? 'primary' : 'action'} />}
+                    onClick={() => setSection('today')}
+                    active={section === 'today'}
+                    startIcon={<Applications />}
                 >
-                    起動時、ホーム、新しいタブ
+                    {translateSection.today}
+                </StyledButton>
+                <StyledButton
+                    onClick={() => setSection('yesterday')}
+                    active={section === 'yesterday'}
+                    startIcon={<Applications />}
+                >
+                    {translateSection.yesterday}
+                </StyledButton>
+                <StyledButton
+                    onClick={() => setSection('lastWeek')}
+                    active={section === 'lastWeek'}
+                    startIcon={<Applications />}
+                >
+                    {translateSection.lastWeek}
+                </StyledButton>
+                <StyledButton
+                    onClick={() => setSection('before')}
+                    active={section === 'before'}
+                    startIcon={<Applications />}
+                >
+                    {translateSection.before}
                 </StyledButton>
             </NavigationDrawer>
             <PageContainer>
                 <PageContent>
-                    {section === 'appearance' && <Appearance />}
-                    {section === 'pages' && <Pages />}
+                    {section === 'all' && <All />}
+                    {section === 'today' && <Today />}
+                    {section === 'yesterday' && <Yesterday />}
                 </PageContent>
             </PageContainer>
         </Page>
@@ -72,7 +96,9 @@ export const App = () => {
             <StyledThemeProvider theme={theme}>
                 <GlobalStyles />
                 <TranslateProvider>
-                    <Content />
+                    <HistoryProvider>
+                        <Content />
+                    </HistoryProvider>
                 </TranslateProvider>
             </StyledThemeProvider>
         </MuiThemeProvider>

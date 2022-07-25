@@ -7,9 +7,8 @@ import { Search, Share, Star, StarFilled } from '../../../../../components/Icons
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { StyledButton, StyledButtonContainer } from '../../../app/components/AddressBar/styles';
 import { ResultType } from '../../interface';
-import { StyledIcon, StyledImage, StyledInput, StyledPanel } from './styles';
+import { StyledButton, StyledButtonContainer, StyledIcon, StyledImage, StyledInput, StyledPanel } from './styles';
 
 interface Props {
     type: ResultType;
@@ -95,11 +94,11 @@ export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
             </StyledIcon>
             <StyledInput ref={ref} type="text" placeholder="なんでも検索…"
                          value={value} onChange={onChange} onKeyDown={onKeyDown} />
-            <StyledButtonContainer>
-                <StyledButton>
+            <StyledButtonContainer appearanceStyle={config.appearance.style}>
+                <StyledButton appearanceStyle={config.appearance.style}>
                     <Share />
                 </StyledButton>
-                <StyledButton onClick={handleBookmarkButtonClick}>
+                <StyledButton onClick={handleBookmarkButtonClick} appearanceStyle={config.appearance.style}>
                     {bookmark ? <StarFilled /> : <Star />}
                 </StyledButton>
             </StyledButtonContainer>

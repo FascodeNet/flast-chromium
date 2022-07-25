@@ -9,7 +9,7 @@ import {
     APPLICATION_WEB_BOOKMARKS,
     APPLICATION_WEB_DOWNLOADS,
     APPLICATION_WEB_EXTENSIONS,
-    APPLICATION_WEB_HISTORY,
+    APPLICATION_WEB_HISTORIES,
     APPLICATION_WEB_SETTINGS,
     EXTENSION_PROTOCOL
 } from '../../../../../../utils';
@@ -40,7 +40,7 @@ const TabIcon = ({ url: urlString, favicon }: TabIconProps) => {
             switch (hostname) {
                 case APPLICATION_WEB_BOOKMARKS:
                     return (<Bookmarks sx={sxTheme} />);
-                case APPLICATION_WEB_HISTORY:
+                case APPLICATION_WEB_HISTORIES:
                     return (<History sx={sxTheme} />);
                 case APPLICATION_WEB_DOWNLOADS:
                     return (<Download sx={sxTheme} />);

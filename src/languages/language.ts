@@ -242,6 +242,17 @@ export interface Language {
         };
     };
     pages: {
+        histories: {
+            title: string;
+
+            all: string;
+            today: string;
+            yesterday: string;
+            lastWeek: string;
+            before: string;
+
+            notFound: string;
+        };
         settings: {
             title: string;
 
@@ -281,7 +292,28 @@ export interface Language {
                     applications: string;
                     extensions: string;
                 }
-            }
+            };
+            pages: {
+                title: string;
+
+                startup: {
+                    title: string;
+
+                    newTab: string;
+                    prevSessions: string;
+                    custom: string;
+                }
+                home: {
+                    title: string;
+
+                    button: {
+                        name: string;
+                        description: string;
+                    }
+                    newTab: string;
+                    custom: string;
+                }
+            };
         };
     };
 }

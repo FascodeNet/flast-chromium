@@ -9,7 +9,7 @@ import {
     APPLICATION_WEB_BOOKMARKS,
     APPLICATION_WEB_DOWNLOADS,
     APPLICATION_WEB_EXTENSIONS,
-    APPLICATION_WEB_HISTORY,
+    APPLICATION_WEB_HISTORIES,
     APPLICATION_WEB_SETTINGS
 } from '../../utils';
 import { isHorizontal } from '../../utils/design';
@@ -520,7 +520,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('history') : undefined,
                 accelerator: Shortcuts.NAVIGATION_HISTORY,
                 click: () => {
-                    const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HISTORY}`;
+                    const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HISTORIES}`;
 
                     const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
                     if (pageView) {

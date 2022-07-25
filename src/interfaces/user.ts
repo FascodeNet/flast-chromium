@@ -61,9 +61,9 @@ export interface UserConfig {
     pages: {
         startup: {
             mode: StartupPageMode;
-            pages: string[];
+            urls: string[];
         }
-        home_button: {
+        home: {
             mode: HomeButtonPageMode;
             url?: string;
         }
@@ -73,7 +73,7 @@ export interface UserConfig {
                 url?: string;
             }
         }
-    },
+    };
     language: {
         language: Language,
         spellcheck: boolean
@@ -107,9 +107,9 @@ export const DefaultUserConfig: UserConfig = {
     pages: {
         startup: {
             mode: 'new_tab',
-            pages: []
+            urls: []
         },
-        home_button: {
+        home: {
             mode: 'new_tab',
             url: undefined
         },

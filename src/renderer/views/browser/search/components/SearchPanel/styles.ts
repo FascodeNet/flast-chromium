@@ -2,11 +2,11 @@ import styled, { css } from 'styled-components';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { borderRadius } from '../../../../../themes';
 
-interface StyledPanelProps {
-    appearanceStyle: AppearanceStyle;
+interface StyledProps {
+  appearanceStyle: AppearanceStyle;
 }
 
-export const StyledPanel = styled.div<StyledPanelProps>`
+export const StyledPanel = styled.div<StyledProps>`
   width: 100%;
   height: 34px;
   margin: 0;
@@ -57,3 +57,60 @@ export const StyledInput = styled.input`
   background: none;
 `;
 
+export const StyledButtonContainer = styled.div<StyledProps>`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: default;
+
+  ${({ appearanceStyle }) => (appearanceStyle !== 'top_double') ? css`
+    margin: -4px 0 -4px -4px;
+    padding: 0 2px 0 0;
+  ` : css`
+    margin: -3px 0 -3px -3px;
+    padding: 0 2px 0 0;
+  `};
+`;
+
+interface StyledButtonProps extends StyledProps {
+  label?: string;
+}
+
+export const StyledButton = styled.button<StyledButtonProps>`
+  margin: 0;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  flex-shrink: 0;
+  gap: 6px;
+  transition: all .2s ease-out;
+  outline-width: 2px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: ${borderRadius.toUnit()};
+  cursor: default;
+  user-select: none;
+
+  svg, img {
+    width: 20px;
+    height: 20px;
+  }
+
+  ${({ appearanceStyle }) => (appearanceStyle !== 'top_double') ? css`
+    min-width: 30px;
+    height: 30px;
+    padding: 5px;
+  ` : css`
+    min-width: 28px;
+    height: 28px;
+    padding: 4px;
+  `};
+
+  ${({ label }) => label && css`
+    &::after {
+      content: '${label}';
+      margin-bottom: 2px;
+    }
+  `};
+`;

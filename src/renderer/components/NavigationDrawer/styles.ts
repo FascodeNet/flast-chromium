@@ -30,13 +30,21 @@ interface ButtonProps {
     active?: boolean;
 }
 
-export const StyledButton = muiStyled(Button)<ButtonProps>(({ theme, active }) => ({
+export const StyledButton = muiStyled(
+    Button,
+    {
+        shouldForwardProp: (prop) => prop !== 'active'
+    }
+)<ButtonProps>(({ theme, active }) => ({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'flex-start',
     fontWeight: active ? 400 : 300,
     color: active ? theme.palette.primary.main : 'inherit',
     backgroundColor: active ? alpha(theme.palette.primary.main, theme.palette.action.hoverOpacity) : 'inherit',
+    '&:hover': {
+        backgroundColor: active ? alpha(theme.palette.primary.main, theme.palette.action.hoverOpacity) : alpha(theme.palette.text.primary, theme.palette.action.hoverOpacity)
+    },
     '& .MuiButton-startIcon': {
         marginLeft: 0,
         color: active ? theme.palette.primary.main : theme.palette.action.active

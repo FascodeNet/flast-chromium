@@ -12,10 +12,10 @@ export const showSearchDialog = (user: IUser, window: AppWindow, x: number, y: n
 
     const { height } = window.browserWindow.getContentBounds();
     const bounds = {
-        width: width,
-        height: height,
-        x: x,
-        y: y
+        width,
+        height,
+        x,
+        y
     };
 
     const dynamicDialog = dialogManager.getDynamic(DIALOG_SEARCH_NAME);

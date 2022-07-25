@@ -55,7 +55,7 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
 
         const values = data[1] as string[];
         const types = (data[4]['google:suggesttype'] as string[]).map((type) => type.toLowerCase());
-        let suggestDatas: SuggestData[] = [];
+        const suggestDatas: SuggestData[] = [];
         for (let i = 0; i < values.length; i++)
             suggestDatas.push({ value: values[i], type: types[i] });
 
@@ -104,5 +104,5 @@ const map = (array: (IBookmark | IHistory)[], type: ResultType): ResultData[] =>
     resultType: type,
     title: title!!,
     url: url!!,
-    favicon: favicon
+    favicon
 }));

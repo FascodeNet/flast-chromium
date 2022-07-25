@@ -243,6 +243,17 @@ export const Ja: Language = {
         }
     },
     pages: {
+        histories: {
+            title: '履歴',
+
+            all: 'すべて',
+            today: '今日',
+            yesterday: '昨日',
+            lastWeek: '先週',
+            before: 'さらに前',
+
+            notFound: 'この期間に閲覧したページはありません。'
+        },
         settings: {
             title: '設定',
 
@@ -252,7 +263,7 @@ export const Ja: Language = {
                 mode: {
                     title: '基本テーマ',
 
-                    system: 'システムに合わせる',
+                    system: 'システムの設定に合わせる',
                     light: 'ライト',
                     dark: 'ダーク'
                 },
@@ -281,6 +292,27 @@ export const Ja: Language = {
                     downloads: 'ダウンロード',
                     applications: 'アプリケーション',
                     extensions: '拡張機能'
+                }
+            },
+            pages: {
+                title: '起動時、ホーム、新しいタブ',
+
+                startup: {
+                    title: '起動時',
+
+                    newTab: '新しいタブ ページを開く',
+                    prevSessions: '前回起動時に表示していたページを開く',
+                    custom: '特定のページまたはページセットを開く'
+                },
+                home: {
+                    title: 'ホーム',
+
+                    button: {
+                        name: 'ツールバーにホームボタンを表示',
+                        description: 'ホームボタンを押した際に表示するページを設定'
+                    },
+                    newTab: '新しいタブ ページを開く',
+                    custom: '特定のページを開く'
                 }
             }
         }

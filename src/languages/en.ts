@@ -242,6 +242,17 @@ export const En: Language = {
         }
     },
     pages: {
+        histories: {
+            title: 'Histories',
+
+            all: 'All',
+            today: 'Today',
+            yesterday: 'Yesterday',
+            lastWeek: 'Last week',
+            before: 'Before',
+
+            notFound: 'No pages were viewed during this period.'
+        },
         settings: {
             title: 'Settings',
 
@@ -272,7 +283,7 @@ export const En: Language = {
                     right: 'Right'
                 },
                 button: {
-                    title: '表示するボタンの選択',
+                    title: 'Select buttons to display',
 
                     home: 'Home',
                     bookmarks: 'Bookmarks',
@@ -280,6 +291,27 @@ export const En: Language = {
                     downloads: 'Downloads',
                     applications: 'Applications',
                     extensions: 'Extensions'
+                }
+            },
+            pages: {
+                title: 'Startup, Home, New Tab',
+
+                startup: {
+                    title: 'Startup',
+
+                    newTab: 'Open new tab page',
+                    prevSessions: 'Open the page that was displayed at the last startup',
+                    custom: 'Open a specific page or set of pages'
+                },
+                home: {
+                    title: 'Home',
+
+                    button: {
+                        name: 'Show Home button on Toolbar',
+                        description: 'Set the page to be displayed when the Home button is pressed'
+                    },
+                    newTab: 'Open new tab page',
+                    custom: 'Open a specific page'
                 }
             }
         }

@@ -20,12 +20,12 @@ export const ViewManagerContext = createContext<ViewManagerProps>({
     selectedId: -1,
     views: [],
     getCurrentViewState: () => DefaultViewState,
-    getViewState: (_) => undefined,
-    setSelectedId: (_) => {
+    getViewState: () => undefined,
+    setSelectedId: () => {
     },
 
     tabContainerWidth: 0,
-    setTabContainerWidth: (_) => {
+    setTabContainerWidth: () => {
     }
 });
 

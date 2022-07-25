@@ -69,7 +69,7 @@ export const StyledButtonContainer = styled.div`
 `;
 
 interface StyledButtonProps {
-    text?: string;
+    label?: string;
 }
 
 export const StyledButton = styled.button<StyledButtonProps>`
@@ -95,9 +95,10 @@ export const StyledButton = styled.button<StyledButtonProps>`
     height: 20px;
   }
 
-  ${({ text }) => text && css`
+  ${({ label }) => label && css`
     &::after {
-      content: '${text}';
+      content: '${label}';
+      margin-bottom: 2px;
     }
   `};
 `;

@@ -9,7 +9,7 @@ export interface TranslateProps {
 
 export const TranslateContext = createContext<TranslateProps>({
     translate: En,
-    setTranslate: (_) => {
+    setTranslate: () => {
     }
 });
 

@@ -64,6 +64,7 @@ applyBrowserEntries(
 applyPageEntries(
     PageRenderer,
     [
+        'histories',
         'settings'
     ]
 );

@@ -15,7 +15,7 @@ export const UserConfigContext = createContext<UserConfigProps>({
     userId: '',
     type: 'normal',
     config: DefaultUserConfig,
-    setConfig: (_) => Promise.resolve()
+    setConfig: () => Promise.resolve()
 });
 
 export const useUserConfigContext = () => useContext(UserConfigContext);

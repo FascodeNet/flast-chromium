@@ -7,11 +7,9 @@ interface Props {
     children?: ReactNode;
 }
 
-export const NavigationDrawer = ({ title, children }: Props) => {
-    return (
-        <StyledDrawer>
-            <Typography variant="h4" sx={{ width: '100%', mb: 1, fontWeight: 100 }}>{title}</Typography>
-            {children}
-        </StyledDrawer>
-    );
-};
+export const NavigationDrawer = ({ title, children }: Props) => (
+    <StyledDrawer>
+        <Typography variant="h4" sx={{ width: '100%', mb: 1, fontWeight: 100 }}>{title}</Typography>
+        {children}
+    </StyledDrawer>
+);

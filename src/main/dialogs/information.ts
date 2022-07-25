@@ -13,7 +13,7 @@ export const showInformationDialog = (user: IUser, browserWindow: BrowserWindow,
         width: 350,
         height: 460,
         x: x - 15,
-        y: y
+        y
     };
 
     const dynamicDialog = dialogManager.getDynamic(DIALOG_INFORMATION_NAME);

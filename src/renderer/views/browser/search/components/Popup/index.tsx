@@ -13,6 +13,10 @@ import { ResultItem, ResultPanel } from '../ResultPanel';
 import { SearchPanel } from '../SearchPanel';
 import { StyledContainer } from './styles';
 
+const filter = (array: ResultData[]) => array.filter((data, i) => array.findIndex(
+    ({ title, url }) => title === data.title || url === data.url
+) === i);
+
 export const Popup = () => {
 
     const { hideDialog, addView, loadView, getCurrentView, search } = useElectronAPI();
@@ -40,11 +44,9 @@ export const Popup = () => {
 
         if (inputValue.length > 0) {
             const searchResult = await search(inputValue);
-            // tslint:disable-next-line:no-console
-            console.log(searchResult);
             const bookmarks = split(searchResult.bookmarks, 3);
             const histories = split(searchResult.histories, 3);
-            const userData = [...bookmarks, ...histories];
+            const userData = filter([...bookmarks, ...histories]);
             const suggests = split(searchResult.suggests, 10 - userData.length);
             setResults([...suggests, ...userData]);
         } else {

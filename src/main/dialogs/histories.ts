@@ -13,7 +13,7 @@ export const showHistoriesDialog = (user: IUser, browserWindow: BrowserWindow, x
         width: 350,
         height: 660,
         x: x - 300,
-        y: y
+        y
     };
 
     const dynamicDialog = dialogManager.getDynamic(DIALOG_HISTORIES_NAME);

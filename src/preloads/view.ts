@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import { IElectronAPI } from '../@types/electron';
 import { UserConfig } from '../interfaces/user';
 import { DeepPartial } from '../utils';
 import { injectChromeWebStoreInstallButton } from './chrome-webstore';
@@ -25,17 +26,20 @@ export const togglePictureInPicture = async (index: number = 0) => {
     }
 };
 
-contextBridge.exposeInMainWorld(
-    'api',
-    {
-        togglePictureInPicture: (index: number = 0) => togglePictureInPicture(index),
-        getUser: () => ipcRenderer.invoke('get-user'),
-        getLanguage: (id: string) => ipcRenderer.invoke('user-language', id),
-        getUserConfig: (id: string) => ipcRenderer.invoke('get-user-config', id),
-        setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke('set-user-config', id, config),
-        setTheme: (id: string) => ipcRenderer.invoke('set-theme', id)
-    }
-);
+const api: IElectronAPI = {
+    togglePictureInPicture: (index: number = 0) => togglePictureInPicture(index),
+
+    getUser: () => ipcRenderer.invoke('get-user'),
+    getLanguage: (userId: string) => ipcRenderer.invoke('user-language', userId),
+    getUserConfig: (userId: string) => ipcRenderer.invoke('get-user-config', userId),
+    setUserConfig: (userId: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke('set-user-config', userId, config),
+    setTheme: (userId: string) => ipcRenderer.invoke('set-theme', userId),
+
+    getBookmarks: (userId: string) => ipcRenderer.invoke(`bookmarks-${userId}`),
+    getHistories: (userId: string) => ipcRenderer.invoke(`histories-${userId}`)
+};
+
+contextBridge.exposeInMainWorld('api', api);
 
 
 if (window.location.host === 'chrome.google.com')

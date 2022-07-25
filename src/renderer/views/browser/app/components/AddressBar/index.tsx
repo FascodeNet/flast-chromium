@@ -29,7 +29,7 @@ export const AddressBar = () => {
     const { userId, config } = useUserConfigContext();
 
     const [state, setState] = useState<ViewState>(getCurrentViewState());
-    const [statusButtonText, setStatusButtonText] = useState<string | undefined>(undefined);
+    const [statusButtonLabel, setStatusButtonLabel] = useState<string | undefined>(undefined);
     const [address, setAddress] = useState('');
     const [active, setActive] = useState(false);
     const [bookmark, setBookmark] = useState<IBookmark | undefined>(undefined);
@@ -61,12 +61,12 @@ export const AddressBar = () => {
 
             if (protocol === `${EXTENSION_PROTOCOL}:`) {
                 const extension = getCurrentWebContents().session.getExtension(hostname);
-                setStatusButtonText(extension ? extension.name : undefined);
+                setStatusButtonLabel(extension ? extension.name : undefined);
             } else {
-                setStatusButtonText(undefined);
+                setStatusButtonLabel(undefined);
             }
         } catch {
-            setStatusButtonText(undefined);
+            setStatusButtonLabel(undefined);
         }
     }, [selectedId, navigationState]);
 
@@ -157,7 +157,7 @@ export const AddressBar = () => {
                 <StyledAddressBar ref={ref} className={clsx('address-bar', state.requestState?.type)}
                                   active={active} appearanceStyle={style} onClick={handleClick}>
                     <StyledButtonContainer className="address-bar-container">
-                        <StyledButton text={statusButtonText} onClick={handleInformationButtonClick}>
+                        <StyledButton label={statusButtonLabel} onClick={handleInformationButtonClick}>
                             <StatusIcon />
                         </StyledButton>
                     </StyledButtonContainer>
@@ -180,7 +180,7 @@ export const AddressBar = () => {
                 <StyledAddressBar ref={ref} className="address-bar" active={active} appearanceStyle={style}
                                   onClick={handleClick}>
                     <StyledButtonContainer className="address-bar-container">
-                        <StyledButton text={statusButtonText}>
+                        <StyledButton label={statusButtonLabel}>
                             <StatusIcon />
                         </StyledButton>
                     </StyledButtonContainer>
