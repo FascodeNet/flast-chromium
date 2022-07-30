@@ -33,8 +33,8 @@ interface StyledExtensionItemIconProps {
 
 export const StyledExtensionItemIcon = styled.div<StyledExtensionItemIconProps>`
   width: 20px;
-  height: 20px;
   min-width: 20px;
+  height: 20px;
   min-height: 20px;
   background-position: center;
   background-repeat: no-repeat;

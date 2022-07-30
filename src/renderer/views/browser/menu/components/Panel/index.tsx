@@ -8,10 +8,10 @@ import {
     Find,
     History,
     Print,
-    Remove,
     Settings,
     Share
 } from '../../../../../components/Icons';
+import { Remove } from '../../../../../components/Icons/state';
 import { TabAdd } from '../../../../../components/Icons/tab';
 import { WindowAdd, WindowIncognito } from '../../../../../components/Icons/window';
 import { useUserConfigContext } from '../../../../../contexts/config';
@@ -43,7 +43,7 @@ export const Panel = () => {
                 <Item icon={<WindowIncognito />} label={translate.menus.application.openIncognitoWindow} />
                 <Divider flexItem sx={{ my: .5 }} />
                 <Item icon={<Bookmarks />} label={translate.menus.application.bookmarks} />
-                <Item icon={<History />} label={translate.menus.application.histories} />
+                <Item icon={<History />} label={translate.menus.application.history} />
                 <Item icon={<Download />} label={translate.menus.application.downloads} />
                 <Item icon={<Applications />} label={translate.menus.application.applications} />
                 <Divider flexItem sx={{ my: .5 }} />

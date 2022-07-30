@@ -137,7 +137,7 @@ applyBrowserEntries(
         'search',
         'find',
         'bookmarks',
-        'histories',
+        'history',
         'downloads',
         'extensions'
     ]
@@ -146,7 +146,9 @@ applyBrowserEntries(
 applyPageEntries(
     PageRenderer,
     [
-        'histories',
+        'bookmarks',
+        'history',
+        'downloads',
         'settings'
     ]
 );

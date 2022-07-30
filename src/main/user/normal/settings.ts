@@ -8,7 +8,7 @@ import { ISettings, IUser } from '../../interfaces/user';
 
 export class NormalSettings implements ISettings {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
     private readonly path: string;
 

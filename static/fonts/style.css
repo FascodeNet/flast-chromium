@@ -136,9 +136,54 @@
 /* Noto Sans */
 @font-face {
     font-family: 'Noto Sans';
+    font-weight: 100;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-Thin.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 100;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-ThinItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-weight: 200;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 200;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-ExtraLightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-weight: 300;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 300;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-LightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
     font-weight: 400;
     font-display: swap;
-    src: url('notosans/NotoSans-Regular.ttf');
+    src: url('noto_sans/NotoSans-Regular.ttf');
 }
 
 @font-face {
@@ -146,14 +191,44 @@
     font-style: italic;
     font-weight: 400;
     font-display: swap;
-    src: url('notosans/NotoSans-Italic.ttf');
+    src: url('noto_sans/NotoSans-RegularItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-weight: 500;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-MediumItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-weight: 600;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 600;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-SemiBoldItalic.ttf');
 }
 
 @font-face {
     font-family: 'Noto Sans';
     font-weight: 700;
     font-display: swap;
-    src: url('notosans/NotoSans-Bold.ttf');
+    src: url('noto_sans/NotoSans-Bold.ttf');
 }
 
 @font-face {
@@ -161,7 +236,37 @@
     font-style: italic;
     font-weight: 700;
     font-display: swap;
-    src: url('notosans/NotoSans-BoldItalic.ttf');
+    src: url('noto_sans/NotoSans-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-weight: 800;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-ExtraBold.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 800;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-ExtraBoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-weight: 900;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-Black.ttf');
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: italic;
+    font-weight: 900;
+    font-display: swap;
+    src: url('noto_sans/NotoSans-BlackItalic.ttf');
 }
 
 
@@ -170,7 +275,7 @@
     font-family: 'Noto Serif';
     font-weight: 400;
     font-display: swap;
-    src: url('notoserif/NotoSerif-Regular.ttf');
+    src: url('noto_serif/NotoSerif-Regular.ttf');
 }
 
 @font-face {
@@ -178,14 +283,14 @@
     font-style: italic;
     font-weight: 400;
     font-display: swap;
-    src: url('notoserif/NotoSerif-Italic.ttf');
+    src: url('noto_serif/NotoSerif-RegularItalic.ttf');
 }
 
 @font-face {
     font-family: 'Noto Serif';
     font-weight: 700;
     font-display: swap;
-    src: url('notoserif/NotoSerif-Bold.ttf');
+    src: url('noto_serif/NotoSerif-Bold.ttf');
 }
 
 @font-face {
@@ -193,7 +298,7 @@
     font-style: italic;
     font-weight: 700;
     font-display: swap;
-    src: url('notoserif/NotoSerif-BoldItalic.ttf');
+    src: url('noto_serif/NotoSerif-BoldItalic.ttf');
 }
 
 
@@ -202,42 +307,42 @@
     font-family: 'Noto Sans JP';
     font-weight: 100;
     font-display: swap;
-    src: url('notosans/NotoSansJP-Thin.otf');
+    src: url('noto_sans_jp/NotoSansJP-Thin.otf');
 }
 
 @font-face {
     font-family: 'Noto Sans JP';
     font-weight: 300;
     font-display: swap;
-    src: url('notosans/NotoSansJP-Light.otf');
+    src: url('noto_sans_jp/NotoSansJP-Light.otf');
 }
 
 @font-face {
     font-family: 'Noto Sans JP';
     font-weight: 400;
     font-display: swap;
-    src: url('notosans/NotoSansJP-Regular.otf');
+    src: url('noto_sans_jp/NotoSansJP-Regular.otf');
 }
 
 @font-face {
     font-family: 'Noto Sans JP';
     font-weight: 500;
     font-display: swap;
-    src: url('notosans/NotoSansJP-Medium.otf');
+    src: url('noto_sans_jp/NotoSansJP-Medium.otf');
 }
 
 @font-face {
     font-family: 'Noto Sans JP';
     font-weight: 700;
     font-display: swap;
-    src: url('notosans/NotoSansJP-Bold.otf');
+    src: url('noto_sans_jp/NotoSansJP-Bold.otf');
 }
 
 @font-face {
     font-family: 'Noto Sans JP';
     font-weight: 900;
     font-display: swap;
-    src: url('notosans/NotoSansJP-Black.otf');
+    src: url('noto_sans_jp/NotoSansJP-Black.otf');
 }
 
 
@@ -246,49 +351,49 @@
     font-family: 'Noto Serif JP';
     font-weight: 200;
     font-display: swap;
-    src: url('notoserif/NotoSerifJP-ExtraLight.otf');
+    src: url('noto_serif_jp/NotoSerifJP-ExtraLight.otf');
 }
 
 @font-face {
     font-family: 'Noto Serif JP';
     font-weight: 300;
     font-display: swap;
-    src: url('notoserif/NotoSerifJP-Light.otf');
+    src: url('noto_serif_jp/NotoSerifJP-Light.otf');
 }
 
 @font-face {
     font-family: 'Noto Serif JP';
     font-weight: 400;
     font-display: swap;
-    src: url('notoserif/NotoSerifJP-Regular.otf');
+    src: url('noto_serif_jp/NotoSerifJP-Regular.otf');
 }
 
 @font-face {
     font-family: 'Noto Serif JP';
     font-weight: 500;
     font-display: swap;
-    src: url('notoserif/NotoSerifJP-Medium.otf');
+    src: url('noto_serif_jp/NotoSerifJP-Medium.otf');
 }
 
 @font-face {
     font-family: 'Noto Serif JP';
     font-weight: 600;
     font-display: swap;
-    src: url('notoserif/NotoSerifJP-SemiBold.otf');
+    src: url('noto_serif_jp/NotoSerifJP-SemiBold.otf');
 }
 
 @font-face {
     font-family: 'Noto Serif JP';
     font-weight: 700;
     font-display: swap;
-    src: url('notoserif/NotoSerifJP-Bold.otf');
+    src: url('noto_serif_jp/NotoSerifJP-Bold.otf');
 }
 
 @font-face {
     font-family: 'Noto Serif JP';
     font-weight: 900;
     font-display: swap;
-    src: url('notoserif/NotoSerifJP-Black.otf');
+    src: url('noto_serif_jp/NotoSerifJP-Black.otf');
 }
 
 

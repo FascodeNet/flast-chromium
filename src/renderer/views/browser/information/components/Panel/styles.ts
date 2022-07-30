@@ -1,18 +1,22 @@
 import styled, { css } from 'styled-components';
-import { borderRadius } from '../../../../../themes';
 
 export const StyledItem = styled.div`
   width: 100%;
   height: 40px;
+  margin: 0;
   padding: 8px 12px;
   display: grid;
   grid-template-columns: 20px 1fr;
   align-items: center;
   flex-shrink: 0;
   gap: 8px;
+  text-align: left;
+  background: none;
+  border: none;
   transition: all .2s ease-out;
-    // border-radius: ${borderRadius.toUnit()};
 `;
+
+export const StyledItemButton = StyledItem.withComponent('button');
 
 export const StyledCertificateStatus = styled(StyledItem)`
   height: unset;
@@ -25,8 +29,8 @@ interface StyledItemIconProps {
 
 export const StyledItemIcon = styled.div<StyledItemIconProps>`
   width: 20px;
-  height: 20px;
   min-width: 20px;
+  height: 20px;
   min-height: 20px;
   display: flex;
   place-content: center;
@@ -52,7 +56,7 @@ export const StyledItemLabelContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
 `;
 
 export const StyledItemLabel = styled.span`
@@ -70,6 +74,7 @@ export const StyledItemSubLabel = styled.h6`
 `;
 
 export const StyledItemDescription = styled.div`
+  margin-bottom: auto;
   font-size: 11px;
 `;
 

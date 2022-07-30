@@ -1,7 +1,7 @@
+import Datastore from '@seald-io/nedb';
 import { Extension, Session as ElectronSession } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions';
-import Datastore from 'nedb';
-import { IBookmark, IHistory, UserConfig, UserType } from '../../interfaces/user';
+import { BookmarkData, HistoryData, HistoryGroup, OmitData, UserConfig, UserType } from '../../interfaces/user';
 import { DeepPartial } from '../../utils';
 
 export interface IUser {
@@ -22,7 +22,7 @@ export interface IUser {
 
     get bookmarks(): IBookmarks;
 
-    get histories(): IHistories;
+    get history(): IHistory;
 
     get downloads(): IDownloads;
 }
@@ -58,26 +58,30 @@ export interface IBookmarks {
 
     get datastore(): Datastore;
 
-    get bookmarks(): IBookmark[];
+    get bookmarks(): BookmarkData[];
 
-    get folders(): IBookmark[];
+    get folders(): BookmarkData[];
 
-    add(data: IBookmark): void;
+    add(data: OmitData<BookmarkData>): Promise<BookmarkData>;
 
-    remove(id: string): void;
+    remove(id: string): Promise<boolean>;
+
+    update(id: string, data: OmitData<BookmarkData>): Promise<BookmarkData>;
 }
 
-export interface IHistories {
+export interface IHistory {
 
     readonly user: IUser;
 
     get datastore(): Datastore;
 
-    get histories(): IHistory[];
+    get history(): HistoryData[];
 
-    add(data: IHistory): void;
+    get historyGroups(): HistoryGroup[];
 
-    remove(id: string): void;
+    add(data: OmitData<HistoryData>): Promise<HistoryData>;
+
+    remove(id: string): Promise<boolean>;
 }
 
 export interface IDownloads {

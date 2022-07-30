@@ -102,8 +102,38 @@ export const MuiPalette: PaletteOptions = {
     }
 };
 
+export const MuiFontFamilies = ['Roboto Symbol', 'Noto Sans', 'Noto Sans JP', 'Yu Gothic UI', 'Hiragino Sans', 'Noto Color Emoji', 'sans-serif'];
+export const MuiDefaultFontFamily = MuiFontFamilies.map((family) => `'${family}'`).join(',');
+export const MuiFontFamily = MuiFontFamilies.filter((family) => family !== 'Noto Sans').map((family) => `'${family}'`).join(',');
 export const MuiTypography: TypographyOptions = {
-    fontFamily: '\'Roboto Symbol\', \'Noto Sans\', \'Noto Sans JP\', \'Yu Gothic UI\', \'Hiragino Sans\', \'Noto Color Emoji\', sans-serif'
+    fontFamily: MuiDefaultFontFamily,
+    h1: {
+        fontWeight: 100
+    },
+    h2: {
+        fontWeight: 100
+    },
+    h3: {
+        fontWeight: 100
+    },
+    h4: {
+        fontWeight: 100
+    },
+    h5: {
+        fontWeight: 100
+    },
+    h6: {
+        fontWeight: 100
+    },
+    body1: {
+        fontWeight: 300
+    },
+    body2: {
+        fontWeight: 100
+    },
+    overline: {
+        fontWeight: 400
+    }
 };
 
 export const MuiLightGlobalStyles = createTheme({

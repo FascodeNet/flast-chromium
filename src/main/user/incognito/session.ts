@@ -7,7 +7,7 @@ import { ISession, IUser } from '../../interfaces/user';
 
 export class IncognitoSession implements ISession {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
     private readonly _session: ElectronSession;
 

@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { app, BrowserView, NativeImage, webContents } from 'electron';
+import { app, BrowserView, NativeImage } from 'electron';
 import { join } from 'path';
 import {
     WINDOW_DOUBLE_TITLE_BAR_HEIGHT,
@@ -90,18 +90,18 @@ export class AppView {
             userSession.extensions.addTab(this.browserView.webContents, window.browserWindow);
 
         this.setListeners();
-        // tslint:disable-next-line:no-shadowed-variable
-        webContents.setWindowOpenHandler(({ url, frameName, disposition }) => {
+        webContents.setWindowOpenHandler(({ url: handlerUrl, frameName, disposition }) => {
+            console.log(handlerUrl, frameName, disposition);
             if (disposition === 'new-window') {
                 if (frameName === '_self') {
-                    webContents.loadURL(url);
+                    webContents.loadURL(handlerUrl);
                 } else {
-                    this.window.viewManager.add(url);
+                    Main.windowManager.add(window.user, [handlerUrl]);
                 }
             } else if (disposition === 'foreground-tab') {
-                this.window.viewManager.add(url);
+                this.window.viewManager.add(handlerUrl);
             } else if (disposition === 'background-tab') {
-                this.window.viewManager.add(url, false);
+                this.window.viewManager.add(handlerUrl, false);
             }
 
             return { action: 'deny' };
@@ -545,8 +545,7 @@ export class AppView {
         this.setWindowTitle();
         this.window.setApplicationMenu();
         this.window.setTouchBar();
-        // tslint:disable-next-line:no-shadowed-variable
-        webContents.getAllWebContents().forEach((webContents) => webContents.send(`view-${this.window.id}`, this.state));
+        this.window.webContents.send(`view-${this.window.id}`, this.state);
     }
 
 
@@ -588,7 +587,7 @@ export class AppView {
             this.updateView();
 
             if (!this.isLoading)
-                this.user.histories.add({ title: this.title, url: this.url, favicon: this.favicon });
+                this.user.history.add({ title: this.title, url: this.url, favicon: this.favicon });
         });
         webContents.on('did-fail-load', () => {
             this.updateView();
@@ -606,7 +605,7 @@ export class AppView {
             this.updateView();
 
             if (!this.isLoading)
-                this.user.histories.add({ title, url: this.url, favicon: this.favicon });
+                this.user.history.add({ title, url: this.url, favicon: this.favicon });
         });
         webContents.on('page-favicon-updated', async (e, favicons) => {
             const favicon = await FaviconManager.getFavicon(this.url, favicons[0]);
@@ -619,7 +618,7 @@ export class AppView {
             this.updateView();
 
             if (!this.isLoading)
-                this.user.histories.add({ title: this.title, url: this.url, favicon: this.favicon });
+                this.user.history.add({ title: this.title, url: this.url, favicon: this.favicon });
         });
         webContents.on('did-change-theme-color', (_, color) => {
             this._color = color ?? undefined;

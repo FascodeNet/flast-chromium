@@ -17,7 +17,7 @@ export class WindowManager {
     }
 
     public getWindows(user: IUser | undefined = undefined): AppWindow[] {
-        const windows: AppWindow[] = [...this.windows.values()].filter(nonNullable).filter((window: AppWindow) => !window.browserWindow.isDestroyed());
+        const windows: AppWindow[] = [...this.windows.values()].filter(nonNullable).filter((window) => !window.browserWindow.isDestroyed());
         return user ? windows.filter((window) => window.user.id === user.id) : windows;
     }
 

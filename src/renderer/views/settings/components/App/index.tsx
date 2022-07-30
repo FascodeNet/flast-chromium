@@ -1,4 +1,11 @@
-import { DescriptionOutlined, PaletteOutlined } from '@mui/icons-material';
+import {
+    ComputerOutlined,
+    DescriptionOutlined,
+    LockOutlined,
+    PaletteOutlined,
+    SearchOutlined,
+    ShieldOutlined
+} from '@mui/icons-material';
 import { Theme } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import React, { useEffect, useState } from 'react';
@@ -13,9 +20,12 @@ import { TranslateProvider, useTranslateContext } from '../../../../contexts/tra
 import { GlobalStyles, MuiDarkGlobalStyles, MuiLightGlobalStyles } from '../../../../themes';
 import { Appearance } from '../Appearance';
 import { Pages } from '../Pages';
+import { PrivacyAndSecurity } from '../PrivacyAndSecurity';
+
+type SectionState = 'privacy_security' | 'ad_blocker' | 'appearance' | 'pages' | 'search' | 'system';
 
 const Content = () => {
-    const [section, setSection] = useState<'appearance' | 'pages'>('appearance');
+    const [section, setSection] = useState<SectionState>('appearance');
 
     const { translate } = useTranslateContext();
     const translateSection = translate.pages.settings;
@@ -26,22 +36,51 @@ const Content = () => {
             <GlobalNavigationDrawer />
             <NavigationDrawer title={translateSection.title}>
                 <StyledButton
+                    onClick={() => setSection('privacy_security')}
+                    active={section === 'privacy_security'}
+                    startIcon={<LockOutlined />}
+                >
+                    {translateSection.privacyAndSecurity.title}
+                </StyledButton>
+                <StyledButton
+                    onClick={() => setSection('ad_blocker')}
+                    active={section === 'ad_blocker'}
+                    startIcon={<ShieldOutlined />}
+                >
+                    広告ブロック
+                </StyledButton>
+                <StyledButton
                     onClick={() => setSection('appearance')}
                     active={section === 'appearance'}
-                    startIcon={<PaletteOutlined color={section === 'appearance' ? 'primary' : 'action'} />}
+                    startIcon={<PaletteOutlined />}
                 >
                     {translateSection.appearance.title}
                 </StyledButton>
                 <StyledButton
                     onClick={() => setSection('pages')}
                     active={section === 'pages'}
-                    startIcon={<DescriptionOutlined color={section === 'pages' ? 'primary' : 'action'} />}
+                    startIcon={<DescriptionOutlined />}
                 >
-                    起動時、ホーム、新しいタブ
+                    {translateSection.pages.title}
+                </StyledButton>
+                <StyledButton
+                    onClick={() => setSection('search')}
+                    active={section === 'search'}
+                    startIcon={<SearchOutlined />}
+                >
+                    検索エンジン
+                </StyledButton>
+                <StyledButton
+                    onClick={() => setSection('system')}
+                    active={section === 'system'}
+                    startIcon={<ComputerOutlined />}
+                >
+                    システム
                 </StyledButton>
             </NavigationDrawer>
             <PageContainer>
                 <PageContent>
+                    {section === 'privacy_security' && <PrivacyAndSecurity />}
                     {section === 'appearance' && <Appearance />}
                     {section === 'pages' && <Pages />}
                 </PageContent>

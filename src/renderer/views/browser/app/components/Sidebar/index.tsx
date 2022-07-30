@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { AppearanceSidebarState } from '../../../../../../interfaces/user';
 import { BookmarksPanel } from '../../../../../components/BookmarksPanel';
 import { DownloadsPanel } from '../../../../../components/DownloadsPanel';
-import { HistoriesPanel } from '../../../../../components/HistoriesPanel';
+import { HistoryPanel } from '../../../../../components/HistoryPanel';
 import { Bookmarks, Download, History } from '../../../../../components/Icons';
 import { ChevronLeft, ChevronRight } from '../../../../../components/Icons/arrow';
 import { useUserConfigContext } from '../../../../../contexts/config';
@@ -42,13 +42,13 @@ export const Sidebar = () => {
                        extended={extended} panel={panel}>
             <VerticalTabContainer extended={extended && panel === 'tab_container'} />
             {panel === 'bookmarks' && <BookmarksPanel type="sidebar" />}
-            {panel === 'histories' && <HistoriesPanel type="sidebar" />}
+            {panel === 'history' && <HistoryPanel type="sidebar" />}
             {panel === 'downloads' && <DownloadsPanel type="sidebar" />}
             <StyledToolBarContainer className="tool-bar" extended={extended} panel={panel}>
                 <IconButton onClick={() => handleTogglePanelClick('bookmarks')}>
                     <Bookmarks />
                 </IconButton>
-                <IconButton onClick={() => handleTogglePanelClick('histories')}>
+                <IconButton onClick={() => handleTogglePanelClick('history')}>
                     <History />
                 </IconButton>
                 <IconButton onClick={() => handleTogglePanelClick('downloads')}>

@@ -1,19 +1,20 @@
+import Datastore from '@seald-io/nedb';
 import { app, ipcMain } from 'electron';
-import Datastore from 'nedb';
 import { join } from 'path';
-import { IBookmark } from '../../../interfaces/user';
+import { BookmarkData, OmitData } from '../../../interfaces/user';
 import { IBookmarks, IUser } from '../../interfaces/user';
 
 export class NormalBookmarks implements IBookmarks {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
-    private _datastore: Datastore;
+    private readonly _datastore: Datastore;
+    private _bookmarks: BookmarkData[] = [];
 
     public constructor(user: IUser) {
         this.user = user;
 
-        this._datastore = new Datastore<IBookmark>({
+        this._datastore = new Datastore<BookmarkData>({
             filename: join(app.getPath('userData'), 'users', user.id, 'bookmarks.db'),
             autoload: true,
             timestampData: true
@@ -29,16 +30,18 @@ export class NormalBookmarks implements IBookmarks {
             return this.bookmarks;
         });
 
-        ipcMain.handle(`bookmark-add-${user.id}`, (e, data: Omit<IBookmark, '_id' | 'updatedAt' | 'createdAt'>) => {
-            this.add(data);
+        ipcMain.handle(`bookmark-add-${user.id}`, async (e, data: OmitData<BookmarkData>) => {
+            return await this.add(data);
         });
 
-        ipcMain.handle(`bookmark-remove-${user.id}`, (e, id: string) => {
-            this.remove(id);
+        ipcMain.handle(`bookmark-remove-${user.id}`, async (e, id: string) => {
+            return await this.remove(id);
+        });
+
+        ipcMain.handle(`bookmark-update-${user.id}`, async (e, id: string, data: OmitData<BookmarkData>) => {
+            return await this.update(id, data);
         });
     }
-
-    private _bookmarks: IBookmark[] = [];
 
     public get datastore() {
         return this._datastore;
@@ -52,15 +55,52 @@ export class NormalBookmarks implements IBookmarks {
         return this._bookmarks.filter((data) => data.isFolder);
     }
 
-    public add(data: IBookmark) {
-        this._datastore.insert(data, (err, doc) => {
-            if (err) return;
-            this._bookmarks.push(doc);
-        });
+    public async add(data: OmitData<BookmarkData>) {
+        const doc: BookmarkData = await this._datastore.insertAsync(data);
+        this._bookmarks.push(doc);
+        return doc;
     }
 
-    public remove(id: string) {
+    public async remove(id: string) {
+        const bookmark = this._bookmarks.find((data) => data._id === id);
+        if (!bookmark)
+            return false;
+
+        if (bookmark.isFolder)
+            await this.removeOf(id);
+
         this._bookmarks = this._bookmarks.filter((data) => data._id !== id);
-        this._datastore.remove({ _id: id });
+        return await this._datastore.removeAsync({ _id: id }, {}) > 0;
+    }
+
+    private async removeOf(id: string) {
+        const items = this._bookmarks.filter((data) => data.parent === id);
+        for (const item of items) {
+            this._bookmarks = this._bookmarks.filter((data) => data._id !== item._id);
+            await this._datastore.removeAsync({ _id: item._id }, {});
+
+            if (item.isFolder)
+                await this.removeOf(item._id!!);
+        }
+    }
+
+    public async update(id: string, data: OmitData<BookmarkData>) {
+        const doc: BookmarkData = (await this._datastore.updateAsync(
+            { _id: id },
+            { $set: data },
+            {
+                returnUpdatedDocs: true
+            }
+        )).affectedDocuments;
+
+        const bookmarks = [...this._bookmarks];
+        const index = bookmarks.findIndex((bookmark) => bookmark._id === id);
+
+        if (index < 0) return Promise.reject();
+
+        bookmarks[index] = doc;
+        this._bookmarks = bookmarks;
+
+        return doc;
     }
 }

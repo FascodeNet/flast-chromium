@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
+import { APPLICATION_NAME } from '../../../../../../utils';
 import { borderRadius } from '../../../../../themes';
 
 interface StyledAddressBarProps {
@@ -98,7 +99,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   ${({ label }) => label && css`
     &::after {
       content: '${label}';
-      margin-bottom: 2px;
+      margin-bottom: ${label === APPLICATION_NAME ? 0 : 2}px;
     }
   `};
 `;

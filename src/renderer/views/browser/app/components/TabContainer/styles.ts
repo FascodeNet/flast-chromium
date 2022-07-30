@@ -5,14 +5,21 @@ interface StyledProps {
     appearanceStyle: AppearanceStyle;
 }
 
-export const StyledHorizontalTabContainer = styled.div<StyledProps>`
+export const StyledHorizontalTabContainer = styled.div`
   width: 100%;
   height: 100%;
-  // position: relative;
   grid-area: horizontal-tab-container;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 8 : 0}px;
+  overflow: hidden;
+`;
+
+export const StyledHorizontalTabWrapper = styled.div`
+  width: calc(100% - 36px);
+  height: 100%;
+  position: relative;
+  white-space: nowrap;
   overflow: auto hidden;
 
   &::-webkit-scrollbar {

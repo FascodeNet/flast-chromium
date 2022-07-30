@@ -6,11 +6,12 @@ import {
     Radio,
     styled,
     Switch,
+    Theme,
     Typography
 } from '@mui/material';
 import React, { ReactNode } from 'react';
 
-export const ButtonBase = styled(MuiButtonBase)(({ theme }) => ({
+const containerStyled = (theme: Theme) => ({
     height: 50,
     padding: theme.spacing(.5, 1, .5, 1.5),
     display: 'flex',
@@ -20,7 +21,13 @@ export const ButtonBase = styled(MuiButtonBase)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     transition: theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'color'], {
         duration: theme.transitions.duration.short
-    }),
+    })
+});
+
+export const ItemContainer = styled(Box)(({ theme }) => containerStyled(theme));
+
+export const ButtonBase = styled(MuiButtonBase)(({ theme }) => ({
+    ...containerStyled(theme),
     [`&.${buttonClasses.disabled}`]: {
         color: theme.palette.action.disabled
     },
@@ -35,8 +42,8 @@ const Icon = ({ icon }: { icon?: ReactNode; }) => icon ? (
 
 const TextBlock = ({ primary, secondary }: ItemProps) => (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
-        <Typography variant="body1" sx={{ fontWeight: 300 }}>{primary}</Typography>
-        {secondary && <Typography variant="body2" sx={{ fontWeight: 100 }}>{secondary}</Typography>}
+        <Typography variant="body1" align="left">{primary}</Typography>
+        {secondary && <Typography variant="body2" align="left">{secondary}</Typography>}
     </Box>
 );
 

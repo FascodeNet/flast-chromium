@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { IBookmark, IHistory } from '../../interfaces/user';
+import { BookmarkData, HistoryData } from '../../interfaces/user';
 import { SuggestData } from '../../renderer/views/browser/search/interface';
 import { isURL } from '../../utils/url';
 import { IUser } from '../interfaces/user';
@@ -8,13 +8,13 @@ import { IncognitoUser } from '../user/incognito';
 export interface SearchResult {
     suggests: ResultData[];
     bookmarks: ResultData[];
-    histories: ResultData[];
+    history: ResultData[];
 }
 
 export const DefaultSearchResult: SearchResult = {
     suggests: [],
     bookmarks: [],
-    histories: []
+    history: []
 };
 
 export type ResultType = 'search' | 'address' | 'bookmark' | 'history';
@@ -27,23 +27,29 @@ export interface ResultData {
 }
 
 export const search = async (value: string, user: IUser): Promise<SearchResult> => {
-    const bookmarks = user.type !== 'guest' ? map(filter(user.bookmarks.bookmarks.filter(({ title, url }) => {
-        return title && url && (contains(title, value) || contains(url, value));
-    })), 'bookmark') : [];
-    const histories = user.type !== 'guest' ? map(filter((user instanceof IncognitoUser ? user.fromUser : user).histories.histories.filter((
-        {
-            title,
-            url
-        }
-    ) => {
-        return title && url && (contains(title, value) || contains(url, value));
-    })), 'history') : [];
+    const suggest = user.settings.config.privacy_security.suggests;
+    const bookmarks = user.type !== 'guest' && suggest.bookmarks ? map(
+        filter(
+            user.bookmarks.bookmarks.filter(({ title, url }) => {
+                return title && url && (contains(title, value) || contains(url, value));
+            })
+        ),
+        'bookmark'
+    ) : [];
+    const history = user.type !== 'guest' && suggest.history ? map(
+        filter(
+            (user instanceof IncognitoUser ? user.fromUser : user).history.history.filter(({ title, url }) => {
+                return title && url && (contains(title, value) || contains(url, value));
+            })
+        ),
+        'history'
+    ) : [];
 
     if (user.type === 'incognito') {
         return {
             suggests: [],
             bookmarks,
-            histories
+            history
         };
     }
 
@@ -59,25 +65,25 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
         for (let i = 0; i < values.length; i++)
             suggestDatas.push({ value: values[i], type: types[i] });
 
-        const suggests = suggestDatas.map(({ value }): ResultData => {
+        const suggests = suggest.search ? suggestDatas.map(({ value }): ResultData => {
             const isValueUrl = isUrl(value);
             return ({
                 resultType: isValueUrl ? 'address' : 'search',
                 title: value,
                 url: isValueUrl ? value : 'https://www.google.com/search?q=%s'.replace('%s', encodeURIComponent(value))
             });
-        });
+        }) : [];
 
         return {
             suggests,
             bookmarks,
-            histories
+            history
         };
     } catch (e) {
         return {
             suggests: [],
             bookmarks,
-            histories
+            history
         };
     }
 };
@@ -90,11 +96,11 @@ const contains = (value: string | undefined, keyword: string) => {
     return (value ?? '').toLowerCase().includes(keyword.toLowerCase()) || encodedValue.toLowerCase().includes(encodedKeyword.toLowerCase());
 };
 
-const filter = (array: (IBookmark | IHistory)[]) => array.filter((data, i) => array.findIndex(
+const filter = (array: (BookmarkData | HistoryData)[]) => array.filter((data, i) => array.findIndex(
     ({ title, url }) => title === data.title || url === data.url
 ) === i);
 
-const map = (array: (IBookmark | IHistory)[], type: ResultType): ResultData[] => array.map((
+const map = (array: (BookmarkData | HistoryData)[], type: ResultType): ResultData[] => array.map((
     {
         title,
         url,

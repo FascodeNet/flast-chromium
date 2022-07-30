@@ -17,7 +17,7 @@ import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
 import {
     StyledCertificateStatus,
-    StyledItem,
+    StyledItemButton,
     StyledItemDescription,
     StyledItemIcon,
     StyledItemLabel,
@@ -50,7 +50,7 @@ export const Panel = () => {
 
     return (
         <StyledPanel className="panel" type="popup">
-            <StyledPanelHeader className="panel-header" type="sidebar">
+            <StyledPanelHeader className="panel-header" type="popup">
                 <StyledPanelTitle className="panel-title">
                     {translate.windows.app.pageInformation.label}
                 </StyledPanelTitle>
@@ -97,13 +97,17 @@ const MainPanel = ({ state, config, setType }: PanelProps) => {
     const { label } = getCertificateTranslate(state, config);
 
     return (
-        <StyledPanelContainer className="panel-container" style={{ padding: '0 0 8px' }}>
-            <StyledItem className="information-item" onClick={() => setType('certificate')}>
+        <StyledPanelContainer className="panel-container" style={{ padding: '8px 0' }}>
+            <StyledItemButton
+                className="information-item-button"
+                disabled={state.requestState?.type !== 'secure' && state.requestState?.type !== 'insecure'}
+                onClick={() => setType('certificate')}
+            >
                 <StyledItemIcon className="information-item-icon">
                     <StatusIcon state={state} />
                 </StyledItemIcon>
                 <StyledItemLabel className="information-item-label">{label}</StyledItemLabel>
-            </StyledItem>
+            </StyledItemButton>
         </StyledPanelContainer>
     );
 };
@@ -113,7 +117,7 @@ const CertificatePanel = ({ state, config, setType }: PanelProps) => {
 
     const certificate = state.requestState?.certificate;
     return (
-        <StyledPanelContainer className="panel-container" style={{ padding: '0 0 8px' }}>
+        <StyledPanelContainer className="panel-container" style={{ padding: '8px 0' }}>
             <StyledCertificateStatus>
                 <StyledItemIcon className="information-item-icon">
                     <StatusIcon state={state} />

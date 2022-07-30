@@ -76,10 +76,10 @@ export class App {
             App.setTheme(settings.config);
 
             const windows = this.windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id && appWindow.id !== browserWindow.id);
-            windows.forEach((window) => {
-                window.webContents.send('settings-update', settings.config);
-                window.viewManager.get()?.setBounds();
-                window.setStyle();
+            windows.forEach((appWindow) => {
+                appWindow.webContents.send('settings-update', settings.config);
+                appWindow.viewManager.get()?.setBounds();
+                appWindow.setStyle();
             });
         });
 

@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IElectronAPI } from '../@types/electron';
-import { UserConfig } from '../interfaces/user';
+import { BookmarkData, OmitData, UserConfig } from '../interfaces/user';
 import { DeepPartial } from '../utils';
 import { injectChromeWebStoreInstallButton } from './chrome-webstore';
 
@@ -36,7 +36,12 @@ const api: IElectronAPI = {
     setTheme: (userId: string) => ipcRenderer.invoke('set-theme', userId),
 
     getBookmarks: (userId: string) => ipcRenderer.invoke(`bookmarks-${userId}`),
-    getHistories: (userId: string) => ipcRenderer.invoke(`histories-${userId}`)
+    addBookmark: (userId: string, data: OmitData<BookmarkData>) => ipcRenderer.invoke(`bookmark-add-${userId}`, data),
+    removeBookmark: (userId: string, bookmarkId: string) => ipcRenderer.invoke(`bookmark-remove-${userId}`, bookmarkId),
+    updateBookmark: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>) => ipcRenderer.invoke(`bookmark-update-${userId}`, bookmarkId, data),
+
+    getHistory: (userId: string) => ipcRenderer.invoke(`history-${userId}`),
+    getHistoryGroups: (userId: string) => ipcRenderer.invoke(`history-groups-${userId}`)
 };
 
 contextBridge.exposeInMainWorld('api', api);

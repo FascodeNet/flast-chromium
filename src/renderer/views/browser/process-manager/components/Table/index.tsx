@@ -1,5 +1,5 @@
 import { app, webContents } from '@electron/remote';
-import { Extension, ProcessMetric, WebContents } from 'electron';
+import { ProcessMetric, WebContents } from 'electron';
 import filesize from 'filesize';
 import format from 'format-number';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -45,12 +45,12 @@ const TableItem = ({ metric }: TableItemProps) => {
             case 'Browser':
                 return APPLICATION_NAME;
             case 'Tab':
-                const contents = webContents.getAllWebContents().find((contents: WebContents) => contents.getOSProcessId() == metric.pid);
+                const contents = webContents.getAllWebContents().find((contents) => contents.getOSProcessId() === metric.pid);
                 if (!contents) return metric.name;
 
                 switch (contents.getType()) {
                     case 'backgroundPage':
-                        const extension = contents.session.getAllExtensions().find((extension: Extension) => contents.getURL().includes(extension.id));
+                        const extension = contents.session.getAllExtensions().find((extension) => contents.getURL().includes(extension.id));
                         if (!extension) return contents.getTitle();
 
                         return extension.name;

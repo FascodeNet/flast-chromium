@@ -7,6 +7,9 @@ export const TAB_PINNED_WIDTH = 34;
 export const TAB_ANIMATION_DURATION = 200;
 export const TABS_PADDING = 8;
 
+export const ADD_TAB_BUTTON_WIDTH = 28;
+export const ADD_TAB_BUTTON_HEIGHT = 28;
+
 export const getWidth = (containerWidth: number, view: ViewState, views: ViewState[]) => {
     if (view.isPinned) return TAB_PINNED_WIDTH;
 
@@ -29,7 +32,7 @@ export const getLeft = (containerWidth: number, view: ViewState, views: ViewStat
 
 export const setTabsBounds = (containerWidth: number, views: ViewState[], animation: boolean = true) => {
     setTabsWidths(containerWidth, views, animation);
-    // setTabsLefts(containerWidth, views, animation);
+    setTabsLefts(containerWidth, views, animation);
 };
 
 export const setTabsWidths = (containerWidth: number, views: ViewState[], animation: boolean = true) => {

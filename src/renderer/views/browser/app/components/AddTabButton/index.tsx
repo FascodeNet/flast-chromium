@@ -1,5 +1,5 @@
 import React, { MouseEvent } from 'react';
-import { Add } from '../../../../../components/Icons';
+import { Add } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledAddTabButton } from './styles';
@@ -7,11 +7,10 @@ import { StyledAddTabButton } from './styles';
 export const AddTabButton = () => {
     const { addView } = useElectronAPI();
 
-    const { config } = useUserConfigContext();
-    const style = config.appearance.style;
+    const { config: { appearance: { style }, pages: { home: { url } } } } = useUserConfigContext();
 
     const handleButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
-        addView('https://www.google.com', true);
+        await addView(url ?? 'https://www.google.com', true);
     };
 
     return (

@@ -1,13 +1,13 @@
+import Datastore from '@seald-io/nedb';
 import { app } from 'electron';
-import Datastore from 'nedb';
 import { join } from 'path';
 import { IDownloads, IUser } from '../../interfaces/user';
 
 export class NormalDownloads implements IDownloads {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
-    private _datastore: Datastore;
+    private readonly _datastore: Datastore;
 
     public constructor(user: IUser) {
         this.user = user;

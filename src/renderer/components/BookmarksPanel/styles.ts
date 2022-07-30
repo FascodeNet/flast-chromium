@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { borderRadius } from '../../themes';
 
 export const StyledHistoryGroup = styled.div`
@@ -35,19 +35,27 @@ interface StyledBookmarkItemFaviconProps {
 
 export const StyledBookmarkItemFavicon = styled.div<StyledBookmarkItemFaviconProps>`
   width: 16px;
-  height: 16px;
   min-width: 16px;
+  height: 16px;
   min-height: 16px;
+  background-image: ${({ favicon }) => favicon ? `url('${favicon}')` : 'unset'};
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+`;
 
-  ${({ favicon }) => favicon && css`
-    background-image: url('${favicon}');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-  `}
+export const StyledBookmarkItemIcon = styled.div`
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  min-height: 16px;
+  display: flex;
+  place-items: center;
+
+  & svg {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 export const StyledBookmarkItemLabel = styled.span`

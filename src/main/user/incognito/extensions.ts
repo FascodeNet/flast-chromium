@@ -3,7 +3,7 @@ import { IExtensions, IUser } from '../../interfaces/user';
 
 export class IncognitoExtensions implements IExtensions {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
     public constructor(user: IUser) {
         this.user = user;

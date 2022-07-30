@@ -1,7 +1,6 @@
 import { app, Session as ElectronSession, session } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions';
 import { join } from 'path';
-import { parse } from 'url';
 import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../../utils';
 import { ISession, IUser } from '../../interfaces/user';
 import { Main } from '../../main';
@@ -10,7 +9,7 @@ import { NormalUser } from './index';
 
 export class NormalSession implements ISession {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
     private readonly _session: ElectronSession;
     private readonly _extensions: ElectronChromeExtensions;
@@ -106,16 +105,18 @@ export class NormalSession implements ISession {
 
         this._session.protocol.registerFileProtocol(
             APPLICATION_PROTOCOL,
-            (request, callback: any) => {
-                const parsed = parse(request.url);
+            (request, callback) => {
+                const { hostname, pathname } = new URL(request.url);
 
-                if (parsed.path === '/') {
-                    return callback({
-                        path: join(__dirname, `${parsed.hostname}.html`)
+                if (pathname === '/' || !pathname.match(/(.*)\.([A-z0-9])\w+/g)) {
+                    callback({
+                        path: join(__dirname, `${hostname}.html`)
+                    });
+                } else {
+                    callback({
+                        path: join(__dirname, pathname.substring(1))
                     });
                 }
-
-                callback({ path: join(__dirname, parsed.path!!) });
             }
         );
     }

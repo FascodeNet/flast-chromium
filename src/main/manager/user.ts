@@ -111,8 +111,8 @@ export class UserManager {
         try {
             const { users, lastUser } = await UserManager.getConfig();
 
-            for (let i = 0; i < users.length; i++)
-                this.add(await UserManager.load(users[i]));
+            for (const user of users)
+                this.add(await UserManager.load(user));
 
             this.lastUserId = lastUser;
             this.loaded = true;
@@ -141,7 +141,7 @@ export class UserManager {
 
     private setupIpc() {
         ipcMain.handle('get-user', (e) => {
-            const window = Main.windowManager.getWindows().find((window) => window.viewManager.get(e.sender.id));
+            const window = Main.windowManager.getWindows().find((appWindow) => appWindow.viewManager.get(e.sender.id));
             if (!window) return undefined;
 
             return window.user.id;

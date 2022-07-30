@@ -1,6 +1,6 @@
 import { app, clipboard, ContextMenuParams, dialog, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
 import { getTranslate } from '../../languages/language';
-import { isURL } from '../../utils/url';
+import { isURL, prefixHttp } from '../../utils/url';
 import { App, Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
@@ -44,9 +44,9 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                 settings.config = { appearance: { fullscreen_showing_toolbar: !settings.config.appearance.fullscreen_showing_toolbar } };
 
                 const windows = Main.windowManager.getWindows(window.user);
-                windows.forEach((window) => {
-                    window.webContents.send('settings-update', settings.config);
-                    window.viewManager.get()?.setBounds();
+                windows.forEach((appWindow) => {
+                    appWindow.webContents.send('settings-update', settings.config);
+                    appWindow.viewManager.get()?.setBounds();
                 });
             }
         },
@@ -66,7 +66,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.link.newTab,
             icon: getMenuItemIconFromName('tab_add'),
             accelerator: Shortcuts.TAB_ADD,
-            click: () => window.viewManager.add(linkURL)
+            click: () => window.viewManager.add(linkURL, false)
         },
         {
             label: languageSection.link.newWindow,
@@ -105,9 +105,9 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
                             const windows = Main.windowManager.getWindows(user);
                             if (windows.length > 0) {
-                                const window = windows[0];
-                                window.viewManager.add(linkURL);
-                                Main.windowManager.select(window.id);
+                                const appWindow = windows[0];
+                                appWindow.viewManager.add(linkURL);
+                                Main.windowManager.select(appWindow.id);
                             } else {
                                 Main.windowManager.add(user, [linkURL]);
                             }
@@ -152,7 +152,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         {
             label: languageSection.image.newTab,
             icon: getMenuItemIconFromName('image_add'),
-            click: () => window.viewManager.add(srcURL)
+            click: () => window.viewManager.add(srcURL, false)
         },
         {
             label: languageSection.image.saveImage,
@@ -192,7 +192,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
             icon: getMenuItemIconFromName('external_link'),
             visible: canCopy && isURL(getSelectionText(false)),
-            click: () => window.viewManager.add(getSelectionText(false))
+            click: () => window.viewManager.add(prefixHttp(getSelectionText(false)))
         },
         {
             label: languageSection.print,
@@ -224,7 +224,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
             icon: getMenuItemIconFromName('external_link'),
             visible: canCopy && isURL(getSelectionText(false)),
-            click: () => window.viewManager.add(getSelectionText(false))
+            click: () => window.viewManager.add(prefixHttp(getSelectionText(false)))
         },
         {
             label: languageSection.print,
@@ -308,6 +308,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             {
                 label: view.isMuted ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
                 icon: getMenuItemIconFromName(`speaker${webContents.audioMuted ? '' : '_muted'}`),
+                accelerator: Shortcuts.TAB_MUTE,
                 click: () => view.setMuted(!view.isMuted)
             },
             {

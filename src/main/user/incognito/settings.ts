@@ -6,7 +6,7 @@ import { NormalUser } from '../normal';
 
 export class IncognitoSettings implements ISettings {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
     private _config: UserConfig = DefaultUserConfig;
 

@@ -1,6 +1,6 @@
 import { getCurrentWebContents, getCurrentWindow } from '@electron/remote';
 import { ipcRenderer } from 'electron';
-import { IBookmark, IHistory, UserConfig, UserType } from '../../interfaces/user';
+import { BookmarkData, HistoryData, HistoryGroup, OmitData, UserConfig, UserType } from '../../interfaces/user';
 import { FindState, MoveDirection, ViewState } from '../../interfaces/view';
 import { SearchResult } from '../../main/utils/search';
 import { DeepPartial } from '../../utils';
@@ -21,20 +21,21 @@ interface ElectronAPI {
 
     getWebContentsId: () => number;
     getViews: () => Promise<ViewState[]>;
-    getView: (id: number) => Promise<ViewState>;
+    getView: (viewId: number) => Promise<ViewState>;
     getCurrentView: () => Promise<ViewState>;
     addView: (url: string, active: boolean) => Promise<number>;
-    removeView: (id: number) => Promise<void>;
-    selectView: (id: number) => Promise<void>;
-    moveTo: (id: number, toIndex: number) => Promise<void>;
-    moveToDirection: (id: number, direction: MoveDirection) => Promise<void>;
-    showTabMenu: (id: number, x: number, y: number) => Promise<void>;
+    removeView: (viewId: number) => Promise<void>;
+    selectView: (viewId: number) => Promise<void>;
+    moveTo: (viewId: number, toIndex: number) => Promise<void>;
+    moveToDirection: (viewId: number, direction: MoveDirection) => Promise<void>;
+    showTabMenu: (viewId: number, x: number, y: number) => Promise<void>;
 
-    backView: (id: number) => Promise<void>;
-    forwardView: (id: number) => Promise<void>;
-    reloadView: (id: number) => Promise<void>;
-    stopView: (id: number) => Promise<void>;
-    loadView: (id: number, url: string) => Promise<void>;
+    backView: (viewId: number) => Promise<void>;
+    forwardView: (viewId: number) => Promise<void>;
+    reloadView: (viewId: number) => Promise<void>;
+    stopView: (viewId: number) => Promise<void>;
+    loadView: (viewId: number, url: string) => Promise<void>;
+
 
     hideDialog: () => Promise<void>;
     destroyDialog: () => Promise<void>;
@@ -52,14 +53,16 @@ interface ElectronAPI {
     stopFindInPage: (id: number, hide: boolean) => Promise<void>;
 
     showBookmarksPopup: (x: number, y: number) => Promise<void>;
-    getBookmarks: (userId: string) => Promise<IBookmark[]>;
-    addBookmark: (userId: string, data: Omit<IBookmark, '_id' | 'updatedAt' | 'createdAt'>) => Promise<void>;
-    removeBookmark: (userId: string, id: string) => Promise<void>;
+    getBookmarks: (userId: string) => Promise<BookmarkData[]>;
+    addBookmark: (userId: string, data: OmitData<BookmarkData>) => Promise<BookmarkData>;
+    removeBookmark: (userId: string, bookmarkId: string) => Promise<boolean>;
+    updateBookmark: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>) => Promise<BookmarkData>;
 
-    showHistoriesPopup: (x: number, y: number) => Promise<void>;
-    getHistories: (userId: string) => Promise<IHistory[]>;
-    addHistory: (userId: string, data: Omit<IHistory, '_id' | 'updatedAt' | 'createdAt'>) => Promise<void>;
-    removeHistory: (userId: string, id: string) => Promise<void>;
+    showHistoryPopup: (x: number, y: number) => Promise<void>;
+    getHistory: (userId: string) => Promise<HistoryData[]>;
+    getHistoryGroups: (userId: string) => Promise<HistoryGroup[]>;
+    addHistory: (userId: string, data: OmitData<HistoryData>) => Promise<HistoryData>;
+    removeHistory: (userId: string, historyId: string) => Promise<boolean>;
 
     showDownloadsPopup: (x: number, y: number) => Promise<void>;
 
@@ -68,9 +71,9 @@ interface ElectronAPI {
 
 
     getCurrentUserId: () => Promise<string>;
-    getUserType: (id: string) => Promise<UserType>;
-    getUserConfig: (id: string) => Promise<UserConfig>;
-    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>;
+    getUserType: (userId: string) => Promise<UserType>;
+    getUserConfig: (userId: string) => Promise<UserConfig>;
+    setUserConfig: (userId: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>;
 }
 
 const windowId = getCurrentWindow().id;
@@ -91,20 +94,21 @@ export const useElectronAPI = (): ElectronAPI => ({
 
     getWebContentsId: () => getCurrentWebContents().id,
     getViews: () => ipcRenderer.invoke(`views-${windowId}`),
-    getView: (id: number) => ipcRenderer.invoke(`view-${windowId}`, id),
+    getView: (viewId: number) => ipcRenderer.invoke(`view-${windowId}`, viewId),
     getCurrentView: () => ipcRenderer.invoke(`view-current-${windowId}`),
     addView: (url: string = 'https://www.google.com', active: boolean = true) => ipcRenderer.invoke(`view-create-${windowId}`, url, active),
-    removeView: (id: number) => ipcRenderer.invoke(`view-destroy-${windowId}`, id),
-    selectView: (id: number) => ipcRenderer.invoke(`view-select-${windowId}`, id),
-    moveTo: (id: number, toIndex: number) => ipcRenderer.invoke(`view-move-${windowId}`, id, toIndex),
-    moveToDirection: (id: number, direction: MoveDirection) => ipcRenderer.invoke(`view-move_direction-${windowId}`, id, direction),
-    showTabMenu: (id: number, x: number, y: number) => ipcRenderer.invoke(`view-menu-${windowId}`, id, x, y),
+    removeView: (viewId: number) => ipcRenderer.invoke(`view-destroy-${windowId}`, viewId),
+    selectView: (viewId: number) => ipcRenderer.invoke(`view-select-${windowId}`, viewId),
+    moveTo: (viewId: number, toIndex: number) => ipcRenderer.invoke(`view-move-${windowId}`, viewId, toIndex),
+    moveToDirection: (viewId: number, direction: MoveDirection) => ipcRenderer.invoke(`view-move_direction-${windowId}`, viewId, direction),
+    showTabMenu: (viewId: number, x: number, y: number) => ipcRenderer.invoke(`view-menu-${windowId}`, viewId, x, y),
 
-    backView: (id: number) => ipcRenderer.invoke(`view-back-${windowId}`, id),
-    forwardView: (id: number) => ipcRenderer.invoke(`view-forward-${windowId}`, id),
-    reloadView: (id: number) => ipcRenderer.invoke(`view-reload-${windowId}`, id),
-    stopView: (id: number) => ipcRenderer.invoke(`view-stop-${windowId}`, id),
-    loadView: (id: number, url: string) => ipcRenderer.invoke(`view-load-${windowId}`, id, url),
+    backView: (viewId: number) => ipcRenderer.invoke(`view-back-${windowId}`, viewId),
+    forwardView: (viewId: number) => ipcRenderer.invoke(`view-forward-${windowId}`, viewId),
+    reloadView: (viewId: number) => ipcRenderer.invoke(`view-reload-${windowId}`, viewId),
+    stopView: (viewId: number) => ipcRenderer.invoke(`view-stop-${windowId}`, viewId),
+    loadView: (viewId: number, url: string) => ipcRenderer.invoke(`view-load-${windowId}`, viewId, url),
+
 
     hideDialog: () => ipcRenderer.invoke(`dialog-hide-${webContentsId}`),
     destroyDialog: () => ipcRenderer.invoke(`dialog-destroy-${webContentsId}`),
@@ -122,23 +126,40 @@ export const useElectronAPI = (): ElectronAPI => ({
     stopFindInPage: (id: number, hide: boolean) => ipcRenderer.invoke(`view-stop_find_in_page-${windowId}`, id, hide),
 
     showBookmarksPopup: (x: number, y: number) => ipcRenderer.invoke(`window-bookmarks-${windowId}`, x, y),
-    getBookmarks: (userId: string): Promise<IBookmark[]> => {
+    getBookmarks: (userId: string): Promise<BookmarkData[]> => {
         if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(`bookmarks-${userId}`);
     },
-    addBookmark: (userId: string, data: Omit<IBookmark, '_id' | 'updatedAt' | 'createdAt'>) => {
-        if (!userId) return Promise.resolve();
-        return ipcRenderer.invoke(`bookmark-add-${userId}`, data);
+    addBookmark: async (userId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
+        if (!userId) return Promise.reject();
+        return await ipcRenderer.invoke(`bookmark-add-${userId}`, data);
     },
-    removeBookmark: (userId: string, id: string) => {
-        if (!userId) return Promise.resolve();
-        return ipcRenderer.invoke(`bookmark-remove-${userId}`, id);
+    removeBookmark: async (userId: string, bookmarkId: string): Promise<boolean> => {
+        if (!userId) return Promise.resolve(false);
+        return await ipcRenderer.invoke(`bookmark-remove-${userId}`, bookmarkId);
+    },
+    updateBookmark: async (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
+        if (!userId) return Promise.reject();
+        return await ipcRenderer.invoke(`bookmark-update-${userId}`, bookmarkId, data);
     },
 
-    showHistoriesPopup: (x: number, y: number) => ipcRenderer.invoke(`window-histories-${windowId}`, x, y),
-    getHistories: (userId: string) => ipcRenderer.invoke(`histories-${userId}`),
-    addHistory: (userId: string, data: Omit<IHistory, '_id' | 'updatedAt' | 'createdAt'>) => ipcRenderer.invoke(`history-add-${userId}`, data),
-    removeHistory: (userId: string, id: string) => ipcRenderer.invoke(`history-remove-${userId}`, id),
+    showHistoryPopup: (x: number, y: number) => ipcRenderer.invoke(`window-history-${windowId}`, x, y),
+    getHistory: (userId: string) => {
+        if (!userId) return Promise.resolve();
+        return ipcRenderer.invoke(`history-${userId}`);
+    },
+    getHistoryGroups: (userId: string) => {
+        if (!userId) return Promise.resolve();
+        return ipcRenderer.invoke(`history-groups-${userId}`);
+    },
+    addHistory: async (userId: string, data: OmitData<HistoryData>): Promise<HistoryData> => {
+        if (!userId) return Promise.reject();
+        return await ipcRenderer.invoke(`history-add-${userId}`, data);
+    },
+    removeHistory: async (userId: string, historyId: string): Promise<boolean> => {
+        if (!userId) return false;
+        return await ipcRenderer.invoke(`history-remove-${userId}`, historyId);
+    },
 
     showDownloadsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-downloads-${windowId}`, x, y),
 
@@ -147,7 +168,7 @@ export const useElectronAPI = (): ElectronAPI => ({
 
 
     getCurrentUserId: () => ipcRenderer.invoke(`window-user-${windowId}`),
-    getUserType: (id: string) => ipcRenderer.invoke('get-user-type', id),
-    getUserConfig: (id: string) => ipcRenderer.invoke(`get-user-config`, id),
-    setUserConfig: (id: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke(`set-user-config`, id, config)
+    getUserType: (userId: string) => ipcRenderer.invoke('get-user-type', userId),
+    getUserConfig: (userId: string) => ipcRenderer.invoke(`get-user-config`, userId),
+    setUserConfig: (userId: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke(`set-user-config`, userId, config)
 });

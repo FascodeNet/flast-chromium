@@ -1,7 +1,7 @@
+import Datastore from '@seald-io/nedb';
 import { app } from 'electron';
 import { fileTypeFromBuffer } from 'file-type';
 import * as icojs from 'icojs';
-import Datastore from 'nedb';
 import { join } from 'path';
 import { Favicon } from '../../interfaces/view';
 import { requestURL } from '../../utils/network';
@@ -10,9 +10,9 @@ import { Main } from '../main';
 
 export class FaviconManager {
 
-    private _datastore: Datastore<Favicon>;
+    private readonly _datastore: Datastore<Favicon>;
 
-    private _favicons: Favicon[];
+    private readonly _favicons: Favicon[];
 
     public constructor() {
         this._datastore = new Datastore<Favicon>({
@@ -37,8 +37,8 @@ export class FaviconManager {
         if (!urlString)
             return Promise.reject('Invalid URL!');
 
-        const data = Main.faviconManager.favicons.find(({ url }) => url === urlString);
-        if (!data) {
+        const faviconData = Main.faviconManager.favicons.find(({ url }) => url === urlString);
+        if (!faviconData) {
             const res = await requestURL(faviconUrl);
 
             if (res.statusCode === 404)
@@ -53,9 +53,9 @@ export class FaviconManager {
 
             return `data:${(await fileTypeFromBuffer(data))!!.ext};base64,${data.toString('base64')}`;
         } else {
-            return data.favicon;
+            return faviconData.favicon;
         }
-    };
+    }
 
     public add(data: Favicon) {
         this._favicons.push(data);

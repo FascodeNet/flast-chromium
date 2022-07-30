@@ -5,7 +5,7 @@ import styled from 'styled-components';
 export const StyledDrawer = styled.div`
   width: 100%;
   height: 100%;
-  padding: 3rem 2rem;
+  padding: 3rem 1.5rem;
   display: none;
   border-right: solid 1px ${({ theme }) => theme.palette.divider};
 
@@ -42,6 +42,7 @@ export const StyledButton = muiStyled(
     fontWeight: active ? 400 : 300,
     color: active ? theme.palette.primary.main : 'inherit',
     backgroundColor: active ? alpha(theme.palette.primary.main, theme.palette.action.hoverOpacity) : 'inherit',
+    textTransform: 'none',
     '&:hover': {
         backgroundColor: active ? alpha(theme.palette.primary.main, theme.palette.action.hoverOpacity) : alpha(theme.palette.text.primary, theme.palette.action.hoverOpacity)
     },

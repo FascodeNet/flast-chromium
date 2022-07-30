@@ -58,6 +58,11 @@ export const Appearance = () => {
                         selectedValue={config.appearance.mode}
                         setSelected={(mode) => setUserConfig({ appearance: { mode } })}
                     />
+                    <SwitchItem
+                        primary={translateSection.mode.tabColored}
+                        checked={config.appearance.tab_colored}
+                        setChecked={(colored) => setUserConfig({ appearance: { tab_colored: colored } })}
+                    />
                 </SectionContent>
             </Section>
             <Section>
@@ -111,9 +116,9 @@ export const Appearance = () => {
                     />
                     <SwitchItem
                         icon={<History />}
-                        primary={translateSection.button.histories}
-                        checked={config.appearance.buttons.histories}
-                        setChecked={(histories) => setUserConfig({ appearance: { buttons: { histories } } })}
+                        primary={translateSection.button.history}
+                        checked={config.appearance.buttons.history}
+                        setChecked={(history) => setUserConfig({ appearance: { buttons: { history } } })}
                         disabled={isVertical(config.appearance.style)}
                     />
                     <SwitchItem

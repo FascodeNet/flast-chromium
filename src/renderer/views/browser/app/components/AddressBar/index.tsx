@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import { ipcRenderer } from 'electron';
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import Icon from '../../../../../../assets/icon.png';
-import { AppearanceStyle, IBookmark } from '../../../../../../interfaces/user';
+import { AppearanceStyle, BookmarkData } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
-import { EXTENSION_PROTOCOL } from '../../../../../../utils';
+import { APPLICATION_NAME, APPLICATION_PROTOCOL, EXTENSION_PROTOCOL } from '../../../../../../utils';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
 import { Extension, File, Search, Star, StarFilled } from '../../../../../components/Icons';
 import { Information, Lock, Warning } from '../../../../../components/Icons/state';
@@ -32,7 +32,7 @@ export const AddressBar = () => {
     const [statusButtonLabel, setStatusButtonLabel] = useState<string | undefined>(undefined);
     const [address, setAddress] = useState('');
     const [active, setActive] = useState(false);
-    const [bookmark, setBookmark] = useState<IBookmark | undefined>(undefined);
+    const [bookmark, setBookmark] = useState<BookmarkData | undefined>(undefined);
 
     const windowId = getWindowId();
     useEffect(() => {
@@ -59,7 +59,9 @@ export const AddressBar = () => {
         try {
             const { protocol, hostname } = new URL(url);
 
-            if (protocol === `${EXTENSION_PROTOCOL}:`) {
+            if (protocol === `${APPLICATION_PROTOCOL}:`) {
+                setStatusButtonLabel(APPLICATION_NAME);
+            } else if (protocol === `${EXTENSION_PROTOCOL}:`) {
                 const extension = getCurrentWebContents().session.getExtension(hostname);
                 setStatusButtonLabel(extension ? extension.name : undefined);
             } else {
@@ -130,8 +132,11 @@ export const AddressBar = () => {
 
                     if (protocol === `${EXTENSION_PROTOCOL}:`) {
                         const extension = getCurrentWebContents().session.getExtension(hostname);
-                        return (extension ? <img src={`crx://extension-icon/${extension.id}/32/2`} /> :
-                            <Extension />);
+                        return extension ? (
+                            <img src={`crx://extension-icon/${extension.id}/32/2`} />
+                        ) : (
+                            <Extension />
+                        );
                     } else {
                         return (<Extension />);
                     }
@@ -154,10 +159,15 @@ export const AddressBar = () => {
             } = new URL(isURL(address) && !address.includes('://') ? prefixHttp(address) : address);
 
             return (
-                <StyledAddressBar ref={ref} className={clsx('address-bar', state.requestState?.type)}
-                                  active={active} appearanceStyle={style} onClick={handleClick}>
+                <StyledAddressBar
+                    ref={ref}
+                    onClick={handleClick}
+                    className={clsx('address-bar', state.requestState?.type)}
+                    active={active}
+                    appearanceStyle={style}
+                >
                     <StyledButtonContainer className="address-bar-container">
-                        <StyledButton label={statusButtonLabel} onClick={handleInformationButtonClick}>
+                        <StyledButton onClick={handleInformationButtonClick} label={statusButtonLabel}>
                             <StatusIcon />
                         </StyledButton>
                     </StyledButtonContainer>
@@ -177,8 +187,13 @@ export const AddressBar = () => {
             );
         } catch (e) {
             return (
-                <StyledAddressBar ref={ref} className="address-bar" active={active} appearanceStyle={style}
-                                  onClick={handleClick}>
+                <StyledAddressBar
+                    ref={ref}
+                    onClick={handleClick}
+                    active={active}
+                    className="address-bar"
+                    appearanceStyle={style}
+                >
                     <StyledButtonContainer className="address-bar-container">
                         <StyledButton label={statusButtonLabel}>
                             <StatusIcon />
@@ -192,8 +207,7 @@ export const AddressBar = () => {
         }
     } else {
         return (
-            <Button className={clsx('address-bar-button', 'search')} appearanceStyle={style}
-                    onClick={handleClick}>
+            <Button onClick={handleClick} className={clsx('address-bar-button', 'search')} appearanceStyle={style}>
                 <Search />
             </Button>
         );

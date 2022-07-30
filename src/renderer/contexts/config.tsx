@@ -31,9 +31,9 @@ export const UserConfigProvider = ({ children }: UserConfigProviderProps) => {
     const [type, setType] = useState(context.type);
     const [config, setConfig] = useState(context.config);
 
-    const _setConfig = async (config: DeepPartial<UserConfig>) => {
+    const _setConfig = async (userConfig: DeepPartial<UserConfig>) => {
         const { setUserConfig } = useElectronAPI();
-        const cfg = await setUserConfig(userId, config);
+        const cfg = await setUserConfig(userId, userConfig);
         setConfig(cfg);
     };
 

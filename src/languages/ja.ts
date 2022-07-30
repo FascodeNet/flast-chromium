@@ -2,6 +2,19 @@ import { APPLICATION_NAME } from '../utils';
 import { Language } from './language';
 
 export const Ja: Language = {
+    common: {
+        success: '成功',
+        warning: '警告',
+        error: 'エラー',
+        information: '情報',
+        yes: 'はい',
+        no: 'いいえ',
+        cancel: 'キャンセル',
+        add: '追加',
+        remove: '削除',
+        delete: '削除',
+        save: '保存'
+    },
     tasks: {
         addTab: '新しいタブ',
         addWindow: '新しいウィンドウ',
@@ -14,7 +27,7 @@ export const Ja: Language = {
             openIncognitoWindow: 'プライベート ウィンドウを開く',
 
             bookmarks: 'ブックマーク',
-            histories: '履歴',
+            history: '履歴',
             downloads: 'ダウンロード',
             applications: 'アプリケーション',
             extensions: '拡張機能',
@@ -89,7 +102,7 @@ export const Ja: Language = {
                 reloadIgnoringCache: '再読み込み (キャッシュの削除)',
                 home: 'ホームページに移動',
                 bookmarks: 'ブックマーク',
-                histories: '履歴',
+                history: '履歴',
                 downloads: 'ダウンロード',
                 applications: 'アプリケーション',
                 extensions: '拡張機能'
@@ -243,7 +256,21 @@ export const Ja: Language = {
         }
     },
     pages: {
-        histories: {
+        bookmarks: {
+            title: 'ブックマーク',
+
+            all: 'すべてのブックマーク',
+
+            addBookmark: 'ブックマークを追加',
+            addFolder: 'フォルダを追加',
+            delete: '削除',
+            edit: '編集',
+            rename: '名前を変更',
+            move: '移動',
+
+            notFound: 'この場所に登録されているブックマークがありません。'
+        },
+        history: {
             title: '履歴',
 
             all: 'すべて',
@@ -254,18 +281,42 @@ export const Ja: Language = {
 
             notFound: 'この期間に閲覧したページはありません。'
         },
+        downloads: {
+            title: 'ダウンロード',
+
+            notFound: 'ダウンロードしたアイテムがありません。'
+        },
         settings: {
             title: '設定',
 
+            privacyAndSecurity: {
+                title: 'プライバシーとセキュリティ',
+
+                history: {
+                    title: '履歴',
+
+                    save: '履歴を保存する',
+                    delete: '閲覧履歴を削除する'
+                },
+                suggests: {
+                    title: 'サジェスト',
+
+                    search: 'Google 検索からサジェストする',
+                    bookmarks: 'ブックマークからサジェストする',
+                    history: '履歴からサジェストする'
+                }
+            },
             appearance: {
                 title: 'デザインと外観',
 
                 mode: {
-                    title: '基本テーマ',
+                    title: 'テーマと配色',
 
                     system: 'システムの設定に合わせる',
                     light: 'ライト',
-                    dark: 'ダーク'
+                    dark: 'ダーク',
+
+                    tabColored: 'サイトに設定されているテーマカラーをタブに設定する'
                 },
                 theme: {
                     title: 'テーマ',
@@ -288,7 +339,7 @@ export const Ja: Language = {
 
                     home: 'ホーム',
                     bookmarks: 'ブックマーク',
-                    histories: '履歴',
+                    history: '履歴',
                     downloads: 'ダウンロード',
                     applications: 'アプリケーション',
                     extensions: '拡張機能'

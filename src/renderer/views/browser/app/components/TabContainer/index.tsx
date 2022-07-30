@@ -1,3 +1,5 @@
+import { getCurrentWindow } from '@electron/remote';
+import { ipcRenderer } from 'electron';
 import React, { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { MoveDirection } from '../../../../../../interfaces/view';
 import { useUserConfigContext } from '../../../../../contexts/config';
@@ -6,7 +8,7 @@ import { useElectronAPI } from '../../../../../utils/electron';
 import { setTabsBounds } from '../../../../../utils/tab';
 import { AddTabButton } from '../AddTabButton';
 import { HorizontalTab, VerticalTab } from '../Tab';
-import { StyledHorizontalTabContainer, StyledVerticalTabContainer } from './styles';
+import { StyledHorizontalTabContainer, StyledHorizontalTabWrapper, StyledVerticalTabContainer } from './styles';
 
 export const HorizontalTabContainer = () => {
     const { views, setTabContainerWidth } = useViewManagerContext();
@@ -14,6 +16,8 @@ export const HorizontalTabContainer = () => {
 
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
+
+    const tabContainerRef = useRef<HTMLDivElement>(null);
 
     const handleMouseWheel = (e: WheelEvent) => {
         if (e.deltaX === 0) {
@@ -24,37 +28,29 @@ export const HorizontalTabContainer = () => {
         }
     };
 
-    const handleResize = () => {
-        const containerWidth = tabContainerRef.current?.offsetWidth ?? 0;
-        if (containerWidth < 1) return;
-        setTabContainerWidth(containerWidth);
-        setTabsBounds(containerWidth, views, false);
-    };
-
-
-    const tabContainerRef = useRef<HTMLDivElement>(null);
+    const windowId = getCurrentWindow().id;
     useEffect(() => {
+        ipcRenderer.on(`window-resize-${windowId}`, (e) => {
+            const tabContainerWidth = tabContainerRef.current?.offsetWidth ?? 0;
+            if (tabContainerWidth < 1) return;
+
+            console.log('ipcRenderer#TabContainerWidth', tabContainerWidth);
+            setTabContainerWidth(tabContainerWidth);
+            setTabsBounds(tabContainerWidth, views, false);
+        });
+
         window.addEventListener('mouseup', handleMouseUp);
         window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('resize', handleResize);
         tabContainerRef.current?.addEventListener('wheel', handleMouseWheel, { passive: false });
 
         return () => {
+            ipcRenderer.removeAllListeners(`window-resize-${windowId}`);
+
             window.removeEventListener('mouseup', handleMouseUp);
             window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('resize', handleResize);
             tabContainerRef.current?.removeEventListener('wheel', handleMouseWheel);
         };
     });
-
-    const containerWidth = tabContainerRef.current?.offsetWidth ?? 0;
-    useEffect(() => {
-        if (containerWidth < 1) return;
-        console.log('useEffect#TabContainerWidth', containerWidth);
-        setTabContainerWidth(containerWidth);
-        setTabsBounds(containerWidth, views, false);
-    }, [containerWidth]);
-
 
     const [move, setMove] = useState<number | undefined>(undefined);
     const [moveDirection, setMoveDirection] = useState<MoveDirection | undefined>(undefined);
@@ -101,10 +97,9 @@ export const HorizontalTabContainer = () => {
     };
 
     return (
-        <StyledHorizontalTabContainer className="horizontal-tab-container" ref={tabContainerRef}
-                                      appearanceStyle={style}>
-            {views.map((view) => {
-                return (
+        <StyledHorizontalTabContainer className="horizontal-tab-container">
+            <StyledHorizontalTabWrapper ref={tabContainerRef} className="horizontal-tab-wrapper">
+                {views.map((view) => (
                     <HorizontalTab
                         key={view.id}
                         state={view}
@@ -113,8 +108,8 @@ export const HorizontalTabContainer = () => {
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     />
-                );
-            })}
+                ))}
+            </StyledHorizontalTabWrapper>
             <AddTabButton />
         </StyledHorizontalTabContainer>
     );
@@ -186,20 +181,18 @@ export const VerticalTabContainer = ({ extended }: VerticalTabContainerProps) =>
     };
 
     return (
-        <StyledVerticalTabContainer className="vertical-tab-container" ref={tabContainerRef}>
-            {views.map((view) => {
-                return (
-                    <VerticalTab
-                        key={view.id}
-                        state={view}
-                        isDragging={view.id === selectedViewId}
-                        onMouseDown={handleMouseDown}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        extended={extended}
-                    />
-                );
-            })}
+        <StyledVerticalTabContainer ref={tabContainerRef} className="vertical-tab-container">
+            {views.map((view) => (
+                <VerticalTab
+                    key={view.id}
+                    state={view}
+                    isDragging={view.id === selectedViewId}
+                    onMouseDown={handleMouseDown}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    extended={extended}
+                />
+            ))}
             <AddTabButton />
         </StyledVerticalTabContainer>
     );

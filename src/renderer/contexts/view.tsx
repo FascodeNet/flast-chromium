@@ -51,13 +51,17 @@ export const ViewManagerProvider = ({ children }: ViewManagerProviderProps) => {
         const { getCurrentView, getViews } = useElectronAPI();
 
         getCurrentView().then((view) => setSelectedId(view.id));
-        getViews().then((views) => setViews(views));
+        getViews().then((viewStates) => setViews(viewStates));
     }, []);
 
     useEffect(() => {
+        ipcRenderer.on(`window-update-${windowId}`, (e) => {
+            setTabsBounds(tabContainerWidth, views, false);
+        });
+
         ipcRenderer.on(`views-${windowId}`, (e, states: ViewState[]) => {
             setViews(states);
-            setTabsBounds(tabContainerWidth, states);
+            setTabsBounds(tabContainerWidth, states, false);
         });
 
         ipcRenderer.on(`view-${windowId}`, (e, state: ViewState) => {
@@ -65,7 +69,7 @@ export const ViewManagerProvider = ({ children }: ViewManagerProviderProps) => {
             const viewStateIndex = viewStates.findIndex((viewState) => viewState.id === state.id);
             viewStates.splice(viewStateIndex, 1, state);
             setViews(viewStates);
-            setTabsBounds(tabContainerWidth, viewStates);
+            setTabsBounds(tabContainerWidth, viewStates, false);
         });
 
         ipcRenderer.on(`view-select-${windowId}`, (e, id: number) => {
@@ -73,6 +77,7 @@ export const ViewManagerProvider = ({ children }: ViewManagerProviderProps) => {
         });
 
         return () => {
+            ipcRenderer.removeAllListeners(`window-update-${windowId}`);
             ipcRenderer.removeAllListeners(`views-${windowId}`);
             ipcRenderer.removeAllListeners(`view-${windowId}`);
             ipcRenderer.removeAllListeners(`view-select-${windowId}`);
@@ -81,7 +86,7 @@ export const ViewManagerProvider = ({ children }: ViewManagerProviderProps) => {
 
 
     const value: ViewManagerProps = {
-        selectedId: selectedId,
+        selectedId,
         views,
         getCurrentViewState,
         getViewState,

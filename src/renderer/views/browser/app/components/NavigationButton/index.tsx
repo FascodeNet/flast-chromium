@@ -1,7 +1,9 @@
 import clsx from 'clsx';
 import React from 'react';
-import { Home, Reload, Remove } from '../../../../../components/Icons';
+import { isURL } from '../../../../../../utils/url';
+import { Home, Reload } from '../../../../../components/Icons';
 import { ArrowLeft, ArrowRight } from '../../../../../components/Icons/arrow';
+import { Remove } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
@@ -21,8 +23,12 @@ export const BackButton = () => {
     };
 
     return (
-        <StyledButton className={clsx('navigation-button', 'back')} appearanceStyle={style}
-                      onClick={handleButtonClick} disabled={!canGoBack}>
+        <StyledButton
+            onClick={handleButtonClick}
+            disabled={!canGoBack}
+            appearanceStyle={style}
+            className={clsx('navigation-button', 'back')}
+        >
             <ArrowLeft />
         </StyledButton>
     );
@@ -42,8 +48,12 @@ export const ForwardButton = () => {
     };
 
     return (
-        <StyledButton className={clsx('navigation-button', 'forward')} appearanceStyle={style}
-                      onClick={handleButtonClick} disabled={!canGoForward}>
+        <StyledButton
+            onClick={handleButtonClick}
+            disabled={!canGoForward}
+            appearanceStyle={style}
+            className={clsx('navigation-button', 'forward')}
+        >
             <ArrowRight />
         </StyledButton>
     );
@@ -63,8 +73,11 @@ export const ReloadButton = () => {
     };
 
     return (
-        <StyledButton className={clsx('navigation-button', !isLoading ? 'reload' : 'stop')} appearanceStyle={style}
-                      onClick={handleButtonClick}>
+        <StyledButton
+            onClick={handleButtonClick}
+            appearanceStyle={style}
+            className={clsx('navigation-button', !isLoading ? 'reload' : 'stop')}
+        >
             {!isLoading ? <Reload /> : <Remove />}
         </StyledButton>
     );
@@ -75,16 +88,18 @@ export const HomeButton = () => {
 
     const { loadView } = useElectronAPI();
 
-    const { config } = useUserConfigContext();
-    const style = config.appearance.style;
+    const { config: { appearance: { style }, pages: { home: { mode, url } } } } = useUserConfigContext();
 
     const handleButtonClick = () => {
-        loadView(selectedId, 'https://www.google.com');
+        loadView(selectedId, mode === 'custom' && url && isURL(url) ? url : 'https://www.google.com');
     };
 
     return (
-        <StyledButton className={clsx('navigation-button', 'home')} appearanceStyle={style}
-                      onClick={handleButtonClick}>
+        <StyledButton
+            onClick={handleButtonClick}
+            appearanceStyle={style}
+            className={clsx('navigation-button', 'home')}
+        >
             <Home />
         </StyledButton>
     );

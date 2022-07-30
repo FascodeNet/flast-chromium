@@ -68,8 +68,8 @@ interface StyledItemIconProps {
 
 export const StyledItemIcon = styled.div<StyledItemIconProps>`
   width: 20px;
-  height: 20px;
   min-width: 20px;
+  height: 20px;
   min-height: 20px;
   display: flex;
   place-content: center;

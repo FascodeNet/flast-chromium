@@ -5,7 +5,7 @@ import { IExtensions, IUser } from '../../interfaces/user';
 
 export class NormalExtensions implements IExtensions {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
     public readonly path: string;
 

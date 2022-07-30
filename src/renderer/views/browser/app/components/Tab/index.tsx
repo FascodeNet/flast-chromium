@@ -6,14 +6,16 @@ import { IExtension } from '../../../../../../interfaces/extension';
 import { ViewState } from '../../../../../../interfaces/view';
 import {
     APPLICATION_PROTOCOL,
+    APPLICATION_WEB_APPLICATIONS,
     APPLICATION_WEB_BOOKMARKS,
     APPLICATION_WEB_DOWNLOADS,
     APPLICATION_WEB_EXTENSIONS,
-    APPLICATION_WEB_HISTORIES,
+    APPLICATION_WEB_HISTORY,
     APPLICATION_WEB_SETTINGS,
     EXTENSION_PROTOCOL
 } from '../../../../../../utils';
-import { Bookmarks, Download, Extension, History, Remove, Settings } from '../../../../../components/Icons';
+import { Applications, Bookmarks, Download, Extension, History, Settings } from '../../../../../components/Icons';
+import { Remove } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
@@ -40,10 +42,12 @@ const TabIcon = ({ url: urlString, favicon }: TabIconProps) => {
             switch (hostname) {
                 case APPLICATION_WEB_BOOKMARKS:
                     return (<Bookmarks sx={sxTheme} />);
-                case APPLICATION_WEB_HISTORIES:
+                case APPLICATION_WEB_HISTORY:
                     return (<History sx={sxTheme} />);
                 case APPLICATION_WEB_DOWNLOADS:
                     return (<Download sx={sxTheme} />);
+                case APPLICATION_WEB_APPLICATIONS:
+                    return (<Applications sx={sxTheme} />);
                 case APPLICATION_WEB_SETTINGS:
                     return (<Settings sx={sxTheme} />);
                 case APPLICATION_WEB_EXTENSIONS:
@@ -96,7 +100,7 @@ export const HorizontalTab = (
     const { selectView, removeView, showTabMenu } = useElectronAPI();
 
     const { config } = useUserConfigContext();
-    const style = config.appearance.style;
+    const { style, tab_colored: isTabColored } = config.appearance;
 
     const handleClick = () => {
         if (id === selectedId) return;
@@ -109,21 +113,26 @@ export const HorizontalTab = (
 
     return (
         <StyledHorizontalTab
+            onClick={handleClick}
+            onContextMenu={handleContextMenu}
+            onMouseDown={(e) => onMouseDown(e, id)}
+            onMouseEnter={(e) => onMouseEnter(e, id)}
+            onMouseLeave={(e) => onMouseLeave(e, id)}
+            active={id === selectedId}
+            pinned={isPinned}
+            themeColor={isTabColored ? color : undefined}
+            tabIndex={0}
+            appearanceStyle={style}
             className={
                 clsx(
                     'horizontal-tab-item',
                     id === selectedId && 'active',
                     isPinned && 'pinned',
-                    color && 'colored',
+                    isTabColored && color && 'colored',
                     `horizontal-tab-item-${id}`
                 )
             }
-            style={{ zIndex: isDragging ? 2 : 'unset' }} appearanceStyle={style}
-            active={id === selectedId} pinned={isPinned} themeColor={color} tabIndex={0}
-            onClick={handleClick} onContextMenu={handleContextMenu}
-            onMouseDown={(e) => onMouseDown(e, id)}
-            onMouseEnter={(e) => onMouseEnter(e, id)}
-            onMouseLeave={(e) => onMouseLeave(e, id)}
+            style={{ zIndex: isDragging ? 2 : 'unset' }}
         >
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
             {!isPinned && <Fragment>
@@ -150,9 +159,11 @@ export const VerticalTab = (
         extended
     }: VerticalTabProps
 ) => {
+    const { selectedId } = useViewManagerContext();
     const { selectView, removeView, showTabMenu } = useElectronAPI();
 
-    const { selectedId } = useViewManagerContext();
+    const { config } = useUserConfigContext();
+    const { tab_colored: isTabColored } = config.appearance;
 
     const handleClick = () => {
         if (id === selectedId) return;
@@ -165,21 +176,26 @@ export const VerticalTab = (
 
     return (
         <StyledVerticalTab
+            onClick={handleClick}
+            onContextMenu={handleContextMenu}
+            onMouseDown={(e) => onMouseDown(e, id)}
+            onMouseEnter={(e) => onMouseEnter(e, id)}
+            onMouseLeave={(e) => onMouseLeave(e, id)}
+            active={id === selectedId}
+            pinned={isPinned}
+            themeColor={isTabColored ? color : undefined}
+            extended={extended}
+            tabIndex={0}
             className={
                 clsx(
                     'vertical-tab-item',
                     id === selectedId && 'active',
                     isPinned && 'pinned',
-                    color && 'colored',
+                    isTabColored && color && 'colored',
                     `vertical-tab-item-${id}`
                 )
             }
             style={{ zIndex: isDragging ? 2 : 'unset' }}
-            active={id === selectedId} pinned={isPinned} themeColor={color} tabIndex={0} extended={extended}
-            onClick={handleClick} onContextMenu={handleContextMenu}
-            onMouseDown={(e) => onMouseDown(e, id)}
-            onMouseEnter={(e) => onMouseEnter(e, id)}
-            onMouseLeave={(e) => onMouseLeave(e, id)}
         >
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
             {extended && <StyledTabTitle className="vertical-tab-item-title">{title}</StyledTabTitle>}

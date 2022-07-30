@@ -9,7 +9,7 @@ import { IS_DEVELOPMENT } from '../../utils/process';
 import { showBookmarksDialog } from '../dialogs/bookmarks';
 import { showDownloadsDialog } from '../dialogs/downloads';
 import { showExtensionsDialog } from '../dialogs/extensions';
-import { showHistoriesDialog } from '../dialogs/histories';
+import { showHistoryDialog } from '../dialogs/history';
 import { showInformationDialog } from '../dialogs/information';
 import { showMenuDialog } from '../dialogs/menu';
 import { showSearchDialog } from '../dialogs/search';
@@ -160,7 +160,7 @@ export class AppWindow {
             icon: getIcon('home'),
             click: () => {
                 if (!view) return;
-                view.load('https://www.google.com');
+                view.load(this.user.settings.config.pages.home.url ?? 'https://www.google.com');
             }
         });
 
@@ -263,6 +263,7 @@ export class AppWindow {
 
     public async setStyle() {
         this.webContents.send('theme-update');
+        this.webContents.send(`window-resize-${this.id}`);
     }
 
     public close() {
@@ -303,6 +304,8 @@ export class AppWindow {
         });
 
         this.browserWindow.on('resize', () => {
+            this.webContents.send(`window-resize-${this.id}`);
+
             const view = this.viewManager.get();
             if (!view) return;
             view.setDialogs();
@@ -313,6 +316,7 @@ export class AppWindow {
             this.setApplicationMenu();
             this.setTouchBar();
             this.setViewBounds();
+            this.webContents.send(`window-resize-${this.id}`);
         });
         this.browserWindow.on('leave-full-screen', () => {
             console.log('leave-full-screen');
@@ -320,21 +324,24 @@ export class AppWindow {
             this.setApplicationMenu();
             this.setTouchBar();
             this.setViewBounds();
+            this.webContents.send(`window-resize-${this.id}`);
         });
         this.browserWindow.on('enter-html-full-screen', () => {
             console.log('enter-html-full-screen');
             this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { html: true });
             this.setViewBounds();
+            this.webContents.send(`window-resize-${this.id}`);
         });
         this.browserWindow.on('leave-html-full-screen', () => {
             console.log('leave-html-full-screen');
             this._fullScreenState = deepmerge<WindowFullScreenState>(this._fullScreenState, { html: false });
             this.setViewBounds();
+            this.webContents.send(`window-resize-${this.id}`);
         });
 
 
         this.browserWindow.webContents.on('did-finish-load', async () => {
-            this.setStyle();
+            await this.setStyle();
         });
     }
 
@@ -418,8 +425,8 @@ export class AppWindow {
             showBookmarksDialog(this.user, this.browserWindow, x, y);
         });
 
-        ipcMain.handle(`window-histories-${this.id}`, (e, x: number, y: number) => {
-            showHistoriesDialog(this.user, this.browserWindow, x, y);
+        ipcMain.handle(`window-history-${this.id}`, (e, x: number, y: number) => {
+            showHistoryDialog(this.user, this.browserWindow, x, y);
         });
 
         ipcMain.handle(`window-downloads-${this.id}`, (e, x: number, y: number) => {

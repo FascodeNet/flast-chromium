@@ -1,6 +1,6 @@
 import { PublicOutlined } from '@mui/icons-material';
 import React, { ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
-import { IBookmark } from '../../../../../../interfaces/user';
+import { BookmarkData } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { prefixHttp } from '../../../../../../utils/url';
 import { Search, Share, Star, StarFilled } from '../../../../../components/Icons';
@@ -31,7 +31,7 @@ export const SearchPanel = ({ type, value, onChange, onKeyDown }: Props) => {
 
     const [state, setState] = useState<ViewState>(getCurrentViewState());
     const [icon, setIcon] = useState<string | undefined>(undefined);
-    const [bookmark, setBookmark] = useState<IBookmark | undefined>(undefined);
+    const [bookmark, setBookmark] = useState<BookmarkData | undefined>(undefined);
 
     const navigationState = getCurrentViewState();
     useEffect(() => {

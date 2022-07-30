@@ -15,6 +15,6 @@ export const SectionContent = styled('div')({
 
 export const SectionTitle = styled(
     (props: TypographyProps) => <Typography variant="h5" {...props} />
-)<TypographyProps>(({ theme }) => ({
-    fontWeight: 100
-}));
+)<TypographyProps>({
+    userSelect: 'none'
+});

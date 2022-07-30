@@ -22,7 +22,7 @@ export type AppearanceStyle = 'top_single' | 'top_double' | 'bottom_single' | 'b
 export type AppearanceSidebarState =
     'tab_container'
     | 'bookmarks'
-    | 'histories'
+    | 'history'
     | 'downloads'
     | 'applications'
     | 'extensions';
@@ -39,9 +39,18 @@ export interface UserConfig {
         name: string;
         avatar?: string;
     };
+    privacy_security: {
+        save_history: boolean;
+        suggests: {
+            search: boolean;
+            bookmarks: boolean;
+            history: boolean;
+        }
+    };
     appearance: {
         mode: AppearanceMode;
         theme: AppearanceTheme;
+        tab_colored: boolean;
         style: AppearanceStyle;
         fullscreen_showing_toolbar: boolean;
         extended_sidebar: boolean;
@@ -52,7 +61,7 @@ export interface UserConfig {
         buttons: {
             home: boolean;
             bookmarks: boolean;
-            histories: boolean;
+            history: boolean;
             downloads: boolean;
             applications: boolean;
             extensions: boolean;
@@ -85,9 +94,18 @@ export const DefaultUserConfig: UserConfig = {
         name: 'New user',
         avatar: undefined
     },
+    privacy_security: {
+        save_history: true,
+        suggests: {
+            search: true,
+            bookmarks: true,
+            history: true
+        }
+    },
     appearance: {
         mode: 'system',
         theme: undefined,
+        tab_colored: true,
         style: 'top_single',
         fullscreen_showing_toolbar: true,
         extended_sidebar: false,
@@ -98,7 +116,7 @@ export const DefaultUserConfig: UserConfig = {
         buttons: {
             home: false,
             bookmarks: false,
-            histories: false,
+            history: false,
             downloads: false,
             applications: false,
             extensions: false
@@ -132,9 +150,7 @@ interface IData {
     createdAt?: Date;
 }
 
-export type BookmarkType = 'folder' | 'item';
-
-export interface IBookmark extends IData {
+export interface BookmarkData extends IData {
     title?: string;
     url?: string;
     favicon?: string;
@@ -142,8 +158,16 @@ export interface IBookmark extends IData {
     parent?: string;
 }
 
-export interface IHistory extends IData {
+export interface HistoryData extends IData {
     title?: string;
     url?: string;
     favicon?: string;
 }
+
+export interface HistoryGroup {
+    date: Date;
+    formatDate: string;
+    history: Required<HistoryData>[];
+}
+
+export type OmitData<T extends IData> = Omit<T, '_id' | 'updatedAt' | 'createdAt'>;

@@ -40,6 +40,22 @@ export const StyledPanelTitle = styled.h3`
   font-weight: 400;
 `;
 
+export const StyledPanelButton = styled.button`
+  aspect-ratio: 1;
+  height: 100%;
+  max-height: 36px;
+  margin: 0 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .2s ease-out;
+  outline-width: 2px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: ${borderRadius.toUnit()};
+  user-select: none;
+`;
+
 export const StyledPanelContainer = styled.div`
   width: 100%;
   height: 100%;

@@ -18,6 +18,19 @@ interface CertificateTranslate {
 }
 
 export interface Language {
+    common: {
+        success: string;
+        warning: string;
+        error: string;
+        information: string;
+        yes: string;
+        no: string;
+        cancel: string;
+        add: string;
+        remove: string;
+        delete: string;
+        save: string;
+    };
     tasks: {
         addTab: string;
         addWindow: string;
@@ -30,7 +43,7 @@ export interface Language {
             openIncognitoWindow: string;
 
             bookmarks: string;
-            histories: string;
+            history: string;
             downloads: string;
             applications: string;
             extensions: string;
@@ -105,7 +118,7 @@ export interface Language {
                 reloadIgnoringCache: string;
                 home: string;
                 bookmarks: string;
-                histories: string;
+                history: string;
                 downloads: string;
                 applications: string;
                 extensions: string;
@@ -242,7 +255,21 @@ export interface Language {
         };
     };
     pages: {
-        histories: {
+        bookmarks: {
+            title: string;
+
+            all: string;
+
+            addBookmark: string;
+            addFolder: string;
+            delete: string;
+            edit: string;
+            rename: string;
+            move: string;
+
+            notFound: string;
+        };
+        history: {
             title: string;
 
             all: string;
@@ -253,9 +280,31 @@ export interface Language {
 
             notFound: string;
         };
+        downloads: {
+            title: string;
+
+            notFound: string;
+        };
         settings: {
             title: string;
 
+            privacyAndSecurity: {
+                title: string;
+
+                history: {
+                    title: string;
+
+                    save: string;
+                    delete: string;
+                }
+                suggests: {
+                    title: string;
+
+                    search: string;
+                    bookmarks: string;
+                    history: string;
+                }
+            };
             appearance: {
                 title: string;
 
@@ -265,6 +314,8 @@ export interface Language {
                     system: string;
                     light: string;
                     dark: string;
+
+                    tabColored: string;
                 }
                 theme: {
                     title: string;
@@ -287,7 +338,7 @@ export interface Language {
 
                     home: string;
                     bookmarks: string;
-                    histories: string;
+                    history: string;
                     downloads: string;
                     applications: string;
                     extensions: string;

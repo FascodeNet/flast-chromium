@@ -1,20 +1,21 @@
+import Datastore from '@seald-io/nedb';
 import { app } from 'electron';
-import Datastore from 'nedb';
 import { join } from 'path';
-import { IBookmark } from '../../../interfaces/user';
+import { BookmarkData, OmitData } from '../../../interfaces/user';
 import { IBookmarks, IUser } from '../../interfaces/user';
 import { NormalUser } from '../normal';
 
 export class IncognitoBookmarks implements IBookmarks {
 
-    readonly user: IUser;
+    public readonly user: IUser;
 
-    private _datastore: Datastore;
+    private readonly _datastore: Datastore;
+    private _bookmarks: BookmarkData[] = [];
 
     public constructor(user: IUser, fromUser: NormalUser) {
         this.user = user;
 
-        this._datastore = new Datastore<IBookmark>({
+        this._datastore = new Datastore<BookmarkData>({
             filename: join(app.getPath('userData'), 'users', fromUser.id, 'bookmarks.db'),
             autoload: true,
             timestampData: true
@@ -25,8 +26,6 @@ export class IncognitoBookmarks implements IBookmarks {
             this._bookmarks = docs;
         });
     }
-
-    private _bookmarks: IBookmark[] = [];
 
     public get datastore() {
         return this._datastore;
@@ -40,13 +39,34 @@ export class IncognitoBookmarks implements IBookmarks {
         return this._bookmarks.filter((data) => data.isFolder);
     }
 
-    public add(data: IBookmark) {
-        this._bookmarks.push(data);
-        this._datastore.insert(data);
+    public async add(data: OmitData<BookmarkData>) {
+        const doc: BookmarkData = await this._datastore.insertAsync(data);
+        this._bookmarks.push(doc);
+        return doc;
     }
 
-    public remove(id: string) {
+    public async remove(id: string) {
         this._bookmarks = this._bookmarks.filter((data) => data._id !== id);
-        this._datastore.remove({ _id: id });
+        return await this._datastore.removeAsync({ _id: id }, {}) > 0;
+    }
+
+    public async update(id: string, data: OmitData<BookmarkData>) {
+        const doc: BookmarkData = (await this._datastore.updateAsync(
+            { _id: id },
+            { $set: data },
+            {
+                returnUpdatedDocs: true
+            }
+        )).affectedDocuments;
+
+        const bookmarks = [...this._bookmarks];
+        const index = bookmarks.findIndex((bookmark) => bookmark._id === id);
+
+        if (index < 0) return Promise.reject();
+
+        bookmarks[index] = doc;
+        this._bookmarks = bookmarks;
+
+        return doc;
     }
 }

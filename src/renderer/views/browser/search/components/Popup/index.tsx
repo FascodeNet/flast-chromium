@@ -45,8 +45,8 @@ export const Popup = () => {
         if (inputValue.length > 0) {
             const searchResult = await search(inputValue);
             const bookmarks = split(searchResult.bookmarks, 3);
-            const histories = split(searchResult.histories, 3);
-            const userData = filter([...bookmarks, ...histories]);
+            const history = split(searchResult.history, 3);
+            const userData = filter([...bookmarks, ...history]);
             const suggests = split(searchResult.suggests, 10 - userData.length);
             setResults([...suggests, ...userData]);
         } else {

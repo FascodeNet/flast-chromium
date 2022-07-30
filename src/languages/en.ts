@@ -2,6 +2,19 @@ import { APPLICATION_NAME } from '../utils';
 import { Language } from './language';
 
 export const En: Language = {
+    common: {
+        success: 'Success',
+        warning: 'Warning',
+        error: 'Error',
+        information: 'Information',
+        yes: 'Yes',
+        no: 'No',
+        cancel: 'Cancel',
+        add: 'Add',
+        remove: 'Remove',
+        delete: 'Delete',
+        save: 'Save'
+    },
     tasks: {
         addTab: 'New tab',
         addWindow: 'New window',
@@ -14,7 +27,7 @@ export const En: Language = {
             openIncognitoWindow: 'Open Private window',
 
             bookmarks: 'Bookmarks',
-            histories: 'Histories',
+            history: 'History',
             downloads: 'Downloads',
             applications: 'Applications',
             extensions: 'Extensions',
@@ -88,7 +101,7 @@ export const En: Language = {
                 reloadIgnoringCache: 'Reload (Clear Cache)',
                 home: 'Home page',
                 bookmarks: 'Bookmarks',
-                histories: 'Histories',
+                history: 'History',
                 downloads: 'Downloads',
                 applications: 'Applications',
                 extensions: 'Extensions'
@@ -242,8 +255,22 @@ export const En: Language = {
         }
     },
     pages: {
-        histories: {
-            title: 'Histories',
+        bookmarks: {
+            title: 'Bookmarks',
+
+            all: 'All bookmarks',
+
+            addBookmark: 'Add bookmark',
+            addFolder: 'Add folder',
+            delete: 'Remove',
+            edit: 'Edit',
+            rename: 'Rename',
+            move: 'Move',
+
+            notFound: 'There are no bookmarks registered for this location.'
+        },
+        history: {
+            title: 'History',
 
             all: 'All',
             today: 'Today',
@@ -253,18 +280,42 @@ export const En: Language = {
 
             notFound: 'No pages were viewed during this period.'
         },
+        downloads: {
+            title: 'Downloads',
+
+            notFound: 'There are no downloaded items.'
+        },
         settings: {
             title: 'Settings',
 
+            privacyAndSecurity: {
+                title: 'Privacy & Security',
+
+                history: {
+                    title: 'History',
+
+                    save: 'Save history',
+                    delete: 'Delete browsing history'
+                },
+                suggests: {
+                    title: 'Suggests',
+
+                    search: 'Suggest from Google Search',
+                    bookmarks: 'Suggest from bookmarks',
+                    history: 'Suggest from history'
+                }
+            },
             appearance: {
                 title: 'Appearance',
 
                 mode: {
-                    title: 'Overall Theme',
+                    title: 'Theme & Color Scheme',
 
                     system: 'System',
                     light: 'Light',
-                    dark: 'Dark'
+                    dark: 'Dark',
+
+                    tabColored: 'Set the tabs to the theme colors set for the site'
                 },
                 theme: {
                     title: 'Theme',
@@ -287,7 +338,7 @@ export const En: Language = {
 
                     home: 'Home',
                     bookmarks: 'Bookmarks',
-                    histories: 'Histories',
+                    history: 'History',
                     downloads: 'Downloads',
                     applications: 'Applications',
                     extensions: 'Extensions'

@@ -5,7 +5,7 @@ import { NormalUser } from '../normal';
 import { IncognitoBookmarks } from './bookmarks';
 import { IncognitoDownloads } from './downloads';
 import { IncognitoExtensions } from './extensions';
-import { IncognitoHistories } from './histories';
+import { IncognitoHistory } from './history';
 import { IncognitoSession } from './session';
 import { IncognitoSettings } from './settings';
 
@@ -17,14 +17,14 @@ export class IncognitoUser implements IUser {
 
     public readonly type: UserType = 'incognito';
 
-    private _extensions: IncognitoExtensions;
-    private _session: IncognitoSession;
+    private readonly _extensions: IncognitoExtensions;
+    private readonly _session: IncognitoSession;
 
-    private _settings: IncognitoSettings;
+    private readonly _settings: IncognitoSettings;
 
-    private _bookmarks: IncognitoBookmarks;
-    private _histories: IncognitoHistories;
-    private _downloads: IncognitoDownloads;
+    private readonly _bookmarks: IncognitoBookmarks;
+    private readonly _history: IncognitoHistory;
+    private readonly _downloads: IncognitoDownloads;
 
     public constructor(fromUser: NormalUser) {
         this.id = `incognito_${nanoid()}`;
@@ -37,7 +37,7 @@ export class IncognitoUser implements IUser {
         this._settings = new IncognitoSettings(this, fromUser);
 
         this._bookmarks = new IncognitoBookmarks(this, fromUser);
-        this._histories = new IncognitoHistories(this, fromUser);
+        this._history = new IncognitoHistory(this, fromUser);
         this._downloads = new IncognitoDownloads(this, fromUser);
     }
 
@@ -69,8 +69,8 @@ export class IncognitoUser implements IUser {
         return this._bookmarks;
     }
 
-    public get histories() {
-        return this._histories;
+    public get history() {
+        return this._history;
     }
 
     public get downloads() {

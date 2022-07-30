@@ -10,7 +10,7 @@ export const Page = styled(Box)(({ theme }) => ({
     color: theme.palette.text.primary,
     background: theme.palette.background.default,
     [theme.breakpoints.up('md')]: {
-        gridTemplateColumns: '56px 300px 1fr',
+        gridTemplateColumns: '56px 325px 1fr',
         gridTemplateAreas: '\'global-navigation-drawer navigation-drawer content\''
     }
 }));
@@ -32,7 +32,8 @@ export const PageContent = styled(Box)(({ theme }) => ({
 export const PageTitle = styled(
     (props: TypographyProps) => <Typography variant="h4" {...props} />
 )<TypographyProps>(({ theme }) => ({
-    fontWeight: 100
+    marginBottom: theme.spacing(.5),
+    userSelect: 'none'
 }));
 
 export * from './components/section';

@@ -6,7 +6,7 @@ import { IUser } from '../../interfaces/user';
 import { NormalBookmarks } from './bookmarks';
 import { NormalDownloads } from './downloads';
 import { NormalExtensions } from './extensions';
-import { NormalHistories } from './histories';
+import { NormalHistory } from './history';
 import { NormalSession } from './session';
 import { NormalSettings } from './settings';
 
@@ -18,14 +18,14 @@ export class NormalUser implements IUser {
 
     private readonly path: string;
 
-    private _extensions: NormalExtensions;
-    private _session: NormalSession;
+    private readonly _extensions: NormalExtensions;
+    private readonly _session: NormalSession;
 
-    private _settings: NormalSettings;
+    private readonly _settings: NormalSettings;
 
-    private _bookmarks: NormalBookmarks;
-    private _histories: NormalHistories;
-    private _downloads: NormalDownloads;
+    private readonly _bookmarks: NormalBookmarks;
+    private readonly _history: NormalHistory;
+    private readonly _downloads: NormalDownloads;
 
     public constructor(id: string) {
         this.id = id;
@@ -39,7 +39,7 @@ export class NormalUser implements IUser {
         this._settings = new NormalSettings(this);
 
         this._bookmarks = new NormalBookmarks(this);
-        this._histories = new NormalHistories(this);
+        this._history = new NormalHistory(this);
         this._downloads = new NormalDownloads(this);
     }
 
@@ -71,8 +71,8 @@ export class NormalUser implements IUser {
         return this._bookmarks;
     }
 
-    public get histories() {
-        return this._histories;
+    public get history() {
+        return this._history;
     }
 
     public get downloads() {

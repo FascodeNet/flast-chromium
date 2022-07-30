@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { isSingle } from '../../../../../../utils/design';
 import { borderRadius } from '../../../../../themes';
-import { TAB_MAX_WIDTH, TAB_PINNED_WIDTH } from '../../../../../utils/tab';
+import { TAB_MAX_WIDTH } from '../../../../../utils/tab';
 
 interface StyledTabIconProps {
   favicon?: string;
@@ -25,8 +25,8 @@ export const StyledTabProgress = styled.div`
 
 export const StyledTabIcon = styled.div<StyledTabIconProps>`
   width: 16px;
-  height: 16px;
   min-width: 16px;
+  height: 16px;
   min-height: 16px;
   line-height: 16px;
 
@@ -58,7 +58,6 @@ export const StyledTabCloseButton = styled.button`
   outline-width: 2px;
   background-color: transparent;
   border: solid 1px transparent;
-  border-radius: 50%;
 
   & svg {
     width: 12px;
@@ -77,17 +76,11 @@ interface StyledHorizontalTabProps extends StyledTabProps {
 }
 
 export const StyledHorizontalTab = styled.div<StyledHorizontalTabProps>`
-    /*
-  width: clamp(72px, 100%, 250px);
-  min-width: ${TAB_PINNED_WIDTH}px;
-  */
   max-width: ${TAB_MAX_WIDTH}px;
   height: 100%;
   padding: 0 5px 0 7px;
-  /*
   position: absolute;
   left: 0;
-  */
   display: flex;
   align-self: center;
   align-content: center;
@@ -113,9 +106,10 @@ export const StyledHorizontalTab = styled.div<StyledHorizontalTabProps>`
 
   & > ${StyledTabCloseButton} {
     display: flex;
+    border-radius: ${borderRadius.toUnit()};
   }
 
-  ${({ active = false, pinned = false, themeColor = undefined }) => {
+  ${({ active = false, pinned = false, themeColor }) => {
     const color = themeColor ? Color(themeColor).alpha(.3) : undefined;
 
     if (pinned) {
@@ -183,10 +177,6 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
   height: 34px;
   margin: 0;
   padding: ${({ extended }) => extended ? '3px 7px' : '3px'};
-  /*
-  position: absolute;
-  left: 0;
-  */
   display: flex;
   place-content: center;
   place-items: center;
@@ -219,9 +209,10 @@ export const StyledVerticalTab = styled.div<StyledVerticalTabProps>`
 
   & > ${StyledTabCloseButton} {
     display: ${({ extended }) => extended ? 'flex' : 'none'};
+    border-radius: 50%;
   }
 
-  ${({ active = false, pinned = false, themeColor = undefined, extended }) => {
+  ${({ active = false, pinned = false, themeColor, extended }) => {
     const color = themeColor ? Color(themeColor).alpha(.3) : undefined;
 
     if (pinned) {
