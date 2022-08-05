@@ -1,4 +1,5 @@
 import { app, clipboard, ContextMenuParams, dialog, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
+import { DefaultUserConfig } from '../../interfaces/user';
 import { getTranslate } from '../../languages/language';
 import { isURL, prefixHttp } from '../../utils/url';
 import { App, Main } from '../main';
@@ -54,7 +55,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
     ] : undefined;
 
     const getSelectionText = (replaceSpace: boolean) => selectionText.replace(/([\n\t])+/g, replaceSpace ? ' ' : '').trim();
-    const searchTemplateUrl = 'https://www.google.com/search?q=%s';
+    const defaultSearchEngine = window.user.settings.config.search.engines[window.user.settings.config.search.default_engine] ?? DefaultUserConfig.search.engines[0];
 
     const onDevToolClick = () => {
         (webContents.isDevToolsOpened() && webContents.devToolsWebContents) ? webContents.devToolsWebContents.focus() : webContents.openDevTools();
@@ -183,10 +184,10 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             click: () => webContents.copy()
         },
         {
-            label: languageSection.selection.textSearch.replace('%n', 'Google').replace('%t', getSelectionText(true)),
+            label: languageSection.selection.textSearch.replace('%n', defaultSearchEngine.name).replace('%t', getSelectionText(true)),
             icon: getMenuItemIconFromName('search'),
             visible: canCopy && !isURL(getSelectionText(true)),
-            click: () => window.viewManager.add(searchTemplateUrl.replace('%s', encodeURIComponent(getSelectionText(true))))
+            click: () => window.viewManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
         },
         {
             label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
@@ -215,10 +216,10 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
     const editableSearchOptions: (MenuItem | MenuItemConstructorOptions)[] = selectionText !== '' ? [
         { type: 'separator' },
         {
-            label: languageSection.selection.textSearch.replace('%n', 'Google').replace('%t', getSelectionText(true)),
+            label: languageSection.selection.textSearch.replace('%n', defaultSearchEngine.name).replace('%t', getSelectionText(true)),
             icon: getMenuItemIconFromName('search'),
             visible: canCopy && !isURL(getSelectionText(true)),
-            click: () => window.viewManager.add(searchTemplateUrl.replace('%s', encodeURIComponent(getSelectionText(true))))
+            click: () => window.viewManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
         },
         {
             label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
@@ -306,10 +307,10 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         const mediaOptions: (MenuItem | MenuItemConstructorOptions)[] = mediaType === 'audio' || mediaType === 'video' || webContents.isCurrentlyAudible() ? [
             { type: 'separator' },
             {
-                label: view.isMuted ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
+                label: view.muted ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
                 icon: getMenuItemIconFromName(`speaker${webContents.audioMuted ? '' : '_muted'}`),
                 accelerator: Shortcuts.TAB_MUTE,
-                click: () => view.setMuted(!view.isMuted)
+                click: () => view.muted = !view.muted
             },
             {
                 label: languageSection.media.pictureInPicture,
@@ -434,16 +435,16 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 click: () => viewManager.add(view.url)
             },
             {
-                label: !view.isPinned ? languageSection.pinTab : languageSection.unpinTab,
-                icon: getMenuItemIconFromName(!view.isPinned ? 'pin' : 'unpin'),
+                label: !view.pinned ? languageSection.pinTab : languageSection.unpinTab,
+                icon: getMenuItemIconFromName(!view.pinned ? 'pin' : 'unpin'),
                 accelerator: Shortcuts.TAB_PIN,
-                click: () => view.setPinned(!view.isPinned)
+                click: () => view.pinned = !view.pinned
             },
             {
-                label: !view.isMuted ? languageSection.muteTab : languageSection.unmuteTab,
-                icon: getMenuItemIconFromName(`speaker${view.isMuted ? '' : '_muted'}`),
+                label: !view.muted ? languageSection.muteTab : languageSection.unmuteTab,
+                icon: getMenuItemIconFromName(`speaker${view.muted ? '' : '_muted'}`),
                 accelerator: Shortcuts.TAB_MUTE,
-                click: () => view.setMuted(!view.isMuted)
+                click: () => view.muted = !view.muted
             },
             { type: 'separator' },
             {

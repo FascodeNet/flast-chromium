@@ -1,9 +1,9 @@
 import Datastore from '@seald-io/nedb';
 import { format } from 'date-fns';
-import { app, ipcMain } from 'electron';
-import { join } from 'path';
+import { ipcMain } from 'electron';
 import { HistoryData, HistoryGroup, OmitData } from '../../../interfaces/user';
 import { APPLICATION_PROTOCOL } from '../../../utils';
+import { getUserDataPath } from '../../../utils/path';
 import { IHistory, IUser } from '../../interfaces/user';
 
 export class NormalHistory implements IHistory {
@@ -17,7 +17,7 @@ export class NormalHistory implements IHistory {
         this.user = user;
 
         this._datastore = new Datastore<HistoryData>({
-            filename: join(app.getPath('userData'), 'users', user.id, 'history.db'),
+            filename: getUserDataPath(user.id, 'history.db'),
             autoload: true,
             timestampData: true
         });

@@ -1,6 +1,5 @@
 import Datastore from '@seald-io/nedb';
-import { app } from 'electron';
-import { join } from 'path';
+import { getUserDataPath } from '../../../utils/path';
 import { IDownloads, IUser } from '../../interfaces/user';
 import { NormalUser } from '../normal';
 
@@ -14,7 +13,7 @@ export class IncognitoDownloads implements IDownloads {
         this.user = user;
 
         this._datastore = new Datastore({
-            filename: join(app.getPath('userData'), 'users', fromUser.id, 'downloads.db'),
+            filename: getUserDataPath(fromUser.id, 'downloads.db'),
             autoload: true,
             timestampData: true
         });

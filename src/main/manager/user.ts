@@ -1,10 +1,10 @@
-import { app, ipcMain } from 'electron';
+import { ipcMain } from 'electron';
 import { readFile, rmdir, stat, writeFile } from 'fs/promises';
 import { nanoid } from 'nanoid';
-import { join } from 'path';
 import { DefaultUserConfig, UserConfig } from '../../interfaces/user';
 import { getTranslate } from '../../languages/language';
 import { DeepPartial } from '../../utils';
+import { getSpecialPath, getUserDataPath } from '../../utils/path';
 import { GlobalConfig } from '../interfaces/config';
 import { IUser } from '../interfaces/user';
 import { App, Main } from '../main';
@@ -87,14 +87,14 @@ export class UserManager {
         if (!this._users.has(id))
             return false;
 
-        const userDataPath = join(app.getPath('userData'), 'users', id);
+        const path = getUserDataPath(id);
         try {
-            const userDataStat = await stat(userDataPath);
-            if (!userDataStat.isDirectory())
+            const stats = await stat(path);
+            if (!stats.isDirectory())
                 return false;
 
             this._users.delete(id);
-            await rmdir(userDataPath);
+            await rmdir(path);
             await UserManager.setConfig({ users: this.normalUsers.map((user) => user.id), lastUser: this.lastUserId });
             return true;
         } catch (e) {
@@ -130,12 +130,12 @@ export class UserManager {
 
 
     private static async getConfig(): Promise<GlobalConfig> {
-        const configDataPath = join(app.getPath('userData'), 'config.json');
+        const configDataPath = getSpecialPath('userData', 'config.json');
         return JSON.parse(await readFile(configDataPath, 'utf8'));
     }
 
     private static async setConfig(data: GlobalConfig) {
-        const configDataPath = join(app.getPath('userData'), 'config.json');
+        const configDataPath = getSpecialPath('userData', 'config.json');
         await writeFile(configDataPath, JSON.stringify(data));
     }
 

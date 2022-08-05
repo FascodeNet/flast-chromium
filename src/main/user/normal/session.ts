@@ -1,9 +1,9 @@
 import { app, Session as ElectronSession, session } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions';
 import { join } from 'path';
-import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../../utils';
 import { ISession, IUser } from '../../interfaces/user';
 import { Main } from '../../main';
+import { registerProtocols, setUserAgent, setWebRequest } from '../../utils/session';
 import { IncognitoUser } from '../incognito';
 import { NormalUser } from './index';
 
@@ -100,25 +100,9 @@ export class NormalSession implements ISession {
             }
         });
 
-        const userAgent = this._session.getUserAgent().replace(/\sElectron\/\S+/, '').replace(app.getName(), APPLICATION_NAME);
-        this._session.setUserAgent(userAgent);
-
-        this._session.protocol.registerFileProtocol(
-            APPLICATION_PROTOCOL,
-            (request, callback) => {
-                const { hostname, pathname } = new URL(request.url);
-
-                if (pathname === '/' || !pathname.match(/(.*)\.([A-z0-9])\w+/g)) {
-                    callback({
-                        path: join(__dirname, `${hostname}.html`)
-                    });
-                } else {
-                    callback({
-                        path: join(__dirname, pathname.substring(1))
-                    });
-                }
-            }
-        );
+        setUserAgent(this._session);
+        setWebRequest(this._session, this.user);
+        registerProtocols(this._session);
     }
 
     public get session() {

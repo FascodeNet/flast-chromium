@@ -1,6 +1,6 @@
-import { app, BrowserWindow } from 'electron';
-import { join } from 'path';
+import { BrowserWindow } from 'electron';
 import { DIALOG_EXTENSIONS_NAME } from '../../constants/dialog';
+import { getBuildPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
@@ -36,7 +36,7 @@ export const showExtensionsDialog = (user: IUser, browserWindow: BrowserWindow, 
             )
         );
 
-        dialog.webContents.loadFile(join(app.getAppPath(), 'build', 'browser', 'extensions.html'));
+        dialog.webContents.loadFile(getBuildPath('browser', 'extensions.html'));
         dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {

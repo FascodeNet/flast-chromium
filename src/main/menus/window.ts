@@ -13,6 +13,7 @@ import {
     APPLICATION_WEB_SETTINGS
 } from '../../utils';
 import { isHorizontal } from '../../utils/design';
+import { getIconsPath } from '../../utils/path';
 import { IS_MAC } from '../../utils/process';
 import { App, Main } from '../main';
 import { IncognitoUser } from '../user/incognito';
@@ -52,7 +53,7 @@ export const getWindowMenu = (window: AppWindow) => {
             message: APPLICATION_NAME,
             detail: `バージョン: ${app.getVersion()}\n© ${new Date().getFullYear()} ${author.name}. All rights reserved.`,
             buttons: [],
-            icon: nativeImage.createFromPath(`${app.getAppPath()}/static/icons/app/icon.png`)
+            icon: nativeImage.createFromPath(getIconsPath('app', 'icon.png'))
         });
     };
 
@@ -496,7 +497,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.NAVIGATION_HOME,
                 click: () => {
                     if (!view) return;
-                    view.load('https://www.google.com');
+                    view.load(window.user.settings.homeUrl);
                 }
             },
             { type: 'separator' },
@@ -634,21 +635,21 @@ export const getWindowMenu = (window: AppWindow) => {
                 }
             },
             {
-                label: !view || !view.isPinned ? languageSection.tab.pinTab : languageSection.tab.unpinTab,
-                icon: !IS_MAC ? getMenuItemIconFromName(!view || !view.isPinned ? 'pin' : 'unpin') : undefined,
+                label: !view || !view.pinned ? languageSection.tab.pinTab : languageSection.tab.unpinTab,
+                icon: !IS_MAC ? getMenuItemIconFromName(!view || !view.pinned ? 'pin' : 'unpin') : undefined,
                 accelerator: Shortcuts.TAB_PIN,
                 click: () => {
                     if (!view) return;
-                    view.setPinned(!view.isPinned);
+                    view.pinned = !view.pinned;
                 }
             },
             {
-                label: !view || !view.isMuted ? languageSection.tab.muteTab : languageSection.tab.unmuteTab,
-                icon: !IS_MAC ? getMenuItemIconFromName(`speaker${!view || view.isMuted ? '' : '_muted'}`) : undefined,
+                label: !view || !view.muted ? languageSection.tab.muteTab : languageSection.tab.unmuteTab,
+                icon: !IS_MAC ? getMenuItemIconFromName(`speaker${!view || view.muted ? '' : '_muted'}`) : undefined,
                 accelerator: Shortcuts.TAB_MUTE,
                 click: () => {
                     if (!view) return;
-                    view.setMuted(!view.isMuted);
+                    view.muted = !view.muted;
                 }
             },
             { type: 'separator' },
@@ -864,7 +865,7 @@ export const getWindowMenu = (window: AppWindow) => {
             { type: 'separator' },
             {
                 label: languageSection.help.about,
-                icon: !IS_MAC ? getMenuItemIcon(`${app.getAppPath()}/static/icons/app/icon.png`) : undefined,
+                icon: !IS_MAC ? getMenuItemIcon(getIconsPath('app', 'icon.png')) : undefined,
                 click: () => showAboutPanel()
             }
         ]

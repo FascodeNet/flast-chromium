@@ -1,6 +1,6 @@
-import { app, BrowserWindow } from 'electron';
-import { join } from 'path';
+import { BrowserWindow } from 'electron';
 import { DIALOG_MENU_NAME } from '../../constants/dialog';
+import { getBuildPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
@@ -36,7 +36,7 @@ export const showMenuDialog = (user: IUser, browserWindow: BrowserWindow, x: num
             )
         );
 
-        dialog.webContents.loadFile(join(app.getAppPath(), 'build', 'browser', 'menu.html'));
+        dialog.webContents.loadFile(getBuildPath('browser', 'menu.html'));
         dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {

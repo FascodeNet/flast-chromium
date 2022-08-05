@@ -25,7 +25,7 @@ export const StyledHistoryItem = styled.div`
   height: 30px;
   padding: 4px 7px;
   display: grid;
-  grid-template-columns: 20px 1fr 30px;
+  grid-template-columns: 20px 1fr 32px;
   align-items: center;
   flex-shrink: 0;
   gap: 4px;

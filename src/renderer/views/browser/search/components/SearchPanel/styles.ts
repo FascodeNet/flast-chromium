@@ -11,8 +11,7 @@ export const StyledPanel = styled.div<StyledProps>`
   height: 34px;
   margin: 0;
   padding: 4px 0 4px 12px;
-  display: grid;
-  grid-template-columns: 20px 1fr auto;
+  display: flex;
   align-items: center;
   gap: 12px;
   border-radius: ${borderRadius.toUnit()};
@@ -44,6 +43,13 @@ export const StyledImage = styled.img`
   max-width: 16px;
   height: 16px;
   max-height: 16px;
+`;
+
+export const StyledLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
 `;
 
 export const StyledInput = styled.input`

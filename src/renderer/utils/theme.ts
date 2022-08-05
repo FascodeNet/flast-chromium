@@ -1,8 +1,8 @@
-import { app, nativeTheme } from '@electron/remote';
+import { nativeTheme } from '@electron/remote';
 import { ipcRenderer } from 'electron';
-import { join } from 'path';
 import { useEffect, useState } from 'react';
 import { AppearanceInternalTheme, AppearanceMode, AppearanceTheme } from '../../interfaces/user';
+import { getStylesPath, getUserDataPath } from '../../utils/path';
 import { useUserConfigContext } from '../contexts/config';
 
 const isInternalTheme = (theme: AppearanceTheme): theme is AppearanceInternalTheme => {
@@ -20,7 +20,7 @@ interface ThemeValue<T> {
 }
 
 export const useTheme = (): Theme => {
-    const { type, config } = useUserConfigContext();
+    const { userId, type, config } = useUserConfigContext();
 
     const [mode, setMode] = useState<AppearanceMode>(config.appearance.mode);
     const [theme, setTheme] = useState<AppearanceTheme>(config.appearance.theme);
@@ -36,27 +36,8 @@ export const useTheme = (): Theme => {
         };
     }, [config]);
 
-    const modePath = type === 'incognito' ? join(
-        app.getAppPath(),
-        'static',
-        'styles',
-        'incognito.css'
-    ) : join(
-        app.getAppPath(),
-        'static',
-        'styles',
-        `${nativeTheme.shouldUseDarkColors ? 'dark' : 'light'}.css`
-    );
-
-    const themePath = isInternalTheme(theme) ? join(
-        app.getAppPath(),
-        'static',
-        'styles',
-        `${theme}.css`
-    ) : join(
-        app.getPath('userData'),
-        'theme.css'
-    );
+    const modePath = getStylesPath(type !== 'incognito' ? `${nativeTheme.shouldUseDarkColors ? 'dark' : 'light'}.css` : 'incognito.css');
+    const themePath = isInternalTheme(theme) ? getStylesPath(`${theme}.css`) : getUserDataPath(userId, 'theme.css');
 
     return {
         mode: {

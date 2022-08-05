@@ -2,7 +2,6 @@ import { RequestState } from '../main/utils/request';
 
 export interface AppViewInitializerOptions {
     url: string;
-    incognito: boolean;
     active: boolean;
 }
 

@@ -96,7 +96,7 @@ export const useElectronAPI = (): ElectronAPI => ({
     getViews: () => ipcRenderer.invoke(`views-${windowId}`),
     getView: (viewId: number) => ipcRenderer.invoke(`view-${windowId}`, viewId),
     getCurrentView: () => ipcRenderer.invoke(`view-current-${windowId}`),
-    addView: (url: string = 'https://www.google.com', active: boolean = true) => ipcRenderer.invoke(`view-create-${windowId}`, url, active),
+    addView: (url: string, active: boolean = true) => ipcRenderer.invoke(`view-create-${windowId}`, url, active),
     removeView: (viewId: number) => ipcRenderer.invoke(`view-destroy-${windowId}`, viewId),
     selectView: (viewId: number) => ipcRenderer.invoke(`view-select-${windowId}`, viewId),
     moveTo: (viewId: number, toIndex: number) => ipcRenderer.invoke(`view-move-${windowId}`, viewId, toIndex),
@@ -118,7 +118,7 @@ export const useElectronAPI = (): ElectronAPI => ({
     showInformationPopup: (x: number, y: number) => ipcRenderer.invoke(`window-information-${windowId}`, x, y),
 
     showSearchPopup: (x: number, y: number, width: number) => ipcRenderer.invoke(`window-show_search-${windowId}`, x, y, width),
-    search: (keyword) => ipcRenderer.invoke(`window-search-${windowId}`, keyword),
+    search: (keyword: string) => ipcRenderer.invoke(`window-search-${windowId}`, keyword),
 
     showFindPopup: () => ipcRenderer.invoke(`window-find-${windowId}`),
     findInPage: (id: number, text: string, matchCase: boolean) => ipcRenderer.invoke(`view-find_in_page-${windowId}`, id, text, matchCase),
@@ -131,15 +131,15 @@ export const useElectronAPI = (): ElectronAPI => ({
         return ipcRenderer.invoke(`bookmarks-${userId}`);
     },
     addBookmark: async (userId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
-        if (!userId) return Promise.reject();
+        if (!userId || !data) return Promise.reject();
         return await ipcRenderer.invoke(`bookmark-add-${userId}`, data);
     },
     removeBookmark: async (userId: string, bookmarkId: string): Promise<boolean> => {
-        if (!userId) return Promise.resolve(false);
+        if (!userId || !bookmarkId) return Promise.resolve(false);
         return await ipcRenderer.invoke(`bookmark-remove-${userId}`, bookmarkId);
     },
     updateBookmark: async (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
-        if (!userId) return Promise.reject();
+        if (!userId || !bookmarkId || !data) return Promise.reject();
         return await ipcRenderer.invoke(`bookmark-update-${userId}`, bookmarkId, data);
     },
 
@@ -153,11 +153,11 @@ export const useElectronAPI = (): ElectronAPI => ({
         return ipcRenderer.invoke(`history-groups-${userId}`);
     },
     addHistory: async (userId: string, data: OmitData<HistoryData>): Promise<HistoryData> => {
-        if (!userId) return Promise.reject();
+        if (!userId || !data) return Promise.reject();
         return await ipcRenderer.invoke(`history-add-${userId}`, data);
     },
     removeHistory: async (userId: string, historyId: string): Promise<boolean> => {
-        if (!userId) return false;
+        if (!userId || !historyId) return false;
         return await ipcRenderer.invoke(`history-remove-${userId}`, historyId);
     },
 

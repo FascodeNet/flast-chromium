@@ -39,14 +39,14 @@ export const Panel = () => {
     const [state, setState] = useState<ViewState>(getCurrentViewState());
     const [url, setUrl] = useState<string>('');
 
-    const viewState = getCurrentView();
+    const currentView = getCurrentView();
     useEffect(() => {
         (async () => {
-            const state = await viewState;
-            setState(state);
-            setUrl(state.url);
+            const viewState = await currentView;
+            setState(viewState);
+            setUrl(viewState.url);
         })();
-    }, [viewState]);
+    }, [currentView]);
 
     return (
         <StyledPanel className="panel" type="popup">

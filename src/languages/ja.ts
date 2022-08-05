@@ -10,10 +10,11 @@ export const Ja: Language = {
         yes: 'はい',
         no: 'いいえ',
         cancel: 'キャンセル',
+        save: '保存',
+        edit: '編集',
         add: '追加',
         remove: '削除',
-        delete: '削除',
-        save: '保存'
+        delete: '削除'
     },
     tasks: {
         addTab: '新しいタブ',
@@ -249,6 +250,14 @@ export const Ja: Language = {
                         description: ''
                     }
                 }
+            },
+
+            addressBar: {
+                placeholder: '%n で検索または URL を入力',
+                searchEngine: {
+                    suggested: '%k を押して %n で検索',
+                    selected: '%n で検索'
+                }
             }
         },
         processManager: {
@@ -284,14 +293,27 @@ export const Ja: Language = {
         downloads: {
             title: 'ダウンロード',
 
-            notFound: 'ダウンロードしたアイテムがありません。'
+            notFound: 'ダウンロードしたファイルがありません。'
+        },
+        applications: {
+            title: 'アプリケーション',
+
+            notFound: 'インストールしたアプリケーションがありません。'
         },
         settings: {
             title: '設定',
 
+            profileAndUsers: {
+                title: 'プロファイルとユーザー'
+            },
             privacyAndSecurity: {
                 title: 'プライバシーとセキュリティ',
 
+                privacy: {
+                    title: 'プライバシー',
+
+                    sendDNTRequest: 'サイトに「トラッキング拒否」リクエストを送信する'
+                },
                 history: {
                     title: '履歴',
 
@@ -364,6 +386,26 @@ export const Ja: Language = {
                     },
                     newTab: '新しいタブ ページを開く',
                     custom: '特定のページを開く'
+                }
+            },
+            search: {
+                title: '検索とアドレスバー',
+
+                suggests: {
+                    title: 'サジェスト',
+
+                    search: 'Google 検索からサジェストする',
+                    bookmarks: 'ブックマークからサジェストする',
+                    history: '履歴からサジェストする'
+                },
+                addressBar: {
+                    title: 'アドレスバー',
+
+                    defaultEngine: 'アドレスバーと右クリック メニューで使用する検索エンジン',
+                    suggestEngine: {
+                        primary: '@メンション や URL で登録されている検索エンジンをサジェストする',
+                        secondary: 'サジェスト中に %k を押して選択した検索エンジンで検索する'
+                    }
                 }
             }
         }

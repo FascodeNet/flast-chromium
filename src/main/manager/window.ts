@@ -25,11 +25,11 @@ export class WindowManager {
         return this.windows.get(id ?? this.selectedId);
     }
 
-    public add(user: IUser, urls: string[] = ['https://www.google.com'], active: boolean = true) {
+    public add(user: IUser, urls: string[] = user.settings.startupUrls, active: boolean = true) {
         const window = new AppWindow(
             user,
             {
-                urls: urls ?? ['https://www.google.com'],
+                urls: urls ?? user.settings.startupUrls,
                 active: active ?? true
             }
         );

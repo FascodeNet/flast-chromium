@@ -1,6 +1,6 @@
 import { enable } from '@electron/remote/main';
-import { app, BrowserWindow, ipcMain, nativeImage } from 'electron';
-import { join } from 'path';
+import { BrowserWindow, ipcMain, nativeImage } from 'electron';
+import { getBuildPath, getIconsPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 
 export class ProcessManagerWindow {
@@ -22,13 +22,14 @@ export class ProcessManagerWindow {
             },
             backgroundColor: '#ffffff',
             title: 'Process Manager',
-            icon: nativeImage.createFromPath(`${app.getAppPath()}/static/icons/app/icon.png`),
+            icon: nativeImage.createFromPath(getIconsPath('app', 'icon.png')),
             webPreferences: {
-                // preload: join(app.getAppPath(), 'build', 'window.js'),
+                // preload: buildDirectory('preloads', 'window.js'),
                 plugins: true,
                 nodeIntegration: true,
                 contextIsolation: false,
-                javascript: true
+                javascript: true,
+                sandbox: false
             },
             show: false
         });
@@ -41,7 +42,7 @@ export class ProcessManagerWindow {
 
         this.browserWindow.setMenu(null);
 
-        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'browser', 'process-manager.html'));
+        this.browserWindow.loadFile(getBuildPath('browser', 'process-manager.html'));
 
         if (IS_DEVELOPMENT)
             this.browserWindow.removeMenu();

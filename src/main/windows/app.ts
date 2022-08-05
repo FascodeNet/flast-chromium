@@ -1,10 +1,10 @@
 import { enable } from '@electron/remote/main';
 import deepmerge from 'deepmerge';
-import { app, BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, TouchBar } from 'electron';
-import { join } from 'path';
+import { BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, TouchBar } from 'electron';
 import { WindowFullScreenState } from '../../interfaces/window';
 import { APPLICATION_NAME } from '../../utils';
 import { isHorizontal } from '../../utils/design';
+import { getBuildPath, getIconsPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { showBookmarksDialog } from '../dialogs/bookmarks';
 import { showDownloadsDialog } from '../dialogs/downloads';
@@ -30,16 +30,18 @@ export class AppWindow {
 
     public readonly id: number;
 
+    public readonly browserWindow: BrowserWindow;
+    public readonly incognito: boolean;
+
     public readonly user: IUser;
 
-    public browserWindow: BrowserWindow;
-    private applicationMenu: Menu;
+    public readonly viewManager: ViewManager;
 
-    public viewManager: ViewManager;
+    private applicationMenu: Menu;
 
     private _fullScreenState: WindowFullScreenState;
 
-    public constructor(user: IUser, { urls = ['https://www.google.com'] }: AppWindowInitializerOptions) {
+    public constructor(user: IUser, { urls = user.settings.startupUrls }: AppWindowInitializerOptions) {
         this.browserWindow = new BrowserWindow({
             frame: false,
             minWidth: 500,
@@ -53,13 +55,14 @@ export class AppWindow {
             },
             backgroundColor: '#ffffffff',
             title: APPLICATION_NAME,
-            icon: nativeImage.createFromPath(`${app.getAppPath()}/static/icons/app/icon.png`),
+            icon: nativeImage.createFromPath(getIconsPath('app', 'icon.png')),
             webPreferences: {
-                preload: join(app.getAppPath(), 'build', 'window.js'),
+                preload: getBuildPath('preloads', 'window.js'),
                 plugins: true,
                 nodeIntegration: true,
                 contextIsolation: false,
                 javascript: true,
+                sandbox: false,
                 session: user.session.session
             },
             show: false
@@ -67,18 +70,20 @@ export class AppWindow {
 
         this.id = this.browserWindow.id;
 
-        enable(this.browserWindow.webContents);
-        this.setListeners();
-        this.setupIpc();
+        this.incognito = user.type === 'incognito';
 
         this.user = user;
+
+        enable(this.webContents);
+        this.setListeners();
+        this.setupIpc();
 
         this._fullScreenState = {
             user: this.browserWindow.isFullScreen(),
             html: false
         };
 
-        this.viewManager = new ViewManager(this, user.type === 'incognito');
+        this.viewManager = new ViewManager(this);
         urls.forEach((url) => this.viewManager.add(url));
 
         this.applicationMenu = getWindowMenu(this);
@@ -86,14 +91,14 @@ export class AppWindow {
         this.browserWindow.setMenu(this.applicationMenu);
         this.setTouchBar();
 
-        this.browserWindow.loadFile(join(app.getAppPath(), 'build', 'browser', 'app.html'));
+        this.browserWindow.loadFile(getBuildPath('browser', 'app.html'));
         this.setStyle();
 
         this.webContents.once('dom-ready', () => {
             if (!IS_DEVELOPMENT) return;
 
             // 開発モードの場合はデベロッパーツールを開く
-            this.browserWindow.webContents.openDevTools({ mode: 'detach' });
+            this.webContents.openDevTools({ mode: 'detach' });
         });
     }
 
@@ -130,7 +135,7 @@ export class AppWindow {
             height: 20
         });
 
-        const getIcon = (name: string) => resizeImage(nativeImage.createFromPath(join(app.getAppPath(), 'static', 'icons', 'white', `${name}.png`)));
+        const getIcon = (name: string) => resizeImage(nativeImage.createFromPath(getIconsPath('white', `${name}.png`)));
 
         const backButton = new TouchBarButton({
             icon: getIcon('arrow_left'),
@@ -160,7 +165,7 @@ export class AppWindow {
             icon: getIcon('home'),
             click: () => {
                 if (!view) return;
-                view.load(this.user.settings.config.pages.home.url ?? 'https://www.google.com');
+                view.load(this.user.settings.homeUrl);
             }
         });
 
@@ -286,7 +291,7 @@ export class AppWindow {
 
             Menu.setApplicationMenu(getApplicationMenu(this.user));
         };
-        this.browserWindow.webContents.on('destroyed', onDestroyed);
+        this.webContents.on('destroyed', onDestroyed);
         this.browserWindow.on('closed', onDestroyed);
 
         this.browserWindow.on('focus', () => {
@@ -340,7 +345,7 @@ export class AppWindow {
         });
 
 
-        this.browserWindow.webContents.on('did-finish-load', async () => {
+        this.webContents.on('did-finish-load', async () => {
             await this.setStyle();
         });
     }

@@ -4,37 +4,37 @@ import { resolve } from 'path';
 import { Configuration } from 'webpack';
 import { APPLICATION_NAME } from './src/utils';
 
-export const getBrowserHtml = (name: string) => new HtmlWebpackPlugin({
+export const getBrowserHtml = (name: string, minify: boolean) => new HtmlWebpackPlugin({
     title: APPLICATION_NAME,
     template: './static/index.html',
     filename: `${name}.html`,
     chunks: [name],
     scriptLoading: 'blocking',
     inject: 'body',
-    minify: false
+    minify
 });
 
-export const getPageHtml = (name: string) => new HtmlWebpackPlugin({
+export const getPageHtml = (name: string, minify: boolean) => new HtmlWebpackPlugin({
     title: APPLICATION_NAME,
     template: './static/index.html',
     filename: `${name}.html`,
     chunks: [name],
     scriptLoading: 'blocking',
     inject: 'body',
-    minify: false
+    minify
 });
 
-export const applyBrowserEntries = (config: any, entries: string[]) => {
+export const applyBrowserEntries = (config: any, entries: string[], minify: boolean) => {
     for (const entry of entries) {
         config.entry[entry] = `./src/renderer/views/browser/${entry}`;
-        config.plugins.push(getBrowserHtml(entry));
+        config.plugins.push(getBrowserHtml(entry, minify));
     }
 };
 
-export const applyPageEntries = (config: any, entries: string[]) => {
+export const applyPageEntries = (config: any, entries: string[], minify: boolean) => {
     for (const entry of entries) {
-        config.entry[entry] = `./src/renderer/views/${entry}`;
-        config.plugins.push(getPageHtml(entry));
+        config.entry[entry] = `./src/renderer/views/pages/${entry}`;
+        config.plugins.push(getPageHtml(entry, minify));
     }
 };
 
@@ -97,6 +97,10 @@ export const Main: Configuration = {
 
 export const Preload: Configuration = {
     ...BaseConfig,
+    output: {
+        ...BaseConfig.output,
+        path: resolve(__dirname, 'build', 'preloads')
+    },
     mode: 'development',
     target: 'electron-preload',
     entry: {
@@ -120,6 +124,10 @@ export const BrowserRenderer: Configuration = {
 
 export const PageRenderer: Configuration = {
     ...BaseConfig,
+    output: {
+        ...BaseConfig.output,
+        path: resolve(__dirname, 'build', 'pages')
+    },
     mode: 'development',
     target: 'web',
     entry: {},
@@ -140,17 +148,21 @@ applyBrowserEntries(
         'history',
         'downloads',
         'extensions'
-    ]
+    ],
+    false
 );
 
 applyPageEntries(
     PageRenderer,
     [
+        'home',
         'bookmarks',
         'history',
         'downloads',
+        'applications',
         'settings'
-    ]
+    ],
+    false
 );
 
 export default [Main, Preload, BrowserRenderer, PageRenderer];

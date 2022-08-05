@@ -27,11 +27,11 @@ export const TranslateProvider = ({ children }: TranslateProviderProps) => {
     const [translate, setTranslate] = useState<Language>(context.translate);
 
     useEffect(() => {
-        window.api.getUser().then(async (id) => {
+        window.flast.getUser().then(async (id) => {
             if (!id) return;
             setUserId(id);
 
-            const language = await window.api.getLanguage(id);
+            const language = await window.flast.getLanguage(id);
             setTranslate(language);
         });
     }, []);

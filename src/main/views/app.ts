@@ -1,6 +1,5 @@
 import deepmerge from 'deepmerge';
-import { app, BrowserView, NativeImage } from 'electron';
-import { join } from 'path';
+import { BrowserView, NativeImage } from 'electron';
 import {
     WINDOW_DOUBLE_TITLE_BAR_HEIGHT,
     WINDOW_DOUBLE_TOOL_BAR_HEIGHT,
@@ -19,6 +18,7 @@ import {
 } from '../../interfaces/view';
 import { APPLICATION_NAME } from '../../utils';
 import { getHeight } from '../../utils/design';
+import { getBuildPath } from '../../utils/path';
 import { Dialog } from '../dialogs/dialog';
 import { showFindDialog } from '../dialogs/find';
 import { IUser } from '../interfaces/user';
@@ -33,40 +33,39 @@ export class AppView {
 
     public readonly id: number;
 
+    public readonly browserView: BrowserView;
+
+    public readonly window: AppWindow;
+    public readonly incognito: boolean;
+
     public readonly user: IUser;
-
-    public browserView: BrowserView;
-
-    public window: AppWindow;
 
     private _favicon?: string;
     private _color?: string;
 
-    private pinned: boolean = false;
+    private _pinned: boolean = false;
 
     private _mediaStatus: MediaStatus = 'none';
 
     private _requestState?: RequestState;
 
-    public findDialog: Dialog | undefined = undefined;
-    private _findState: FindState | undefined = undefined;
+    public findDialog?: Dialog = undefined;
+    private _findState?: FindState = undefined;
 
-    private _captureImage: NativeImage | undefined = undefined;
+    private _captureImage?: NativeImage = undefined;
 
-    public incognito: boolean = false;
-
-    public constructor(window: AppWindow, { url, incognito = false }: AppViewInitializerOptions) {
+    public constructor(window: AppWindow, { url }: AppViewInitializerOptions) {
         const userSession = window.user.session;
 
         this.browserView = new BrowserView({
             webPreferences: {
-                preload: join(app.getAppPath(), 'build', 'view.js'),
+                preload: getBuildPath('preloads', 'view.js'),
                 nodeIntegration: false,
                 contextIsolation: true,
                 javascript: true,
                 plugins: false,
                 experimentalFeatures: false,
-                sandbox: false,
+                sandbox: true,
                 scrollBounce: true,
                 safeDialogs: true,
                 safeDialogsMessage: '今後このページではダイアログを表示しない',
@@ -75,26 +74,20 @@ export class AppView {
         });
         this.browserView.setBackgroundColor('#ffffffff');
 
+        this.id = this.webContents.id;
+
         this.window = window;
+        this.incognito = window.incognito;
         // this.setBounds();
 
         this.user = window.user;
 
-        this.id = this.browserView.webContents.id;
-        this.incognito = incognito;
-
-        // tslint:disable-next-line:no-shadowed-variable
-        const webContents = this.webContents;
-
-        if (window.user.type === 'normal')
-            userSession.extensions.addTab(this.browserView.webContents, window.browserWindow);
-
         this.setListeners();
-        webContents.setWindowOpenHandler(({ url: handlerUrl, frameName, disposition }) => {
+        this.webContents.setWindowOpenHandler(({ url: handlerUrl, frameName, disposition }) => {
             console.log(handlerUrl, frameName, disposition);
             if (disposition === 'new-window') {
                 if (frameName === '_self') {
-                    webContents.loadURL(handlerUrl);
+                    this.webContents.loadURL(handlerUrl);
                 } else {
                     Main.windowManager.add(window.user, [handlerUrl]);
                 }
@@ -107,8 +100,11 @@ export class AppView {
             return { action: 'deny' };
         });
 
-        webContents.setVisualZoomLevelLimits(1, 3);
-        webContents.loadURL(url);
+        if (window.user.type === 'normal')
+            userSession.extensions.addTab(this.webContents, window.browserWindow);
+
+        this.webContents.setVisualZoomLevelLimits(1, 3);
+        this.webContents.loadURL(url);
     }
 
     public get webContents() {
@@ -151,21 +147,26 @@ export class AppView {
         return this._requestState;
     }
 
-    public get isMuted() {
+    public get muted() {
         return this.webContents.isAudioMuted();
     }
 
-    public setMuted(muted: boolean) {
+    public set muted(muted: boolean) {
         this.webContents.setAudioMuted(muted);
         this.updateView();
     }
 
-    public get isPinned() {
-        return this.pinned;
+    public get pinned() {
+        return this._pinned;
     }
 
-    public setPinned(pinned: boolean) {
-        this.pinned = pinned;
+    public set pinned(pinned: boolean) {
+        const viewManager = this.window.viewManager;
+        const pinnedViews = viewManager.views.filter((view) => view.pinned && view.id !== this.id);
+        viewManager.moveTo(this.id, pinnedViews.length);
+
+        this._pinned = pinned;
+
         this.updateView();
     }
 
@@ -188,7 +189,7 @@ export class AppView {
             canGoForward: this.canGoForward,
 
             media: this.mediaStatus,
-            isPinned: this.isPinned,
+            isPinned: this.pinned,
 
             findState: this.findState
         };

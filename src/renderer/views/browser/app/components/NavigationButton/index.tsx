@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../utils';
 import { isURL } from '../../../../../../utils/url';
 import { Home, Reload } from '../../../../../components/Icons';
 import { ArrowLeft, ArrowRight } from '../../../../../components/Icons/arrow';
@@ -88,10 +89,15 @@ export const HomeButton = () => {
 
     const { loadView } = useElectronAPI();
 
-    const { config: { appearance: { style }, pages: { home: { mode, url } } } } = useUserConfigContext();
+    const {
+        config: {
+            appearance: { style },
+            pages: { home: { mode, url } }
+        }
+    } = useUserConfigContext();
 
     const handleButtonClick = () => {
-        loadView(selectedId, mode === 'custom' && url && isURL(url) ? url : 'https://www.google.com');
+        loadView(selectedId, mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`);
     };
 
     return (

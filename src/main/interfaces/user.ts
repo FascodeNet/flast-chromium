@@ -12,7 +12,7 @@ export interface IUser {
 
     get name(): string;
 
-    get avatar(): string | undefined;
+    get avatar(): string | null;
 
     get extensions(): IExtensions;
 
@@ -46,6 +46,10 @@ export interface ISession {
 export interface ISettings {
 
     readonly user: IUser;
+
+    get startupUrls(): string[];
+
+    get homeUrl(): string;
 
     get config(): UserConfig;
 

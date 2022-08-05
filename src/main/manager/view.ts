@@ -1,24 +1,31 @@
 import { ipcMain } from 'electron';
 import { MoveDirection } from '../../interfaces/view';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../utils';
 import { nonNullable } from '../../utils/array';
+import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { getTabMenu } from '../menus/view';
 import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
 
 export class ViewManager {
-    private _views = new Map<number, AppView>();
-
-    public sortOrders: number[] = [];
 
     private _selectedId: number = -1;
 
-    public readonly window: AppWindow;
-    public readonly incognito: boolean = false;
+    private _views = new Map<number, AppView>();
+    private _sortOrders: number[] = [];
 
-    public constructor(window: AppWindow, incognito: boolean) {
+    public readonly window: AppWindow;
+    public readonly incognito: boolean;
+
+    public readonly user: IUser;
+
+    public constructor(window: AppWindow) {
         this.window = window;
-        this.incognito = incognito;
+        this.incognito = window.incognito;
+
+        this.user = window.user;
+
         this.setupIpc();
     }
 
@@ -26,8 +33,12 @@ export class ViewManager {
         return this._selectedId;
     }
 
-    public get views() {
-        return this.sortOrders.map((id) => this.get(id)).filter(nonNullable).filter((view: AppView) => !view.webContents.isDestroyed());
+    public get views(): AppView[] {
+        return this._sortOrders.map((id) => this.get(id)).filter(nonNullable).filter((view: AppView) => !view.webContents.isDestroyed());
+    }
+
+    public get sortOrders() {
+        return this._sortOrders;
     }
 
     public getLeftViews(id: number) {
@@ -48,18 +59,17 @@ export class ViewManager {
         return this._views.get(id ?? this._selectedId);
     }
 
-    public add(url: string = 'https://www.google.com', active: boolean = true) {
+    public add(url: string = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`, active: boolean = true) {
         const view = new AppView(
             this.window,
             {
-                url: url ?? 'https://www.google.com',
-                incognito: this.incognito,
+                url: url ?? `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`,
                 active: active ?? true
             }
         );
 
         this._views.set(view.id, view);
-        this.sortOrders.push(view.id);
+        this._sortOrders.push(view.id);
 
         view.updateView();
         this.updateViews();
@@ -136,7 +146,7 @@ export class ViewManager {
 
     private removeOf(view: AppView) {
         this._views.delete(view.id);
-        this.sortOrders = this.sortOrders.filter((sortId) => sortId !== view.id);
+        this._sortOrders = this._sortOrders.filter((sortId) => sortId !== view.id);
 
         if (view.webContents && !view.webContents.isDestroyed()) {
             // @ts-ignore
@@ -173,22 +183,32 @@ export class ViewManager {
     }
 
     public moveTo(id: number, toIndex: number) {
-        const filtered = this.sortOrders.filter((sortId) => sortId !== id);
+        const filtered = this._sortOrders.filter((sortId) => sortId !== id);
         filtered.splice(toIndex, 0, id);
-        this.sortOrders = filtered;
+        this._sortOrders = filtered;
 
         this.updateViews();
     }
 
     public moveToDirection(id: number, direction: MoveDirection) {
-        const index = this.sortOrders.findIndex((sortId) => sortId === id);
+        const index = this._sortOrders.findIndex((sortId) => sortId === id);
 
-        // 端に行くことを防ぐ
-        if (index === 0 && direction === 'start' || index === (this.sortOrders.length - 1) && direction === 'end') return;
+        const view = this.get(id);
+        if (!view) return;
 
-        const filtered = this.sortOrders.filter((sortId) => sortId !== id);
+        const pinnedViews = this.views.filter((appView) => appView.pinned);
+        // 端からはみ出すことを防ぐ
+        if (view.pinned) {
+            if (index === 0 && direction === 'start' || index === (pinnedViews.length - 1) && direction === 'end')
+                return;
+        } else {
+            if (index === pinnedViews.length && direction === 'start' || index === (this._sortOrders.length - 1) && direction === 'end')
+                return;
+        }
+
+        const filtered = this._sortOrders.filter((sortId) => sortId !== id);
         filtered.splice(direction === 'start' ? index - 1 : index + 1, 0, id);
-        this.sortOrders = filtered;
+        this._sortOrders = filtered;
 
         this.updateViews();
     }

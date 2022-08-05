@@ -1,6 +1,7 @@
 import { app, Menu, MenuItemConstructorOptions } from 'electron';
 import { getTranslate } from '../../languages/language';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
+import { getIconsPath } from '../../utils/path';
 import { IS_MAC } from '../../utils/process';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
@@ -135,7 +136,7 @@ export const getApplicationMenu = (user: IUser) => {
             { type: 'separator' },
             {
                 label: languageSection.help.about,
-                icon: !IS_MAC ? getMenuItemIcon(`${app.getAppPath()}/static/icons/app/icon.png`) : undefined,
+                icon: !IS_MAC ? getMenuItemIcon(getIconsPath('app', 'icon.png')) : undefined,
                 click: () => {
                 }
             }

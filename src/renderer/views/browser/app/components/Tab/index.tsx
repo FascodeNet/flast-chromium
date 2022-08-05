@@ -11,10 +11,11 @@ import {
     APPLICATION_WEB_DOWNLOADS,
     APPLICATION_WEB_EXTENSIONS,
     APPLICATION_WEB_HISTORY,
+    APPLICATION_WEB_HOME,
     APPLICATION_WEB_SETTINGS,
     EXTENSION_PROTOCOL
 } from '../../../../../../utils';
-import { Applications, Bookmarks, Download, Extension, History, Settings } from '../../../../../components/Icons';
+import { Applications, Bookmarks, Download, Extension, History, Home, Settings } from '../../../../../components/Icons';
 import { Remove } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
@@ -40,6 +41,8 @@ const TabIcon = ({ url: urlString, favicon }: TabIconProps) => {
             const sxTheme = { width: 16, height: 16 };
 
             switch (hostname) {
+                case APPLICATION_WEB_HOME:
+                    return (<Home sx={sxTheme} />);
                 case APPLICATION_WEB_BOOKMARKS:
                     return (<Bookmarks sx={sxTheme} />);
                 case APPLICATION_WEB_HISTORY:

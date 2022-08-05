@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { BookmarkData, HistoryData } from '../../interfaces/user';
+import { BookmarkData, DefaultUserConfig, HistoryData } from '../../interfaces/user';
 import { SuggestData } from '../../renderer/views/browser/search/interface';
 import { isURL } from '../../utils/url';
 import { IUser } from '../interfaces/user';
@@ -27,7 +27,8 @@ export interface ResultData {
 }
 
 export const search = async (value: string, user: IUser): Promise<SearchResult> => {
-    const suggest = user.settings.config.privacy_security.suggests;
+    const { suggests: suggest, default_engine: defaultEngine, engines } = user.settings.config.search;
+
     const bookmarks = user.type !== 'guest' && suggest.bookmarks ? map(
         filter(
             user.bookmarks.bookmarks.filter(({ title, url }) => {
@@ -61,16 +62,17 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
 
         const values = data[1] as string[];
         const types = (data[4]['google:suggesttype'] as string[]).map((type) => type.toLowerCase());
-        const suggestDatas: SuggestData[] = [];
+        const suggestDataList: SuggestData[] = [];
         for (let i = 0; i < values.length; i++)
-            suggestDatas.push({ value: values[i], type: types[i] });
+            suggestDataList.push({ value: values[i], type: types[i] });
 
-        const suggests = suggest.search ? suggestDatas.map(({ value }): ResultData => {
+        const defaultSearchEngine = engines[defaultEngine] ?? DefaultUserConfig.search.engines[0];
+        const suggests = suggest.search ? suggestDataList.map(({ value }): ResultData => {
             const isValueUrl = isUrl(value);
             return ({
                 resultType: isValueUrl ? 'address' : 'search',
                 title: value,
-                url: isValueUrl ? value : 'https://www.google.com/search?q=%s'.replace('%s', encodeURIComponent(value))
+                url: isValueUrl ? value : defaultSearchEngine.url.replace('%s', encodeURIComponent(value))
             });
         }) : [];
 

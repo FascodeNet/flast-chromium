@@ -16,6 +16,11 @@
     color: var(--primary-foreground-color);
 }
 
+code {
+    background: #f8f8f8 !important;
+    border-color: var(--divider-color) !important;
+}
+
 hr {
     border-color: var(--divider-color) !important;
 }

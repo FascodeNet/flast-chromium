@@ -45,6 +45,7 @@ export const StyledItemLabelContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 3px;
+  overflow: hidden;
 `;
 
 export const StyledItemLabel = styled.span`

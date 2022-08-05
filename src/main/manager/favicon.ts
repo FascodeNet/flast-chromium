@@ -1,10 +1,9 @@
 import Datastore from '@seald-io/nedb';
-import { app } from 'electron';
 import { fileTypeFromBuffer } from 'file-type';
 import * as icojs from 'icojs';
-import { join } from 'path';
 import { Favicon } from '../../interfaces/view';
 import { requestURL } from '../../utils/network';
+import { getSpecialPath } from '../../utils/path';
 import { prefixHttp } from '../../utils/url';
 import { Main } from '../main';
 
@@ -16,7 +15,7 @@ export class FaviconManager {
 
     public constructor() {
         this._datastore = new Datastore<Favicon>({
-            filename: join(app.getPath('userData'), 'favicons.db'),
+            filename: getSpecialPath('appData', 'favicons.db'),
             autoload: true,
             timestampData: true
         });

@@ -1,9 +1,7 @@
-import { app, Session as ElectronSession, session } from 'electron';
+import { Session as ElectronSession, session } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions';
-import { join } from 'path';
-import { parse } from 'url';
-import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../../utils';
 import { ISession, IUser } from '../../interfaces/user';
+import { registerProtocols, setUserAgent, setWebRequest } from '../../utils/session';
 
 export class IncognitoSession implements ISession {
 
@@ -16,23 +14,9 @@ export class IncognitoSession implements ISession {
 
         this._session = session.fromPartition(user.id);
 
-        const userAgent = this._session.getUserAgent().replace(/\sElectron\/\S+/, '').replace(app.getName(), APPLICATION_NAME);
-        this._session.setUserAgent(userAgent);
-
-        this._session.protocol.registerFileProtocol(
-            APPLICATION_PROTOCOL,
-            (request, callback: any) => {
-                const parsed = parse(request.url);
-
-                if (parsed.path === '/') {
-                    return callback({
-                        path: join(__dirname, `${parsed.hostname}.html`)
-                    });
-                }
-
-                callback({ path: join(__dirname, parsed.path!!) });
-            }
-        );
+        setUserAgent(this._session);
+        setWebRequest(this._session, this.user);
+        registerProtocols(this._session);
     }
 
     public get session() {

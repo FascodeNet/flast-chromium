@@ -1,6 +1,7 @@
-import { app, Session } from 'electron';
+import { Session } from 'electron';
 import { mkdir, readdir, stat } from 'fs/promises';
 import { join } from 'path';
+import { getUserDataPath } from '../../../utils/path';
 import { IExtensions, IUser } from '../../interfaces/user';
 
 export class NormalExtensions implements IExtensions {
@@ -12,7 +13,7 @@ export class NormalExtensions implements IExtensions {
     public constructor(user: IUser) {
         this.user = user;
 
-        this.path = join(app.getPath('userData'), 'users', user.id, 'extensions');
+        this.path = getUserDataPath(user.id, 'extensions');
         mkdir(this.path, { recursive: true });
     }
 

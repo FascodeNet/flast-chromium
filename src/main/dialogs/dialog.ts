@@ -1,6 +1,6 @@
 import { enable } from '@electron/remote/main';
-import { app, BrowserView, BrowserWindow, ipcMain, Rectangle } from 'electron';
-import { join } from 'path';
+import { BrowserView, BrowserWindow, ipcMain, Rectangle } from 'electron';
+import { getBuildPath } from '../../utils/path';
 import { IDialog } from '../interfaces/dialog';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
@@ -38,10 +38,11 @@ export class Dialog {
     }: IDialog) {
         this.browserView = new BrowserView({
             webPreferences: {
-                preload: join(app.getAppPath(), 'build', 'dialog.js'),
+                preload: getBuildPath('preloads', 'dialog.js'),
                 nodeIntegration: true,
                 contextIsolation: false,
                 javascript: true,
+                sandbox: false,
                 session: user.session.session,
                 ...webPreferences
             }

@@ -3,7 +3,9 @@ import {
     ButtonBase as MuiButtonBase,
     buttonClasses,
     Checkbox,
+    MenuItem,
     Radio,
+    Select,
     styled,
     Switch,
     Theme,
@@ -15,8 +17,8 @@ const containerStyled = (theme: Theme) => ({
     height: 50,
     padding: theme.spacing(.5, 1, .5, 1.5),
     display: 'flex',
-    justifyContent: 'flex-start',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     gap: theme.spacing(1),
     borderRadius: theme.shape.borderRadius,
     transition: theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'color'], {
@@ -26,7 +28,7 @@ const containerStyled = (theme: Theme) => ({
 
 export const ItemContainer = styled(Box)(({ theme }) => containerStyled(theme));
 
-export const ButtonBase = styled(MuiButtonBase)(({ theme }) => ({
+export const ItemButtonBase = styled(MuiButtonBase)(({ theme }) => ({
     ...containerStyled(theme),
     [`&.${buttonClasses.disabled}`]: {
         color: theme.palette.action.disabled
@@ -36,14 +38,76 @@ export const ButtonBase = styled(MuiButtonBase)(({ theme }) => ({
     }
 }));
 
-const Icon = ({ icon }: { icon?: ReactNode; }) => icon ? (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{icon}</Box>
+export interface ItemIconProps {
+    icon?: ReactNode;
+}
+
+export interface ItemTextBlockProps {
+    primary?: ReactNode;
+    secondary?: ReactNode;
+}
+
+export const ItemIcon = ({ icon }: ItemIconProps) => icon ? (
+    <Box sx={{ width: 42, height: 42, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {icon}
+    </Box>
 ) : null;
 
-const TextBlock = ({ primary, secondary }: ItemProps) => (
-    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
-        <Typography variant="body1" align="left">{primary}</Typography>
-        {secondary && <Typography variant="body2" align="left">{secondary}</Typography>}
+export const ItemFavicon = styled(
+    Box,
+    { shouldForwardProp: (prop) => prop !== 'src' }
+)<{ src?: string; }>(({ src }) => ({
+    width: 24,
+    minWidth: 24,
+    height: 24,
+    minHeight: 24,
+    backgroundImage: src ? `url('${src}')` : 'unset',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'contain'
+}));
+
+export const ItemTextBlock = ({ primary, secondary }: ItemTextBlockProps) => (
+    <Box
+        sx={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            overflow: 'hidden'
+        }}
+    >
+        <Typography
+            variant="body1"
+            align="left"
+            color="text.primary"
+            sx={{
+                width: '100%',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                userSelect: 'none'
+            }}
+        >
+            {primary}
+        </Typography>
+        {secondary && <Typography
+            variant="body2"
+            align="left"
+            color="text.secondary"
+            sx={{
+                width: '100%',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                userSelect: 'none'
+            }}
+
+        >
+            {secondary}
+        </Typography>}
     </Box>
 );
 
@@ -51,25 +115,16 @@ const FormContainer = styled(Box)({
     marginLeft: 'auto'
 });
 
-interface ItemProps {
-    primary?: ReactNode;
-    secondary?: ReactNode;
-}
-
-interface IconItemProps extends ItemProps {
-    icon?: ReactNode;
-}
-
-interface SwitchItemProps extends IconItemProps {
+interface SwitchItemProps extends ItemTextBlockProps, ItemIconProps {
     checked: boolean;
     setChecked: (checked: boolean) => void;
     disabled?: boolean;
 }
 
 export const SwitchItem = ({ icon, primary, secondary, checked, setChecked, disabled }: SwitchItemProps) => (
-    <ButtonBase onClick={() => setChecked(!checked)} disabled={disabled}>
-        <Icon icon={icon} />
-        <TextBlock primary={primary} secondary={secondary} />
+    <ItemButtonBase onClick={() => setChecked(!checked)} disabled={disabled} sx={{ pl: icon ? .5 : 1.5 }}>
+        <ItemIcon icon={icon} />
+        <ItemTextBlock primary={primary} secondary={secondary} />
         <FormContainer>
             <Switch
                 checked={checked}
@@ -79,23 +134,23 @@ export const SwitchItem = ({ icon, primary, secondary, checked, setChecked, disa
                 sx={{ '& .MuiSwitch-switchBase:hover': { backgroundColor: 'transparent !important' } }}
             />
         </FormContainer>
-    </ButtonBase>
+    </ItemButtonBase>
 );
 
 export const CheckItem = ({ icon, primary, secondary, checked, setChecked, disabled }: SwitchItemProps) => (
-    <ButtonBase onClick={() => setChecked(!checked)} disabled={disabled} sx={{ pl: .5 }}>
+    <ItemButtonBase onClick={() => setChecked(!checked)} disabled={disabled} sx={{ pl: .5 }}>
         <Checkbox
             checked={checked}
             onChange={() => setChecked(!checked)}
             disabled={disabled}
             disableRipple
         />
-        <Icon icon={icon} />
-        <TextBlock primary={primary} secondary={secondary} />
-    </ButtonBase>
+        <ItemIcon icon={icon} />
+        <ItemTextBlock primary={primary} secondary={secondary} />
+    </ItemButtonBase>
 );
 
-interface RadioItemProps<T> extends IconItemProps {
+interface RadioItemProps<T> extends ItemTextBlockProps, ItemIconProps {
     name: string;
     value: T;
     selectedValue: T;
@@ -115,7 +170,7 @@ export const RadioItem = <T, >(
         disabled
     }: RadioItemProps<T>
 ) => (
-    <ButtonBase onClick={() => setSelected(value)} disabled={disabled} sx={{ pl: .5 }}>
+    <ItemButtonBase onClick={() => setSelected(value)} disabled={disabled} sx={{ pl: .5 }}>
         <Radio
             name={name}
             value={value}
@@ -125,7 +180,46 @@ export const RadioItem = <T, >(
             disableRipple
             sx={{ '&:hover': { backgroundColor: 'transparent' } }}
         />
-        <Icon icon={icon} />
-        <TextBlock primary={primary} secondary={secondary} />
-    </ButtonBase>
+        <ItemIcon icon={icon} />
+        <ItemTextBlock primary={primary} secondary={secondary} />
+    </ItemButtonBase>
+);
+
+interface SelectItemProps<T> extends ItemTextBlockProps, ItemIconProps {
+    value: T;
+    setSelected: (value: T) => void;
+    choices: ({ value: T; children?: ReactNode; })[];
+    disabled?: boolean;
+}
+
+export const SelectItem = <T, >(
+    {
+        icon,
+        primary,
+        secondary,
+        value,
+        setSelected,
+        choices,
+        disabled
+    }: SelectItemProps<T>
+) => (
+    <ItemContainer sx={{ pl: icon ? .5 : 1.5, pr: 2 }}>
+        <ItemIcon icon={icon} />
+        <ItemTextBlock primary={primary} secondary={secondary} />
+        <FormContainer>
+            <Select
+                value={value}
+                onChange={(e) => setSelected(e.target.value as T)}
+                disabled={disabled}
+                size="small"
+                sx={{ width: 200 }}
+            >
+                {choices.map((choice) => (
+                    <MenuItem key={choice.value as unknown as string} value={choice.value as unknown as string}>
+                        {choice.children}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormContainer>
+    </ItemContainer>
 );

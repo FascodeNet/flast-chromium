@@ -31,7 +31,8 @@ export const HistoryPanel = ({ type }: PanelProps) => {
             if (!id) return;
             setUserId(id);
 
-            setHistoryGroups(await getHistoryGroups(id));
+            const historyGroupList = await getHistoryGroups(id);
+            setHistoryGroups(historyGroupList);
         });
     }, []);
 

@@ -1,8 +1,9 @@
-import { app } from 'electron';
+import { ipcMain } from 'electron';
 import { mkdir } from 'fs/promises';
-import { join } from 'path';
 import { UserType } from '../../../interfaces/user';
+import { getUserDataPath } from '../../../utils/path';
 import { IUser } from '../../interfaces/user';
+import { search } from '../../utils/search';
 import { NormalBookmarks } from './bookmarks';
 import { NormalDownloads } from './downloads';
 import { NormalExtensions } from './extensions';
@@ -30,7 +31,7 @@ export class NormalUser implements IUser {
     public constructor(id: string) {
         this.id = id;
 
-        this.path = join(app.getPath('userData'), 'users', id);
+        this.path = getUserDataPath(id);
         mkdir(this.path, { recursive: true });
 
         this._extensions = new NormalExtensions(this);
@@ -41,6 +42,11 @@ export class NormalUser implements IUser {
         this._bookmarks = new NormalBookmarks(this);
         this._history = new NormalHistory(this);
         this._downloads = new NormalDownloads(this);
+
+
+        ipcMain.handle(`search-${this.id}`, async (e, keyword: string) => {
+            return await search(keyword, this);
+        });
     }
 
 

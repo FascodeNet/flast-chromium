@@ -58,17 +58,21 @@ applyBrowserEntries(
         'history',
         'downloads',
         'extensions'
-    ]
+    ],
+    true
 );
 
 applyPageEntries(
     PageRenderer,
     [
+        'home',
         'bookmarks',
         'history',
         'downloads',
+        'applications',
         'settings'
-    ]
+    ],
+    true
 );
 
 export default [Main, Preload, BrowserRenderer, PageRenderer];

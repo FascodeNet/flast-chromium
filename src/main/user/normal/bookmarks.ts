@@ -1,7 +1,7 @@
 import Datastore from '@seald-io/nedb';
-import { app, ipcMain } from 'electron';
-import { join } from 'path';
+import { ipcMain } from 'electron';
 import { BookmarkData, OmitData } from '../../../interfaces/user';
+import { getUserDataPath } from '../../../utils/path';
 import { IBookmarks, IUser } from '../../interfaces/user';
 
 export class NormalBookmarks implements IBookmarks {
@@ -15,7 +15,7 @@ export class NormalBookmarks implements IBookmarks {
         this.user = user;
 
         this._datastore = new Datastore<BookmarkData>({
-            filename: join(app.getPath('userData'), 'users', user.id, 'bookmarks.db'),
+            filename: getUserDataPath(user.id, 'bookmarks.db'),
             autoload: true,
             timestampData: true
         });

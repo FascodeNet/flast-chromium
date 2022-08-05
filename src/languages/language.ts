@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { UserConfig } from '../interfaces/user';
 import { En } from './en';
 import { Ja } from './ja';
@@ -13,8 +12,8 @@ export const getTranslate = (config: UserConfig): Language => {
 };
 
 interface CertificateTranslate {
-    label: ReactNode;
-    description: ReactNode;
+    label: string;
+    description: string;
 }
 
 export interface Language {
@@ -26,10 +25,11 @@ export interface Language {
         yes: string;
         no: string;
         cancel: string;
+        save: string;
+        edit: string;
         add: string;
         remove: string;
         delete: string;
-        save: string;
     };
     tasks: {
         addTab: string;
@@ -57,7 +57,7 @@ export interface Language {
                 label: string;
             }
             close: string;
-        }
+        };
         window: {
             app: {
                 label: string;
@@ -241,14 +241,21 @@ export interface Language {
                 label: string;
 
                 certificate: {
-                    secure: CertificateTranslate
-                    inSecure: CertificateTranslate,
-                    file: CertificateTranslate,
-                    source: CertificateTranslate,
-                    internal: CertificateTranslate,
-                    extension: CertificateTranslate
+                    secure: CertificateTranslate;
+                    inSecure: CertificateTranslate;
+                    file: CertificateTranslate;
+                    source: CertificateTranslate;
+                    internal: CertificateTranslate;
+                    extension: CertificateTranslate;
                 }
-            }
+            };
+            addressBar: {
+                placeholder: string;
+                searchEngine: {
+                    suggested: string;
+                    selected: string;
+                }
+            };
         };
         processManager: {
             title: string;
@@ -285,12 +292,25 @@ export interface Language {
 
             notFound: string;
         };
+        applications: {
+            title: string;
+
+            notFound: string;
+        };
         settings: {
             title: string;
 
+            profileAndUsers: {
+                title: string;
+            };
             privacyAndSecurity: {
                 title: string;
 
+                privacy: {
+                    title: string;
+
+                    sendDNTRequest: string;
+                }
                 history: {
                     title: string;
 
@@ -363,6 +383,26 @@ export interface Language {
                     }
                     newTab: string;
                     custom: string;
+                }
+            };
+            search: {
+                title: string;
+
+                suggests: {
+                    title: string;
+
+                    search: string;
+                    bookmarks: string;
+                    history: string;
+                }
+                addressBar: {
+                    title: string;
+
+                    defaultEngine: string;
+                    suggestEngine: {
+                        primary: string;
+                        secondary: string;
+                    }
                 }
             };
         };

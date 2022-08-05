@@ -31,21 +31,23 @@ export type StartupPageMode = 'new_tab' | 'prev_sessions' | 'custom';
 export type HomeButtonPageMode = 'new_tab' | 'custom';
 export type NewTabBackgroundStyle = 'none' | 'random' | 'custom';
 
+export interface SearchEngine {
+    name: string;
+    url: string;
+    mentions: string[];
+}
+
 export type Language = 'ja' | 'en';
 
 
 export interface UserConfig {
     profile: {
         name: string;
-        avatar?: string;
+        avatar: string | null;
     };
     privacy_security: {
+        send_dnt_request: boolean;
         save_history: boolean;
-        suggests: {
-            search: boolean;
-            bookmarks: boolean;
-            history: boolean;
-        }
     };
     appearance: {
         mode: AppearanceMode;
@@ -53,7 +55,6 @@ export interface UserConfig {
         tab_colored: boolean;
         style: AppearanceStyle;
         fullscreen_showing_toolbar: boolean;
-        extended_sidebar: boolean;
         sidebar: {
             extended: boolean;
             state: AppearanceSidebarState;
@@ -74,33 +75,40 @@ export interface UserConfig {
         }
         home: {
             mode: HomeButtonPageMode;
-            url?: string;
+            url: string | null;
         }
         new_tab: {
             background: {
                 style: NewTabBackgroundStyle;
-                url?: string;
+                url: string | null;
             }
         }
+    };
+    search: {
+        suggests: {
+            search: boolean;
+            bookmarks: boolean;
+            history: boolean;
+        }
+        default_engine: number;
+        suggest_engine: boolean;
+        engines: SearchEngine[];
     };
     language: {
         language: Language,
         spellcheck: boolean
     };
+    version: number;
 }
 
 export const DefaultUserConfig: UserConfig = {
     profile: {
         name: 'New user',
-        avatar: undefined
+        avatar: null
     },
     privacy_security: {
-        save_history: true,
-        suggests: {
-            search: true,
-            bookmarks: true,
-            history: true
-        }
+        send_dnt_request: false,
+        save_history: true
     },
     appearance: {
         mode: 'system',
@@ -108,7 +116,6 @@ export const DefaultUserConfig: UserConfig = {
         tab_colored: true,
         style: 'top_single',
         fullscreen_showing_toolbar: true,
-        extended_sidebar: false,
         sidebar: {
             extended: false,
             state: 'tab_container'
@@ -129,19 +136,91 @@ export const DefaultUserConfig: UserConfig = {
         },
         home: {
             mode: 'new_tab',
-            url: undefined
+            url: null
         },
         new_tab: {
             background: {
                 style: 'random',
-                url: undefined
+                url: null
             }
         }
+    },
+    search: {
+        suggests: {
+            search: true,
+            bookmarks: true,
+            history: true
+        },
+        default_engine: 0,
+        suggest_engine: true,
+        engines: [
+            {
+                name: 'Google',
+                url: 'https://www.google.com/search?q=%s',
+                mentions: ['google']
+            },
+            {
+                name: 'Bing',
+                url: 'https://www.bing.com/search?q=%s',
+                mentions: ['bing']
+            },
+            {
+                name: 'Yahoo! Japan',
+                url: 'https://search.yahoo.co.jp/search?p=%s',
+                mentions: ['yahoo']
+            },
+            {
+                name: 'DuckDuckGo',
+                url: 'https://duckduckgo.com/?q=%s',
+                mentions: ['duckduckgo']
+            },
+            {
+                name: 'Google 翻訳',
+                url: 'https://translate.google.com/?text=%s',
+                mentions: ['translate']
+            },
+            {
+                name: 'DeepL 翻訳',
+                url: 'https://www.deepl.com/ja/translator#auto/ja/%s',
+                mentions: ['deepl']
+            },
+            {
+                name: 'Google マップ',
+                url: 'https://www.google.co.jp/maps/search/%s',
+                mentions: ['map']
+            },
+            {
+                name: 'YouTube',
+                url: 'https://www.youtube.com/results?search_query=%s',
+                mentions: ['youtube', 'yt']
+            },
+            {
+                name: 'ニコニコ動画',
+                url: 'https://www.nicovideo.jp/search/%s',
+                mentions: ['nicovideo', 'niconico']
+            },
+            {
+                name: 'Twitter',
+                url: 'https://www.twitter.com/search?q=%s',
+                mentions: ['twitter']
+            },
+            {
+                name: 'GitHub',
+                url: 'https://github.com/search?q=%s',
+                mentions: ['github']
+            },
+            {
+                name: 'Amazon',
+                url: 'https://www.amazon.co.jp/s?k=%s',
+                mentions: ['amazon']
+            }
+        ]
     },
     language: {
         language: 'ja',
         spellcheck: true
-    }
+    },
+    version: 1
 };
 
 interface IData {

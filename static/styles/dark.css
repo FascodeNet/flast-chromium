@@ -17,6 +17,11 @@
     color: var(--primary-foreground-color);
 }
 
+code {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: var(--divider-color) !important;
+}
+
 hr {
     border-color: var(--divider-color) !important;
 }

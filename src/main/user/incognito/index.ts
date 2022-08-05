@@ -47,7 +47,7 @@ export class IncognitoUser implements IUser {
     }
 
     public get avatar() {
-        return undefined;
+        return null;
     }
 
 

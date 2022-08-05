@@ -10,10 +10,11 @@ export const En: Language = {
         yes: 'Yes',
         no: 'No',
         cancel: 'Cancel',
+        save: 'Save',
+        edit: 'Edit',
         add: 'Add',
         remove: 'Remove',
-        delete: 'Delete',
-        save: 'Save'
+        delete: 'Delete'
     },
     tasks: {
         addTab: 'New tab',
@@ -248,6 +249,14 @@ export const En: Language = {
                         description: ''
                     }
                 }
+            },
+
+            addressBar: {
+                placeholder: 'Search by %n or Enter URL',
+                searchEngine: {
+                    suggested: 'Press %k to search by %n',
+                    selected: 'Search by %n'
+                }
             }
         },
         processManager: {
@@ -285,12 +294,25 @@ export const En: Language = {
 
             notFound: 'There are no downloaded items.'
         },
+        applications: {
+            title: 'Applications',
+
+            notFound: 'There is no application installed.'
+        },
         settings: {
             title: 'Settings',
 
+            profileAndUsers: {
+                title: 'Profile & Users'
+            },
             privacyAndSecurity: {
                 title: 'Privacy & Security',
 
+                privacy: {
+                    title: 'Privacy',
+
+                    sendDNTRequest: 'Send a "Do Not Track" request to the site'
+                },
                 history: {
                     title: 'History',
 
@@ -363,6 +385,26 @@ export const En: Language = {
                     },
                     newTab: 'Open new tab page',
                     custom: 'Open a specific page'
+                }
+            },
+            search: {
+                title: 'Search & Address bar',
+
+                suggests: {
+                    title: 'Suggests',
+
+                    search: 'Suggest from Google Search',
+                    bookmarks: 'Suggest from bookmarks',
+                    history: 'Suggest from history'
+                },
+                addressBar: {
+                    title: 'Address bar',
+
+                    defaultEngine: 'Search engines used in the address bar and right-click menu',
+                    suggestEngine: {
+                        primary: 'Suggest search engines registered with @mentions and URL',
+                        secondary: 'Press %k during suggestions to search with the selected search engine'
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ import { stat } from 'fs/promises';
 import { isAbsolute } from 'path';
 import { UserConfig } from '../interfaces/user';
 import { APPLICATION_PROTOCOL } from '../utils';
+import { getIconsPath } from '../utils/path';
 import { IS_DEVELOPMENT, IS_MAC, IS_WINDOWS } from '../utils/process';
 import { isURL, prefixHttp } from '../utils/url';
 import { IUser } from './interfaces/user';
@@ -42,14 +43,12 @@ export class App {
 
         initialize();
 
-        console.log(process.argv);
-        const urls = !IS_DEVELOPMENT && process.argv.length > 1 ? [process.argv[1]] : ['https://www.google.com'];
-
         const user = users.length < 1 || !this.userManager.lastUserId ? await this.userManager.create() : await this.userManager.get(this.userManager.lastUserId)!!;
         this.userManager.lastUserId = user.id;
         App.setTheme(user.settings.config);
-        this.windowManager.add(user, urls);
 
+        console.log(process.argv);
+        this.windowManager.add(user, !IS_DEVELOPMENT && process.argv.length > 1 ? [process.argv[1]] : undefined);
 
         app.on('window-all-closed', () => {
             if (!IS_MAC)
@@ -162,7 +161,7 @@ export class App {
             {
                 program: process.execPath,
                 arguments: '--new-window',
-                iconPath: `${app.getAppPath()}/static/icons/${nativeTheme.shouldUseDarkColors ? 'white' : 'black'}/window_add.ico`,
+                iconPath: getIconsPath(nativeTheme.shouldUseDarkColors ? 'white' : 'black', 'window_add.ico'),
                 iconIndex: 0,
                 title: 'New Window',
                 description: 'Create a new window'
@@ -170,7 +169,7 @@ export class App {
             {
                 program: process.execPath,
                 arguments: '--new-incognito-window',
-                iconPath: `${app.getAppPath()}/static/icons/${nativeTheme.shouldUseDarkColors ? 'white' : 'black'}/window_incognito.png`,
+                iconPath: getIconsPath(nativeTheme.shouldUseDarkColors ? 'white' : 'black', 'window_incognito.png'),
                 iconIndex: 0,
                 title: 'New Incognito Window',
                 description: 'Create a new incognito window'
