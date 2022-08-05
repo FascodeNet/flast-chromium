@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-latest ]
+        os: [ linux-latest ]
 
     steps:
       - name: Check out Git repository
@@ -20,12 +20,17 @@ jobs:
         with:
           node-version: 16
 
+      - name: Install Required Build Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-multilib g++-multilib
+
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
       - name: Compile
         run: |
-          set NODE_OPTIONS=--max-old-space-size=4096
+          export NODE_OPTIONS=--max-old-space-size=4096
           npm run ci-compile:win32
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
