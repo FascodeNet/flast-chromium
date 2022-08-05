@@ -58,8 +58,7 @@ applyBrowserEntries(
         'history',
         'downloads',
         'extensions'
-    ],
-    true
+    ]
 );
 
 applyPageEntries(
@@ -71,8 +70,7 @@ applyPageEntries(
         'downloads',
         'applications',
         'settings'
-    ],
-    true
+    ]
 );
 
 export default [Main, Preload, BrowserRenderer, PageRenderer];

@@ -4,37 +4,37 @@ import { resolve } from 'path';
 import { Configuration } from 'webpack';
 import { APPLICATION_NAME } from './src/utils';
 
-export const getBrowserHtml = (name: string, minify: boolean) => new HtmlWebpackPlugin({
+export const getBrowserHtml = (name: string) => new HtmlWebpackPlugin({
     title: APPLICATION_NAME,
     template: './static/index.html',
     filename: `${name}.html`,
     chunks: [name],
     scriptLoading: 'blocking',
     inject: 'body',
-    minify
+    minify: 'auto'
 });
 
-export const getPageHtml = (name: string, minify: boolean) => new HtmlWebpackPlugin({
+export const getPageHtml = (name: string) => new HtmlWebpackPlugin({
     title: APPLICATION_NAME,
     template: './static/index.html',
     filename: `${name}.html`,
     chunks: [name],
     scriptLoading: 'blocking',
     inject: 'body',
-    minify
+    minify: 'auto'
 });
 
-export const applyBrowserEntries = (config: any, entries: string[], minify: boolean) => {
+export const applyBrowserEntries = (config: any, entries: string[]) => {
     for (const entry of entries) {
         config.entry[entry] = `./src/renderer/views/browser/${entry}`;
-        config.plugins.push(getBrowserHtml(entry, minify));
+        config.plugins.push(getBrowserHtml(entry));
     }
 };
 
-export const applyPageEntries = (config: any, entries: string[], minify: boolean) => {
+export const applyPageEntries = (config: any, entries: string[]) => {
     for (const entry of entries) {
         config.entry[entry] = `./src/renderer/views/pages/${entry}`;
-        config.plugins.push(getPageHtml(entry, minify));
+        config.plugins.push(getPageHtml(entry));
     }
 };
 
@@ -148,8 +148,7 @@ applyBrowserEntries(
         'history',
         'downloads',
         'extensions'
-    ],
-    false
+    ]
 );
 
 applyPageEntries(
@@ -161,8 +160,7 @@ applyPageEntries(
         'downloads',
         'applications',
         'settings'
-    ],
-    false
+    ]
 );
 
 export default [Main, Preload, BrowserRenderer, PageRenderer];

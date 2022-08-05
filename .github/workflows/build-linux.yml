@@ -1,4 +1,4 @@
-name: Build
+name: Build Linux
 
 on: [ push, pull_request ]
 
@@ -7,8 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # os: [ windows-latest, macos-latest ]
-        os: [ macos-latest, ubuntu-latest ]
+        os: [ ubuntu-latest ]
 
     steps:
       - name: Check out Git repository
@@ -22,7 +21,6 @@ jobs:
           node-version: 16
 
       - name: Install Required Build Toolchain
-        if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install gcc-multilib g++-multilib
@@ -30,24 +28,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Compile Windows
-        if: matrix.os == 'windows-latest'
-        run: |
-          set NODE_OPTIONS=--max-old-space-size=4096
-          npm run ci-compile:win32
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Compile macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          export NODE_OPTIONS=--max-old-space-size=4096
-          npm run ci-compile:darwin
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Compile Linux
-        if: matrix.os == 'ubuntu-latest'
+      - name: Compile
         run: |
           export NODE_OPTIONS=--max-old-space-size=4096
           npm run ci-compile:linux
