@@ -1,4 +1,4 @@
-name: Build Windows
+name: Build
 
 on: [ push, pull_request ]
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-18.04 ]
+        os: [ ubuntu-18.04, macos-latest, ubuntu-latest ]
 
     steps:
       - name: Check out Git repository
@@ -21,12 +21,14 @@ jobs:
           node-version: 16
 
       - name: Install Required Build Toolchain
+        if: matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install gcc-multilib g++-multilib
           sudo apt-get install --no-install-recommends -y libopenjp2-tools
 
       - name: Install Wine
+        if: matrix.os == 'ubuntu-18.04'
         run: |
           sudo dpkg --add-architecture i386
           wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
@@ -34,13 +36,27 @@ jobs:
           sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
           sudo apt install --install-recommends winehq-stable
 
+      - name: Set NODE_OPTIONS
+        run: export NODE_OPTIONS=--max-old-space-size=4096
+
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Compile
-        run: |
-          export NODE_OPTIONS=--max-old-space-size=4096
-          npm run ci-compile:win32
+      - name: Compile Windows
+        if: matrix.os == 'ubuntu-18.04'
+        run: npm run ci-compile:win32
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Compile macOS
+        if: matrix.os == 'macos-latest'
+        run: npm run ci-compile:darwin
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Compile Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run ci-compile:linux
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
