@@ -11,11 +11,12 @@ import React, {
     useState
 } from 'react';
 import reactStringReplace from 'react-string-replace';
+import { APPLICATION_PROTOCOL } from '../../../../../../constants';
 import { BookmarkData, DefaultUserConfig, SearchEngine } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { getTranslate } from '../../../../../../languages/language';
 import { ResultData } from '../../../../../../main/utils/search';
-import { APPLICATION_PROTOCOL, equals, includes } from '../../../../../../utils';
+import { equals, includes } from '../../../../../../utils';
 import { split } from '../../../../../../utils/array';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
 import { Code } from '../../../../../components/Code';

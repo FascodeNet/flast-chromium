@@ -2,7 +2,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { resolve } from 'path';
 import { Configuration } from 'webpack';
-import { APPLICATION_NAME } from './src/utils';
+import { APPLICATION_NAME } from './src/constants';
 
 export const getBrowserHtml = (name: string) => new HtmlWebpackPlugin({
     title: APPLICATION_NAME,

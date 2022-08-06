@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge';
 import { BrowserView, NativeImage } from 'electron';
+import { APPLICATION_NAME } from '../../constants';
 import {
     WINDOW_DOUBLE_TITLE_BAR_HEIGHT,
     WINDOW_DOUBLE_TOOL_BAR_HEIGHT,
@@ -16,7 +17,6 @@ import {
     ZoomLevel,
     ZoomLevels
 } from '../../interfaces/view';
-import { APPLICATION_NAME } from '../../utils';
 import { getHeight } from '../../utils/design';
 import { getBuildPath } from '../../utils/path';
 import { Dialog } from '../dialogs/dialog';

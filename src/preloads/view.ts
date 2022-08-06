@@ -1,7 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IFlastAPI } from '../@types/electron';
+import { APPLICATION_PROTOCOL } from '../constants';
 import { BookmarkData, OmitData, UserConfig } from '../interfaces/user';
-import { APPLICATION_PROTOCOL, DeepPartial } from '../utils';
+import { DeepPartial } from '../utils';
 import { injectChromeWebStoreInstallButton } from './chrome-webstore';
 
 export const togglePictureInPicture = async (index: number = 0) => {

@@ -2,8 +2,6 @@ import { getCurrentWebContents } from '@electron/remote';
 import { CircularProgress } from '@mui/material';
 import clsx from 'clsx';
 import React, { Fragment, MouseEvent } from 'react';
-import { IExtension } from '../../../../../../interfaces/extension';
-import { ViewState } from '../../../../../../interfaces/view';
 import {
     APPLICATION_PROTOCOL,
     APPLICATION_WEB_APPLICATIONS,
@@ -14,7 +12,9 @@ import {
     APPLICATION_WEB_HOME,
     APPLICATION_WEB_SETTINGS,
     EXTENSION_PROTOCOL
-} from '../../../../../../utils';
+} from '../../../../../../constants';
+import { IExtension } from '../../../../../../interfaces/extension';
+import { ViewState } from '../../../../../../interfaces/view';
 import { Applications, Bookmarks, Download, Extension, History, Home, Settings } from '../../../../../components/Icons';
 import { Remove } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';

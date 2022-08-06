@@ -1,6 +1,6 @@
 import { app, Menu, MenuItemConstructorOptions } from 'electron';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../constants';
 import { getTranslate } from '../../languages/language';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../utils';
 import { getIconsPath } from '../../utils/path';
 import { IS_MAC } from '../../utils/process';
 import { IUser } from '../interfaces/user';

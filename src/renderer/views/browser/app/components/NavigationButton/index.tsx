@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../utils';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../constants';
 import { isURL } from '../../../../../../utils/url';
 import { Home, Reload } from '../../../../../components/Icons';
 import { ArrowLeft, ArrowRight } from '../../../../../components/Icons/arrow';

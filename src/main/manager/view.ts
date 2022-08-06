@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../constants';
 import { MoveDirection } from '../../interfaces/view';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../utils';
 import { nonNullable } from '../../utils/array';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';

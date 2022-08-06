@@ -1,5 +1,5 @@
 import React, { MouseEvent } from 'react';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../utils';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../constants';
 import { isURL } from '../../../../../../utils/url';
 import { Add } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';

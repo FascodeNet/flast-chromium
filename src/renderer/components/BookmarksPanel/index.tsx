@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_BOOKMARKS } from '../../../constants';
 import { BookmarkData } from '../../../interfaces/user';
 import { getTranslate } from '../../../languages/language';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_BOOKMARKS } from '../../../utils';
 import { useUserConfigContext } from '../../contexts/config';
 import { useElectronAPI } from '../../utils/electron';
 import { Folder } from '../Icons/object';

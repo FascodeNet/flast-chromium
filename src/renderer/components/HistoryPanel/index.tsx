@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HISTORY } from '../../../constants';
 import { HistoryData, HistoryGroup } from '../../../interfaces/user';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_HISTORY } from '../../../utils';
 import { useElectronAPI } from '../../utils/electron';
 import { PanelOpenButton, PanelProps } from '../Panel';
 import { StyledPanel, StyledPanelContainer, StyledPanelHeader, StyledPanelTitle } from '../Panel/styles';

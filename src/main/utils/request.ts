@@ -1,6 +1,6 @@
 import https from 'https';
 import { PeerCertificate, TLSSocket } from 'tls';
-import { APPLICATION_PROTOCOL, EXTENSION_PROTOCOL } from '../../utils';
+import { APPLICATION_PROTOCOL, EXTENSION_PROTOCOL } from '../../constants';
 
 export type RequestType = 'secure' | 'insecure' | 'file' | 'source' | 'search' | 'internal' | 'extension';
 

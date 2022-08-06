@@ -3,7 +3,7 @@ import { ProcessMetric, WebContents } from 'electron';
 import filesize from 'filesize';
 import format from 'format-number';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { APPLICATION_NAME } from '../../../../../../utils';
+import { APPLICATION_NAME } from '../../../../../../constants';
 import {
     StyledTable,
     StyledTableBody,

@@ -9,7 +9,7 @@ import {
     APPLICATION_WEB_HISTORY,
     APPLICATION_WEB_HOME,
     APPLICATION_WEB_SETTINGS
-} from '../../../utils';
+} from '../../../constants';
 import { Applications, Bookmarks, Download, Extension, History, Home, Settings } from '../Icons';
 import { StyledDrawer } from './styles';
 

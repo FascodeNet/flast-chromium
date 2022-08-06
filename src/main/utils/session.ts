@@ -1,5 +1,5 @@
 import { app, Session } from 'electron';
-import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../utils';
+import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../constants';
 import { getBuildPath } from '../../utils/path';
 import { IUser } from '../interfaces/user';
 

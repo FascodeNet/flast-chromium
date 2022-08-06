@@ -1,8 +1,8 @@
 import { enable } from '@electron/remote/main';
 import deepmerge from 'deepmerge';
 import { BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, TouchBar } from 'electron';
+import { APPLICATION_NAME } from '../../constants';
 import { WindowFullScreenState } from '../../interfaces/window';
-import { APPLICATION_NAME } from '../../utils';
 import { isHorizontal } from '../../utils/design';
 import { getBuildPath, getIconsPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';

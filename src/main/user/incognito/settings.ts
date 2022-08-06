@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../constants';
 import { DefaultUserConfig, UserConfig } from '../../../interfaces/user';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME, DeepPartial } from '../../../utils';
+import { DeepPartial } from '../../../utils';
 import { isURL } from '../../../utils/url';
 import { ISettings, IUser } from '../../interfaces/user';
 import { NormalUser } from '../normal';

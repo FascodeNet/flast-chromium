@@ -1,4 +1,4 @@
-import { APPLICATION_NAME } from '../utils';
+import { APPLICATION_NAME } from '../constants';
 import { Language } from './language';
 
 export const Ja: Language = {

@@ -1,7 +1,8 @@
 import deepmerge from 'deepmerge';
 import { readFile, writeFile } from 'fs/promises';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../constants';
 import { DefaultUserConfig, UserConfig } from '../../../interfaces/user';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME, DeepPartial } from '../../../utils';
+import { DeepPartial } from '../../../utils';
 import { getUserDataPath } from '../../../utils/path';
 import { isURL } from '../../../utils/url';
 import { ISettings, IUser } from '../../interfaces/user';

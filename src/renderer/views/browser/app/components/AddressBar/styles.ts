@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
+import { APPLICATION_NAME } from '../../../../../../constants';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
-import { APPLICATION_NAME } from '../../../../../../utils';
 import { borderRadius } from '../../../../../themes';
 
 interface StyledAddressBarProps {

@@ -3,8 +3,8 @@ import { Box, IconButton, InputBase, Popper, useMediaQuery, useTheme } from '@mu
 import React, { ChangeEvent, KeyboardEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import Logo from '../../../../../../assets/logo.svg';
+import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../../../../../constants';
 import { ResultData } from '../../../../../../main/utils/search';
-import { APPLICATION_NAME, APPLICATION_PROTOCOL } from '../../../../../../utils';
 import { split } from '../../../../../../utils/array';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
 import { Applications, Search } from '../../../../../components/Icons';

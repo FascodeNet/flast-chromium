@@ -1,8 +1,8 @@
 import Datastore from '@seald-io/nedb';
 import { format } from 'date-fns';
 import { ipcMain } from 'electron';
+import { APPLICATION_PROTOCOL } from '../../../constants';
 import { HistoryData, HistoryGroup, OmitData } from '../../../interfaces/user';
-import { APPLICATION_PROTOCOL } from '../../../utils';
 import { getUserDataPath } from '../../../utils/path';
 import { IHistory, IUser } from '../../interfaces/user';
 

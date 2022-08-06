@@ -1,7 +1,6 @@
 import faker from '@faker-js/faker';
 import { app, dialog, Menu, MenuItemConstructorOptions, nativeImage } from 'electron';
 import { author } from '../../../package.json';
-import { getTranslate } from '../../languages/language';
 import {
     APPLICATION_NAME,
     APPLICATION_PROTOCOL,
@@ -11,7 +10,8 @@ import {
     APPLICATION_WEB_EXTENSIONS,
     APPLICATION_WEB_HISTORY,
     APPLICATION_WEB_SETTINGS
-} from '../../utils';
+} from '../../constants';
+import { getTranslate } from '../../languages/language';
 import { isHorizontal } from '../../utils/design';
 import { getIconsPath } from '../../utils/path';
 import { IS_MAC } from '../../utils/process';
