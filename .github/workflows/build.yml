@@ -38,7 +38,7 @@ jobs:
 
       - name: Set "NODE_OPTIONS" (Windows, Linux)
         if: matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-latest'
-        run: export NODE_OPTIONS=--max-old-space-size=4096
+        run: export NODE_OPTIONS=--max-old-space-size=6144
 
       - name: Set "NODE_OPTIONS" (macOS)
         if: matrix.os == 'macos-latest'
