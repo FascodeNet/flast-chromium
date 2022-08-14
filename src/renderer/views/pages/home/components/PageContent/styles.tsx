@@ -11,7 +11,7 @@ export const Page = styled(Box)({
         'header'
         'content'
     `,
-    backgroundImage: 'url(https://source.unsplash.com/random)',
+    backgroundImage: 'url(https://source.unsplash.com/random/1920x1280)',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover'
