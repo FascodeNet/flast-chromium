@@ -39,7 +39,7 @@
     ]
   },
   "mac": {
-    "category": "public.app-category.navigation",
+    "category": "public.app-category.utilities",
     "target": [
       {
         "target": "default",
