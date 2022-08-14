@@ -39,13 +39,13 @@ jobs:
       - name: Set "NODE_OPTIONS" (Windows, Linux)
         if: matrix.os == 'ubuntu-18.04' || matrix.os == 'ubuntu-latest'
         run: |
-          export NODE_OPTIONS=--max-old-space-size=6144
+          export NODE_OPTIONS="--max-old-space-size=6144 --gc_interval=100"
           echo $NODE_OPTIONS
 
       - name: Set "NODE_OPTIONS" (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          export NODE_OPTIONS=--max-old-space-size=10240
+          export NODE_OPTIONS="--max-old-space-size=10240 --gc_interval=100"
           echo $NODE_OPTIONS
 
       - name: Install Dependencies
