@@ -3,6 +3,7 @@ import { app, ipcMain, nativeTheme, protocol } from 'electron';
 import { stat } from 'fs/promises';
 import { isAbsolute } from 'path';
 import { APPLICATION_PROTOCOL } from '../constants';
+import { IPCChannel } from '../constants/ipc';
 import { UserConfig } from '../interfaces/user';
 import { getIconsPath } from '../utils/path';
 import { IS_DEVELOPMENT, IS_MAC, IS_WINDOWS } from '../utils/process';
@@ -56,29 +57,29 @@ export class App {
         });
 
         app.on('activate', () => {
-            if (this.windowManager.getWindows().length > 0) return;
+            if (this.windowManager.windows.length > 0) return;
 
             const lastUserId = this.userManager.lastUserId;
             if (!lastUserId) return;
 
-            const user = this.userManager.get(lastUserId);
-            if (!user) return;
+            const lastUser = this.userManager.get(lastUserId);
+            if (!lastUser) return;
 
-            this.windowManager.add(user);
+            this.windowManager.add(lastUser);
         });
 
         app.on('browser-window-focus', (e, browserWindow) => {
-            const window = this.windowManager.get(browserWindow.id);
-            if (!window) return;
+            const appWindow = this.windowManager.get(browserWindow.id);
+            if (!appWindow) return;
 
-            const settings = window.user.settings;
+            const settings = appWindow.user.settings;
             App.setTheme(settings.config);
 
-            const windows = this.windowManager.getWindows().filter((appWindow) => appWindow.user.id === window.user.id && appWindow.id !== browserWindow.id);
-            windows.forEach((appWindow) => {
-                appWindow.webContents.send('settings-update', settings.config);
-                appWindow.viewManager.get()?.setBounds();
-                appWindow.setStyle();
+            const windows = this.windowManager.getWindows(appWindow.user).filter((window) => window.id !== browserWindow.id);
+            windows.forEach((window) => {
+                window.viewManager.views.forEach((view) => view.setBounds());
+                window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
+                window.setStyle();
             });
         });
 
@@ -87,16 +88,16 @@ export class App {
 
             if (!this.userManager.lastUserId) return;
 
-            const user = this.userManager.get(this.userManager.lastUserId);
-            if (!user) return;
+            const lastUser = this.userManager.get(this.userManager.lastUserId);
+            if (!lastUser) return;
 
             const path = argv[argv.length - 1];
 
-            await this.addWindow(user, path);
+            await this.addWindow(lastUser, path);
         });
 
         nativeTheme.on('updated', () => {
-            this.windowManager.getWindows().forEach((window) => {
+            this.windowManager.windows.filter((window) => !window.isDestroyed).forEach((window) => {
                 window.viewManager.get()?.setBounds();
                 window.setStyle();
             });
@@ -109,7 +110,7 @@ export class App {
     }
 
     public static setTheme(config: UserConfig) {
-        nativeTheme.themeSource = config.appearance.mode;
+        nativeTheme.themeSource = config.appearance.color_scheme;
     }
 
 
@@ -119,14 +120,14 @@ export class App {
         if (isAbsolute(path) && (await stat(path)).isFile()) {
             if (IS_DEVELOPMENT) return;
 
-            if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
+            if (this.windowManager.windows.length < 1 || currentWindow == null) {
                 this.windowManager.add(user, [`file:///${path}`]);
             } else {
                 currentWindow.viewManager.add(`file:///${path}`);
                 currentWindow.browserWindow.show();
             }
         } else if (isURL(path)) {
-            if (this.windowManager.getWindows().length < 1 || currentWindow == null) {
+            if (this.windowManager.windows.length < 1 || currentWindow == null) {
                 this.windowManager.add(user, [prefixHttp(path)]);
             } else {
                 currentWindow.viewManager.add(prefixHttp(path));

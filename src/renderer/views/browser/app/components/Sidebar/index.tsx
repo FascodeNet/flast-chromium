@@ -13,7 +13,7 @@ import { VerticalTabContainer } from '../TabContainer';
 import { StyledSidebar, StyledToolBarContainer } from './styles';
 
 export const Sidebar = () => {
-    const { toggleSidebar } = useElectronAPI();
+    const { windowApi } = useElectronAPI();
 
     const { config, setConfig } = useUserConfigContext();
     const { style, sidebar: { extended, state } } = config.appearance;
@@ -26,11 +26,11 @@ export const Sidebar = () => {
         setPanel(newState);
         setConfig({ appearance: { sidebar: { state: newState } } });
         if (!extended && prevState === 'tab_container')
-            toggleSidebar();
+            windowApi.toggleSidebar();
     };
 
     const handleToggleSidebarClick = () => {
-        toggleSidebar();
+        windowApi.toggleSidebar();
         if (extended) {
             setPanel('tab_container');
             setConfig({ appearance: { sidebar: { state: 'tab_container' } } });

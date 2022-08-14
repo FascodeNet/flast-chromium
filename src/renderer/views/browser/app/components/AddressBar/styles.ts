@@ -67,6 +67,15 @@ export const StyledButtonContainer = styled.div`
   align-items: center;
   gap: 1px;
   cursor: default;
+
+  & .MuiButtonBase-root {
+    min-width: 30px !important;
+    height: 30px !important;
+
+    &.IconButton {
+      width: 30px !important;
+    }
+  }
 `;
 
 interface StyledButtonProps {

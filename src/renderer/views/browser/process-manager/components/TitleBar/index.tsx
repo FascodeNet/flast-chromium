@@ -7,14 +7,14 @@ import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledContainer, StyledTitleBar } from './styles';
 
 export const TitleBar = () => {
-    const { minimize, maximize, close } = useElectronAPI();
+    const { windowApi } = useElectronAPI();
 
     const { palette } = useTheme();
 
     const isMac = platform() === 'darwin';
 
     return (
-        <StyledTitleBar>
+        <StyledTitleBar className="title-bar">
             <StyledContainer>
                 {!isMac && <img src={Icon} />}
                 <span>プロセス マネージャー</span>
@@ -23,9 +23,9 @@ export const TitleBar = () => {
                 <WindowsControls
                     dark={palette.mode === 'dark'}
                     style={{ appRegion: 'no-drag' }}
-                    onMinimize={() => minimize()}
-                    onMaximize={() => maximize()}
-                    onClose={() => close()}
+                    onMinimize={windowApi.minimize}
+                    onMaximize={windowApi.maximize}
+                    onClose={windowApi.close}
                 />
             }
         </StyledTitleBar>

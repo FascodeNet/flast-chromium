@@ -5,6 +5,7 @@ import { DeepPartial } from '../../../utils';
 import { isURL } from '../../../utils/url';
 import { ISettings, IUser } from '../../interfaces/user';
 import { NormalUser } from '../normal';
+import { ThemeData } from '../theme';
 
 export class IncognitoSettings implements ISettings {
 
@@ -15,7 +16,11 @@ export class IncognitoSettings implements ISettings {
     public constructor(user: IUser, fromUser: NormalUser) {
         this.user = user;
 
-        this._config = fromUser.settings.config;
+        this._config = deepmerge<UserConfig>(fromUser.settings.config, { appearance: { theme: null } } as any);
+    }
+
+    public get theme(): ThemeData | undefined {
+        return undefined;
     }
 
     public get startupUrls(): string[] {

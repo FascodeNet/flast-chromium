@@ -1,4 +1,5 @@
-import { UserConfig } from '../interfaces/user';
+import { ContentType, UserConfig } from '../interfaces/user';
+import { PermissionType } from '../main/session/permission';
 import { En } from './en';
 import { Ja } from './ja';
 
@@ -16,6 +17,14 @@ interface CertificateTranslate {
     description: string;
 }
 
+interface SitePermission {
+    title: string;
+    description: string;
+
+    enable: string;
+    disable: string;
+}
+
 export interface Language {
     common: {
         success: string;
@@ -24,6 +33,7 @@ export interface Language {
         information: string;
         yes: string;
         no: string;
+        none: string;
         cancel: string;
         save: string;
         edit: string;
@@ -31,6 +41,10 @@ export interface Language {
         remove: string;
         delete: string;
     };
+
+    permissions: Record<PermissionType, SitePermission>;
+    contents: Record<ContentType | 'cookies' | 'zoom_level', string>;
+
     tasks: {
         addTab: string;
         addWindow: string;
@@ -42,6 +56,22 @@ export interface Language {
             newWindow: string;
             openIncognitoWindow: string;
 
+            zoom: {
+                label: string;
+
+                zoomIn: string;
+                zoomOut: string;
+                zoomReset: string;
+                fullScreen: string;
+            }
+            edit: {
+                label: string;
+
+                cut: string;
+                copy: string;
+                paste: string;
+            }
+
             bookmarks: string;
             history: string;
             downloads: string;
@@ -50,11 +80,23 @@ export interface Language {
 
             print: string;
             find: string;
-            share: string;
+            share: {
+                label: string;
+
+                twitter: string;
+                facebook: string;
+                copyLink: string;
+                qrCode: string;
+            }
 
             settings: string;
-            help: {
+            helpAndFeedback: {
                 label: string;
+
+                help: string;
+                feedback: string;
+                whatsNewAndHint: string;
+                about: string;
             }
             close: string;
         };
@@ -159,7 +201,6 @@ export interface Language {
                 removeUser: string;
                 editUser: string;
             }
-
             help: {
                 label: string;
 
@@ -325,10 +366,16 @@ export interface Language {
                     history: string;
                 }
             };
+            adBlocker: {
+                title: string;
+
+                enabled: string;
+                filters: string;
+            };
             appearance: {
                 title: string;
 
-                mode: {
+                colorScheme: {
                     title: string;
 
                     system: string;
@@ -339,11 +386,6 @@ export interface Language {
                 }
                 theme: {
                     title: string;
-
-                    none: string;
-                    morningFog: string;
-                    icyMint: string;
-                    islandGetaway: string;
                 }
                 tabPosition: {
                     title: string;
@@ -378,14 +420,14 @@ export interface Language {
                     title: string;
 
                     button: {
-                        name: string;
-                        description: string;
+                        primary: string;
+                        secondary: string;
                     }
                     newTab: string;
                     custom: string;
                 }
             };
-            search: {
+            searchAndAddressBar: {
                 title: string;
 
                 suggests: {
@@ -405,6 +447,22 @@ export interface Language {
                     }
                 }
             };
+            sites: {
+                title: string;
+
+                permissions: string;
+                contents: string;
+
+                default: string;
+            }
+            systemAndPerformance: {
+                title: string;
+
+                smoothTabSwitching: {
+                    primary: string;
+                    secondary: string;
+                }
+            }
         };
     };
 }

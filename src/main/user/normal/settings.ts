@@ -6,6 +6,7 @@ import { DeepPartial } from '../../../utils';
 import { getUserDataPath } from '../../../utils/path';
 import { isURL } from '../../../utils/url';
 import { ISettings, IUser } from '../../interfaces/user';
+import { ThemeData } from '../theme';
 
 export class NormalSettings implements ISettings {
 
@@ -15,16 +16,24 @@ export class NormalSettings implements ISettings {
 
     private _config: UserConfig = DefaultUserConfig;
 
+    private _themeData?: ThemeData;
+
     public constructor(user: IUser) {
         this.user = user;
 
-        this.path = getUserDataPath(user.id, 'config.json');
+        this.path = getUserDataPath(user.id, 'Config.json');
         this.getConfig().then((userConfig) => {
-            this._config = deepmerge(DefaultUserConfig, this.migrate(userConfig), { arrayMerge: (target, source, options) => source });
+            const config = deepmerge(DefaultUserConfig, this.migrate(userConfig), { arrayMerge: (target, source, options) => source });
+            this._config = config;
+            this._themeData = new ThemeData(this.user, config.appearance.theme);
         }).catch(async () => {
             await this.setConfig(DefaultUserConfig);
             this._config = DefaultUserConfig;
         });
+    }
+
+    public get theme(): ThemeData | undefined {
+        return this._themeData;
     }
 
     public get startupUrls(): string[] {
@@ -52,6 +61,8 @@ export class NormalSettings implements ISettings {
         const config = deepmerge<UserConfig>(this._config, data as any);
         this._config = config;
         this.setConfig(config);
+
+        this._themeData = new ThemeData(this.user, config.appearance.theme);
     }
 
     private async getConfig() {
@@ -70,10 +81,22 @@ export class NormalSettings implements ISettings {
         switch (config.version) {
             case undefined:
                 config.version = 1;
-
                 config.search = DefaultUserConfig.search;
+                break;
+            case 1:
+                config.version = 2;
+                config.appearance.color_scheme = (config.appearance as any).mode;
+                config.system_performance = DefaultUserConfig.system_performance;
+
+                delete (config.appearance as any).mode;
+                delete (config.appearance as any).extended_sidebar;
+                break;
+            case 2:
+                config.version = 3;
+                config.ad_blocker = DefaultUserConfig.ad_blocker;
+                break;
         }
 
-        return config;
+        return config.version >= DefaultUserConfig.version ? config : this.migrate(config);
     }
 }

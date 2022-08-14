@@ -1,4 +1,6 @@
 import Datastore from '@seald-io/nedb';
+import { ipcMain } from 'electron';
+import { IPCChannel } from '../../../constants/ipc';
 import { BookmarkData, OmitData } from '../../../interfaces/user';
 import { getUserDataPath } from '../../../utils/path';
 import { IBookmarks, IUser } from '../../interfaces/user';
@@ -11,11 +13,13 @@ export class IncognitoBookmarks implements IBookmarks {
     private readonly _datastore: Datastore;
     private _bookmarks: BookmarkData[] = [];
 
+    private readonly ipcChannel = IPCChannel.Bookmarks;
+
     public constructor(user: IUser, fromUser: NormalUser) {
         this.user = user;
 
         this._datastore = new Datastore<BookmarkData>({
-            filename: getUserDataPath(fromUser.id, 'bookmarks.db'),
+            filename: getUserDataPath(fromUser.id, 'Bookmarks.db'),
             autoload: true,
             timestampData: true
         });
@@ -23,6 +27,19 @@ export class IncognitoBookmarks implements IBookmarks {
         this._datastore.find({}, {}, (err, docs) => {
             if (err) throw new Error('The data could not be read!');
             this._bookmarks = docs;
+        });
+
+        ipcMain.handle(this.ipcChannel.LIST(user.id), () => {
+            return this.bookmarks;
+        });
+        ipcMain.handle(this.ipcChannel.ADD(user.id), async (e, data: OmitData<BookmarkData>) => {
+            return await this.add(data);
+        });
+        ipcMain.handle(this.ipcChannel.REMOVE(user.id), async (e, id: string) => {
+            return await this.remove(id);
+        });
+        ipcMain.handle(this.ipcChannel.UPDATE(user.id), async (e, id: string, data: OmitData<BookmarkData>) => {
+            return await this.update(id, data);
         });
     }
 

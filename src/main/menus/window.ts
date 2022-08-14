@@ -11,6 +11,7 @@ import {
     APPLICATION_WEB_HISTORY,
     APPLICATION_WEB_SETTINGS
 } from '../../constants';
+import { IPCChannel } from '../../constants/ipc';
 import { getTranslate } from '../../languages/language';
 import { isHorizontal } from '../../utils/design';
 import { getIconsPath } from '../../utils/path';
@@ -286,7 +287,7 @@ export const getWindowMenu = (window: AppWindow) => {
         submenu: [
             {
                 label: languageSection.view.fullScreen,
-                icon: !IS_MAC ? getMenuItemIconFromName('fullscreen') : undefined,
+                icon: !IS_MAC ? getMenuItemIconFromName(!window.browserWindow.fullScreen ? 'expand' : 'shrink') : undefined,
                 accelerator: Shortcuts.FULLSCREEN,
                 click: () => window.browserWindow.setFullScreen(!window.browserWindow.fullScreen)
             },
@@ -302,8 +303,8 @@ export const getWindowMenu = (window: AppWindow) => {
 
                     const windows = Main.windowManager.getWindows(window.user);
                     windows.forEach((appWindow) => {
-                        appWindow.webContents.send('settings-update', settings.config);
-                        appWindow.viewManager.get()?.setBounds();
+                        appWindow.viewManager.views.forEach((appView) => appView.setBounds());
+                        appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                     });
                 }
             },
@@ -320,8 +321,8 @@ export const getWindowMenu = (window: AppWindow) => {
 
                     const windows = Main.windowManager.getWindows(window.user);
                     windows.forEach((appWindow) => {
-                        appWindow.webContents.send('settings-update', settings.config);
-                        appWindow.viewManager.get()?.setBounds();
+                        appWindow.viewManager.views.forEach((appView) => appView.setBounds());
+                        appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                     });
                 }
             },
@@ -750,7 +751,7 @@ export const getWindowMenu = (window: AppWindow) => {
             },
             {
                 label: languageSection.window.toggleFullScreen,
-                icon: !IS_MAC ? getMenuItemIconFromName('fullscreen') : undefined,
+                icon: !IS_MAC ? getMenuItemIconFromName(!window.browserWindow.fullScreen ? 'expand' : 'shrink') : undefined,
                 accelerator: Shortcuts.FULLSCREEN,
                 click: () => window.browserWindow.setFullScreen(!window.browserWindow.fullScreen)
             },
@@ -762,7 +763,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => Main.windowManager.openProcessManagerWindow()
             },
             { type: 'separator' },
-            ...(Main.windowManager.getWindows().map((appWindow, i): MenuItemConstructorOptions => {
+            ...(Main.windowManager.getWindows(window.user).map((appWindow, i): MenuItemConstructorOptions => {
                 const windowViewManager = appWindow.viewManager;
                 const subLabel = windowViewManager.views.length - 1 > 0 ? ` とその他 ${windowViewManager.views.length - 1}つのタブ` : '';
 

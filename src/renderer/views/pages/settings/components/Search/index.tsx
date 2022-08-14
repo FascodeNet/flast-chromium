@@ -40,10 +40,10 @@ export const Search = () => {
     const [config, setConfig] = useState<UserConfig>(DefaultUserConfig);
 
     const { translate } = useTranslateContext();
-    const translateSection = translate.pages.settings.search;
+    const translateSection = translate.pages.settings.searchAndAddressBar;
 
     const [defaultEngines, setDefaultEngines] = useState(DefaultUserConfig.search.engines);
-    const [searchEngines, setSearchEngines] = useState<SearchEngine[]>(DefaultUserConfig.search.engines);
+    const [searchEngines, setSearchEngines] = useState(defaultEngines);
 
     const [dialogState, setDialogState] = useState<number | undefined>(undefined);
     const [dialogName, setDialogName] = useState('');
@@ -200,7 +200,7 @@ export const Search = () => {
                                     />
                                 }
                             />
-                            <ItemTextBlock key={index} primary={engine.name} secondary={engine.url} />
+                            <ItemTextBlock primary={engine.name} secondary={engine.url} />
                             <IconButton onClick={(e) => handleEngineEditClick(e, index)}>
                                 <Edit />
                             </IconButton>

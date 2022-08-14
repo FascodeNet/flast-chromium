@@ -67,13 +67,11 @@ export const SearchPanel = (
     }: Props
 ) => {
     const {
-        hideDialog,
-        getCurrentView,
+        viewsApi,
+        dialogApi,
+        bookmarksApi,
         search,
-        getCurrentUserId,
-        getBookmarks,
-        addBookmark,
-        removeBookmark
+        getCurrentUserId
     } = useElectronAPI();
 
     const { selectedId, getCurrentViewState } = useViewManagerContext();
@@ -97,7 +95,7 @@ export const SearchPanel = (
     const [icon, setIcon] = useState<string | undefined>(undefined);
     const [bookmark, setBookmark] = useState<BookmarkData | undefined>(undefined);
 
-    const currentView = getCurrentView();
+    const currentView = viewsApi.getCurrentView();
     useEffect(() => {
         (async () => setState(await currentView))();
 
@@ -107,7 +105,7 @@ export const SearchPanel = (
 
             const viewState = await currentView;
 
-            const bookmarkDataList = await getBookmarks(id);
+            const bookmarkDataList = await bookmarksApi.list(id);
             setBookmark(bookmarkDataList.find((bookmarkData) => bookmarkData.url === viewState.url));
         });
     }, [selectedId]);
@@ -200,7 +198,7 @@ export const SearchPanel = (
 
         setEngine(undefined);
         setSuggestedEngine(undefined);
-        await hideDialog();
+        await dialogApi.hide();
     };
 
     const handleArrowUpKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
@@ -270,7 +268,7 @@ export const SearchPanel = (
             await addOrLoadView(e, value);
         }
 
-        await hideDialog();
+        await dialogApi.hide();
     };
 
 
@@ -278,9 +276,9 @@ export const SearchPanel = (
         e.stopPropagation();
 
         if (bookmark) {
-            await removeBookmark(userId, bookmark._id!!);
+            await bookmarksApi.remove(userId, bookmark._id!!);
         } else {
-            await addBookmark(
+            await bookmarksApi.add(
                 userId,
                 {
                     title: state.title,
@@ -291,7 +289,7 @@ export const SearchPanel = (
             );
         }
 
-        const bookmarks = await getBookmarks(userId);
+        const bookmarks = await bookmarksApi.list(userId);
         setBookmark(bookmarks.find((bookmarkData) => bookmarkData.url === state.url));
     };
 

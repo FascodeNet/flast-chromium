@@ -1,9 +1,8 @@
 import { ipcMain } from 'electron';
 import { readFile, rmdir, stat, writeFile } from 'fs/promises';
 import { nanoid } from 'nanoid';
-import { DefaultUserConfig, UserConfig } from '../../interfaces/user';
+import { DefaultUserConfig } from '../../interfaces/user';
 import { getTranslate } from '../../languages/language';
-import { DeepPartial } from '../../utils';
 import { getSpecialPath, getUserDataPath } from '../../utils/path';
 import { GlobalConfig } from '../interfaces/config';
 import { IUser } from '../interfaces/user';
@@ -64,7 +63,7 @@ export class UserManager {
 
     private static async load(id: string) {
         const user = new NormalUser(id);
-        await user.extensions.loads(user.session.session);
+        await user.extensions.loads();
         return user;
     }
 
@@ -130,18 +129,18 @@ export class UserManager {
 
 
     private static async getConfig(): Promise<GlobalConfig> {
-        const configDataPath = getSpecialPath('userData', 'config.json');
+        const configDataPath = getSpecialPath('userData', 'Config.json');
         return JSON.parse(await readFile(configDataPath, 'utf8'));
     }
 
     private static async setConfig(data: GlobalConfig) {
-        const configDataPath = getSpecialPath('userData', 'config.json');
+        const configDataPath = getSpecialPath('userData', 'Config.json');
         await writeFile(configDataPath, JSON.stringify(data));
     }
 
     private setupIpc() {
         ipcMain.handle('get-user', (e) => {
-            const window = Main.windowManager.getWindows().find((appWindow) => appWindow.viewManager.get(e.sender.id));
+            const window = Main.windowManager.windows.find((appWindow) => appWindow.viewManager.get(e.sender.id));
             if (!window) return undefined;
 
             return window.user.id;
@@ -149,29 +148,6 @@ export class UserManager {
 
         ipcMain.handle('user-language', (e, id: string) => {
             return getTranslate(this.get(id)?.settings.config ?? DefaultUserConfig);
-        });
-
-        ipcMain.handle('get-user-type', (e, id: string) => {
-            return this.get(id)?.type;
-        });
-        ipcMain.handle('get-user-config', (e, id: string) => {
-            return this.get(id)?.settings.config ?? DefaultUserConfig;
-        });
-        ipcMain.handle(`set-user-config`, (e, id: string, config: DeepPartial<UserConfig>) => {
-            const user = this.get(id);
-            if (!user) return;
-
-            user.settings.config = config;
-            App.setTheme(user.settings.config);
-
-            const windows = Main.windowManager.getWindows(user);
-            windows.forEach(async (window) => {
-                window.webContents.send('settings-update', user.settings.config);
-                window.viewManager.get()?.setBounds();
-                await window.setStyle();
-            });
-
-            return user.settings.config;
         });
 
         ipcMain.handle(`set-theme`, (e, id: string) => {

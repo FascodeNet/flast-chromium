@@ -1,15 +1,13 @@
-import { enable } from '@electron/remote/main';
 import { BrowserWindow, ipcMain, nativeImage } from 'electron';
+import { IPCChannel } from '../../constants/ipc';
 import { getBuildPath, getIconsPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
+import { WindowImpl } from '../implements/window';
 
-export class ProcessManagerWindow {
-    public readonly id: number;
-
-    public browserWindow: BrowserWindow;
+export class ProcessManagerWindow extends WindowImpl {
 
     public constructor() {
-        this.browserWindow = new BrowserWindow({
+        super(new BrowserWindow({
             frame: false,
             minWidth: 500,
             minHeight: 450,
@@ -32,11 +30,8 @@ export class ProcessManagerWindow {
                 sandbox: false
             },
             show: false
-        });
+        }));
 
-        this.id = this.browserWindow.id;
-
-        enable(this.browserWindow.webContents);
         this.setListeners();
         this.setupIpc();
 
@@ -55,34 +50,12 @@ export class ProcessManagerWindow {
         });
     }
 
-    public get webContents() {
-        return this.browserWindow.webContents;
-    }
-
-    public getTitle() {
-        return this.browserWindow.getTitle();
-    }
-
-    public getURL() {
-        return this.webContents.getURL();
-    }
-
-
     private setListeners() {
 
     }
 
     private setupIpc() {
-        ipcMain.handle(`window-minimize-${this.id}`, () => {
-            this.browserWindow.minimize();
-        });
-        ipcMain.handle(`window-maximize-${this.id}`, () => {
-            if (this.browserWindow.isMaximized())
-                this.browserWindow.unmaximize();
-            else
-                this.browserWindow.maximize();
-        });
-        ipcMain.handle(`window-close-${this.id}`, () => {
+        ipcMain.handle(IPCChannel.Window.CLOSE(this.id), () => {
             this.browserWindow.close();
         });
     }

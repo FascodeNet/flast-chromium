@@ -9,6 +9,7 @@ export const Ja: Language = {
         information: '情報',
         yes: 'はい',
         no: 'いいえ',
+        none: 'なし',
         cancel: 'キャンセル',
         save: '保存',
         edit: '編集',
@@ -16,6 +17,103 @@ export const Ja: Language = {
         remove: '削除',
         delete: '削除'
     },
+
+    permissions: {
+        geolocation: {
+            title: '位置情報',
+            description: '多くのサイトは、ローカル ニュースや近くのお店の情報などを取得するためにユーザーの位置情報を使用します。',
+
+            enable: 'サイトが位置情報の使用を要求できるようにする',
+            disable: 'サイトに位置情報の使用を許可しない'
+        },
+        camera: {
+            title: 'カメラ',
+            description: '多くのサイトは、ビデオチャットなどの通信機能に Web カメラを使用します。',
+
+            enable: 'サイトがカメラの使用を要求できるようにする',
+            disable: 'サイトにカメラの使用を許可しない'
+        },
+        microphone: {
+            title: 'マイク',
+            description: '多くのサイトは、ビデオチャットなどの通信機能にマイクを使用します。',
+
+            enable: 'サイトがマイクの使用を要求できるようにする',
+            disable: 'サイトにマイクの使用を許可しない'
+        },
+        notifications: {
+            title: '通知',
+            description: 'サイトは最新情報やチャット メッセージなどを知らせる目的で通知を送信します。',
+
+            enable: 'サイトが通知の送信を要求できるようにする',
+            disable: 'サイトに通知の送信を許可しない'
+        },
+        sensors: {
+            title: 'モーション センサー',
+            description: 'バーチャル リアリティやフィットネス トラッキングなどの機能にデバイスのモーション センサーを使用します。',
+
+            enable: 'サイトがモーション センサーの使用を要求できるようにする',
+            disable: 'サイトにモーション センサーの使用を許可しない'
+        },
+        midi: {
+            title: 'MIDI デバイス',
+            description: '音楽の制作や編集をするために MIDI デバイスに接続します。',
+
+            enable: 'サイトが MIDI デバイスへの接続を要求できるようにする',
+            disable: 'サイトに MIDI デバイスへの接続を許可しない'
+        },
+        hid: {
+            title: 'HID デバイス',
+            description: '一般的ではないキーボードや、ゲーム コントローラなどのデバイスを使用する機能に対応するために、HID デバイスに接続します。',
+
+            enable: 'サイトが HID デバイスへの接続を要求できるようにする',
+            disable: 'サイトに HID デバイスへの接続を許可しない'
+        },
+        serial: {
+            title: 'シリアルポート',
+            description: 'ネットワークを設定するなど、データ転送機能を使用するためにシリアルポートに接続します。',
+
+            enable: 'サイトがシリアルポートへの接続を要求できるようにする',
+            disable: 'サイトにシリアルポートへの接続を許可しない'
+        },
+        idle_detection: {
+            title: 'デバイスのアクティブ状態',
+            description: 'デバイスのアクティブ状態を検出して、チャットアプリのステータスを設定します。',
+
+            enable: 'サイトがデバイスのアクティブ状態の検出を要求できるようにする',
+            disable: 'サイトによるデバイスのアクティブ状態の検出を許可しない'
+        },
+        clipboard: {
+            title: 'クリップボードの読み書き',
+            description: '多くのサイトは、コピーしたテキストの書式を保持するなどのためにクリップボードを読み取ります。',
+
+            enable: 'サイトがクリップボード内のテキストや画像へのアクセスを要求できるようにする',
+            disable: 'サイトにクリップボード内のテキストや画像へのアクセスを許可しない'
+        },
+        pointer_lock: {
+            title: 'マウスカーソルのロック',
+            description: 'サイトはFPS ゲームなどを操作できるようにするためにマウスカーソルを占有します。',
+
+            enable: 'サイトがマウスカーソルのロックを要求できるようにする',
+            disable: 'サイトにマウスカーソルのロックを許可しない'
+        },
+        open_external: {
+            title: '外部のアプリを開く',
+            description: '多くのサイトは、デスクトップ アプリへのシームレスな遷移のために外部のアプリを開きます。',
+
+            enable: 'サイトが外部のアプリを開くことを要求できるようにする',
+            disable: 'サイトに外部のアプリを開くことを許可しない'
+        }
+    },
+    contents: {
+        cookies: 'Cookie とサイトデータ',
+        javascript: 'JavaScript',
+        images: '画像',
+        sounds: '音声',
+        ads: '広告',
+        protected_content: '保護されたコンテンツ',
+        zoom_level: 'ズームレベル'
+    },
+
     tasks: {
         addTab: '新しいタブ',
         addWindow: '新しいウィンドウ',
@@ -27,6 +125,22 @@ export const Ja: Language = {
             newWindow: '新しいウィンドウ',
             openIncognitoWindow: 'プライベート ウィンドウを開く',
 
+            zoom: {
+                label: 'ズーム',
+
+                zoomIn: 'ページを拡大',
+                zoomOut: 'ページを縮小',
+                zoomReset: 'ページのズームをリセット',
+                fullScreen: '全画面表示の切り替え'
+            },
+            edit: {
+                label: '編集',
+
+                cut: '切り取り',
+                copy: 'コピー',
+                paste: '貼り付け'
+            },
+
             bookmarks: 'ブックマーク',
             history: '履歴',
             downloads: 'ダウンロード',
@@ -35,11 +149,23 @@ export const Ja: Language = {
 
             print: '印刷',
             find: 'ページ内検索',
-            share: '共有',
+            share: {
+                label: '共有',
+
+                twitter: 'Twitter',
+                facebook: 'Facebook',
+                copyLink: 'リンクをコピー',
+                qrCode: 'QR コードを表示'
+            },
 
             settings: '設定',
-            help: {
-                label: 'ヘルプ'
+            helpAndFeedback: {
+                label: 'ヘルプとフィードバック',
+
+                help: 'ヘルプ',
+                feedback: 'フィードバックの送信',
+                whatsNewAndHint: '新着情報とヒント',
+                about: `${APPLICATION_NAME} について`
             },
             close: '閉じる'
         },
@@ -328,11 +454,17 @@ export const Ja: Language = {
                     history: '履歴からサジェストする'
                 }
             },
+            adBlocker: {
+                title: '広告ブロック',
+
+                enabled: '広告ブロックを有効にする',
+                filters: 'フィルター リスト'
+            },
             appearance: {
                 title: 'デザインと外観',
 
-                mode: {
-                    title: 'テーマと配色',
+                colorScheme: {
+                    title: '全体的な配色',
 
                     system: 'システムの設定に合わせる',
                     light: 'ライト',
@@ -341,12 +473,7 @@ export const Ja: Language = {
                     tabColored: 'サイトに設定されているテーマカラーをタブに設定する'
                 },
                 theme: {
-                    title: 'テーマ',
-
-                    none: '既定',
-                    morningFog: 'Morning fog',
-                    icyMint: 'Icy mint',
-                    islandGetaway: 'Island getaway'
+                    title: 'テーマ'
                 },
                 tabPosition: {
                     title: 'タブとアドレスバーの配置',
@@ -381,14 +508,14 @@ export const Ja: Language = {
                     title: 'ホーム',
 
                     button: {
-                        name: 'ツールバーにホームボタンを表示',
-                        description: 'ホームボタンを押した際に表示するページを設定'
+                        primary: 'ツールバーにホームボタンを表示',
+                        secondary: 'ホームボタンを押した際に表示するページを設定'
                     },
                     newTab: '新しいタブ ページを開く',
                     custom: '特定のページを開く'
                 }
             },
-            search: {
+            searchAndAddressBar: {
                 title: '検索とアドレスバー',
 
                 suggests: {
@@ -406,6 +533,22 @@ export const Ja: Language = {
                         primary: '@メンション や URL で登録されている検索エンジンをサジェストする',
                         secondary: 'サジェスト中に %k を押して選択した検索エンジンで検索する'
                     }
+                }
+            },
+            sites: {
+                title: 'Cookie とサイトの設定',
+
+                permissions: '権限',
+                contents: 'コンテンツ',
+
+                default: 'デフォルトの動作'
+            },
+            systemAndPerformance: {
+                title: 'システムとパフォーマンス',
+
+                smoothTabSwitching: {
+                    primary: 'タブの切り替えを滑らかにする',
+                    secondary: 'パフォーマンスに影響が出る場合はこのオプションを無効にしてください。'
                 }
             }
         }

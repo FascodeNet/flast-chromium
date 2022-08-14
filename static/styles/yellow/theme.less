@@ -1,0 +1,174 @@
+@background: #fdd835;
+@foreground-primary: rgba(0, 0, 0, .87);
+@foreground-secondary: rgba(0, 0, 0, .6);
+@foreground-disabled: rgba(0, 0, 0, .38);
+@foreground-icon: rgba(0, 0, 0, .38);
+@divider: darken(@background, 15%);
+
+@action-active-color: rgba(0, 0, 0, @action-active-opacity);
+@action-active-opacity: .54;
+@action-hover-color: rgba(0, 0, 0, @action-hover-opacity);
+@action-hover-opacity: .04;
+@action-selected-color: rgba(0, 0, 0, @action-selected-opacity);
+@action-selected-opacity: .08;
+@action-disabled-color: rgba(0, 0, 0, .26);
+@action-disabled-background: rgba(0, 0, 0, .12);
+@action-disabled-opacity: .38;
+@action-focus-color: rgba(0, 0, 0, @action-focus-opacity);
+@action-focus-opacity: .12;
+
+@layer system-theme, internal-theme, theme;
+@layer internal-theme {
+  * {
+    color: @foreground-primary;
+    outline-color: @foreground-primary;
+  }
+
+  hr {
+    border-color: @divider !important;
+  }
+
+  .MuiSvgIcon-root {
+    fill: @foreground-primary;
+  }
+
+  .app {
+    &[data-style='top_single'], &[data-style='bottom_single'], &[data-style='left'], &[data-style='right'] {
+      .title-bar, .tool-bar, .horizontal-tab-container, .vertical-tab-container {
+        background: @background;
+      }
+
+      .title-bar {
+        border-bottom: solid 1px @divider;
+      }
+
+      .horizontal-tab-item, .vertical-tab-item {
+        background: @background;
+        border-color: @divider;
+        color: @foreground-primary;
+
+        &.active {
+          background: darken(@background, 5%);
+          border-color: darken(@background, 20%);
+
+          &:hover {
+            border-color: darken(@background, 20%);
+          }
+        }
+
+        &:hover {
+          border-color: darken(@background, 20%);
+        }
+      }
+
+      .add-tab-button {
+        background: @background;
+        border-color: @divider;
+      }
+
+      .add-tab-button:not(:disabled):hover {
+        background: darken(@background, 5%);
+        border-color: darken(@background, 20%);
+      }
+    }
+
+    &[data-style='top_double'], &[data-style='bottom_double'] {
+      .title-bar, .horizontal-tab-container, .vertical-tab-container {
+        background: darken(@background, 15%);
+      }
+
+      .tool-bar {
+        background: @background;
+        border-bottom: solid 1px @divider;
+      }
+
+      .horizontal-tab-item, .vertical-tab-item {
+        border-color: transparent;
+
+        &.active, &.active:hover {
+          background: @background;
+        }
+
+        &:hover {
+          background: darken(@background, 5%);
+        }
+      }
+
+      .add-tab-button {
+        background: darken(@background, 10%);
+        border-color: transparent;
+      }
+
+      .add-tab-button:not(:disabled):hover {
+        background: darken(@background, 5%);
+        border-color: darken(@background, 20%);
+      }
+    }
+
+    .address-bar {
+      background: lighten(@background, 10%);
+      border-color: @divider;
+      color: @foreground-primary;
+
+      .hostname {
+        color: inherit;
+      }
+
+      span, .protocol, .path, &.internal .protocol, &.file .protocol {
+        color: lighten(@foreground-primary, 50%);
+      }
+
+      &.secure .protocol {
+        color: #4caf50;
+      }
+
+      &.insecure .protocol {
+        color: #ef5350;
+      }
+    }
+
+    .sidebar {
+      &.left {
+        border-right: solid 1px @divider;
+
+        & > .panel {
+          border-left: solid 1px @divider;
+        }
+      }
+
+      &.right {
+        border-left: solid 1px @divider;
+
+        & > .panel {
+          border-right: solid 1px @divider;
+        }
+      }
+    }
+  }
+
+  .panel {
+    background-color: @background;
+
+    .panel-header {
+      border-bottom-color: @divider;
+    }
+  }
+
+  .popup > .panel {
+    background-image: none;
+  }
+
+  .popup.search {
+    .panel.search-bar, .panel.search-result {
+      background-color: @background;
+    }
+  }
+
+  .history-group h4 {
+    background-color: @background;
+  }
+
+  .popup .history-group h4 {
+    background-image: none;
+  }
+}

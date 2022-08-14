@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { BrowserView, NativeImage } from 'electron';
+import { BrowserView, ipcMain, NativeImage } from 'electron';
 import { APPLICATION_NAME } from '../../constants';
 import {
     WINDOW_DOUBLE_TITLE_BAR_HEIGHT,
@@ -8,32 +8,23 @@ import {
     WINDOW_EXTENDED_TAB_CONTAINER_WIDTH,
     WINDOW_SINGLE_LENGTH
 } from '../../constants/design';
-import {
-    AppViewInitializerOptions,
-    DefaultFindState,
-    FindState,
-    MediaStatus,
-    ViewState,
-    ZoomLevel,
-    ZoomLevels
-} from '../../interfaces/view';
+import { IPCChannel } from '../../constants/ipc';
+import { SitePermissionData } from '../../interfaces/user';
+import { AppViewInitializerOptions, DefaultFindState, FindState, MediaStatus, ViewState } from '../../interfaces/view';
 import { getHeight } from '../../utils/design';
 import { getBuildPath } from '../../utils/path';
 import { Dialog } from '../dialogs/dialog';
 import { showFindDialog } from '../dialogs/find';
+import { ViewImpl } from '../implements/view';
 import { IUser } from '../interfaces/user';
 import { ViewBoundsMapping } from '../interfaces/view';
 import { Main } from '../main';
 import { FaviconManager } from '../manager/favicon';
-import { getContextMenu } from '../menus/view';
+import { getContextMenu, getTabMenu } from '../menus/view';
 import { getRequestState, RequestState } from '../utils/request';
 import { AppWindow } from '../windows/app';
 
-export class AppView {
-
-    public readonly id: number;
-
-    public readonly browserView: BrowserView;
+export class AppView extends ViewImpl {
 
     public readonly window: AppWindow;
     public readonly incognito: boolean;
@@ -48,6 +39,7 @@ export class AppView {
     private _mediaStatus: MediaStatus = 'none';
 
     private _requestState?: RequestState;
+    private _permissions: Required<SitePermissionData>[] = [];
 
     public findDialog?: Dialog = undefined;
     private _findState?: FindState = undefined;
@@ -57,24 +49,22 @@ export class AppView {
     public constructor(window: AppWindow, { url }: AppViewInitializerOptions) {
         const userSession = window.user.session;
 
-        this.browserView = new BrowserView({
+        super(new BrowserView({
             webPreferences: {
                 preload: getBuildPath('preloads', 'view.js'),
                 nodeIntegration: false,
                 contextIsolation: true,
                 javascript: true,
                 plugins: false,
-                experimentalFeatures: false,
+                experimentalFeatures: true,
                 sandbox: true,
                 scrollBounce: true,
                 safeDialogs: true,
                 safeDialogsMessage: '今後このページではダイアログを表示しない',
                 session: userSession.session
             }
-        });
+        }));
         this.browserView.setBackgroundColor('#ffffffff');
-
-        this.id = this.webContents.id;
 
         this.window = window;
         this.incognito = window.incognito;
@@ -99,36 +89,12 @@ export class AppView {
 
             return { action: 'deny' };
         });
+        this.handleIpc();
 
         if (window.user.type === 'normal')
             userSession.extensions.addTab(this.webContents, window.browserWindow);
 
-        this.webContents.setVisualZoomLevelLimits(1, 3);
         this.webContents.loadURL(url);
-    }
-
-    public get webContents() {
-        return this.browserView.webContents;
-    }
-
-    public get isLoading() {
-        return this.webContents.isLoadingMainFrame();
-    }
-
-    public get canGoBack() {
-        return this.webContents.canGoBack();
-    }
-
-    public get canGoForward() {
-        return this.webContents.canGoForward();
-    }
-
-    public get title() {
-        return this.webContents.getTitle();
-    }
-
-    public get url() {
-        return this.webContents.getURL();
     }
 
     public get favicon() {
@@ -145,6 +111,14 @@ export class AppView {
 
     public get requestState() {
         return this._requestState;
+    }
+
+    public get permissions() {
+        return this._permissions;
+    }
+
+    public zoomReset() {
+        this.zoomLevel = this.user.settings.config.sites.contents.zoom_level;
     }
 
     public get muted() {
@@ -179,83 +153,26 @@ export class AppView {
             id: this.id,
             title: this.title,
             url: this.url,
-            favicon: this.favicon,
-            color: this.color,
-
-            requestState: this.requestState,
+            favicon: this._favicon,
+            color: this._color,
+            zoomLevel: this.zoomLevel,
 
             isLoading: this.isLoading,
             canGoBack: this.canGoBack,
             canGoForward: this.canGoForward,
 
-            media: this.mediaStatus,
-            isPinned: this.pinned,
+            requestState: this._requestState,
+            permissions: this._permissions,
 
-            findState: this.findState
+            media: this._mediaStatus,
+            isPinned: this._pinned,
+
+            findState: this._findState
         };
     }
 
     public get captureImage() {
         return this._captureImage;
-    }
-
-
-    public back() {
-        if (!this.webContents.canGoBack()) return;
-        this.webContents.goBack();
-    }
-
-    public forward() {
-        if (!this.webContents.canGoForward()) return;
-        this.webContents.goForward();
-    }
-
-    public reload(ignoringCache: boolean = false) {
-        if (ignoringCache) {
-            this.webContents.reloadIgnoringCache();
-        } else {
-            this.webContents.reload();
-        }
-    }
-
-    public stop() {
-        this.webContents.stop();
-    }
-
-    public load(url: string) {
-        this.webContents.loadURL(url);
-    }
-
-
-    public get zoomLevel(): ZoomLevel {
-        return this.webContents.getZoomFactor() as ZoomLevel;
-    }
-
-    public set zoomLevel(level: ZoomLevel) {
-        this.webContents.setZoomFactor(level);
-    }
-
-    public zoomIn() {
-        const index = this.getZoomLevelIndex();
-        if (index >= (ZoomLevels.length - 1)) return;
-        this.zoomLevel = ZoomLevels[index + 1];
-    }
-
-    public zoomOut() {
-        const index = this.getZoomLevelIndex();
-        if (index <= 0) return;
-        this.zoomLevel = ZoomLevels[index - 1];
-    }
-
-    public zoomReset() {
-        this.zoomLevel = 1.00;
-    }
-
-    private getZoomLevelIndex() {
-        const level = this.zoomLevel;
-        const levels = ZoomLevels.map((zoomLevel) => Math.abs(zoomLevel - level));
-        const minLevel = Math.min(...levels);
-        return levels.indexOf(minLevel);
     }
 
 
@@ -279,6 +196,8 @@ export class AppView {
             finalUpdate: false
         };
         this.findDialog.webContents.send(`view-find-${this.window.id}`, this.id, this._findState);
+
+        return this._findState;
     }
 
     public moveFindInPage(forward: boolean = true) {
@@ -286,20 +205,21 @@ export class AppView {
 
         const { text, matchCase } = this._findState;
         if (!text) return;
+
         this.webContents.findInPage(text, { forward, findNext: false, matchCase });
         this.findDialog?.webContents.send(`view-find-${this.window.id}`, this.id, this._findState);
+
+        return this._findState;
     }
 
     public stopFindInPage(action: 'clearSelection' | 'keepSelection' | 'activateSelection' = 'keepSelection') {
-        this.webContents.stopFindInPage(action);
         this._findState = undefined;
+        this.webContents.stopFindInPage(action);
         this.findDialog?.webContents.send(`view-find-${this.window.id}`, this.id, this._findState);
     }
 
 
     public setBounds() {
-        if (this.window.viewManager.selectedId !== this.id) return;
-
         const { width, height } = this.window.browserWindow.getContentBounds();
         const { html: htmlState } = this.window.fullScreenState;
         const isFullScreen = this.window.browserWindow.isFullScreen();
@@ -486,8 +406,10 @@ export class AppView {
             });
         }
 
-        this.window.browserWindow.addBrowserView(this.browserView);
-        this.window.browserWindow.setTopBrowserView(this.browserView);
+        if (this.window.viewManager.selectedId === this.id) {
+            this.window.browserWindow.addBrowserView(this.browserView);
+            this.window.browserWindow.setTopBrowserView(this.browserView);
+        }
 
         const findDialog = this.findDialog;
         if (findDialog && !findDialog.webContents.isDestroyed()) {
@@ -553,7 +475,8 @@ export class AppView {
     private setListeners() {
         // tslint:disable-next-line:no-shadowed-variable
         const webContents = this.webContents;
-        webContents.on('destroyed', () => {
+        webContents.once('destroyed', () => {
+            this.removeIpc();
             this.window.viewManager.remove(this.id);
         });
 
@@ -571,12 +494,14 @@ export class AppView {
             if (isInPlace || !isMainFrame) return;
 
             this._requestState = undefined;
+            this._permissions = [];
             this.updateView();
         });
         webContents.on('did-navigate', async (_, url) => {
             // tslint:disable-next-line:no-console
             console.log('did-navigate');
             this._requestState = await getRequestState(url);
+            this._permissions = this.user.sites.permissions.filter((site) => site.origin === new URL(url).origin);
         });
         webContents.on('did-finish-load', () => {
             this.updateView();
@@ -585,6 +510,7 @@ export class AppView {
             if (!isMainFrame) return;
 
             this._requestState = await getRequestState(this.url);
+            this._permissions = this.user.sites.permissions.filter((site) => site.origin === new URL(this.url).origin);
             this.updateView();
 
             if (!this.isLoading)
@@ -639,5 +565,40 @@ export class AppView {
             const menu = getContextMenu(this.window, this, params);
             menu.popup({ window: this.window.browserWindow });
         });
+    }
+
+    private handleIpc() {
+        ipcMain.handle(this.ipcChannel.TAB_MENU(this.id), (e, x: number, y: number) => {
+            if (this.webContents.isDestroyed()) return;
+
+            const menu = getTabMenu(this.window, this);
+            menu.popup({ window: this.window.browserWindow, x, y });
+        });
+
+        ipcMain.handle(IPCChannel.Find.START(this.id), (e, text: string, matchCase: boolean) => {
+            if (this.isDestroyed) return;
+            return this.findInPage(text, matchCase);
+        });
+        ipcMain.handle(IPCChannel.Find.STOP(this.id), (e, action: 'clearSelection' | 'keepSelection' | 'activateSelection', hideDialog: boolean) => {
+            if (this.isDestroyed) return;
+
+            this.stopFindInPage(action);
+            if (hideDialog && this.findDialog) {
+                Main.dialogManager.destroy(this.findDialog);
+                this.findDialog = undefined;
+            }
+        });
+        ipcMain.handle(IPCChannel.Find.MOVE(this.id), (e, forward: boolean) => {
+            if (this.isDestroyed) return;
+            return this.moveFindInPage(forward);
+        });
+    }
+
+    private removeIpc() {
+        ipcMain.removeHandler(this.ipcChannel.TAB_MENU(this.id));
+
+        ipcMain.removeHandler(IPCChannel.Find.START(this.id));
+        ipcMain.removeHandler(IPCChannel.Find.STOP(this.id));
+        ipcMain.removeHandler(IPCChannel.Find.MOVE(this.id));
     }
 }

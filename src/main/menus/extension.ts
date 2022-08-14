@@ -1,6 +1,6 @@
 import { Menu, MenuItem } from 'electron';
-import { BrowserActionAPI } from 'electron-chrome-extensions/dist/browser/api/browser-action';
-import { ContextMenusAPI } from 'electron-chrome-extensions/dist/browser/api/context-menus';
+import { BrowserActionAPI } from 'electron-chrome-extensions-production/dist/browser/api/browser-action';
+import { ContextMenusAPI } from 'electron-chrome-extensions-production/dist/browser/api/context-menus';
 import { IExtension } from '../../interfaces/extension';
 import { getTranslate } from '../../languages/language';
 import { AppWindow } from '../windows/app';

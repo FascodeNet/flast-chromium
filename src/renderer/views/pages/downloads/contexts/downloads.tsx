@@ -1,8 +1,8 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { BookmarkData } from '../../../../../interfaces/user';
+import { NativeDownloadData } from '../../../../../interfaces/user';
 
 export interface DownloadsProps {
-    downloads: BookmarkData[];
+    downloads: NativeDownloadData[];
 }
 
 export const DownloadsContext = createContext<DownloadsProps>({
@@ -20,17 +20,15 @@ export const DownloadsProvider = ({ children }: DownloadsProviderProps) => {
 
     const [userId, setUserId] = useState('');
 
-    const [downloads, setDownloads] = useState<BookmarkData[]>(context.downloads);
+    const [downloads, setDownloads] = useState<NativeDownloadData[]>(context.downloads);
 
     useEffect(() => {
         window.flast.getUser().then(async (id) => {
             if (!id) return;
             setUserId(id);
 
-            /*
-            const downloadDataList = await window.flast.getDownloads(id);
+            const downloadDataList = await window.flast.getDownloadsWithFileIcon(id);
             setDownloads(downloadDataList);
-            */
         });
     }, []);
 

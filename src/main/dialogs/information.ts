@@ -2,6 +2,7 @@ import { BrowserWindow } from 'electron';
 import { DIALOG_INFORMATION_NAME } from '../../constants/dialog';
 import { getBuildPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
+import { buildTheme } from '../../utils/theme';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { Dialog } from './dialog';
@@ -9,9 +10,10 @@ import { Dialog } from './dialog';
 export const showInformationDialog = (user: IUser, browserWindow: BrowserWindow, x: number, y: number): Dialog => {
     const dialogManager = Main.dialogManager;
 
+    const { height } = browserWindow.getContentBounds();
     const bounds = {
         width: 350,
-        height: 460,
+        height,
         x: x - 15,
         y
     };
@@ -23,21 +25,16 @@ export const showInformationDialog = (user: IUser, browserWindow: BrowserWindow,
         dialogManager.show(dynamicDialog);
         return dynamicDialog;
     } else {
-        const dialog = dialogManager.show(
-            new Dialog(
-                user,
-                browserWindow,
-                {
-                    name: DIALOG_INFORMATION_NAME,
-                    bounds,
-                    onWindowBoundsUpdate: () => dialogManager.destroy(dialog),
-                    onHide: () => dialogManager.destroy(dialog)
-                }
-            )
+        const dialog = new Dialog(
+            user,
+            browserWindow,
+            {
+                name: DIALOG_INFORMATION_NAME,
+                bounds,
+                onWindowBoundsUpdate: (d) => dialogManager.destroy(d),
+                onHide: (d) => dialogManager.destroy(d)
+            }
         );
-
-        dialog.webContents.loadFile(getBuildPath('browser', 'information.html'));
-        dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {
             if (!IS_DEVELOPMENT) return;
@@ -45,6 +42,15 @@ export const showInformationDialog = (user: IUser, browserWindow: BrowserWindow,
             // 開発モードの場合はデベロッパーツールを開く
             // dialog.browserView.webContents.openDevTools({ mode: 'detach' });
         });
+
+        dialog.webContents.loadFile(
+            getBuildPath('browser', 'information.html'),
+            { hash: buildTheme(user).toString() }
+        );
+        dialog.setStyle();
+
+        dialogManager.show(dialog);
+        dialog.webContents.focus();
 
         return dialog;
     }

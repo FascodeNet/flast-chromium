@@ -1,4 +1,12 @@
-import { BookmarkData, HistoryData, HistoryGroup, OmitData, UserConfig } from '../interfaces/user';
+import {
+    BookmarkData,
+    DownloadData,
+    HistoryData,
+    HistoryGroup,
+    NativeDownloadData,
+    OmitData,
+    UserConfig
+} from '../interfaces/user';
 import { Language } from '../languages/language';
 import { SearchResult } from '../main/utils/search';
 import { DeepPartial } from '../utils';
@@ -21,6 +29,9 @@ export interface IFlastAPI {
 
     getHistory: (userId: string) => Promise<HistoryData[]>;
     getHistoryGroups: (userId: string) => Promise<HistoryGroup[]>;
+
+    getDownloads: (userId: string) => Promise<DownloadData[]>;
+    getDownloadsWithFileIcon: (userId: string) => Promise<NativeDownloadData[]>;
 }
 
 declare global {

@@ -17,6 +17,7 @@ export const getBrowserHtml = (name: string) => new HtmlWebpackPlugin({
 export const getPageHtml = (name: string) => new HtmlWebpackPlugin({
     title: APPLICATION_NAME,
     template: './static/index.html',
+    publicPath: '/',
     filename: `${name}.html`,
     chunks: [name],
     scriptLoading: 'blocking',

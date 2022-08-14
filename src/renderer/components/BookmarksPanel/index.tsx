@@ -15,7 +15,7 @@ import {
 } from './styles';
 
 export const BookmarksPanel = ({ type }: PanelProps) => {
-    const { getCurrentUserId, getBookmarks } = useElectronAPI();
+    const { bookmarksApi, getCurrentUserId } = useElectronAPI();
 
     const [userId, setUserId] = useState('');
     const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
@@ -31,7 +31,7 @@ export const BookmarksPanel = ({ type }: PanelProps) => {
             if (!id) return;
             setUserId(id);
 
-            const bookmarkDataList = await getBookmarks(id);
+            const bookmarkDataList = await bookmarksApi.list(id);
             setBookmarks(bookmarkDataList);
         });
     }, []);

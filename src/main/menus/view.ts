@@ -1,4 +1,5 @@
 import { app, clipboard, ContextMenuParams, dialog, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
+import { IPCChannel } from '../../constants/ipc';
 import { DefaultUserConfig } from '../../interfaces/user';
 import { getTranslate } from '../../languages/language';
 import { isURL, prefixHttp } from '../../utils/url';
@@ -30,7 +31,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
     const fullscreenOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = window.browserWindow.isFullScreen() ? [
         {
             label: languageSection.fullScreen.fullScreenExit,
-            icon: getMenuItemIconFromName('fullscreen_exit'),
+            icon: getMenuItemIconFromName('shrink'),
             accelerator: Shortcuts.FULLSCREEN,
             click: () => window.browserWindow.setFullScreen(false)
         },
@@ -46,8 +47,8 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
                 const windows = Main.windowManager.getWindows(window.user);
                 windows.forEach((appWindow) => {
-                    appWindow.webContents.send('settings-update', settings.config);
-                    appWindow.viewManager.get()?.setBounds();
+                    appWindow.viewManager.views.forEach((appView) => appView.setBounds());
+                    appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                 });
             }
         },

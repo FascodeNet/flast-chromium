@@ -2,6 +2,7 @@ import { DIALOG_FIND_NAME } from '../../constants/dialog';
 import { getHeight } from '../../utils/design';
 import { getBuildPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
+import { buildTheme } from '../../utils/theme';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { AppView } from '../views/app';
@@ -39,7 +40,10 @@ export const showFindDialog = (user: IUser, view: AppView): Dialog => {
             )
         );
 
-        dialog.webContents.loadFile(getBuildPath('browser', 'find.html'));
+        dialog.webContents.loadFile(
+            getBuildPath('browser', 'find.html'),
+            { hash: buildTheme(user).toString() }
+        );
         dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {

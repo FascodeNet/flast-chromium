@@ -1,23 +1,19 @@
+import { NativeImage } from 'electron';
+import { PermissionType } from '../main/session/permission';
+import { ZoomLevel } from './view';
+
 export type UserType = 'normal' | 'incognito' | 'guest';
-export type AppearanceInternalTheme =
-    'morning_fog'
-    | 'icy_mint'
-    | 'island_getaway'
-    | 'cool_breeze'
-    | 'silky_pink'
-    | 'bubblegum'
-    | 'sunny_day'
-    | 'mango_paradise'
-    | 'dark_and_stormy'
-    | 'cool_slate'
-    | 'moonlight_glow'
-    | 'juicy_plum'
-    | 'spicy_red'
-    | 'mystical_forest';
 
+export interface AdBlockerFilter {
+    name: string;
+    url: string;
+    enabled: boolean;
+}
 
-export type AppearanceMode = 'system' | 'light' | 'dark';
-export type AppearanceTheme = undefined | AppearanceInternalTheme | string;
+export type AppearanceColorScheme = 'system' | 'light' | 'dark';
+export type AppearanceSystemTheme = AppearanceColorScheme | 'incognito';
+export type AppearanceInternalTheme = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple';
+export type AppearanceTheme = AppearanceInternalTheme | string | null;
 export type AppearanceStyle = 'top_single' | 'top_double' | 'bottom_single' | 'bottom_double' | 'left' | 'right';
 export type AppearanceSidebarState =
     'tab_container'
@@ -37,8 +33,11 @@ export interface SearchEngine {
     mentions: string[];
 }
 
-export type Language = 'ja' | 'en';
+export type ContentType = 'javascript' | 'images' | 'sounds' | 'ads' | 'protected_content';
+export type PermissionDefaultCallback = 'confirm' | 'deny';
+export type ContentDefaultCallback = 'allow' | 'deny';
 
+export type Language = 'ja' | 'en';
 
 export interface UserConfig {
     profile: {
@@ -49,8 +48,12 @@ export interface UserConfig {
         send_dnt_request: boolean;
         save_history: boolean;
     };
+    ad_blocker: {
+        enabled: boolean;
+        filters: AdBlockerFilter[];
+    };
     appearance: {
-        mode: AppearanceMode;
+        color_scheme: AppearanceColorScheme;
         theme: AppearanceTheme;
         tab_colored: boolean;
         style: AppearanceStyle;
@@ -94,9 +97,19 @@ export interface UserConfig {
         suggest_engine: boolean;
         engines: SearchEngine[];
     };
+    sites: {
+        permissions: Record<PermissionType, PermissionDefaultCallback>;
+        contents: Record<ContentType, ContentDefaultCallback> & {
+            cookies: 'allow' | 'deny_3rd_party_in_incognito' | 'deny_3rd_party' | 'deny';
+            zoom_level: ZoomLevel;
+        }
+    };
     language: {
-        language: Language,
-        spellcheck: boolean
+        language: Language;
+        spellcheck: boolean;
+    };
+    system_performance: {
+        smooth_tab_switching: boolean;
     };
     version: number;
 }
@@ -110,9 +123,69 @@ export const DefaultUserConfig: UserConfig = {
         send_dnt_request: false,
         save_history: true
     },
+    ad_blocker: {
+        enabled: false,
+        filters: [
+            {
+                name: 'uBlock Origin — 基本フィルター',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt',
+                enabled: true
+            },
+            {
+                name: 'uBlock Origin — 迷惑行為',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/annoyances.txt',
+                enabled: true
+            },
+            {
+                name: 'uBlock Origin — 危険なプログラム',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/badware.txt',
+                enabled: true
+            },
+            {
+                name: 'uBlock Origin — プライバシー',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt',
+                enabled: true
+            },
+            {
+                name: 'uBlock Origin — クイック フィックス',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/quick-fixes.txt',
+                enabled: true
+            },
+            {
+                name: 'uBlock Origin — システム リソースの濫用',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/resource-abuse.txt',
+                enabled: true
+            },
+            {
+                name: 'uBlock Origin — アンブレイク',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/unbreak.txt',
+                enabled: true
+            },
+            {
+                name: 'AdGuard — 日本語圏向けフィルター',
+                url: 'https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_7_Japanese/filter.txt',
+                enabled: true
+            },
+            {
+                name: 'EasyList',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/thirdparties/easylist-downloads.adblockplus.org/easylist.txt',
+                enabled: true
+            },
+            {
+                name: 'EasyPrivacy',
+                url: 'https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/thirdparties/easylist-downloads.adblockplus.org/easyprivacy.txt',
+                enabled: true
+            },
+            {
+                name: '悪意のある URL のブロック',
+                url: 'https://malware-filter.gitlab.io/malware-filter/urlhaus-filter.txt',
+                enabled: true
+            }
+        ]
+    },
     appearance: {
-        mode: 'system',
-        theme: undefined,
+        color_scheme: 'system',
+        theme: null,
         tab_colored: true,
         style: 'top_single',
         fullscreen_showing_toolbar: true,
@@ -216,12 +289,48 @@ export const DefaultUserConfig: UserConfig = {
             }
         ]
     },
+    sites: {
+        permissions: {
+            geolocation: 'confirm',
+            camera: 'confirm',
+            microphone: 'confirm',
+            notifications: 'confirm',
+            sensors: 'confirm',
+            midi: 'confirm',
+            hid: 'confirm',
+            serial: 'confirm',
+            idle_detection: 'confirm',
+            clipboard: 'confirm',
+            pointer_lock: 'confirm',
+            open_external: 'confirm'
+        },
+        contents: {
+            cookies: 'deny_3rd_party_in_incognito',
+            javascript: 'allow',
+            images: 'allow',
+            sounds: 'allow',
+            ads: 'deny',
+            protected_content: 'allow',
+            zoom_level: 1.00
+        }
+    },
     language: {
         language: 'ja',
         spellcheck: true
     },
-    version: 1
+    system_performance: {
+        smooth_tab_switching: true
+    },
+    version: 3
 };
+
+export interface ThemeManifest {
+    name: string;
+    description?: string;
+    version: string;
+    author?: string;
+    background_color: string;
+}
 
 interface IData {
     _id?: string;
@@ -247,6 +356,52 @@ export interface HistoryGroup {
     date: Date;
     formatDate: string;
     history: Required<HistoryData>[];
+}
+
+export interface DownloadData extends IData {
+    name?: string;
+    path?: string;
+    url?: string;
+    mimeType?: string;
+    totalBytes?: number;
+    receivedBytes?: number;
+    isPaused?: boolean;
+    canResume?: boolean;
+    state?: 'progressing' | 'completed' | 'cancelled' | 'interrupted';
+}
+
+export interface NativeDownloadData extends Required<DownloadData> {
+    icon?: NativeImage;
+}
+
+export interface SiteData extends IData {
+    kind?: 'permission' | 'content';
+    origin?: string;
+}
+
+export interface SitePermissionData extends SiteData {
+    kind?: 'permission';
+    type?: PermissionType;
+    callback?: boolean;
+}
+
+export interface SiteContentData extends SiteData {
+    kind?: 'content';
+    type?: ContentType;
+    callback?: boolean;
+}
+
+export interface SiteContentCookieData extends SiteData {
+    kind?: 'content';
+    type?: 'cookies';
+    callback?: boolean;
+    allow3rdParty?: boolean;
+}
+
+export interface SiteContentZoomLevelData extends SiteData {
+    kind?: 'content';
+    type?: 'zoom_level';
+    level?: ZoomLevel;
 }
 
 export type OmitData<T extends IData> = Omit<T, '_id' | 'updatedAt' | 'createdAt'>;

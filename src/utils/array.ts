@@ -4,6 +4,8 @@ export const nonNullable = <T>(value: T): value is NonNullable<T> => value != nu
 
 export const split = <T>(data: T[], count: number) => data.slice(0, Math.min(data.length, count));
 
+export const sort = <E, T>(data: E[], types: T[], callback: (elem: E) => T) => data.sort((a, b) => types.findIndex((type) => type === callback(a)) - types.findIndex((type) => type === callback(b)));
+
 export const combineMerge = (target: any[], source: any[], options: deepmerge.Options) => {
     const destination = target.slice();
 

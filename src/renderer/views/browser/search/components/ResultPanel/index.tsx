@@ -27,7 +27,7 @@ interface Props {
 }
 
 export const ResultPanel = ({ value, selectedIndex, data, engine, addOrLoadView }: Props) => {
-    const { hideDialog } = useElectronAPI();
+    const { dialogApi } = useElectronAPI();
     const { config } = useUserConfigContext();
 
     const handleClick = async (e: MouseEvent<HTMLDivElement>, index: number) => {
@@ -46,7 +46,7 @@ export const ResultPanel = ({ value, selectedIndex, data, engine, addOrLoadView 
             await addOrLoadView(e, resultValue);
         }
 
-        await hideDialog();
+        await dialogApi.hide();
     };
 
     if (!data || data.length < 1)

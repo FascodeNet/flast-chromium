@@ -18,3 +18,9 @@ export const SectionTitle = styled(
 )<TypographyProps>({
     userSelect: 'none'
 });
+
+export const SectionParagraph = styled(
+    (props: TypographyProps) => <Typography variant="body1" {...props} />
+)<TypographyProps>({
+    userSelect: 'none'
+});

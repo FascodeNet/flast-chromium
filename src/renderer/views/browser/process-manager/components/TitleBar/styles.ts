@@ -1,13 +1,11 @@
 import { platform } from 'os';
 import styled from 'styled-components';
-import { getColor } from '../../../../../themes';
 
 export const StyledTitleBar = styled.div`
   width: 100%;
   height: 100%;
   display: grid;
   grid-template-columns: 1fr 135px;
-  background-color: ${({ theme }) => getColor(theme.palette.titleBar)};
   user-select: none;
   app-region: drag;
 `;

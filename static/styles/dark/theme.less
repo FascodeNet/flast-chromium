@@ -1,0 +1,193 @@
+@background: #121212;
+@background-gradation: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12));
+@foreground-primary: #fff;
+@foreground-secondary: rgba(255, 255, 255, .7);
+@foreground-disabled: rgba(255, 255, 255, .5);
+@foreground-icon: rgba(255, 255, 255, .5);
+@divider: rgba(255, 255, 255, .12);
+
+@action-active-color: #fff;
+@action-active-opacity: 1;
+@action-hover-color: rgba(255, 255, 255, @action-hover-opacity);
+@action-hover-opacity: .08;
+@action-selected-color: rgba(255, 255, 255, @action-selected-opacity);
+@action-selected-opacity: .16;
+@action-disabled-color: rgba(255, 255, 255, .3);
+@action-disabled-background-color: rgba(255, 255, 255, .12);
+@action-disabled-opacity: .38;
+@action-focus-color: rgba(255, 255, 255, @action-focus-opacity);
+@action-focus-opacity: .12;
+
+@layer system-theme, internal-theme, theme;
+@layer system-theme {
+  * {
+    color: @foreground-primary;
+    outline-color: @foreground-primary;
+  }
+
+  hr {
+    border-color: @divider !important;
+  }
+
+  .MuiSvgIcon-root {
+    fill: @foreground-primary;
+  }
+
+  .app {
+    &[data-style='top_single'], &[data-style='bottom_single'], &[data-style='left'], &[data-style='right'] {
+      .title-bar, .tool-bar, .horizontal-tab-container, .vertical-tab-container {
+        background-color: @background;
+      }
+
+      .title-bar {
+        border-bottom: solid 1px @divider;
+      }
+
+      .horizontal-tab-item, .vertical-tab-item {
+        background-color: lighten(@background, 5%);
+        border-color: lighten(@background, 10%);
+        color: @foreground-primary;
+
+        &.active {
+          background-color: lighten(@background, 10%);
+          border-color: lighten(@background, 20%);
+
+          &:hover {
+            border-color: lighten(@background, 20%);
+          }
+        }
+
+        &:hover {
+          background-color: lighten(@background, 10%);
+          border-color: lighten(@background, 20%);
+        }
+      }
+
+      .add-tab-button {
+        background-color: @background;
+        border-color: @divider;
+      }
+
+      .add-tab-button:not(:disabled):hover {
+        background-color: darken(@background, 5%);
+        border-color: darken(@background, 20%);
+      }
+    }
+
+    &[data-style='top_double'], &[data-style='bottom_double'] {
+      .title-bar, .horizontal-tab-container, .vertical-tab-container {
+        background-color: darken(@background, 10%);
+      }
+
+      .tool-bar {
+        background-color: @background;
+        border-bottom: solid 1px @divider;
+      }
+
+      .horizontal-tab-item, .vertical-tab-item {
+        border-color: transparent;
+
+        &.active, &.active:hover {
+          background-color: @background;
+        }
+
+        &:hover {
+          background-color: darken(@background, 5%);
+        }
+      }
+
+      .add-tab-button {
+        background-color: darken(@background, 10%);
+        border-color: transparent;
+      }
+
+      .add-tab-button:not(:disabled):hover {
+        background-color: darken(@background, 5%);
+        border-color: darken(@background, 20%);
+      }
+    }
+
+    .address-bar {
+      background-color: lighten(@background, 5%);
+      border-color: lighten(@background, 10%);
+      color: @foreground-primary;
+
+      .hostname {
+        color: inherit;
+      }
+
+      span, .protocol, .path, &.internal .protocol, &.file .protocol {
+        color: #909192;
+      }
+
+      &.secure .protocol {
+        color: #4caf50;
+      }
+
+      &.insecure .protocol {
+        color: #ef5350;
+      }
+    }
+
+    .sidebar {
+      &.left {
+        border-right: solid 1px @divider;
+
+        & > .panel {
+          border-left: solid 1px @divider;
+        }
+      }
+
+      &.right {
+        border-left: solid 1px @divider;
+
+        & > .panel {
+          border-right: solid 1px @divider;
+        }
+      }
+    }
+
+    &:not([data-style]) {
+      .title-bar {
+        background-color: darken(@background, 10%);
+      }
+    }
+  }
+
+  .panel {
+    background-color: @background;
+
+    .panel-header {
+      border-bottom-color: @divider;
+    }
+
+    .menu-item:hover, .menu-item-button:not(:disabled):hover, .information-item-button:not(:disabled):hover,
+    .search-result-item.selected, .search-result-item:hover,
+    .bookmark-item:hover, .history-item:hover, .download-item:hover, .extension-item:hover {
+      background-color: @action-hover-color !important;
+      border-color: @action-hover-color !important;
+    }
+
+    .menu-item-shortcut {
+      color: @foreground-secondary;
+    }
+  }
+
+  .popup > .panel {
+    background-image: @background-gradation;
+  }
+
+  .popup.search {
+    .panel.search-bar, .panel.search-result {
+      background-color: @background;
+    }
+  }
+
+  .history-group h4 {
+    background-color: @background;
+  }
+
+  .popup .history-group h4 {
+    background-image: @background-gradation;
+  }
+}

@@ -14,7 +14,7 @@ const filter = (array: ResultData[]) => array.filter((data, i) => array.findInde
 
 export const Popup = () => {
 
-    const { getCurrentView, addView, loadView } = useElectronAPI();
+    const { viewsApi, viewApi } = useElectronAPI();
     const { selectedId } = useViewManagerContext();
 
     const [value, setValue] = useState('');
@@ -24,7 +24,7 @@ export const Popup = () => {
     const [type, setType] = useState<ResultType>('suggest');
     const [engine, setEngine] = useState<SearchEngine | undefined>(undefined);
 
-    const viewState = getCurrentView();
+    const viewState = viewsApi.getCurrentView();
     useEffect(() => {
         (async () => {
             setValue(decodeURIComponent((await viewState)?.url ?? ''));
@@ -33,9 +33,9 @@ export const Popup = () => {
 
     const addOrLoadView = async (e: KeyboardEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>, url: string) => {
         if (e.shiftKey) {
-            await addView(url, true);
+            await viewsApi.add(url, true);
         } else {
-            await loadView(selectedId, url);
+            await viewApi.load(selectedId, url);
         }
     };
 

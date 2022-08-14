@@ -1,6 +1,7 @@
 import { DIALOG_SEARCH_NAME } from '../../constants/dialog';
 import { getBuildPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
+import { buildTheme } from '../../utils/theme';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { AppWindow } from '../windows/app';
@@ -43,7 +44,10 @@ export const showSearchDialog = (user: IUser, window: AppWindow, x: number, y: n
             )
         );
 
-        dialog.webContents.loadFile(getBuildPath('browser', 'search.html'));
+        dialog.webContents.loadFile(
+            getBuildPath('browser', 'search.html'),
+            { hash: buildTheme(user).toString() }
+        );
         dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {

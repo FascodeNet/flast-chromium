@@ -1,11 +1,25 @@
+import { CookieOutlined } from '@mui/icons-material';
+import { Divider, Switch } from '@mui/material';
 import { format } from 'date-fns';
 import React, { Fragment, useEffect, useState } from 'react';
 import Icon from '../../../../../../assets/icon.png';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_SETTINGS } from '../../../../../../constants';
 import { UserConfig } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { getTranslate } from '../../../../../../languages/language';
-import { Certificate, Extension, File, Search } from '../../../../../components/Icons';
-import { Information, Lock, Warning } from '../../../../../components/Icons/state';
+import { PermissionTypes } from '../../../../../../main/session/permission';
+import { sort } from '../../../../../../utils/array';
+import {
+    Certificate,
+    Extension,
+    File,
+    Information,
+    Lock,
+    Search,
+    Settings,
+    Warning
+} from '../../../../../components/Icons';
+import { PermissionIcons } from '../../../../../components/Icons/permissions';
 import {
     StyledPanel,
     StyledPanelContainer,
@@ -25,21 +39,21 @@ import {
     StyledItemSubLabel
 } from './styles';
 
-type PanelType = 'main' | 'certificate';
+type Section = 'main' | 'certificate';
 
 export const Panel = () => {
 
-    const { getCurrentView } = useElectronAPI();
+    const { viewsApi } = useElectronAPI();
     const { getCurrentViewState } = useViewManagerContext();
     const { config } = useUserConfigContext();
 
     const translate = getTranslate(config);
 
-    const [type, setType] = useState<PanelType>('main');
+    const [section, setSection] = useState<Section>('main');
     const [state, setState] = useState<ViewState>(getCurrentViewState());
     const [url, setUrl] = useState<string>('');
 
-    const currentView = getCurrentView();
+    const currentView = viewsApi.getCurrentView();
     useEffect(() => {
         (async () => {
             const viewState = await currentView;
@@ -55,8 +69,8 @@ export const Panel = () => {
                     {translate.windows.app.pageInformation.label}
                 </StyledPanelTitle>
             </StyledPanelHeader>
-            {type === 'main' && <MainPanel state={state} config={config} setType={setType} />}
-            {type === 'certificate' && <CertificatePanel state={state} config={config} setType={setType} />}
+            {section === 'main' && <MainPanel state={state} config={config} setSection={setSection} />}
+            {section === 'certificate' && <CertificatePanel state={state} config={config} setSection={setSection} />}
         </StyledPanel>
     );
 };
@@ -90,29 +104,86 @@ const StatusIcon = ({ state }: StatusIconProps): JSX.Element => {
 interface PanelProps {
     state: ViewState;
     config: UserConfig;
-    setType: (type: PanelType) => void;
+    setSection: (section: Section) => void;
 }
 
-const MainPanel = ({ state, config, setType }: PanelProps) => {
+const MainPanel = ({ state, config, setSection }: PanelProps) => {
+
+    const { viewsApi } = useElectronAPI();
+
+    const translate = getTranslate(config);
     const { label } = getCertificateTranslate(state, config);
+
+    const isHttpOrHttps = state.requestState?.type === 'secure' || state.requestState?.type === 'insecure';
+
+    const addOrSelectView = async (viewUrl: string) => {
+        const views = await viewsApi.getViews();
+        const view = views.find((appView) => appView.url.startsWith(viewUrl));
+        if (view) {
+            await viewsApi.select(view.id);
+        } else {
+            await viewsApi.add(viewUrl, true);
+        }
+    };
 
     return (
         <StyledPanelContainer className="panel-container" style={{ padding: '8px 0' }}>
             <StyledItemButton
+                onClick={() => setSection('certificate')}
+                disabled={!isHttpOrHttps}
                 className="information-item-button"
-                disabled={state.requestState?.type !== 'secure' && state.requestState?.type !== 'insecure'}
-                onClick={() => setType('certificate')}
             >
                 <StyledItemIcon className="information-item-icon">
                     <StatusIcon state={state} />
                 </StyledItemIcon>
                 <StyledItemLabel className="information-item-label">{label}</StyledItemLabel>
             </StyledItemButton>
+            {isHttpOrHttps && <Divider flexItem sx={{ my: .5 }} />}
+            {sort(
+                state.permissions,
+                PermissionTypes as unknown as string[],
+                ({ type }) => type
+            ).map(({ type, callback }) => {
+                const icons = PermissionIcons[type];
+                return (
+                    <StyledItemButton
+                        key={type as string}
+                        className="information-item-button"
+                        style={{ gridTemplateColumns: '20px 1fr auto' }}
+                    >
+                        <StyledItemIcon className="information-item-icon">
+                            {callback ? icons.enabled : icons.disabled}
+                        </StyledItemIcon>
+                        <StyledItemLabel className="information-item-label">
+                            {translate.permissions[type].title}
+                        </StyledItemLabel>
+                        <Switch checked={callback} color="default" size="small" />
+                    </StyledItemButton>
+                );
+            })}
+            {isHttpOrHttps && state.permissions && state.permissions.length > 0 && <Divider flexItem sx={{ my: .5 }} />}
+            {isHttpOrHttps && <Fragment>
+                <StyledItemButton className="information-item-button">
+                    <StyledItemIcon className="information-item-icon">
+                        <CookieOutlined />
+                    </StyledItemIcon>
+                    <StyledItemLabel className="information-item-label">Cookie</StyledItemLabel>
+                </StyledItemButton>
+                <StyledItemButton
+                    onClick={() => addOrSelectView(`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_SETTINGS}/sites/details?url=${encodeURIComponent(new URL(state.url).origin)}`)}
+                    className="information-item-button"
+                >
+                    <StyledItemIcon className="information-item-icon">
+                        <Settings />
+                    </StyledItemIcon>
+                    <StyledItemLabel className="information-item-label">サイトの設定</StyledItemLabel>
+                </StyledItemButton>
+            </Fragment>}
         </StyledPanelContainer>
     );
 };
 
-const CertificatePanel = ({ state, config, setType }: PanelProps) => {
+const CertificatePanel = ({ state, config, setSection }: PanelProps) => {
     const { label, description } = getCertificateTranslate(state, config);
 
     const certificate = state.requestState?.certificate;

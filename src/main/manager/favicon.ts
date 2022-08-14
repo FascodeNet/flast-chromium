@@ -15,7 +15,7 @@ export class FaviconManager {
 
     public constructor() {
         this._datastore = new Datastore<Favicon>({
-            filename: getSpecialPath('appData', 'favicons.db'),
+            filename: getSpecialPath('appData', 'Favicons.db'),
             autoload: true,
             timestampData: true
         });

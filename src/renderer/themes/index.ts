@@ -2,7 +2,9 @@ import { createTheme, PaletteColor, useTheme } from '@mui/material';
 import { blue, green, indigo, orange, pink, red } from '@mui/material/colors';
 import { PaletteOptions } from '@mui/material/styles';
 import { TypographyOptions } from '@mui/material/styles/createTypography';
+import { os } from 'platform';
 import { createGlobalStyle } from 'styled-components';
+import { includes } from '../../utils';
 
 type StyleAbsoluteUnit = 'cm' | 'mm' | 'Q' | 'in' | 'pc' | 'pt' | 'px';
 type StyleRelativeUnit = 'em' | 'ex' | 'ch' | 'rem' | 'lh' | 'vw' | 'vh' | 'vmin' | 'vmax';
@@ -62,43 +64,6 @@ export const MuiPalette: PaletteOptions = {
         light: green[300],
         main: green[500],
         dark: green[700]
-    },
-
-    outline: {
-        light: '#000',
-        main: '#000',
-        dark: '#fff',
-        incognito: '#fff'
-    },
-    titleBar: {
-        light: '#f2f3f5',
-        main: '#f2f3f5',
-        dark: '#121212',
-        incognito: '#0c113a'
-    },
-    addressBar: {
-        light: '#fff',
-        main: '#fff',
-        dark: '#242424',
-        incognito: '#23234f'
-    },
-    tab: {
-        light: '#fff',
-        main: '#fff',
-        dark: '#242424',
-        incognito: '#23234f'
-    },
-    tabBorder: {
-        light: '#d2d3d5',
-        main: '#d2d3d5',
-        dark: '#424242',
-        incognito: '#404076'
-    },
-    addTabButton: {
-        light: '#fff',
-        main: '#fff',
-        dark: '#242424',
-        incognito: '#23234f'
     }
 };
 
@@ -108,28 +73,28 @@ export const MuiFontFamily = MuiFontFamilies.filter((family) => family !== 'Noto
 export const MuiTypography: TypographyOptions = {
     fontFamily: MuiDefaultFontFamily,
     h1: {
-        fontWeight: 100
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 100 : 300
     },
     h2: {
-        fontWeight: 100
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 100 : 300
     },
     h3: {
-        fontWeight: 100
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 100 : 300
     },
     h4: {
-        fontWeight: 100
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 100 : 300
     },
     h5: {
-        fontWeight: 100
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 100 : 300
     },
     h6: {
-        fontWeight: 100
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 100 : 300
     },
     body1: {
-        fontWeight: 300
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 300 : 400
     },
     body2: {
-        fontWeight: 100
+        fontWeight: includes(os?.family ?? '', 'OS X', true) ? 100 : 300
     },
     overline: {
         fontWeight: 400

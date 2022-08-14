@@ -2,6 +2,7 @@ import { BrowserWindow } from 'electron';
 import { DIALOG_BOOKMARKS_NAME } from '../../constants/dialog';
 import { getBuildPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
+import { buildTheme } from '../../utils/theme';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { Dialog } from './dialog';
@@ -36,7 +37,10 @@ export const showBookmarksDialog = (user: IUser, browserWindow: BrowserWindow, x
             )
         );
 
-        dialog.webContents.loadFile(getBuildPath('browser', 'bookmarks.html'));
+        dialog.webContents.loadFile(
+            getBuildPath('browser', 'bookmarks.html'),
+            { hash: buildTheme(user).toString() }
+        );
         dialog.webContents.focus();
 
         dialog.webContents.once('dom-ready', () => {

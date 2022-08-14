@@ -1,174 +1,202 @@
-import { getCurrentWebContents, getCurrentWindow } from '@electron/remote';
+import { getCurrentWebContents, getCurrentWindow, nativeTheme } from '@electron/remote';
+import { Theme } from '@mui/material';
 import { ipcRenderer } from 'electron';
-import { BookmarkData, HistoryData, HistoryGroup, OmitData, UserConfig, UserType } from '../../interfaces/user';
-import { FindState, MoveDirection, ViewState } from '../../interfaces/view';
+import { useEffect, useState } from 'react';
+import { IPCChannel } from '../../constants/ipc';
+import {
+    BookmarkData,
+    DownloadData,
+    HistoryData,
+    HistoryGroup,
+    NativeDownloadData,
+    OmitData,
+    UserConfig,
+    UserType
+} from '../../interfaces/user';
+import { FindState, MoveDirection, ViewState, ZoomLevel } from '../../interfaces/view';
 import { SearchResult } from '../../main/utils/search';
 import { DeepPartial } from '../../utils';
+import { MuiDarkGlobalStyles, MuiLightGlobalStyles } from '../themes';
 
-interface ElectronAPI {
-    getWindowId: () => number;
-    showApplicationMenu: () => Promise<void>;
-    toggleSidebar: () => Promise<void>;
-
-    isMinimized: () => Promise<boolean>;
-    isMaximized: () => Promise<boolean>;
-    isFullScreen: () => Promise<boolean>;
-    minimize: () => Promise<void>;
-    maximize: () => Promise<void>;
-    fullScreen: () => Promise<void>;
-    close: () => Promise<void>;
-
-
-    getWebContentsId: () => number;
-    getViews: () => Promise<ViewState[]>;
-    getView: (viewId: number) => Promise<ViewState>;
-    getCurrentView: () => Promise<ViewState>;
-    addView: (url: string, active: boolean) => Promise<number>;
-    removeView: (viewId: number) => Promise<void>;
-    selectView: (viewId: number) => Promise<void>;
-    moveTo: (viewId: number, toIndex: number) => Promise<void>;
-    moveToDirection: (viewId: number, direction: MoveDirection) => Promise<void>;
-    showTabMenu: (viewId: number, x: number, y: number) => Promise<void>;
-
-    backView: (viewId: number) => Promise<void>;
-    forwardView: (viewId: number) => Promise<void>;
-    reloadView: (viewId: number) => Promise<void>;
-    stopView: (viewId: number) => Promise<void>;
-    loadView: (viewId: number, url: string) => Promise<void>;
-
-
-    hideDialog: () => Promise<void>;
-    destroyDialog: () => Promise<void>;
-
-    showMenuPopup: (x: number, y: number) => Promise<void>;
-
-    showInformationPopup: (x: number, y: number) => Promise<void>;
-
-    showSearchPopup: (x: number, y: number, width: number) => Promise<void>;
-    search: (keyword: string) => Promise<SearchResult>;
-
-    showFindPopup: () => Promise<void>;
-    findInPage: (id: number, text: string, matchCase: boolean) => Promise<FindState>;
-    moveFindInPage: (id: number, forward: boolean) => Promise<FindState>;
-    stopFindInPage: (id: number, hide: boolean) => Promise<void>;
-
-    showBookmarksPopup: (x: number, y: number) => Promise<void>;
-    getBookmarks: (userId: string) => Promise<BookmarkData[]>;
-    addBookmark: (userId: string, data: OmitData<BookmarkData>) => Promise<BookmarkData>;
-    removeBookmark: (userId: string, bookmarkId: string) => Promise<boolean>;
-    updateBookmark: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>) => Promise<BookmarkData>;
-
-    showHistoryPopup: (x: number, y: number) => Promise<void>;
-    getHistory: (userId: string) => Promise<HistoryData[]>;
-    getHistoryGroups: (userId: string) => Promise<HistoryGroup[]>;
-    addHistory: (userId: string, data: OmitData<HistoryData>) => Promise<HistoryData>;
-    removeHistory: (userId: string, historyId: string) => Promise<boolean>;
-
-    showDownloadsPopup: (x: number, y: number) => Promise<void>;
-
-    showExtensionsPopup: (x: number, y: number) => Promise<void>;
-    showExtensionMenu: (id: string, x: number, y: number) => Promise<void>;
-
-
-    getCurrentUserId: () => Promise<string>;
-    getUserType: (userId: string) => Promise<UserType>;
-    getUserConfig: (userId: string) => Promise<UserConfig>;
-    setUserConfig: (userId: string, config: DeepPartial<UserConfig>) => Promise<UserConfig>;
-}
+const windowsApi = {
+    add: (userId: string, urls: string[] = []): Promise<number> => ipcRenderer.invoke(IPCChannel.Windows.ADD(), userId, urls),
+    openIncognito: (userId: string): Promise<number> => ipcRenderer.invoke(IPCChannel.Windows.OPEN_INCOGNITO(), userId)
+} as const;
 
 const windowId = getCurrentWindow().id;
-const webContentsId = getCurrentWebContents().id;
-export const useElectronAPI = (): ElectronAPI => ({
-    getWindowId: () => getCurrentWindow().id,
-    showApplicationMenu: () => ipcRenderer.invoke(`window-application_menu-${windowId}`),
-    toggleSidebar: () => ipcRenderer.invoke(`window-sidebar-${windowId}`),
+const windowApi = {
+    getId: (): number => getCurrentWindow().id,
 
-    isMinimized: () => ipcRenderer.invoke(`window-minimized-${windowId}`),
-    isMaximized: () => ipcRenderer.invoke(`window-maximized-${windowId}`),
-    isFullScreen: () => ipcRenderer.invoke(`window-fullscreened-${windowId}`),
-    minimize: () => ipcRenderer.invoke(`window-minimize-${windowId}`),
-    maximize: () => ipcRenderer.invoke(`window-maximize-${windowId}`),
-    fullScreen: () => ipcRenderer.invoke(`window-fullscreen-${windowId}`),
-    close: () => ipcRenderer.invoke(`window-close-${windowId}`),
+    showApplicationMenu: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Window.APPLICATION_MENU(windowId)),
+    toggleSidebar: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Window.SIDEBAR(windowId)),
 
+    isMinimized: (): Promise<boolean> => ipcRenderer.invoke(IPCChannel.Window.IS_MINIMIZED(windowId)),
+    isMaximized: (): Promise<boolean> => ipcRenderer.invoke(IPCChannel.Window.IS_MAXIMIZED(windowId)),
+    isFullscreen: (): Promise<boolean> => ipcRenderer.invoke(IPCChannel.Window.IS_FULLSCREEN(windowId)),
 
-    getWebContentsId: () => getCurrentWebContents().id,
-    getViews: () => ipcRenderer.invoke(`views-${windowId}`),
-    getView: (viewId: number) => ipcRenderer.invoke(`view-${windowId}`, viewId),
-    getCurrentView: () => ipcRenderer.invoke(`view-current-${windowId}`),
-    addView: (url: string, active: boolean = true) => ipcRenderer.invoke(`view-create-${windowId}`, url, active),
-    removeView: (viewId: number) => ipcRenderer.invoke(`view-destroy-${windowId}`, viewId),
-    selectView: (viewId: number) => ipcRenderer.invoke(`view-select-${windowId}`, viewId),
-    moveTo: (viewId: number, toIndex: number) => ipcRenderer.invoke(`view-move-${windowId}`, viewId, toIndex),
-    moveToDirection: (viewId: number, direction: MoveDirection) => ipcRenderer.invoke(`view-move_direction-${windowId}`, viewId, direction),
-    showTabMenu: (viewId: number, x: number, y: number) => ipcRenderer.invoke(`view-menu-${windowId}`, viewId, x, y),
+    minimize: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Window.MINIMIZE(windowId)),
+    maximize: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Window.MAXIMIZE(windowId)),
+    fullscreen: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Window.FULLSCREEN(windowId)),
 
-    backView: (viewId: number) => ipcRenderer.invoke(`view-back-${windowId}`, viewId),
-    forwardView: (viewId: number) => ipcRenderer.invoke(`view-forward-${windowId}`, viewId),
-    reloadView: (viewId: number) => ipcRenderer.invoke(`view-reload-${windowId}`, viewId),
-    stopView: (viewId: number) => ipcRenderer.invoke(`view-stop-${windowId}`, viewId),
-    loadView: (viewId: number, url: string) => ipcRenderer.invoke(`view-load-${windowId}`, viewId, url),
+    close: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Window.CLOSE(windowId))
+} as const;
 
+const viewsApi = {
+    getViews: (): Promise<ViewState[]> => ipcRenderer.invoke(IPCChannel.Views.LIST(windowId)),
+    getView: (viewId: number): Promise<ViewState> => ipcRenderer.invoke(IPCChannel.Views.GET(windowId), viewId),
+    getCurrentView: (): Promise<ViewState> => ipcRenderer.invoke(IPCChannel.Views.GET_CURRENT(windowId)),
 
-    hideDialog: () => ipcRenderer.invoke(`dialog-hide-${webContentsId}`),
-    destroyDialog: () => ipcRenderer.invoke(`dialog-destroy-${webContentsId}`),
+    add: (url: string, active: boolean = true): Promise<number> => ipcRenderer.invoke(IPCChannel.Views.ADD(windowId), url, active),
+    remove: (viewId: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Views.REMOVE(windowId), viewId),
+    select: (viewId: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Views.SELECT(windowId), viewId),
 
-    showMenuPopup: (x: number, y: number) => ipcRenderer.invoke(`window-menu-${windowId}`, x, y),
+    moveTo: (viewId: number, toIndex: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Views.MOVE(windowId), viewId, toIndex),
+    moveToDirection: (viewId: number, direction: MoveDirection): Promise<void> => ipcRenderer.invoke(IPCChannel.Views.MOVE_DIRECTION(windowId), viewId, direction)
+} as const;
 
-    showInformationPopup: (x: number, y: number) => ipcRenderer.invoke(`window-information-${windowId}`, x, y),
+const viewApi = {
+    getId: (): number => getCurrentWebContents().id,
 
-    showSearchPopup: (x: number, y: number, width: number) => ipcRenderer.invoke(`window-show_search-${windowId}`, x, y, width),
-    search: (keyword: string) => ipcRenderer.invoke(`window-search-${windowId}`, keyword),
+    showTabMenu: (viewId: number, x: number, y: number): Promise<void> => ipcRenderer.invoke(IPCChannel.View.TAB_MENU(viewId), x, y),
 
-    showFindPopup: () => ipcRenderer.invoke(`window-find-${windowId}`),
-    findInPage: (id: number, text: string, matchCase: boolean) => ipcRenderer.invoke(`view-find_in_page-${windowId}`, id, text, matchCase),
-    moveFindInPage: (id: number, forward: boolean) => ipcRenderer.invoke(`view-move_find_in_page-${windowId}`, id, forward),
-    stopFindInPage: (id: number, hide: boolean) => ipcRenderer.invoke(`view-stop_find_in_page-${windowId}`, id, hide),
+    back: (viewId: number): Promise<void> => ipcRenderer.invoke(IPCChannel.View.BACK(viewId)),
+    forward: (viewId: number): Promise<void> => ipcRenderer.invoke(IPCChannel.View.FORWARD(viewId)),
+    reload: (viewId: number, ignoringCache: boolean = false): Promise<void> => ipcRenderer.invoke(IPCChannel.View.RELOAD(viewId), ignoringCache),
+    stop: (viewId: number): Promise<void> => ipcRenderer.invoke(IPCChannel.View.STOP(viewId)),
+    load: (viewId: number, url: string): Promise<void> => ipcRenderer.invoke(IPCChannel.View.LOAD(viewId), url),
 
-    showBookmarksPopup: (x: number, y: number) => ipcRenderer.invoke(`window-bookmarks-${windowId}`, x, y),
-    getBookmarks: (userId: string): Promise<BookmarkData[]> => {
+    zoomIn: (viewId: number): Promise<ZoomLevel> => ipcRenderer.invoke(IPCChannel.View.ZOOM_IN(viewId)),
+    zoomOut: (viewId: number): Promise<ZoomLevel> => ipcRenderer.invoke(IPCChannel.View.ZOOM_OUT(viewId)),
+    zoomReset: (viewId: number): Promise<ZoomLevel> => ipcRenderer.invoke(IPCChannel.View.ZOOM_RESET(viewId))
+} as const;
+
+const dialogApi = {
+    hide: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Dialog.HIDE(getCurrentWebContents().id)),
+    destroy: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Dialog.DESTROY(getCurrentWebContents().id))
+} as const;
+
+const popupApi = {
+    windowMenu: (x: number, y: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.WINDOW_MENU(windowId), x, y),
+
+    search: (x: number, y: number, width: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.SEARCH(windowId), x, y, width),
+
+    viewInformation: (x: number, y: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.VIEW_INFORMATION(windowId), x, y),
+    viewFind: (): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.VIEW_FIND(windowId)),
+
+    bookmarks: (x: number, y: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.BOOKMARKS(windowId), x, y),
+    history: (x: number, y: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.HISTORY(windowId), x, y),
+    downloads: (x: number, y: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.DOWNLOADS(windowId), x, y),
+    extensions: (x: number, y: number): Promise<void> => ipcRenderer.invoke(IPCChannel.Popup.EXTENSIONS(windowId), x, y)
+} as const;
+
+const findApi = {
+    start: (viewId: number, text: string, matchCase: boolean): Promise<FindState> => ipcRenderer.invoke(IPCChannel.Find.START(viewId), text, matchCase),
+    stop: (viewId: number, action: 'clearSelection' | 'keepSelection' | 'activateSelection', hideDialog: boolean = true): Promise<void> => ipcRenderer.invoke(IPCChannel.Find.STOP(viewId), action, hideDialog),
+    move: (viewId: number, forward: boolean = true): Promise<FindState> => ipcRenderer.invoke(IPCChannel.Find.MOVE(viewId), forward)
+} as const;
+
+const bookmarksApi = {
+    list: (userId: string): Promise<BookmarkData[]> => {
         if (!userId) return Promise.resolve([]);
-        return ipcRenderer.invoke(`bookmarks-${userId}`);
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.LIST(userId));
     },
-    addBookmark: async (userId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
+    add: (userId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
         if (!userId || !data) return Promise.reject();
-        return await ipcRenderer.invoke(`bookmark-add-${userId}`, data);
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.ADD(userId), data);
     },
-    removeBookmark: async (userId: string, bookmarkId: string): Promise<boolean> => {
+    remove: (userId: string, bookmarkId: string): Promise<boolean> => {
         if (!userId || !bookmarkId) return Promise.resolve(false);
-        return await ipcRenderer.invoke(`bookmark-remove-${userId}`, bookmarkId);
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.REMOVE(userId), bookmarkId);
     },
-    updateBookmark: async (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
+    update: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
         if (!userId || !bookmarkId || !data) return Promise.reject();
-        return await ipcRenderer.invoke(`bookmark-update-${userId}`, bookmarkId, data);
-    },
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.UPDATE(userId), bookmarkId, data);
+    }
+} as const;
 
-    showHistoryPopup: (x: number, y: number) => ipcRenderer.invoke(`window-history-${windowId}`, x, y),
-    getHistory: (userId: string) => {
-        if (!userId) return Promise.resolve();
-        return ipcRenderer.invoke(`history-${userId}`);
+const historyApi = {
+    list: (userId: string): Promise<HistoryData[]> => {
+        if (!userId) return Promise.resolve([]);
+        return ipcRenderer.invoke(IPCChannel.History.LIST(userId));
     },
-    getHistoryGroups: (userId: string) => {
-        if (!userId) return Promise.resolve();
-        return ipcRenderer.invoke(`history-groups-${userId}`);
+    listGroups: (userId: string): Promise<HistoryGroup[]> => {
+        if (!userId) return Promise.resolve([]);
+        return ipcRenderer.invoke(IPCChannel.History.LIST_GROUPS(userId));
     },
-    addHistory: async (userId: string, data: OmitData<HistoryData>): Promise<HistoryData> => {
+    add: (userId: string, data: OmitData<HistoryData>): Promise<HistoryData> => {
         if (!userId || !data) return Promise.reject();
-        return await ipcRenderer.invoke(`history-add-${userId}`, data);
+        return ipcRenderer.invoke(IPCChannel.History.ADD(userId), data);
     },
-    removeHistory: async (userId: string, historyId: string): Promise<boolean> => {
-        if (!userId || !historyId) return false;
-        return await ipcRenderer.invoke(`history-remove-${userId}`, historyId);
+    remove: (userId: string, historyId: string): Promise<boolean> => {
+        if (!userId || !historyId) return Promise.resolve(false);
+        return ipcRenderer.invoke(IPCChannel.History.REMOVE(userId), historyId);
+    }
+} as const;
+
+const downloadsApi = {
+    list: (userId: string): Promise<Required<DownloadData>[]> => {
+        if (!userId) return Promise.resolve([]);
+        return ipcRenderer.invoke(IPCChannel.Downloads.LIST(userId));
     },
+    listWithFileIcon: (userId: string): Promise<NativeDownloadData[]> => {
+        if (!userId) return Promise.resolve([]);
+        return ipcRenderer.invoke(IPCChannel.Downloads.LIST_WITH_FILE_ICON(userId));
+    },
+    pause: (downloadId: string): Promise<void> => {
+        if (!downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.PAUSE(downloadId));
+    },
+    resume: (downloadId: string): Promise<void> => {
+        if (!downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.RESUME(downloadId));
+    },
+    cancel: (downloadId: string): Promise<void> => {
+        if (!downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.CANCEL(downloadId));
+    }
+} as const;
 
-    showDownloadsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-downloads-${windowId}`, x, y),
+const webContentsId = getCurrentWebContents().id;
+export const useElectronAPI = () => ({
+    windowsApi,
+    windowApi,
+    viewsApi,
+    viewApi,
+    dialogApi,
 
-    showExtensionsPopup: (x: number, y: number) => ipcRenderer.invoke(`window-extensions-${windowId}`, x, y),
-    showExtensionMenu: (id: string, x: number, y: number) => ipcRenderer.invoke(`extension-menu-${windowId}`, id, x, y),
+    popupApi,
 
+    findApi,
 
-    getCurrentUserId: () => ipcRenderer.invoke(`window-user-${windowId}`),
-    getUserType: (userId: string) => ipcRenderer.invoke('get-user-type', userId),
-    getUserConfig: (userId: string) => ipcRenderer.invoke(`get-user-config`, userId),
-    setUserConfig: (userId: string, config: DeepPartial<UserConfig>) => ipcRenderer.invoke(`set-user-config`, userId, config)
+    bookmarksApi,
+    historyApi,
+    downloadsApi,
+
+    search: (keyword: string): Promise<SearchResult> => ipcRenderer.invoke(`window-search-${windowId}`, keyword),
+
+    showExtensionMenu: (id: string, x: number, y: number): Promise<void> => ipcRenderer.invoke(`extension-menu-${windowId}`, id, x, y),
+
+    getCurrentUserId: (): Promise<string> => ipcRenderer.invoke(`window-user-${windowId}`),
+    getUserType: (userId: string): Promise<UserType> => ipcRenderer.invoke(IPCChannel.User.TYPE(userId)),
+    getUserConfig: (userId: string): Promise<UserConfig> => ipcRenderer.invoke(IPCChannel.User.GET_CONFIG(userId)),
+    setUserConfig: (userId: string, config: DeepPartial<UserConfig>): Promise<UserConfig> => ipcRenderer.invoke(IPCChannel.User.SET_CONFIG(userId), config)
 });
+
+
+export const useNativeTheme = () => {
+    const [theme, setTheme] = useState<Theme>(MuiLightGlobalStyles);
+
+    useEffect(() => {
+        setTheme(nativeTheme.shouldUseDarkColors ? MuiDarkGlobalStyles : MuiLightGlobalStyles);
+
+        nativeTheme.on('updated', () => {
+            setTheme(nativeTheme.shouldUseDarkColors ? MuiDarkGlobalStyles : MuiLightGlobalStyles);
+        });
+
+        return () => {
+            nativeTheme.removeAllListeners();
+        };
+    }, []);
+
+    return theme;
+};

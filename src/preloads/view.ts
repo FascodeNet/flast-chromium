@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { IFlastAPI } from '../@types/electron';
 import { APPLICATION_PROTOCOL } from '../constants';
+import { IPCChannel } from '../constants/ipc';
 import { BookmarkData, OmitData, UserConfig } from '../interfaces/user';
 import { DeepPartial } from '../utils';
 import { injectChromeWebStoreInstallButton } from './chrome-webstore';
@@ -40,11 +41,11 @@ const api: IFlastAPI = {
     },
     getUserConfig: (userId: string) => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        return ipcRenderer.invoke('get-user-config', userId);
+        return ipcRenderer.invoke(IPCChannel.User.GET_CONFIG(userId));
     },
     setUserConfig: (userId: string, config: DeepPartial<UserConfig>) => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        return ipcRenderer.invoke('set-user-config', userId, config);
+        return ipcRenderer.invoke(IPCChannel.User.SET_CONFIG(userId), config);
     },
     setTheme: (userId: string) => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
@@ -59,33 +60,44 @@ const api: IFlastAPI = {
     getBookmarks: (userId: string): Promise<BookmarkData[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
         if (!userId) return Promise.resolve([]);
-        return ipcRenderer.invoke(`bookmarks-${userId}`);
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.LIST(userId));
     },
     addBookmark: (userId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
         if (!userId || !data) return Promise.reject();
-        return ipcRenderer.invoke(`bookmark-add-${userId}`, data);
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.ADD(userId), data);
     },
     removeBookmark: (userId: string, bookmarkId: string): Promise<boolean> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
         if (!userId || !bookmarkId) return Promise.resolve(false);
-        return ipcRenderer.invoke(`bookmark-remove-${userId}`, bookmarkId);
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.REMOVE(userId), bookmarkId);
     },
     updateBookmark: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
         if (!userId || !bookmarkId || !data) return Promise.reject();
-        return ipcRenderer.invoke(`bookmark-update-${userId}`, bookmarkId, data);
+        return ipcRenderer.invoke(IPCChannel.Bookmarks.UPDATE(userId), bookmarkId, data);
     },
 
     getHistory: (userId: string) => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
         if (!userId) return Promise.resolve();
-        return ipcRenderer.invoke(`history-${userId}`);
+        return ipcRenderer.invoke(IPCChannel.History.LIST(userId));
     },
     getHistoryGroups: (userId: string) => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
         if (!userId) return Promise.resolve();
-        return ipcRenderer.invoke(`history-groups-${userId}`);
+        return ipcRenderer.invoke(IPCChannel.History.LIST_GROUPS(userId));
+    },
+
+    getDownloads: (userId: string) => {
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        if (!userId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.LIST(userId));
+    },
+    getDownloadsWithFileIcon: (userId: string) => {
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        if (!userId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.LIST_WITH_FILE_ICON(userId));
     }
 };
 

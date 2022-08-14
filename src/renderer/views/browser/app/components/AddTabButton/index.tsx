@@ -7,7 +7,7 @@ import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledAddTabButton } from './styles';
 
 export const AddTabButton = () => {
-    const { addView } = useElectronAPI();
+    const { viewsApi } = useElectronAPI();
 
     const {
         config: {
@@ -16,8 +16,11 @@ export const AddTabButton = () => {
         }
     } = useUserConfigContext();
 
-    const handleButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
-        await addView(mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`, true);
+    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+        viewsApi.add(
+            mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`,
+            true
+        );
     };
 
     return (

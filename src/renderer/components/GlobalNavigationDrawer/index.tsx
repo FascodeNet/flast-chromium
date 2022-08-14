@@ -32,11 +32,11 @@ export const GlobalNavigationDrawer = () => (
             <Applications />
         </IconButton>
         <Divider sx={{ width: 20, alignItems: 'center' }} />
-        <IconButton component={Link} href={`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_SETTINGS}`}>
-            <Settings />
-        </IconButton>
         <IconButton component={Link} href={`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_EXTENSIONS}`}>
             <Extension />
+        </IconButton>
+        <IconButton component={Link} href={`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_SETTINGS}`}>
+            <Settings />
         </IconButton>
     </StyledDrawer>
 );

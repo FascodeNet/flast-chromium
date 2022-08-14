@@ -1,5 +1,5 @@
 import { Session as ElectronSession, session } from 'electron';
-import { ElectronChromeExtensions } from 'electron-chrome-extensions';
+import { ElectronChromeExtensions } from 'electron-chrome-extensions-production';
 import { ISession, IUser } from '../../interfaces/user';
 import { registerProtocols, setUserAgent, setWebRequest } from '../../utils/session';
 

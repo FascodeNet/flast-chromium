@@ -9,6 +9,7 @@ export const En: Language = {
         information: 'Information',
         yes: 'Yes',
         no: 'No',
+        none: 'None',
         cancel: 'Cancel',
         save: 'Save',
         edit: 'Edit',
@@ -16,6 +17,103 @@ export const En: Language = {
         remove: 'Remove',
         delete: 'Delete'
     },
+
+    permissions: {
+        geolocation: {
+            title: 'Location',
+            description: 'Many sites use the user\'s location to retrieve local news and information about nearby stores.',
+
+            enable: 'Allow sites to request the use of location information',
+            disable: 'Do not allow the site to use your location'
+        },
+        camera: {
+            title: 'Camera',
+            description: 'Many sites use webcams for video chat and other communication functions.',
+
+            enable: 'Allow sites to request the use of cameras',
+            disable: 'Do not allow the use of cameras on the site'
+        },
+        microphone: {
+            title: 'Microphone',
+            description: 'Many sites use microphones for video chat and other communication functions.',
+
+            enable: 'Allow sites to request the use of microphones',
+            disable: 'Do not allow the use of microphones on the site'
+        },
+        notifications: {
+            title: 'Notifications',
+            description: 'The site sends notifications to keep you informed of updates, chat messages, etc.',
+
+            enable: 'Allow sites to request that notifications be sent',
+            disable: 'Do not allow the site to send notifications'
+        },
+        sensors: {
+            title: 'Motion Sensor',
+            description: 'Use the device\'s motion sensors for features such as virtual reality and fitness tracking.',
+
+            enable: 'Allow sites to request the use of motion sensors',
+            disable: 'Do not allow sites to use motion sensors'
+        },
+        midi: {
+            title: 'MIDI Device',
+            description: 'Connects to a MIDI device for music production or editing.',
+
+            enable: 'Allow sites to request a connection to a MIDI device',
+            disable: 'Do not allow sites to connect to MIDI devices'
+        },
+        hid: {
+            title: 'HID Device',
+            description: 'Connect to HID devices to accommodate functions that use less common keyboards or devices such as game controllers.',
+
+            enable: 'Allow sites to request a connection to HID devices',
+            disable: 'Do not allow sites to connect to HID devices'
+        },
+        serial: {
+            title: 'Serial Port',
+            description: 'Connect to the serial port to use data transfer functions, such as setting up a network.',
+
+            enable: 'Allow sites to request a connection to the serial port',
+            disable: 'Do not allow site to connect to serial port'
+        },
+        idle_detection: {
+            title: 'Device active status',
+            description: 'Detects the active status of the device and sets the status of the chat application.',
+
+            enable: 'Allow sites to request detection of device active status',
+            disable: 'Do not allow detection of the active state of the device by the site'
+        },
+        clipboard: {
+            title: 'Clipboard read/write',
+            description: 'Many sites read the clipboard to retain the formatting of copied text, for example.',
+
+            enable: 'Allow sites to request access to text and images in the clipboard',
+            disable: 'Do not allow sites to access text or images in the clipboard'
+        },
+        pointer_lock: {
+            title: 'Pointer Lock',
+            description: 'The site occupies the mouse cursor to be able to control FPS games, etc.',
+
+            enable: 'Allow sites to request mouse cursor lock',
+            disable: 'Do not allow the site to lock the mouse cursor'
+        },
+        open_external: {
+            title: 'Open an external application',
+            description: 'Many sites open external apps for seamless transitions to desktop apps.',
+
+            enable: 'Allow sites to require external apps to open',
+            disable: 'Do not allow external apps to open on the site'
+        }
+    },
+    contents: {
+        cookies: 'Cookie & Site Data',
+        javascript: 'JavaScript',
+        images: 'Images',
+        sounds: 'Sounds',
+        ads: 'Ads',
+        protected_content: 'Protected Content',
+        zoom_level: 'Zoom Level'
+    },
+
     tasks: {
         addTab: 'New tab',
         addWindow: 'New window',
@@ -27,6 +125,22 @@ export const En: Language = {
             newWindow: 'New window',
             openIncognitoWindow: 'Open Private window',
 
+            zoom: {
+                label: 'Zoom',
+
+                zoomIn: 'Zoom in',
+                zoomOut: 'Zoom out',
+                zoomReset: 'Zoom reset',
+                fullScreen: 'Toggle Full Screen'
+            },
+            edit: {
+                label: 'Edit',
+
+                cut: 'Cut',
+                copy: 'Copy',
+                paste: 'Paste'
+            },
+
             bookmarks: 'Bookmarks',
             history: 'History',
             downloads: 'Downloads',
@@ -35,11 +149,23 @@ export const En: Language = {
 
             print: 'Print',
             find: 'Find',
-            share: 'Share',
+            share: {
+                label: 'Share',
+
+                twitter: 'Twitter',
+                facebook: 'Facebook',
+                copyLink: 'Copy link',
+                qrCode: 'Show QR Code'
+            },
 
             settings: 'Settings',
-            help: {
-                label: 'Help'
+            helpAndFeedback: {
+                label: 'Help & Feedback',
+
+                help: 'Help',
+                feedback: 'Send Feedback',
+                whatsNewAndHint: 'What\'s New & Tips',
+                about: `About ${APPLICATION_NAME}`
             },
             close: 'Close'
         },
@@ -110,30 +236,30 @@ export const En: Language = {
             tab: {
                 label: 'Tab',
 
-                addTab: '新しいタブを開く',
-                removeTab: 'タブを閉じる',
-                removeOtherTabs: '他のタブを閉じる',
-                removeLeftTabs: '左側のタブを閉じる',
-                removeRightTabs: '右側のタブを閉じる',
-                duplicateTab: 'タブを複製',
-                pinTab: 'タブをピン留め',
-                unpinTab: 'タブのピン留めを解除',
-                muteTab: 'タブのミュート',
-                unmuteTab: 'タブのミュートを解除',
-                prevTab: '前のタブを表示',
-                nextTab: '次のタブを表示'
+                addTab: 'New tab',
+                removeTab: 'Close tab',
+                removeOtherTabs: 'Close other tabs',
+                removeLeftTabs: 'Close tabs on the left',
+                removeRightTabs: 'Close tabs on the right',
+                duplicateTab: 'Duplicate tab',
+                pinTab: 'Pin tab',
+                unpinTab: 'Unpin tab',
+                muteTab: 'Mute tab',
+                unmuteTab: 'Unmute tab',
+                prevTab: 'Select previous tab',
+                nextTab: 'Select next tab'
             },
             window: {
                 label: 'Window',
 
-                addWindow: '新しいウィンドウを開く',
-                openIncognitoWindow: 'プライベート ウィンドウを開く',
-                removeWindow: 'ウィンドウを閉じる',
-                removeOtherWindows: '他のウィンドウを閉じる',
-                minimizeWindow: 'ウィンドウを最小化',
-                maximizeWindow: 'ウィンドウを最大化',
-                unmaximizeWindow: 'ウィンドウを元に戻す',
-                toggleFullScreen: 'ウィンドウを全画面表示',
+                addWindow: 'New window',
+                openIncognitoWindow: 'Open Private window',
+                removeWindow: 'Close window',
+                removeOtherWindows: 'Close other windows',
+                minimizeWindow: 'Minimize window',
+                maximizeWindow: 'Maximize window',
+                unmaximizeWindow: 'Restore window',
+                toggleFullScreen: 'Toggle Full Screen',
                 openProcessManager: 'Open Process manager'
             },
             user: {
@@ -189,7 +315,7 @@ export const En: Language = {
             back: 'Back',
             forward: 'Forward',
             reload: 'Reload',
-            stop: 'Stop loading',
+            stop: 'Stop',
             media: {
                 audioMute: 'Mute tab',
                 audioMuteExit: 'Unmute tab',
@@ -201,19 +327,19 @@ export const En: Language = {
             devTool: 'Developer Tool'
         },
         tab: {
-            addTab: '新しいタブを開く',
-            moveToWindow: 'このタブを新しいウィンドウに移動',
-            reload: '再読み込み',
-            stop: '中止',
-            duplicateTab: 'タブを複製',
-            pinTab: 'タブをピン留め',
-            unpinTab: 'タブのピン留めを解除',
-            muteTab: 'タブのミュート',
-            unmuteTab: 'タブのミュートを解除',
-            removeTab: 'タブを閉じる',
-            removeOtherTabs: '他のタブを閉じる',
-            removeLeftTabs: '左側のタブを閉じる',
-            removeRightTabs: '右側のタブを閉じる'
+            addTab: 'New tab',
+            moveToWindow: 'Move this tab to a new window',
+            reload: 'Reload',
+            stop: 'Stop',
+            duplicateTab: 'Duplicate tab',
+            pinTab: 'Pin tab',
+            unpinTab: 'Unpin tab',
+            muteTab: 'Mute tab',
+            unmuteTab: 'Unmute tab',
+            removeTab: 'Close tab',
+            removeOtherTabs: 'Close other tabs',
+            removeLeftTabs: 'Close tabs on the left',
+            removeRightTabs: 'Close tabs on the right'
         }
     },
     windows: {
@@ -327,11 +453,17 @@ export const En: Language = {
                     history: 'Suggest from history'
                 }
             },
+            adBlocker: {
+                title: 'Ad Blocker',
+
+                enabled: 'Enable Ad Blocker',
+                filters: 'Filters'
+            },
             appearance: {
                 title: 'Appearance',
 
-                mode: {
-                    title: 'Theme & Color Scheme',
+                colorScheme: {
+                    title: 'Color Scheme',
 
                     system: 'System',
                     light: 'Light',
@@ -340,12 +472,7 @@ export const En: Language = {
                     tabColored: 'Set the tabs to the theme colors set for the site'
                 },
                 theme: {
-                    title: 'Theme',
-
-                    none: 'None',
-                    morningFog: 'Morning fog',
-                    icyMint: 'Icy mint',
-                    islandGetaway: 'Island getaway'
+                    title: 'Theme'
                 },
                 tabPosition: {
                     title: 'Tab Position',
@@ -380,14 +507,14 @@ export const En: Language = {
                     title: 'Home',
 
                     button: {
-                        name: 'Show Home button on Toolbar',
-                        description: 'Set the page to be displayed when the Home button is pressed'
+                        primary: 'Show Home button on Toolbar',
+                        secondary: 'Set the page to be displayed when the Home button is pressed'
                     },
                     newTab: 'Open new tab page',
                     custom: 'Open a specific page'
                 }
             },
-            search: {
+            searchAndAddressBar: {
                 title: 'Search & Address bar',
 
                 suggests: {
@@ -405,6 +532,22 @@ export const En: Language = {
                         primary: 'Suggest search engines registered with @mentions and URL',
                         secondary: 'Press %k during suggestions to search with the selected search engine'
                     }
+                }
+            },
+            sites: {
+                title: 'Cookie & Site Settings',
+
+                permissions: 'Permissions',
+                contents: 'Contents',
+
+                default: 'デフォルトの動作'
+            },
+            systemAndPerformance: {
+                title: 'System & Performance',
+
+                smoothTabSwitching: {
+                    primary: 'Smooth tab switching',
+                    secondary: 'Disable this option if performance is affected.'
                 }
             }
         }

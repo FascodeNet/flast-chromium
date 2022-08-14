@@ -13,14 +13,8 @@ import {
     StyledHistoryItemLabel
 } from './styles';
 
-interface IDate {
-    year: number;
-    month: number;
-    day: number;
-}
-
 export const HistoryPanel = ({ type }: PanelProps) => {
-    const { getCurrentUserId, getHistoryGroups } = useElectronAPI();
+    const { historyApi, getCurrentUserId } = useElectronAPI();
 
     const [userId, setUserId] = useState('');
 
@@ -31,7 +25,7 @@ export const HistoryPanel = ({ type }: PanelProps) => {
             if (!id) return;
             setUserId(id);
 
-            const historyGroupList = await getHistoryGroups(id);
+            const historyGroupList = await historyApi.listGroups(id);
             setHistoryGroups(historyGroupList);
         });
     }, []);

@@ -100,18 +100,18 @@ export const HorizontalTab = (
     }: TabProps
 ) => {
     const { selectedId } = useViewManagerContext();
-    const { selectView, removeView, showTabMenu } = useElectronAPI();
+    const { viewsApi, viewApi } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const { style, tab_colored: isTabColored } = config.appearance;
 
     const handleClick = () => {
         if (id === selectedId) return;
-        selectView(id);
+        viewsApi.select(id);
     };
 
     const handleContextMenu = ({ pageX, pageY }: MouseEvent<HTMLDivElement>) => {
-        showTabMenu(id, pageX, pageY);
+        viewApi.showTabMenu(id, pageX, pageY);
     };
 
     return (
@@ -140,7 +140,7 @@ export const HorizontalTab = (
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
             {!isPinned && <Fragment>
                 <StyledTabTitle className="horizontal-tab-item-title">{title}</StyledTabTitle>
-                <StyledTabCloseButton className="horizontal-tab-item-close-button" onClick={() => removeView(id)}>
+                <StyledTabCloseButton className="horizontal-tab-item-close-button" onClick={() => viewsApi.remove(id)}>
                     <Remove />
                 </StyledTabCloseButton>
             </Fragment>}
@@ -163,18 +163,18 @@ export const VerticalTab = (
     }: VerticalTabProps
 ) => {
     const { selectedId } = useViewManagerContext();
-    const { selectView, removeView, showTabMenu } = useElectronAPI();
+    const { viewsApi, viewApi } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const { tab_colored: isTabColored } = config.appearance;
 
     const handleClick = () => {
         if (id === selectedId) return;
-        selectView(id);
+        viewsApi.select(id);
     };
 
     const handleContextMenu = ({ pageX, pageY }: MouseEvent<HTMLDivElement>) => {
-        showTabMenu(id, pageX, pageY);
+        viewApi.showTabMenu(id, pageX, pageY);
     };
 
     return (
@@ -203,7 +203,7 @@ export const VerticalTab = (
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
             {extended && <StyledTabTitle className="vertical-tab-item-title">{title}</StyledTabTitle>}
             {!isPinned &&
-                <StyledTabCloseButton className="vertical-tab-item-close-button" onClick={() => removeView(id)}>
+                <StyledTabCloseButton className="vertical-tab-item-close-button" onClick={() => viewsApi.remove(id)}>
                     <Remove />
                 </StyledTabCloseButton>}
         </StyledVerticalTab>

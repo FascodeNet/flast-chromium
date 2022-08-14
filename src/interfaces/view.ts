@@ -1,29 +1,13 @@
 import { RequestState } from '../main/utils/request';
+import { DefaultUserConfig, SitePermissionData } from './user';
 
 export interface AppViewInitializerOptions {
     url: string;
     active: boolean;
 }
 
-export const ZoomLevels: ZoomLevel[] = [.25, .33, .50, .67, .75, .80, .90, 1.00, 1.10, 1.25, 1.50, 1.75, 2.00, 2.50, 3.00, 4.00, 5.00];
-export type ZoomLevel =
-    .25
-    | .33
-    | .50
-    | .67
-    | .75
-    | .80
-    | .90
-    | 1.00
-    | 1.10
-    | 1.25
-    | 1.50
-    | 1.75
-    | 2.00
-    | 2.50
-    | 3.00
-    | 4.00
-    | 5.00;
+export const ZoomLevels = [.25, .33, .50, .67, .75, .80, .90, 1.00, 1.10, 1.25, 1.50, 1.75, 2.00, 2.50, 3.00, 4.00, 5.00] as const;
+export type ZoomLevel = typeof ZoomLevels[number];
 
 export type MoveDirection = 'start' | 'end';
 
@@ -35,12 +19,14 @@ export interface ViewState {
     url: string;
     favicon?: string;
     color?: string;
-
-    requestState?: RequestState;
+    zoomLevel: ZoomLevel;
 
     isLoading: boolean;
     canGoBack: boolean;
     canGoForward: boolean;
+
+    requestState?: RequestState;
+    permissions: Required<SitePermissionData>[];
 
     media: MediaStatus;
     isPinned: boolean;
@@ -54,12 +40,14 @@ export const DefaultViewState: ViewState = {
     url: '',
     favicon: undefined,
     color: undefined,
-
-    requestState: undefined,
+    zoomLevel: DefaultUserConfig.sites.contents.zoom_level,
 
     isLoading: false,
     canGoBack: false,
     canGoForward: false,
+
+    requestState: undefined,
+    permissions: [],
 
     media: 'none',
     isPinned: false,

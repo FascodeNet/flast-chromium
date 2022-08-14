@@ -4,26 +4,19 @@ import { ipcRenderer } from 'electron';
 import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 import Icon from '../../../../../../assets/icon.png';
 import { APPLICATION_NAME, APPLICATION_PROTOCOL, EXTENSION_PROTOCOL } from '../../../../../../constants';
-import { AppearanceStyle, BookmarkData } from '../../../../../../interfaces/user';
+import { BookmarkData } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
+import { Button, ButtonIcon, IconButton } from '../../../../../components/Button';
 import { Extension, File, Search, Star, StarFilled } from '../../../../../components/Icons';
 import { Information, Lock, Warning } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { StyledButton as Button } from '../Button/styles';
 import { StyledAddressBar, StyledButton, StyledButtonContainer, StyledText, StyledTextContainer } from './styles';
 
 export const AddressBar = () => {
-    const {
-        getWindowId,
-        showSearchPopup,
-        showInformationPopup,
-        getBookmarks,
-        addBookmark,
-        removeBookmark
-    } = useElectronAPI();
+    const { windowApi, bookmarksApi, popupApi } = useElectronAPI();
 
     const { selectedId, getCurrentViewState } = useViewManagerContext();
     const { userId, config } = useUserConfigContext();
@@ -34,7 +27,7 @@ export const AddressBar = () => {
     const [active, setActive] = useState(false);
     const [bookmark, setBookmark] = useState<BookmarkData | undefined>(undefined);
 
-    const windowId = getWindowId();
+    const windowId = windowApi.getId();
     useEffect(() => {
         ipcRenderer.on(`window-hide_search-${windowId}`, () => {
             setActive(false);
@@ -52,7 +45,7 @@ export const AddressBar = () => {
         setAddress(url);
 
         (async () => {
-            const bookmarks = await getBookmarks(userId);
+            const bookmarks = await bookmarksApi.list(userId);
             setBookmark(bookmarks.find((data) => data.url === navigationState.url));
         })();
 
@@ -78,7 +71,7 @@ export const AddressBar = () => {
         setActive(true);
         setTimeout(() => {
             const { x, y, width } = ref.current!!.getBoundingClientRect();
-            showSearchPopup(x - 15 - 4, y, width + (15 * 2) + (4 * 2));
+            popupApi.search(x - 15 - 4, y, width + (15 * 2) + (4 * 2));
         });
         setTimeout(() => setActive(false), 500);
     };
@@ -86,16 +79,16 @@ export const AddressBar = () => {
     const handleInformationButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         const { x, y, height } = e.currentTarget.getBoundingClientRect();
-        showInformationPopup(x, y + height);
+        popupApi.viewInformation(x, y + height);
     };
 
     const handleBookmarkButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
 
         if (bookmark) {
-            await removeBookmark(userId, bookmark._id!!);
+            await bookmarksApi.remove(userId, bookmark._id!!);
         } else {
-            await addBookmark(
+            await bookmarksApi.add(
                 userId,
                 {
                     title: state.title,
@@ -106,7 +99,7 @@ export const AddressBar = () => {
             );
         }
 
-        const bookmarks = await getBookmarks(userId);
+        const bookmarks = await bookmarksApi.list(userId);
         setBookmark(bookmarks.find((data) => data.url === navigationState.url));
     };
 
@@ -125,7 +118,7 @@ export const AddressBar = () => {
             case 'file':
                 return (<File />);
             case 'internal':
-                return (<img src={Icon} style={{ filter: 'grayscale(1)' }} />);
+                return (<ButtonIcon src={Icon} size={20} sx={{ filter: 'grayscale(1)' }} />);
             case 'extension':
                 try {
                     const { protocol, hostname } = new URL(address);
@@ -133,7 +126,7 @@ export const AddressBar = () => {
                     if (protocol === `${EXTENSION_PROTOCOL}:`) {
                         const extension = getCurrentWebContents().session.getExtension(hostname);
                         return extension ? (
-                            <img src={`crx://extension-icon/${extension.id}/32/2`} />
+                            <ButtonIcon src={`crx://extension-icon/${extension.id}/32/2`} size={20} />
                         ) : (
                             <Extension />
                         );
@@ -146,7 +139,7 @@ export const AddressBar = () => {
         }
     };
 
-    const style: AppearanceStyle = config.appearance.style;
+    const style = config.appearance.style;
     if (window.outerWidth >= 850 || style !== 'top_single' || active) {
         try {
             const {
@@ -167,9 +160,14 @@ export const AddressBar = () => {
                     appearanceStyle={style}
                 >
                     <StyledButtonContainer className="address-bar-container">
-                        <StyledButton onClick={handleInformationButtonClick} label={statusButtonLabel}>
-                            <StatusIcon />
-                        </StyledButton>
+                        <Button
+                            onClick={handleInformationButtonClick}
+                            icon={<StatusIcon />}
+                            disableRipple
+                            sx={{ '& .Icon *': { width: 20, height: 20 } }}
+                        >
+                            {statusButtonLabel}
+                        </Button>
                     </StyledButtonContainer>
                     <StyledTextContainer className="address">
                         <StyledText className="protocol">{protocol}//</StyledText>
@@ -179,9 +177,13 @@ export const AddressBar = () => {
                         </StyledText>
                     </StyledTextContainer>
                     <StyledButtonContainer className="address-bar-container">
-                        <StyledButton onClick={handleBookmarkButtonClick}>
+                        <IconButton
+                            onClick={handleBookmarkButtonClick}
+                            disableRipple
+                            sx={{ '& svg': { width: 20, height: 20 } }}
+                        >
                             {bookmark ? <StarFilled /> : <Star />}
-                        </StyledButton>
+                        </IconButton>
                     </StyledButtonContainer>
                 </StyledAddressBar>
             );
@@ -207,9 +209,9 @@ export const AddressBar = () => {
         }
     } else {
         return (
-            <Button onClick={handleClick} className={clsx('address-bar-button', 'search')} appearanceStyle={style}>
+            <IconButton onClick={handleClick} disableRipple className={clsx('address-bar-button', 'search')}>
                 <Search />
-            </Button>
+            </IconButton>
         );
     }
 };

@@ -2,6 +2,7 @@ import Datastore from '@seald-io/nedb';
 import { format } from 'date-fns';
 import { ipcMain } from 'electron';
 import { APPLICATION_PROTOCOL } from '../../../constants';
+import { IPCChannel } from '../../../constants/ipc';
 import { HistoryData, HistoryGroup, OmitData } from '../../../interfaces/user';
 import { getUserDataPath } from '../../../utils/path';
 import { IHistory, IUser } from '../../interfaces/user';
@@ -13,11 +14,13 @@ export class NormalHistory implements IHistory {
     private readonly _datastore: Datastore;
     private _history: HistoryData[] = [];
 
+    private readonly ipcChannel = IPCChannel.History;
+
     public constructor(user: IUser) {
         this.user = user;
 
         this._datastore = new Datastore<HistoryData>({
-            filename: getUserDataPath(user.id, 'history.db'),
+            filename: getUserDataPath(user.id, 'History.db'),
             autoload: true,
             timestampData: true
         });
@@ -27,20 +30,16 @@ export class NormalHistory implements IHistory {
             this._history = docs;
         });
 
-
-        ipcMain.handle(`history-${user.id}`, () => {
+        ipcMain.handle(this.ipcChannel.LIST(user.id), () => {
             return this.history;
         });
-
-        ipcMain.handle(`history-groups-${user.id}`, () => {
+        ipcMain.handle(this.ipcChannel.LIST_GROUPS(user.id), () => {
             return this.historyGroups;
         });
-
-        ipcMain.handle(`history-add-${user.id}`, async (e, data: OmitData<HistoryData>) => {
+        ipcMain.handle(this.ipcChannel.ADD(user.id), async (e, data: OmitData<HistoryData>) => {
             return await this.add(data);
         });
-
-        ipcMain.handle(`history-remove-${user.id}`, async (e, id: string) => {
+        ipcMain.handle(this.ipcChannel.REMOVE(user.id), async (e, id: string) => {
             return await this.remove(id);
         });
     }
@@ -92,7 +91,8 @@ export class NormalHistory implements IHistory {
     }
 
     public async add(data: OmitData<HistoryData>) {
-        if (!this.user.settings.config.privacy_security.save_history) return Promise.reject();
+        if (!this.user.settings.config.privacy_security.save_history)
+            return Promise.reject();
 
         const isToday = (date: Date) => {
             const today = new Date();

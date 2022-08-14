@@ -21,10 +21,12 @@ export const ViewManagerContext = createContext<ViewManagerProps>({
     views: [],
     getCurrentViewState: () => DefaultViewState,
     getViewState: () => undefined,
+    // tslint:disable-next-line:no-empty
     setSelectedId: () => {
     },
 
     tabContainerWidth: 0,
+    // tslint:disable-next-line:no-empty
     setTabContainerWidth: () => {
     }
 });
@@ -48,10 +50,10 @@ export const ViewManagerProvider = ({ children }: ViewManagerProviderProps) => {
 
     const windowId = getCurrentWindow().id;
     useEffect(() => {
-        const { getCurrentView, getViews } = useElectronAPI();
+        const { viewsApi } = useElectronAPI();
 
-        getCurrentView().then((view) => setSelectedId(view.id));
-        getViews().then((viewStates) => setViews(viewStates));
+        viewsApi.getCurrentView().then((view) => setSelectedId(view.id));
+        viewsApi.getViews().then((viewStates) => setViews(viewStates));
     }, []);
 
     useEffect(() => {

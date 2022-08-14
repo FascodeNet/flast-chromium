@@ -12,6 +12,9 @@ import {
     Typography
 } from '@mui/material';
 import React, { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRight } from '../../Icons/arrow';
+import { ExternalLink } from '../../Icons/state';
 
 const containerStyled = (theme: Theme) => ({
     height: 50,
@@ -33,7 +36,7 @@ export const ItemButtonBase = styled(MuiButtonBase)(({ theme }) => ({
     [`&.${buttonClasses.disabled}`]: {
         color: theme.palette.action.disabled
     },
-    '&:hover': {
+    [`&:hover, &.${buttonClasses.focusVisible}`]: {
         background: theme.palette.action.hover
     }
 }));
@@ -45,6 +48,10 @@ export interface ItemIconProps {
 export interface ItemTextBlockProps {
     primary?: ReactNode;
     secondary?: ReactNode;
+}
+
+export interface ItemDisabledProps {
+    disabled?: boolean;
 }
 
 export const ItemIcon = ({ icon }: ItemIconProps) => icon ? (
@@ -111,29 +118,29 @@ export const ItemTextBlock = ({ primary, secondary }: ItemTextBlockProps) => (
     </Box>
 );
 
-const FormContainer = styled(Box)({
+export const ItemFormContainer = styled(Box)({
     marginLeft: 'auto'
 });
 
-interface SwitchItemProps extends ItemTextBlockProps, ItemIconProps {
+interface SwitchItemProps extends ItemTextBlockProps, ItemIconProps, ItemDisabledProps {
     checked: boolean;
     setChecked: (checked: boolean) => void;
-    disabled?: boolean;
 }
 
 export const SwitchItem = ({ icon, primary, secondary, checked, setChecked, disabled }: SwitchItemProps) => (
     <ItemButtonBase onClick={() => setChecked(!checked)} disabled={disabled} sx={{ pl: icon ? .5 : 1.5 }}>
         <ItemIcon icon={icon} />
         <ItemTextBlock primary={primary} secondary={secondary} />
-        <FormContainer>
+        <ItemFormContainer>
             <Switch
                 checked={checked}
                 onChange={() => setChecked(!checked)}
                 disabled={disabled}
                 disableRipple
+                tabIndex={-1}
                 sx={{ '& .MuiSwitch-switchBase:hover': { backgroundColor: 'transparent !important' } }}
             />
-        </FormContainer>
+        </ItemFormContainer>
     </ItemButtonBase>
 );
 
@@ -144,18 +151,18 @@ export const CheckItem = ({ icon, primary, secondary, checked, setChecked, disab
             onChange={() => setChecked(!checked)}
             disabled={disabled}
             disableRipple
+            tabIndex={-1}
         />
         <ItemIcon icon={icon} />
         <ItemTextBlock primary={primary} secondary={secondary} />
     </ItemButtonBase>
 );
 
-interface RadioItemProps<T> extends ItemTextBlockProps, ItemIconProps {
+interface RadioItemProps<T> extends ItemTextBlockProps, ItemIconProps, ItemDisabledProps {
     name: string;
     value: T;
     selectedValue: T;
     setSelected: (value: T) => void;
-    disabled?: boolean;
 }
 
 export const RadioItem = <T, >(
@@ -178,6 +185,7 @@ export const RadioItem = <T, >(
             onChange={() => setSelected(value)}
             disabled={disabled}
             disableRipple
+            tabIndex={-1}
             sx={{ '&:hover': { backgroundColor: 'transparent' } }}
         />
         <ItemIcon icon={icon} />
@@ -185,11 +193,10 @@ export const RadioItem = <T, >(
     </ItemButtonBase>
 );
 
-interface SelectItemProps<T> extends ItemTextBlockProps, ItemIconProps {
+interface SelectItemProps<T> extends ItemTextBlockProps, ItemIconProps, ItemDisabledProps {
     value: T;
     setSelected: (value: T) => void;
     choices: ({ value: T; children?: ReactNode; })[];
-    disabled?: boolean;
 }
 
 export const SelectItem = <T, >(
@@ -206,7 +213,7 @@ export const SelectItem = <T, >(
     <ItemContainer sx={{ pl: icon ? .5 : 1.5, pr: 2 }}>
         <ItemIcon icon={icon} />
         <ItemTextBlock primary={primary} secondary={secondary} />
-        <FormContainer>
+        <ItemFormContainer>
             <Select
                 value={value}
                 onChange={(e) => setSelected(e.target.value as T)}
@@ -220,6 +227,39 @@ export const SelectItem = <T, >(
                     </MenuItem>
                 ))}
             </Select>
-        </FormContainer>
+        </ItemFormContainer>
     </ItemContainer>
 );
+
+interface LinkItemProps extends ItemTextBlockProps, ItemIconProps, ItemDisabledProps {
+    href: string;
+    route?: boolean;
+}
+
+export const LinkItem = (
+    {
+        icon,
+        primary,
+        secondary,
+        href,
+        route,
+        disabled
+    }: LinkItemProps
+) => {
+    const navigate = useNavigate();
+
+    return (
+        <ItemButtonBase
+            onClick={() => route ? navigate(href) : window.location.href = href}
+            disabled={disabled}
+            sx={{ pl: icon ? .5 : 1.5 }}
+        >
+            <ItemIcon icon={icon} />
+            <ItemTextBlock primary={primary} secondary={secondary} />
+            <ItemFormContainer>
+                <ItemIcon icon={route ? <ChevronRight /> : <ExternalLink />} />
+            </ItemFormContainer>
+        </ItemButtonBase>
+    );
+};
+

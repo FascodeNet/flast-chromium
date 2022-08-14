@@ -60,7 +60,7 @@ export const App = () => {
     const [userId, setUserId] = useState('');
     const [config, setConfig] = useState<UserConfig>(DefaultUserConfig);
 
-    const [theme, setTheme] = useState<Theme>(config.appearance.mode === 'dark' ? MuiDarkGlobalStyles : MuiLightGlobalStyles);
+    const [theme, setTheme] = useState<Theme>(config.appearance.color_scheme === 'dark' ? MuiDarkGlobalStyles : MuiLightGlobalStyles);
 
     useEffect(() => {
         window.flast.getUser().then(async (id) => {
@@ -69,7 +69,7 @@ export const App = () => {
 
             const userConfig = await window.flast.getUserConfig(id);
             setConfig(userConfig);
-            setTheme(userConfig.appearance.mode === 'dark' ? MuiDarkGlobalStyles : MuiLightGlobalStyles);
+            setTheme(userConfig.appearance.color_scheme === 'dark' ? MuiDarkGlobalStyles : MuiLightGlobalStyles);
         });
     }, []);
 

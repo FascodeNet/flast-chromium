@@ -1,11 +1,16 @@
+import { ipcMain } from 'electron';
+import { IPCChannel } from '../../constants/ipc';
 import { nonNullable } from '../../utils/array';
 import { IUser } from '../interfaces/user';
+import { Main } from '../main';
+import { IncognitoUser } from '../user/incognito';
+import { NormalUser } from '../user/normal';
 import { AppWindow } from '../windows/app';
 import { ProcessManagerWindow } from '../windows/process-manager';
 
 export class WindowManager {
 
-    public windows = new Map<number, AppWindow>();
+    private _windows = new Map<number, AppWindow>();
 
     public selectedId: number = -1;
     public lastWindowId: number = -1;
@@ -13,28 +18,28 @@ export class WindowManager {
     private processManagerWindow: ProcessManagerWindow | undefined;
 
     public constructor() {
-
+        this.handleIpc();
     }
 
-    public getWindows(user: IUser | undefined = undefined): AppWindow[] {
-        const windows: AppWindow[] = [...this.windows.values()].filter(nonNullable).filter((window) => !window.browserWindow.isDestroyed());
-        return user ? windows.filter((window) => window.user.id === user.id) : windows;
+    public get windows(): AppWindow[] {
+        return [...this._windows.values()].filter(nonNullable).filter((window) => !window.browserWindow.isDestroyed());
+    }
+
+    public getWindows(user: IUser): AppWindow[] {
+        return this.windows.filter((window) => window.user.id === user.id);
     }
 
     public get(id: number = this.selectedId) {
-        return this.windows.get(id ?? this.selectedId);
+        return this._windows.get(id ?? this.selectedId);
     }
 
     public add(user: IUser, urls: string[] = user.settings.startupUrls, active: boolean = true) {
         const window = new AppWindow(
             user,
-            {
-                urls: urls ?? user.settings.startupUrls,
-                active: active ?? true
-            }
+            urls && urls.length > 0 ? urls : user.settings.startupUrls
         );
 
-        this.windows.set(window.id, window);
+        this._windows.set(window.id, window);
         window.setApplicationMenu();
         window.setTouchBar();
 
@@ -50,10 +55,10 @@ export class WindowManager {
     }
 
     public remove(id: number = this.selectedId) {
-        const window = this.windows.get(id);
-        if (!window) return;
+        const appWindow = this._windows.get(id);
+        if (!appWindow) return;
 
-        this.removeOf(window);
+        this.removeOf(appWindow);
 
         const windows = [...this.windows.values()];
         for (const window of windows) {
@@ -63,20 +68,20 @@ export class WindowManager {
     }
 
     public removeOthers(id: number = this.selectedId) {
-        const window = this.windows.get(id);
-        if (!window) return;
+        const appWindow = this._windows.get(id);
+        if (!appWindow) return;
 
-        const windows = this.getWindows(window.user).filter((view) => view.id !== id);
+        const windows = this.getWindows(appWindow.user).filter((view) => view.id !== id);
         windows.forEach((window) => this.removeOf(window));
 
         setTimeout(() => {
-            window.setApplicationMenu();
-            window.setTouchBar();
+            appWindow.setApplicationMenu();
+            appWindow.setTouchBar();
         });
     }
 
     private removeOf(window: AppWindow) {
-        this.windows.delete(window.id);
+        this._windows.delete(window.id);
 
         if (window && !window.browserWindow.isDestroyed()) {
             window.viewManager.clear();
@@ -86,14 +91,14 @@ export class WindowManager {
     }
 
     public select(id: number) {
-        const window = this.windows.get(id);
+        const window = this._windows.get(id);
         if (!window) return;
         this.selectOf(window);
     }
 
     private selectOf(window: AppWindow) {
         if (window.browserWindow.isDestroyed()) {
-            this.windows.delete(window.id);
+            this._windows.delete(window.id);
             return;
         }
 
@@ -109,13 +114,41 @@ export class WindowManager {
         if (!this.processManagerWindow) {
             const window = new ProcessManagerWindow();
             window.browserWindow.once('ready-to-show', () => window.browserWindow.show());
-            window.browserWindow.webContents.on('destroyed', () => this.processManagerWindow = undefined);
-            window.browserWindow.on('closed', () => this.processManagerWindow = undefined);
+            window.browserWindow.webContents.once('destroyed', () => this.processManagerWindow = undefined);
+            window.browserWindow.once('closed', () => this.processManagerWindow = undefined);
             this.processManagerWindow = window;
         } else {
             const window = this.processManagerWindow;
             window.browserWindow.reload();
             window.browserWindow.show();
         }
+    }
+
+
+    private handleIpc() {
+        ipcMain.handle(IPCChannel.Windows.ADD(), (e, userId: string, urls: string[] | undefined) => {
+            const user = Main.userManager.get(userId);
+            if (!user)
+                return;
+
+            const window = this.add(user, urls ?? user.settings.startupUrls);
+            return window.id;
+        });
+
+        ipcMain.handle(IPCChannel.Windows.OPEN_INCOGNITO(), (e, userId: string) => {
+            const user = Main.userManager.get(userId);
+            if (!user)
+                return;
+
+            if (user instanceof NormalUser) {
+                const incognitoUser = Main.userManager.add(new IncognitoUser(user));
+                const window = Main.windowManager.add(incognitoUser, undefined);
+                return window.id;
+            } else if (user instanceof IncognitoUser) {
+                const incognitoUser = Main.userManager.add(new IncognitoUser(user.fromUser));
+                const window = Main.windowManager.add(incognitoUser, undefined);
+                return window.id;
+            }
+        });
     }
 }

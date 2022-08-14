@@ -1,5 +1,5 @@
 import { app, Session as ElectronSession, session } from 'electron';
-import { ElectronChromeExtensions } from 'electron-chrome-extensions';
+import { ElectronChromeExtensions } from 'electron-chrome-extensions-production';
 import { join } from 'path';
 import { ISession, IUser } from '../../interfaces/user';
 import { Main } from '../../main';
@@ -19,7 +19,7 @@ export class NormalSession implements ISession {
 
         this._session = session.fromPartition(`persist:user_${user.id}`);
         this._extensions = new ElectronChromeExtensions({
-            modulePath: join(app.getAppPath(), 'node_modules', 'electron-chrome-extensions'),
+            modulePath: join(app.getAppPath(), 'node_modules', 'electron-chrome-extensions-production'),
             session: this._session,
             createTab: ({ windowId, url, active }) => {
                 const window = Main.windowManager.get(windowId!!);

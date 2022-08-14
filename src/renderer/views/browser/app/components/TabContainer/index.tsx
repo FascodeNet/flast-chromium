@@ -12,7 +12,7 @@ import { StyledHorizontalTabContainer, StyledHorizontalTabWrapper, StyledVertica
 
 export const HorizontalTabContainer = () => {
     const { views, setTabContainerWidth } = useViewManagerContext();
-    const { moveToDirection } = useElectronAPI();
+    const { viewsApi } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
@@ -76,7 +76,7 @@ export const HorizontalTabContainer = () => {
     const handleMouseEnter = (e: ReactMouseEvent<HTMLDivElement>, id: number) => {
         if (!move || !selectedViewId || hoveredViewId || !moveDirection) return;
 
-        moveToDirection(selectedViewId, moveDirection);
+        viewsApi.moveToDirection(selectedViewId, moveDirection);
         setHoveredViewId(id);
     };
 
@@ -120,7 +120,7 @@ interface VerticalTabContainerProps {
 }
 
 export const VerticalTabContainer = ({ extended }: VerticalTabContainerProps) => {
-    const { moveToDirection } = useElectronAPI();
+    const { viewsApi } = useElectronAPI();
 
     const { views } = useViewManagerContext();
 
@@ -160,7 +160,7 @@ export const VerticalTabContainer = ({ extended }: VerticalTabContainerProps) =>
     const handleMouseEnter = (e: ReactMouseEvent<HTMLDivElement>, id: number) => {
         if (!move || !selectedViewId || hoveredViewId || !moveDirection) return;
 
-        moveToDirection(selectedViewId, moveDirection);
+        viewsApi.moveToDirection(selectedViewId, moveDirection);
         setHoveredViewId(id);
     };
 

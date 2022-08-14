@@ -1,10 +1,9 @@
 import { ipcMain } from 'electron';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../constants';
+import { IPCChannel } from '../../constants/ipc';
 import { MoveDirection } from '../../interfaces/view';
 import { nonNullable } from '../../utils/array';
 import { IUser } from '../interfaces/user';
-import { Main } from '../main';
-import { getTabMenu } from '../menus/view';
 import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
 
@@ -173,6 +172,7 @@ export class ViewManager {
         this._selectedId = view.id;
         view.setWindowTitle();
         view.setBounds();
+        view.webContents.focus();
 
         if (view.user.type === 'normal')
             view.user.session.extensions.selectTab(view.webContents);
@@ -227,92 +227,36 @@ export class ViewManager {
 
     private setupIpc() {
         const windowId = this.window.id;
-        ipcMain.handle(`views-${windowId}`, () => {
+        ipcMain.handle(IPCChannel.Views.LIST(windowId), () => {
             return this.views.map((view) => view.state);
         });
-        ipcMain.handle(`view-${windowId}`, (e, id: number) => {
+        ipcMain.handle(IPCChannel.Views.GET(windowId), (e, id: number) => {
             const view = this._views.get(id);
             if (!view) return undefined;
             return view.state;
         });
-        ipcMain.handle(`view-current-${windowId}`, () => {
+        ipcMain.handle(IPCChannel.Views.GET_CURRENT(windowId), () => {
             const view = this._views.get(this._selectedId);
             if (!view) return undefined;
             return view.state;
         });
-        ipcMain.handle(`view-create-${windowId}`, (e, url: string, active) => {
+
+        ipcMain.handle(IPCChannel.Views.ADD(windowId), (e, url: string, active: boolean) => {
             const view = this.add(url, active);
             return view.id;
         });
-        ipcMain.handle(`view-destroy-${windowId}`, (e, id: number) => {
+        ipcMain.handle(IPCChannel.Views.REMOVE(windowId), (e, id: number) => {
             this.remove(id);
         });
-        ipcMain.handle(`view-select-${windowId}`, (e, id: number) => {
+        ipcMain.handle(IPCChannel.Views.SELECT(windowId), (e, id: number) => {
             this.select(id);
         });
-        ipcMain.handle(`view-move-${windowId}`, (e, id: number, toIndex: number) => {
+
+        ipcMain.handle(IPCChannel.Views.MOVE(windowId), (e, id: number, toIndex: number) => {
             this.moveTo(id, toIndex);
         });
-        ipcMain.handle(`view-move_direction-${windowId}`, (e, id: number, direction: MoveDirection) => {
+        ipcMain.handle(IPCChannel.Views.MOVE_DIRECTION(windowId), (e, id: number, direction: MoveDirection) => {
             this.moveToDirection(id, direction);
-        });
-        ipcMain.handle(`view-menu-${windowId}`, (e, id: number, x: number, y: number) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-
-            const menu = getTabMenu(this.window, view);
-            menu.popup({ window: this.window.browserWindow, x, y });
-        });
-
-        ipcMain.handle(`view-back-${windowId}`, (e, id: number) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-            view.back();
-        });
-        ipcMain.handle(`view-forward-${windowId}`, (e, id: number) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-            view.forward();
-        });
-        ipcMain.handle(`view-reload-${windowId}`, (e, id: number) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-            view.reload();
-        });
-        ipcMain.handle(`view-stop-${windowId}`, (e, id: number) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-            view.stop();
-        });
-        ipcMain.handle(`view-load-${windowId}`, (e, id: number, url: string) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-            view.load(url);
-        });
-
-        ipcMain.handle(`view-find_in_page-${windowId}`, (e, id: number, text: string, matchCase: boolean) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-
-            view.findInPage(text, matchCase);
-            return view.findState;
-        });
-        ipcMain.handle(`view-move_find_in_page-${windowId}`, (e, id: number, forward: boolean) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-
-            view.moveFindInPage(forward);
-            return view.findState;
-        });
-        ipcMain.handle(`view-stop_find_in_page-${windowId}`, (e, id: number, hide: boolean) => {
-            const view = this._views.get(id);
-            if (!view || view.webContents.isDestroyed()) return;
-
-            view.stopFindInPage();
-            if (hide && view.findDialog) {
-                Main.dialogManager.destroy(view.findDialog);
-                view.findDialog = undefined;
-            }
         });
     }
 
@@ -327,9 +271,11 @@ export class ViewManager {
 
     private replaceView(view: AppView) {
         const selected = this.get();
-        if (selected)
-            this.window.browserWindow.removeBrowserView(selected.browserView);
 
         this.window.browserWindow.addBrowserView(view.browserView);
+        this.window.browserWindow.setTopBrowserView(view.browserView);
+
+        if (!this.user.settings.config.system_performance.smooth_tab_switching && selected && selected.id !== view.id)
+            this.window.browserWindow.removeBrowserView(selected.browserView);
     }
 }

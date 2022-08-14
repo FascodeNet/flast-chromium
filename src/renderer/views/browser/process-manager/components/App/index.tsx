@@ -1,35 +1,39 @@
 import { nativeTheme } from '@electron/remote';
-import { Theme, ThemeProvider as MuiThemeProvider } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { GlobalStyles, MuiDarkGlobalStyles, MuiLightGlobalStyles } from '../../../../../themes';
+import { getStylesPath } from '../../../../../../utils/path';
+import { UserConfigProvider } from '../../../../../contexts/config';
+import { ThemeProvider } from '../../../../../contexts/theme';
+import { GlobalStyles } from '../../../../../themes';
+import { useNativeTheme } from '../../../../../utils/electron';
 import { AppContent } from '../AppContent';
 import { TitleBar } from '../TitleBar';
 import { StyledApp } from './styles';
 
-const Content = () => {
-    return (
-        <StyledApp>
-            <TitleBar />
-            <AppContent />
-        </StyledApp>
-    );
-};
-
 export const App = () => {
-    const [theme, setTheme] = useState<Theme>(MuiLightGlobalStyles);
-
-    useEffect(() => {
-        setTheme(nativeTheme.shouldUseDarkColors ? MuiDarkGlobalStyles : MuiLightGlobalStyles);
-    }, [nativeTheme.shouldUseDarkColors]);
+    const theme = useNativeTheme();
 
     return (
         <MuiThemeProvider theme={theme}>
             <StyledThemeProvider theme={theme}>
-                <Helmet title="プロセス マネージャー" />
                 <GlobalStyles />
-                <Content />
+                <UserConfigProvider>
+                    <ThemeProvider>
+                        <Helmet>
+                            <link
+                                rel="stylesheet"
+                                type="text/css"
+                                href={getStylesPath(nativeTheme.shouldUseDarkColors ? 'dark' : 'light', 'theme.css')}
+                            />
+                        </Helmet>
+                        <StyledApp className="app">
+                            <TitleBar />
+                            <AppContent />
+                        </StyledApp>
+                    </ThemeProvider>
+                </UserConfigProvider>
             </StyledThemeProvider>
         </MuiThemeProvider>
     );

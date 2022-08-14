@@ -3,6 +3,15 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="Chrome Extension">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="Chrome Extension" />
+              <option name="relativePathToSchema" value="https://json.schemastore.org/chrome-manifest.json" />
+              <option name="applicationDefined" value="true" />
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="electron-builder configuration file.">
           <value>
             <SchemaInfo>

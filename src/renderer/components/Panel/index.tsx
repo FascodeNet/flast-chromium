@@ -15,20 +15,20 @@ interface PanelOpenButtonProps extends PanelProps {
 }
 
 export const PanelOpenButton = ({ url, type }: PanelOpenButtonProps) => {
-    const { getViews, addView, selectView, hideDialog } = useElectronAPI();
+    const { viewsApi, dialogApi } = useElectronAPI();
 
     const handleExternalClick = async () => {
-        const viewStates = await getViews();
+        const viewStates = await viewsApi.getViews();
         const viewState = viewStates.find((state) => state.url.startsWith(url));
 
         if (viewState) {
-            await selectView(viewState.id);
+            await viewsApi.select(viewState.id);
         } else {
-            await addView(url, true);
+            await viewsApi.add(url, true);
         }
 
         if (type === 'popup')
-            await hideDialog();
+            await dialogApi.hide();
     };
 
     return (

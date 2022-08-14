@@ -1,18 +1,21 @@
 import React, { Fragment } from 'react';
 import { DownloadsPanel } from '../../../../../components/DownloadsPanel';
-import { Popup } from '../../../../../components/Popup';
+import { Popup, PopupContainer } from '../../../../../components/Popup';
 import { UserConfigProvider } from '../../../../../contexts/config';
+import { ThemeProvider } from '../../../../../contexts/theme';
 import { GlobalStyles } from '../../../../../themes';
 
-export const App = () => {
-    return (
-        <Fragment>
-            <GlobalStyles />
-            <UserConfigProvider>
-                <Popup>
-                    <DownloadsPanel type="popup" />
-                </Popup>
-            </UserConfigProvider>
-        </Fragment>
-    );
-};
+export const App = () => (
+    <Fragment>
+        <GlobalStyles />
+        <UserConfigProvider>
+            <ThemeProvider>
+                <PopupContainer>
+                    <Popup>
+                        <DownloadsPanel type="popup" />
+                    </Popup>
+                </PopupContainer>
+            </ThemeProvider>
+        </UserConfigProvider>
+    </Fragment>
+);

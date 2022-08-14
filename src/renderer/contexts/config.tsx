@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { IPCChannel } from '../../constants/ipc';
 import { DefaultUserConfig, UserConfig, UserType } from '../../interfaces/user';
 import { DeepPartial } from '../../utils';
 import { useElectronAPI } from '../utils/electron';
@@ -52,14 +53,15 @@ export const UserConfigProvider = ({ children }: UserConfigProviderProps) => {
     }, []);
 
     useEffect(() => {
-        ipcRenderer.on('settings-update', (e, data: UserConfig) => {
+        const channel = IPCChannel.User.UPDATED_SETTINGS(userId);
+        ipcRenderer.on(channel, (e, data: UserConfig) => {
             setConfig(data);
         });
 
         return () => {
-            ipcRenderer.removeAllListeners('settings-update');
+            ipcRenderer.removeAllListeners(channel);
         };
-    }, [config]);
+    }, [userId]);
 
 
     const value: UserConfigProps = { userId, type, config, setConfig: _setConfig };

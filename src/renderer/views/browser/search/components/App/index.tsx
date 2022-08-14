@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { UserConfigProvider } from '../../../../../contexts/config';
+import { ThemeProvider } from '../../../../../contexts/theme';
 import { ViewManagerProvider } from '../../../../../contexts/view';
 import { GlobalStyles } from '../../../../../themes';
 import { Container } from '../Container';
@@ -10,11 +11,13 @@ export const App = () => {
         <Fragment>
             <GlobalStyles />
             <UserConfigProvider>
-                <ViewManagerProvider>
-                    <Container>
-                        <Popup />
-                    </Container>
-                </ViewManagerProvider>
+                <ThemeProvider>
+                    <ViewManagerProvider>
+                        <Container>
+                            <Popup />
+                        </Container>
+                    </ViewManagerProvider>
+                </ThemeProvider>
             </UserConfigProvider>
         </Fragment>
     );

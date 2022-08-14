@@ -2,13 +2,13 @@ import clsx from 'clsx';
 import React from 'react';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../constants';
 import { isURL } from '../../../../../../utils/url';
+import { IconButton } from '../../../../../components/Button';
 import { Home, Reload } from '../../../../../components/Icons';
 import { ArrowLeft, ArrowRight } from '../../../../../components/Icons/arrow';
 import { Remove } from '../../../../../components/Icons/state';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { StyledButton } from '../Button/styles';
 
 export const BackButton = () => {
     const { selectedId, getCurrentViewState } = useViewManagerContext();
@@ -17,21 +17,21 @@ export const BackButton = () => {
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
-    const { backView } = useElectronAPI();
+    const { viewApi } = useElectronAPI();
 
     const handleButtonClick = () => {
-        backView(selectedId);
+        viewApi.back(selectedId);
     };
 
     return (
-        <StyledButton
+        <IconButton
             onClick={handleButtonClick}
             disabled={!canGoBack}
-            appearanceStyle={style}
+            disableRipple
             className={clsx('navigation-button', 'back')}
         >
             <ArrowLeft />
-        </StyledButton>
+        </IconButton>
     );
 };
 
@@ -39,24 +39,24 @@ export const ForwardButton = () => {
     const { selectedId, getCurrentViewState } = useViewManagerContext();
     const { canGoForward } = getCurrentViewState();
 
-    const { forwardView } = useElectronAPI();
+    const { viewApi } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
     const handleButtonClick = () => {
-        forwardView(selectedId);
+        viewApi.forward(selectedId);
     };
 
     return (
-        <StyledButton
+        <IconButton
             onClick={handleButtonClick}
             disabled={!canGoForward}
-            appearanceStyle={style}
+            disableRipple
             className={clsx('navigation-button', 'forward')}
         >
             <ArrowRight />
-        </StyledButton>
+        </IconButton>
     );
 };
 
@@ -64,30 +64,30 @@ export const ReloadButton = () => {
     const { selectedId, getCurrentViewState } = useViewManagerContext();
     const { isLoading } = getCurrentViewState();
 
-    const { reloadView, stopView } = useElectronAPI();
+    const { viewApi } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
     const handleButtonClick = () => {
-        !isLoading ? reloadView(selectedId) : stopView(selectedId);
+        !isLoading ? viewApi.reload(selectedId, false) : viewApi.stop(selectedId);
     };
 
     return (
-        <StyledButton
+        <IconButton
             onClick={handleButtonClick}
-            appearanceStyle={style}
+            disableRipple
             className={clsx('navigation-button', !isLoading ? 'reload' : 'stop')}
         >
             {!isLoading ? <Reload /> : <Remove />}
-        </StyledButton>
+        </IconButton>
     );
 };
 
 export const HomeButton = () => {
     const { selectedId } = useViewManagerContext();
 
-    const { loadView } = useElectronAPI();
+    const { viewApi } = useElectronAPI();
 
     const {
         config: {
@@ -97,16 +97,15 @@ export const HomeButton = () => {
     } = useUserConfigContext();
 
     const handleButtonClick = () => {
-        loadView(selectedId, mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`);
+        viewApi.load(
+            selectedId,
+            mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`
+        );
     };
 
     return (
-        <StyledButton
-            onClick={handleButtonClick}
-            appearanceStyle={style}
-            className={clsx('navigation-button', 'home')}
-        >
+        <IconButton onClick={handleButtonClick} disableRipple className={clsx('navigation-button', 'home')}>
             <Home />
-        </StyledButton>
+        </IconButton>
     );
 };

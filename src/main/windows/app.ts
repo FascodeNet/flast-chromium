@@ -1,7 +1,8 @@
-import { enable } from '@electron/remote/main';
 import deepmerge from 'deepmerge';
 import { BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, TouchBar } from 'electron';
 import { APPLICATION_NAME } from '../../constants';
+import { DIALOG_EXTENSIONS_NAME } from '../../constants/dialog';
+import { IPCChannel } from '../../constants/ipc';
 import { WindowFullScreenState } from '../../interfaces/window';
 import { isHorizontal } from '../../utils/design';
 import { getBuildPath, getIconsPath } from '../../utils/path';
@@ -13,8 +14,8 @@ import { showHistoryDialog } from '../dialogs/history';
 import { showInformationDialog } from '../dialogs/information';
 import { showMenuDialog } from '../dialogs/menu';
 import { showSearchDialog } from '../dialogs/search';
+import { WindowImpl } from '../implements/window';
 import { IUser } from '../interfaces/user';
-import { AppWindowInitializerOptions } from '../interfaces/window';
 import { Main } from '../main';
 import { ViewManager } from '../manager/view';
 import { getApplicationMenu } from '../menus/app';
@@ -26,11 +27,8 @@ import { search } from '../utils/search';
 
 const { TouchBarButton, TouchBarPopover, TouchBarSpacer } = TouchBar;
 
-export class AppWindow {
+export class AppWindow extends WindowImpl {
 
-    public readonly id: number;
-
-    public readonly browserWindow: BrowserWindow;
     public readonly incognito: boolean;
 
     public readonly user: IUser;
@@ -41,8 +39,8 @@ export class AppWindow {
 
     private _fullScreenState: WindowFullScreenState;
 
-    public constructor(user: IUser, { urls = user.settings.startupUrls }: AppWindowInitializerOptions) {
-        this.browserWindow = new BrowserWindow({
+    public constructor(user: IUser, urls: string[] = user.settings.startupUrls) {
+        super(new BrowserWindow({
             frame: false,
             minWidth: 500,
             minHeight: 450,
@@ -53,7 +51,7 @@ export class AppWindow {
                 x: 17,
                 y: 17
             },
-            backgroundColor: '#ffffffff',
+            backgroundColor: user.settings.theme?.manifest?.background_color ?? '#ffffffff',
             title: APPLICATION_NAME,
             icon: nativeImage.createFromPath(getIconsPath('app', 'icon.png')),
             webPreferences: {
@@ -66,15 +64,12 @@ export class AppWindow {
                 session: user.session.session
             },
             show: false
-        });
-
-        this.id = this.browserWindow.id;
+        }));
 
         this.incognito = user.type === 'incognito';
 
         this.user = user;
 
-        enable(this.webContents);
         this.setListeners();
         this.setupIpc();
 
@@ -100,18 +95,6 @@ export class AppWindow {
             // 開発モードの場合はデベロッパーツールを開く
             this.webContents.openDevTools({ mode: 'detach' });
         });
-    }
-
-    public get webContents() {
-        return this.browserWindow.webContents;
-    }
-
-    public get title() {
-        return this.browserWindow.getTitle();
-    }
-
-    public get url() {
-        return this.webContents.getURL();
     }
 
     public get fullScreenState() {
@@ -267,7 +250,13 @@ export class AppWindow {
     }
 
     public async setStyle() {
-        this.webContents.send('theme-update');
+        const { color_scheme, theme } = this.user.settings.config.appearance;
+        this.browserWindow.setBackgroundColor(this.user.settings.theme?.manifest?.background_color ?? '#ffffffff');
+        this.webContents.send(
+            IPCChannel.User.UPDATED_THEME(this.user.id),
+            this.user.type !== 'incognito' ? color_scheme : 'incognito',
+            theme
+        );
         this.webContents.send(`window-resize-${this.id}`);
     }
 
@@ -287,19 +276,15 @@ export class AppWindow {
         const onDestroyed = () => {
             this.viewManager.clear();
             Main.windowManager.remove(this.id);
-            Main.windowManager.windows.delete(this.id);
 
             Menu.setApplicationMenu(getApplicationMenu(this.user));
         };
-        this.webContents.on('destroyed', onDestroyed);
-        this.browserWindow.on('closed', onDestroyed);
+        this.webContents.once('destroyed', onDestroyed);
+        this.browserWindow.once('closed', onDestroyed);
 
         this.browserWindow.on('focus', () => {
             this.setApplicationMenu();
             this.setTouchBar();
-
-            Main.windowManager.selectedId = this.id;
-            Main.windowManager.lastWindowId = this.id;
 
             Main.windowManager.select(this.id);
             this.setViewBounds();
@@ -355,7 +340,8 @@ export class AppWindow {
             return this.user.id;
         });
 
-        ipcMain.handle(`window-application_menu-${this.id}`, () => {
+
+        ipcMain.handle(IPCChannel.Window.APPLICATION_MENU(this.id), () => {
             const settings = this.user.settings;
 
             this.applicationMenu.popup({
@@ -364,7 +350,7 @@ export class AppWindow {
                 y: settings.config.appearance.style !== 'top_double' ? 42 : 36
             });
         });
-        ipcMain.handle(`window-sidebar-${this.id}`, () => {
+        ipcMain.handle(IPCChannel.Window.SIDEBAR(this.id), () => {
             const settings = this.user.settings;
             if (isHorizontal(settings.config.appearance.style)) return;
 
@@ -372,82 +358,59 @@ export class AppWindow {
 
             const windows = Main.windowManager.getWindows(this.user);
             windows.forEach((window) => {
-                window.webContents.send('settings-update', settings.config);
-                window.viewManager.get()?.setBounds();
+                window.viewManager.views.forEach((view) => view.setBounds());
+                window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.user.id), settings.config);
             });
         });
 
-        ipcMain.handle(`window-minimized-${this.id}`, () => {
-            return this.browserWindow.isMinimized();
-        });
-        ipcMain.handle(`window-maximized-${this.id}`, () => {
-            return this.browserWindow.isMaximized();
-        });
-        ipcMain.handle(`window-fullscreened-${this.id}`, () => {
-            return this.browserWindow.isFullScreen();
-        });
-
-        ipcMain.handle(`window-minimize-${this.id}`, () => {
-            this.browserWindow.minimize();
-        });
-        ipcMain.handle(`window-maximize-${this.id}`, () => {
-            if (this.browserWindow.isMaximized())
-                this.browserWindow.unmaximize();
-            else
-                this.browserWindow.maximize();
-        });
-        ipcMain.handle(`window-fullscreen-${this.id}`, () => {
-            this.browserWindow.setFullScreen(!this.browserWindow.isFullScreen());
-        });
-        ipcMain.handle(`window-close-${this.id}`, () => {
+        ipcMain.handle(IPCChannel.Window.CLOSE(this.id), () => {
             this.close();
         });
 
 
-        ipcMain.handle(`window-menu-${this.id}`, (e, x: number, y: number) => {
+        ipcMain.handle(IPCChannel.Popup.WINDOW_MENU(this.id), (e, x: number, y: number) => {
             showMenuDialog(this.user, this.browserWindow, x, y);
         });
 
-        ipcMain.handle(`window-information-${this.id}`, (e, x: number, y: number) => {
-            showInformationDialog(this.user, this.browserWindow, x, y);
-        });
-
-        ipcMain.handle(`window-show_search-${this.id}`, (e, x: number, y: number, width: number) => {
+        ipcMain.handle(IPCChannel.Popup.SEARCH(this.id), (e, x: number, y: number, width: number) => {
             showSearchDialog(this.user, this, x, y, width);
         });
-        ipcMain.handle(`window-search-${this.id}`, async (e, keyword: string) => {
-            return await search(keyword, this.user);
-        });
 
-        ipcMain.handle(`window-find-${this.id}`, () => {
+        ipcMain.handle(IPCChannel.Popup.VIEW_INFORMATION(this.id), (e, x: number, y: number) => {
+            showInformationDialog(this.user, this.browserWindow, x, y);
+        });
+        ipcMain.handle(IPCChannel.Popup.VIEW_FIND(this.id), () => {
             const view = this.viewManager.get();
             if (!view) return;
 
             view.findInPage(null);
         });
 
-        ipcMain.handle(`window-bookmarks-${this.id}`, (e, x: number, y: number) => {
+        ipcMain.handle(IPCChannel.Popup.BOOKMARKS(this.id), (e, x: number, y: number) => {
             showBookmarksDialog(this.user, this.browserWindow, x, y);
         });
-
-        ipcMain.handle(`window-history-${this.id}`, (e, x: number, y: number) => {
+        ipcMain.handle(IPCChannel.Popup.HISTORY(this.id), (e, x: number, y: number) => {
             showHistoryDialog(this.user, this.browserWindow, x, y);
         });
-
-        ipcMain.handle(`window-downloads-${this.id}`, (e, x: number, y: number) => {
+        ipcMain.handle(IPCChannel.Popup.DOWNLOADS(this.id), (e, x: number, y: number) => {
             showDownloadsDialog(this.user, this.browserWindow, x, y);
         });
-
-        ipcMain.handle(`window-extensions-${this.id}`, (e, x: number, y: number) => {
+        ipcMain.handle(IPCChannel.Popup.EXTENSIONS(this.id), (e, x: number, y: number) => {
             showExtensionsDialog(this.user, this.browserWindow, x, y);
         });
+
+
+        ipcMain.handle(`window-search-${this.id}`, async (e, keyword: string) => {
+            return await search(keyword, this.user);
+        });
+
         ipcMain.handle(`extension-menu-${this.id}`, (e, id: string, x: number, y: number) => {
             const extension = this.webContents.session.getExtension(id);
             if (!extension) return;
 
             const menu = getExtensionMenu(extension, this);
             if (e.sender.getType() === 'browserView') {
-                const dialog = Main.dialogManager.getDynamic('extensions');
+                const dialog = Main.dialogManager.getDynamic(DIALOG_EXTENSIONS_NAME);
                 if (!dialog) return;
 
                 menu.popup({

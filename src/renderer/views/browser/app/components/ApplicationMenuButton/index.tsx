@@ -4,10 +4,10 @@ import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledApplicationMenuButton } from './styles';
 
 export const ApplicationMenuButton = () => {
-    const { showApplicationMenu } = useElectronAPI();
+    const { windowApi } = useElectronAPI();
 
     const handleButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
-        showApplicationMenu();
+        windowApi.showApplicationMenu();
     };
 
     return (

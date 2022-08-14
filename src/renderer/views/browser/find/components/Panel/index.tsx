@@ -10,7 +10,7 @@ import { useElectronAPI } from '../../../../../utils/electron';
 import { StyledButton, StyledContainer, StyledInput, StyledLabel, StyledPanel } from './styles';
 
 export const Panel = () => {
-    const { findInPage, moveFindInPage, stopFindInPage } = useElectronAPI();
+    const { findApi } = useElectronAPI();
     const { selectedId, getCurrentViewState } = useViewManagerContext();
 
     const [value, setValue] = useState('');
@@ -26,7 +26,7 @@ export const Panel = () => {
         const windowId = getCurrentWindow().id;
         ipcRenderer.on(`view-find-${windowId}`, (e, id: number, state: FindState) => {
             console.log(id, selectedId, state);
-            if (id != selectedId) return;
+            if (id !== selectedId) return;
 
             setState(state);
         });
@@ -43,8 +43,8 @@ export const Panel = () => {
         if (text === '') {
             await stop(false);
         } else {
-            const state = await findInPage(selectedId, text, false);
-            setState(state);
+            const findState = await findApi.start(selectedId, text, false);
+            setState(findState);
         }
     };
 
@@ -59,13 +59,13 @@ export const Panel = () => {
     };
 
     const move = async (forward: boolean) => {
-        const state = await moveFindInPage(selectedId, forward);
-        setState(state);
+        const findState = await findApi.move(selectedId, forward);
+        setState(findState);
     };
 
-    const stop = async (hide: boolean) => {
+    const stop = async (hideDialog: boolean) => {
+        await findApi.stop(selectedId, 'keepSelection', hideDialog);
         setValue('');
-        await stopFindInPage(selectedId, hide);
         setState(undefined);
     };
 

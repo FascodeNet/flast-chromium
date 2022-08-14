@@ -13,6 +13,11 @@ export const StyledContainer = styled.div<StyledProps>`
   align-items: center;
   flex-shrink: 0;
   gap: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 3 : 5}px;
+
+  & .MuiButtonBase-root.IconButton {
+    width: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 32}px;
+    height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 32}px;
+  }
 `;
 
 export const StyledButton = styled.button<StyledProps>`

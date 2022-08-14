@@ -31,6 +31,11 @@ export const StyledContainer = styled.div<StyledProps>`
   gap: 8px;
 
   ${({ appearanceStyle }) => getStyle(appearanceStyle)};
+
+  & .MuiButtonBase-root.IconButton {
+    width: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 32}px;
+    height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? 34 : 32}px;
+  }
 `;
 
 export const StyledWrapper = styled.div`

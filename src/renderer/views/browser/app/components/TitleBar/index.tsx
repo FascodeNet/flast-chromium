@@ -12,7 +12,7 @@ import { HorizontalTabContainer } from '../TabContainer';
 import { StyledContainer, StyledTitleBar, StyledWindowControls, StyledWrapper } from './styles';
 
 export const TitleBar = () => {
-    const { isMaximized, isFullScreen, minimize, maximize, close } = useElectronAPI();
+    const { windowApi } = useElectronAPI();
 
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
@@ -21,8 +21,8 @@ export const TitleBar = () => {
     const [fullScreened, setFullScreened] = useState(false);
 
     const requestMaximized = () => {
-        isMaximized().then((result) => setMaximized(result));
-        isFullScreen().then((result) => setFullScreened(result));
+        windowApi.isMaximized().then((result) => setMaximized(result));
+        windowApi.isFullscreen().then((result) => setFullScreened(result));
     };
 
     useEffect(() => {
@@ -77,9 +77,9 @@ export const TitleBar = () => {
                 <StyledWindowControls className="window-controllers">
                     <WindowsControls
                         isMaximized={maximized}
-                        onMinimize={() => minimize()}
-                        onMaximize={() => maximize()}
-                        onClose={() => close()}
+                        onMinimize={windowApi.minimize}
+                        onMaximize={windowApi.maximize}
+                        onClose={windowApi.close}
                     />
                 </StyledWindowControls>
             }

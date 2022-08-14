@@ -1,3 +1,4 @@
+import { includes } from '../../utils';
 import { IS_LINUX, IS_MAC, IS_WINDOWS } from '../../utils/process';
 
 export const Shortcuts = {
@@ -53,4 +54,16 @@ export const Shortcuts = {
     OPEN_PROCESS_MANAGER: 'Shift+Esc',
 
     SETTINGS: 'CmdOrCtrl+,'
+};
+
+export const replaceShortcut = (key: string) => {
+    const isMac = process.type === 'browser' ? IS_MAC : includes(require('platform').os?.family ?? '', 'OS X', true);
+    return key.replace('CmdOrCtrl', isMac ? '􀆔' : 'Ctrl')
+        .replace('Cmd', '􀆔')
+        .replace('Ctrl', isMac ? '􀆍' : 'Ctrl')
+        .replace('Alt', isMac ? '􀆕' : 'Alt')
+        .replace('Shift', isMac ? '􀆝' : 'Shift')
+        .replace('Esc', isMac ? '􀆧' : 'Esc')
+        .replace('Escape', isMac ? '􀆧' : 'Escape')
+        .replaceAll('+', isMac ? '' : '+');
 };

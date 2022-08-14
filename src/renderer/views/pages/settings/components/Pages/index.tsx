@@ -187,8 +187,8 @@ export const Pages = () => {
                 <SectionContent>
                     <SwitchItem
                         icon={<Home />}
-                        primary={translateSection.home.button.name}
-                        secondary={translateSection.home.button.description}
+                        primary={translateSection.home.button.primary}
+                        secondary={translateSection.home.button.secondary}
                         checked={config.appearance.buttons.home}
                         setChecked={(home) => setUserConfig({ appearance: { buttons: { home } } })}
                     />
