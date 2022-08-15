@@ -31,16 +31,16 @@
     "build": "npm run build:main && npm run build:renderer",
     "build:main": "webpack --config webpack.config.main.ts --progress",
     "build:renderer": "webpack --config webpack.config.renderer.ts --progress",
-    "compile:win32": "npm run build && electron-builder -w",
-    "compile:darwin": "npm run build && electron-builder -m --universal",
-    "compile:darwin:intel": "npm run build && electron-builder -m --x64",
-    "compile:darwin:arm": "npm run build && electron-builder -m --arm64",
-    "compile:linux": "npm run build && electron-builder -l",
-    "ci-compile:win32": "npm run build && electron-builder -w -p always",
-    "ci-compile:darwin": "npm run build && electron-builder -m --universal -p always",
-    "ci-compile:darwin:intel": "npm run build && electron-builder -m --x64 -p always",
-    "ci-compile:darwin:arm": "npm run build && electron-builder -m --arm64 -p always",
-    "ci-compile:linux": "npm run build && electron-builder -l -p always"
+    "compile:win32": "electron-builder -w",
+    "compile:darwin": "electron-builder -m --universal",
+    "compile:darwin:intel": "electron-builder -m --x64",
+    "compile:darwin:arm": "electron-builder -m --arm64",
+    "compile:linux": "electron-builder -l",
+    "ci-compile:win32": "electron-builder -w -p always",
+    "ci-compile:darwin": "electron-builder -m --universal -p always",
+    "ci-compile:darwin:intel": "electron-builder -m --x64 -p always",
+    "ci-compile:darwin:arm": "electron-builder -m --arm64 -p always",
+    "ci-compile:linux": "electron-builder -l -p always"
   },
   "dependencies": {
     "@cliqz/adblocker-electron": "1.23.8",
@@ -63,7 +63,7 @@
     "icojs": "0.17.0",
     "jszip": "3.10.1",
     "nanoid": "3.3.1",
-    "node-fetch": "3.2.8",
+    "node-fetch": "3.2.10",
     "platform": "1.3.6",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -105,8 +105,12 @@
     "webpack-cli": "4.10.0"
   },
   "resolutions": {
+    "file-type": "17.1.6",
     "follow-redirects": "1.14.8",
+    "jpeg-js": "0.4.4",
     "minimist": "1.2.6",
+    "plist": "3.0.5",
+    "terser": "5.14.2",
     "underscore": "1.13.1",
     "yargs-parser": "21.0.0"
   }
