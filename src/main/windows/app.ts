@@ -103,7 +103,7 @@ export class AppWindow extends WindowImpl {
 
 
     public setApplicationMenu() {
-        if (this.browserWindow.isDestroyed()) return;
+        if (this.isDestroyed) return;
 
         this.applicationMenu = getWindowMenu(this);
         Menu.setApplicationMenu(this.applicationMenu);
@@ -270,6 +270,7 @@ export class AppWindow extends WindowImpl {
         const view = this.viewManager.get();
         if (!view) return;
         view.setBounds();
+        view.setDialogs();
     }
 
     private setListeners() {
@@ -283,10 +284,9 @@ export class AppWindow extends WindowImpl {
         this.browserWindow.once('closed', onDestroyed);
 
         this.browserWindow.on('focus', () => {
+            Main.windowManager.select(this.id);
             this.setApplicationMenu();
             this.setTouchBar();
-
-            Main.windowManager.select(this.id);
             this.setViewBounds();
         });
         this.browserWindow.on('blur', () => {
@@ -294,11 +294,8 @@ export class AppWindow extends WindowImpl {
         });
 
         this.browserWindow.on('resize', () => {
+            this.setViewBounds();
             this.webContents.send(`window-resize-${this.id}`);
-
-            const view = this.viewManager.get();
-            if (!view) return;
-            view.setDialogs();
         });
         this.browserWindow.on('enter-full-screen', () => {
             console.log('enter-full-screen');
