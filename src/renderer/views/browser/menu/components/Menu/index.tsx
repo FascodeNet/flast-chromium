@@ -104,8 +104,8 @@ const Item = ({ icon, label, shortcut, onClick, section, setSection, setSubMenuT
             <StyledItemIcon className="menu-item-icon">{icon}</StyledItemIcon>
             <StyledItemLabel className="menu-item-label">{label}</StyledItemLabel>
             <StyledItemShortcut className="menu-item-shortcut">
-                {typeof shortcut === 'string' ? reactStringReplace(shortcut, /([A-z0-9])+/g, (match) => (
-                    <StyledItemShortcutText>{match}</StyledItemShortcutText>
+                {typeof shortcut === 'string' ? reactStringReplace(shortcut, /([!-~]+)/g, (match) => (
+                    <StyledItemShortcutText key={match}>{match}</StyledItemShortcutText>
                 )) : shortcut}
             </StyledItemShortcut>
             {setSection && setSubMenuTop && <ChevronRight sx={{ width: 16, height: 16 }} />}
@@ -124,20 +124,31 @@ export const MainMenu = () => {
     const [state, setState] = useState<ViewState>(getCurrentViewState());
     const [url, setUrl] = useState<string>('');
 
-    const currentView = viewsApi.getCurrentView();
     useEffect(() => {
-        (async () => {
-            const viewState = await currentView;
-            setState(viewState);
-            setUrl(viewState.url);
-        })();
-    }, [currentView]);
+        updateViewState();
+    }, []);
 
     const translate = getTranslate(config);
     const translateSection = translate.menus.application;
 
     const [subMenuSection, setSubMenuSection] = useState<Section>(undefined);
     const [subMenuTop, setSubMenuTop] = useState<number>(0);
+
+    const updateViewState = async () => {
+        const viewState = await viewsApi.getCurrentView();
+        setState(viewState);
+        setUrl(viewState.url);
+    };
+
+    const handleZoomInClick = async () => {
+        const level = await viewApi.zoomIn(state.id);
+        setState((prevState) => ({ ...prevState, zoomLevel: level }));
+    };
+
+    const handleZoomOutClick = async () => {
+        const level = await viewApi.zoomOut(state.id);
+        setState((prevState) => ({ ...prevState, zoomLevel: level }));
+    };
 
     const addOrSelectView = async (viewUrl: string) => {
         const views = await viewsApi.getViews();
@@ -180,17 +191,17 @@ export const MainMenu = () => {
                                 <Divider orientation="vertical" sx={{ m: 0, p: 0 }} />
                                 <StyledItemButton
                                     title={translateSection.zoom.zoomOut}
-                                    onClick={() => viewApi.zoomOut(state.id)}
+                                    onClick={handleZoomOutClick}
                                     className="menu-item-button"
                                 >
                                     <Minus />
                                 </StyledItemButton>
-                                <div style={{ margin: '0 8px', fontSize: 13 }}>
+                                <div style={{ margin: '0 8px', fontSize: 13, fontWeight: 300 }}>
                                     {Math.round(state.zoomLevel * 100)}%
                                 </div>
                                 <StyledItemButton
                                     title={translateSection.zoom.zoomIn}
-                                    onClick={() => viewApi.zoomIn(state.id)}
+                                    onClick={handleZoomInClick}
                                     className="menu-item-button"
                                 >
                                     <Add />

@@ -106,6 +106,7 @@ export const StyledItemIcon = styled.div<StyledItemIconProps>`
 export const StyledItemLabel = styled.div`
   margin: 0;
   font-size: 13px;
+  font-weight: 300;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -142,6 +143,7 @@ export const StyledItemButton = styled.button`
   place-items: center;
   place-content: center;
   font-size: 13px;
+  font-weight: 300;
   background: none;
   border: none;
   transition: all .2s ease-out;
