@@ -4,8 +4,8 @@
     "module": "es2020",
     "moduleResolution": "node",
     "lib": [
-      "dom",
-      "es2021"
+      "es2021",
+      "dom"
     ],
     "jsx": "react",
     "allowJs": true,
