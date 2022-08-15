@@ -107,7 +107,6 @@
   "resolutions": {
     "file-type": "17.1.6",
     "follow-redirects": "1.14.8",
-    "got": "12.3.1",
     "jpeg-js": "0.4.4",
     "minimist": "1.2.6",
     "plist": "3.0.5",
