@@ -2,7 +2,15 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { IFlastAPI } from '../@types/electron';
 import { APPLICATION_PROTOCOL } from '../constants';
 import { IPCChannel } from '../constants/ipc';
-import { BookmarkData, OmitData, UserConfig } from '../interfaces/user';
+import {
+    BookmarkData,
+    DownloadData,
+    HistoryData,
+    HistoryGroup,
+    NativeDownloadData,
+    OmitData,
+    UserConfig
+} from '../interfaces/user';
 import { DeepPartial } from '../utils';
 import { injectChromeWebStoreInstallButton } from './chrome-webstore';
 
@@ -78,25 +86,25 @@ const api: IFlastAPI = {
         return ipcRenderer.invoke(IPCChannel.Bookmarks.UPDATE(userId), bookmarkId, data);
     },
 
-    getHistory: (userId: string) => {
+    getHistory: (userId: string): Promise<HistoryData[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        if (!userId) return Promise.resolve();
+        if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.History.LIST(userId));
     },
-    getHistoryGroups: (userId: string) => {
+    getHistoryGroups: (userId: string): Promise<HistoryGroup[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        if (!userId) return Promise.resolve();
+        if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.History.LIST_GROUPS(userId));
     },
 
-    getDownloads: (userId: string) => {
+    getDownloads: (userId: string): Promise<DownloadData[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        if (!userId) return Promise.resolve();
+        if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.Downloads.LIST(userId));
     },
-    getDownloadsWithFileIcon: (userId: string) => {
+    getDownloadsWithFileIcon: (userId: string): Promise<NativeDownloadData[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        if (!userId) return Promise.resolve();
+        if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.Downloads.LIST_WITH_FILE_ICON(userId));
     }
 };
