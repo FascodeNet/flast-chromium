@@ -3,12 +3,9 @@ name: Build
 on: [ push ]
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ windows-latest, macos-latest, ubuntu-latest ]
-
+  release-windows:
+    name: Release (Windows)
+    runs-on: windows-latest
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
@@ -20,31 +17,16 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install Required Build Toolchain (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install gcc-multilib g++-multilib
-          sudo apt-get install --no-install-recommends -y libopenjp2-tools
-
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Compile (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Build
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Compile
         run: npm run ci-compile:win32
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Compile (macOS)
-        if: matrix.os == 'macos-latest'
-        run: npm run ci-compile:darwin
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Compile (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: npm run ci-compile:linux
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
@@ -54,11 +36,74 @@ jobs:
           name: ${{ matrix.os }}
           path: dist
 
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        if: startsWith(github.ref, 'refs/tags/')
-#        with:
-#          draft: true
-#          files: "dist/**"
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release-darwin:
+    name: Release (macOS)
+    runs-on: macos-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Compile
+        run: npm run ci-compile:darwin
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.os }}
+          path: dist
+
+  release-linux:
+    name: Release (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Install Required Build Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-multilib g++-multilib
+          sudo apt-get install --no-install-recommends -y libopenjp2-tools
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Compile
+        run: npm run ci-compile:linux
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.os }}
+          path: dist
