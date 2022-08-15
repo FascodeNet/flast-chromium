@@ -1,7 +1,7 @@
 import { Session as ElectronSession, session } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions-production';
 import { ISession, IUser } from '../../interfaces/user';
-import { registerProtocols, setUserAgent, setWebRequest } from '../../utils/session';
+import { registerProtocols, setUserAgent, setWebRequest } from '../../session';
 
 export class IncognitoSession implements ISession {
 

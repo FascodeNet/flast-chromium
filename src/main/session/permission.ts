@@ -35,7 +35,7 @@ const registerPermissionRequestListener = (session: Session, user: IUser) => {
                 }
             default:
                 const types = getPermissionTypes(permission, mediaTypes);
-                if (!types)
+                if (!types || types.length < 1)
                     return callback(false);
 
                 if (types.length > 1) {
@@ -111,7 +111,7 @@ const registerPermissionCheckListener = (session: Session, user: IUser) => {
         console.log('権限のチェック:', permission, requestingOrigin, requestingUrl, mediaType);
 
         const types = getPermissionTypes(permission, mediaType && mediaType !== 'unknown' ? [mediaType] : undefined);
-        if (!types)
+        if (!types || types.length < 1)
             return false;
 
         if (types.length > 1) {

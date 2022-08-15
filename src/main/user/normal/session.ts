@@ -3,7 +3,7 @@ import { ElectronChromeExtensions } from 'electron-chrome-extensions-production'
 import { join } from 'path';
 import { ISession, IUser } from '../../interfaces/user';
 import { Main } from '../../main';
-import { registerProtocols, setUserAgent, setWebRequest } from '../../utils/session';
+import { registerProtocols, setUserAgent, setWebRequest } from '../../session';
 import { IncognitoUser } from '../incognito';
 import { NormalUser } from './index';
 
