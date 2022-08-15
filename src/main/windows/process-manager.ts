@@ -8,11 +8,12 @@ export class ProcessManagerWindow extends WindowImpl {
 
     public constructor() {
         super(new BrowserWindow({
-            frame: false,
-            minWidth: 500,
-            minHeight: 450,
             width: 600,
+            minWidth: 500,
             height: 550,
+            minHeight: 450,
+            frame: false,
+            show: false,
             titleBarStyle: 'hiddenInset',
             trafficLightPosition: {
                 x: 15,
@@ -23,13 +24,12 @@ export class ProcessManagerWindow extends WindowImpl {
             icon: nativeImage.createFromPath(getIconsPath('app', 'icon.png')),
             webPreferences: {
                 // preload: buildDirectory('preloads', 'window.js'),
-                plugins: true,
                 nodeIntegration: true,
                 contextIsolation: false,
-                javascript: true,
-                sandbox: false
-            },
-            show: false
+                sandbox: false,
+                plugins: true,
+                javascript: true
+            }
         }));
 
         this.setListeners();

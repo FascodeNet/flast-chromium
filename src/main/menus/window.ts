@@ -1,4 +1,4 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { app, dialog, Menu, MenuItemConstructorOptions, nativeImage } from 'electron';
 import { author } from '../../../package.json';
 import {

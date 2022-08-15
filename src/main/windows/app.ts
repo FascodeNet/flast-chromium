@@ -41,11 +41,12 @@ export class AppWindow extends WindowImpl {
 
     public constructor(user: IUser, urls: string[] = user.settings.startupUrls) {
         super(new BrowserWindow({
-            frame: false,
-            minWidth: 500,
-            minHeight: 450,
             width: 900,
+            minWidth: 500,
             height: 700,
+            minHeight: 450,
+            frame: false,
+            show: false,
             titleBarStyle: 'hidden',
             trafficLightPosition: {
                 x: 17,
@@ -56,14 +57,13 @@ export class AppWindow extends WindowImpl {
             icon: nativeImage.createFromPath(getIconsPath('app', 'icon.png')),
             webPreferences: {
                 preload: getBuildPath('preloads', 'window.js'),
-                plugins: true,
                 nodeIntegration: true,
                 contextIsolation: false,
-                javascript: true,
                 sandbox: false,
+                javascript: true,
+                plugins: true,
                 session: user.session.session
-            },
-            show: false
+            }
         }));
 
         this.incognito = user.type === 'incognito';
