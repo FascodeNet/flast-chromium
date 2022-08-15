@@ -8,11 +8,11 @@ import { DeepPartial } from '../../../../../../utils';
 import { ArrowLeft } from '../../../../../components/Icons';
 import { PermissionIcons } from '../../../../../components/Icons/permissions';
 import {
+    PageParagraph,
     PageTitle,
     RadioItem,
     Section,
     SectionContent,
-    SectionParagraph,
     SectionTitle
 } from '../../../../../components/Page';
 import { useTranslateContext } from '../../../../../contexts/translate';
@@ -62,7 +62,7 @@ export const SitePermission = ({ type }: Props) => {
                 </IconButton>
                 <div>{translatePermissionSection.title}</div>
             </PageTitle>
-            <SectionParagraph>{translatePermissionSection.description}</SectionParagraph>
+            <PageParagraph>{translatePermissionSection.description}</PageParagraph>
             <Section>
                 <SectionTitle>{translateSection.default}</SectionTitle>
                 <SectionContent>

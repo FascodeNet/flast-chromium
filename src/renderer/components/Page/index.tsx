@@ -15,24 +15,31 @@ export const Page = styled(Box)(({ theme }) => ({
     }
 }));
 
-export const PageContainer = styled('main')(({ theme }) => ({
+export const PageContainer = styled('main')({
     width: '100%',
     height: '100%',
     gridArea: 'content',
     overflow: 'hidden auto'
-}));
+});
 
-export const PageContent = styled(Box)(({ theme }) => ({
+export const PageContent = styled(Box)({
     width: '100%',
     maxWidth: 'calc(820px + calc(2rem * 2))',
     minHeight: '100%',
     padding: '3rem 2rem'
-}));
+});
 
 export const PageTitle = styled(
     (props: TypographyProps) => <Typography variant="h4" {...props} />
 )<TypographyProps>(({ theme }) => ({
     marginBottom: theme.spacing(.5),
+    userSelect: 'none'
+}));
+
+export const PageParagraph = styled(
+    (props: TypographyProps) => <Typography variant="body1" {...props} />
+)<TypographyProps>(({ theme }) => ({
+    margin: theme.spacing(.5, 0),
     userSelect: 'none'
 }));
 
