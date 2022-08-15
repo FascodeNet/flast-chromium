@@ -43,6 +43,7 @@ interface ContentProps {
         | 'siteCamera'
         | 'siteMicrophone'
         | 'siteNotifications'
+        | 'siteSensors'
         | 'siteMidi'
         | 'siteHid'
         | 'siteSerial'
@@ -134,6 +135,7 @@ const Content = ({ section }: ContentProps) => {
                     {section === 'siteCamera' && <SitePermission type="camera" />}
                     {section === 'siteMicrophone' && <SitePermission type="microphone" />}
                     {section === 'siteNotifications' && <SitePermission type="notifications" />}
+                    {section === 'siteSensors' && <SitePermission type="sensors" />}
                     {section === 'siteMidi' && <SitePermission type="midi" />}
                     {section === 'siteHid' && <SitePermission type="hid" />}
                     {section === 'siteSerial' && <SitePermission type="serial" />}
@@ -185,6 +187,7 @@ export const App = () => {
                                 <Route path="camera" element={<Content section="siteCamera" />} />
                                 <Route path="microphone" element={<Content section="siteMicrophone" />} />
                                 <Route path="notifications" element={<Content section="siteNotifications" />} />
+                                <Route path="sensors" element={<Content section="siteSensors" />} />
                                 <Route path="midi" element={<Content section="siteMidi" />} />
                                 <Route path="hid" element={<Content section="siteHid" />} />
                                 <Route path="serial" element={<Content section="siteSerial" />} />
