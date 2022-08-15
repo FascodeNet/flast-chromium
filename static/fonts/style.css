@@ -7,31 +7,6 @@
 }
 
 
-/* Renner */
-@font-face {
-    font-family: Renner;
-    font-weight: 400;
-    font-display: swap;
-    src: url('Renner-Regular.ttf');
-}
-
-
-/* Product Sans */
-@font-face {
-    font-family: 'Product Sans';
-    font-weight: 400;
-    font-display: swap;
-    src: url('Product-Sans-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Product Sans';
-    font-weight: 700;
-    font-display: swap;
-    src: url('Product-Sans-Bold.ttf');
-}
-
-
 /* Roboto */
 @font-face {
     font-family: 'Roboto Symbol';
@@ -270,38 +245,6 @@
 }
 
 
-/* Noto Serif */
-@font-face {
-    font-family: 'Noto Serif';
-    font-weight: 400;
-    font-display: swap;
-    src: url('noto_serif/NotoSerif-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Noto Serif';
-    font-style: italic;
-    font-weight: 400;
-    font-display: swap;
-    src: url('noto_serif/NotoSerif-RegularItalic.ttf');
-}
-
-@font-face {
-    font-family: 'Noto Serif';
-    font-weight: 700;
-    font-display: swap;
-    src: url('noto_serif/NotoSerif-Bold.ttf');
-}
-
-@font-face {
-    font-family: 'Noto Serif';
-    font-style: italic;
-    font-weight: 700;
-    font-display: swap;
-    src: url('noto_serif/NotoSerif-BoldItalic.ttf');
-}
-
-
 /* Noto Sans JP */
 @font-face {
     font-family: 'Noto Sans JP';
@@ -346,57 +289,6 @@
 }
 
 
-/* Noto Serif JP */
-@font-face {
-    font-family: 'Noto Serif JP';
-    font-weight: 200;
-    font-display: swap;
-    src: url('noto_serif_jp/NotoSerifJP-ExtraLight.otf');
-}
-
-@font-face {
-    font-family: 'Noto Serif JP';
-    font-weight: 300;
-    font-display: swap;
-    src: url('noto_serif_jp/NotoSerifJP-Light.otf');
-}
-
-@font-face {
-    font-family: 'Noto Serif JP';
-    font-weight: 400;
-    font-display: swap;
-    src: url('noto_serif_jp/NotoSerifJP-Regular.otf');
-}
-
-@font-face {
-    font-family: 'Noto Serif JP';
-    font-weight: 500;
-    font-display: swap;
-    src: url('noto_serif_jp/NotoSerifJP-Medium.otf');
-}
-
-@font-face {
-    font-family: 'Noto Serif JP';
-    font-weight: 600;
-    font-display: swap;
-    src: url('noto_serif_jp/NotoSerifJP-SemiBold.otf');
-}
-
-@font-face {
-    font-family: 'Noto Serif JP';
-    font-weight: 700;
-    font-display: swap;
-    src: url('noto_serif_jp/NotoSerifJP-Bold.otf');
-}
-
-@font-face {
-    font-family: 'Noto Serif JP';
-    font-weight: 900;
-    font-display: swap;
-    src: url('noto_serif_jp/NotoSerifJP-Black.otf');
-}
-
-
 /* HackGen */
 @font-face {
     font-family: 'HackGen';
@@ -405,48 +297,9 @@
     src: url('hackgen/HackGen-Regular.ttf');
 }
 
-
-/* Material Design Icons (Filled) */
 @font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
+    font-family: 'HackGen';
+    font-weight: 700;
     font-display: swap;
-    src: url('mdicons/MDIcons-Filled.ttf');
-}
-
-/* Material Design Icons (Outlined) */
-@font-face {
-    font-family: 'Material Icons Outlined';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('mdicons/MDIcons-Outlined.otf');
-}
-
-/* Material Design Icons (Rounded) */
-@font-face {
-    font-family: 'Material Icons Rounded';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('mdicons/MDIcons-Rounded.otf');
-}
-
-/* Material Design Icons (TwoTone) */
-@font-face {
-    font-family: 'Material Icons TwoTone';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('mdicons/MDIcons-TwoTone.otf');
-}
-
-/* Material Design Icons (Sharp) */
-@font-face {
-    font-family: 'Material Icons Sharp';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('mdicons/MDIcons-Sharp.otf');
+    src: url('hackgen/HackGen-Bold.ttf');
 }

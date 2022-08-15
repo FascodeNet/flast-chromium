@@ -1,11 +1,6 @@
 {
   "appId": "net.fascode.flast",
   "productName": "Flast",
-  "nsis": {
-    "include": "static/installer.nsh",
-    "installerIcon": "static/icons/app/icon.ico",
-    "uninstallerIcon": "static/icons/app/icon.ico"
-  },
   "electronVersion": "19.0.12",
   "generateUpdatesFilesForAllChannels": true,
   "asar": true,
@@ -37,6 +32,11 @@
         ]
       }
     ]
+  },
+  "nsis": {
+    "include": "static/installer.nsh",
+    "installerIcon": "static/icons/app/icon.ico",
+    "uninstallerIcon": "static/icons/app/icon.ico"
   },
   "mac": {
     "category": "public.app-category.utilities",
