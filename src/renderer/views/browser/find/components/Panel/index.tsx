@@ -3,11 +3,12 @@ import { Divider } from '@mui/material';
 import { ipcRenderer } from 'electron';
 import React, { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { FindState } from '../../../../../../interfaces/view';
+import { IconButton } from '../../../../../components/Button';
 import { ArrowDown, ArrowUp } from '../../../../../components/Icons/arrow';
 import { Remove } from '../../../../../components/Icons/state';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { StyledButton, StyledContainer, StyledInput, StyledLabel, StyledPanel } from './styles';
+import { StyledContainer, StyledInput, StyledLabel, StyledPanel } from './styles';
 
 export const Panel = () => {
     const { findApi } = useElectronAPI();
@@ -78,21 +79,25 @@ export const Panel = () => {
         <StyledPanel className="panel">
             <StyledContainer>
                 <StyledInput
-                    ref={ref} type="text" value={value}
-                    onChange={handleChange} onKeyPress={handleKeyPress} onKeyDown={handleKeyDown}
+                    ref={ref}
+                    type="text"
+                    value={value}
+                    onChange={handleChange}
+                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyDown}
                 />
                 <StyledLabel>{state ? `${state.index} / ${state.matches}` : '0 / 0'}</StyledLabel>
             </StyledContainer>
             <Divider orientation="vertical" flexItem sx={{ margin: '6px 4px' }} />
-            <StyledButton onClick={() => move(false)}>
+            <IconButton onClick={() => move(false)} size={28}>
                 <ArrowUp />
-            </StyledButton>
-            <StyledButton onClick={() => move(true)}>
+            </IconButton>
+            <IconButton onClick={() => move(true)} size={28}>
                 <ArrowDown />
-            </StyledButton>
-            <StyledButton onClick={() => stop(true)}>
+            </IconButton>
+            <IconButton onClick={() => stop(true)} size={28}>
                 <Remove />
-            </StyledButton>
+            </IconButton>
         </StyledPanel>
     );
 };

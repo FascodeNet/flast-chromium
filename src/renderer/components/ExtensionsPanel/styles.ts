@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { borderRadius } from '../../themes';
 
@@ -50,6 +51,7 @@ export const StyledExtensionItemIcon = styled.div<StyledExtensionItemIconProps>`
 
 export const StyledExtensionItemLabel = styled.span`
   font-size: 13px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

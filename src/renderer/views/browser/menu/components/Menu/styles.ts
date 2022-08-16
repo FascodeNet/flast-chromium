@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { borderRadius } from '../../../../../themes';
 
@@ -106,7 +107,7 @@ export const StyledItemIcon = styled.div<StyledItemIconProps>`
 export const StyledItemLabel = styled.div`
   margin: 0;
   font-size: 13px;
-  font-weight: 300;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -126,6 +127,7 @@ export const StyledItemShortcut = styled.div`
 export const StyledItemShortcutText = styled.span`
   color: inherit;
   font-size: 13.5px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
 `;
 
 export const StyledItemButtonContainer = styled.div`

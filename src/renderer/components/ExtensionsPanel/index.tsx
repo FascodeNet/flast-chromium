@@ -4,15 +4,16 @@ import { customAlphabet } from 'nanoid';
 import React, { MouseEvent } from 'react';
 import { IExtension } from '../../../interfaces/extension';
 import { useViewManagerContext } from '../../contexts/view';
+import { borderRadius } from '../../themes';
 import { useElectronAPI } from '../../utils/electron';
+import { IconButton } from '../Button';
 import { PanelProps } from '../Panel';
 import { StyledPanel, StyledPanelContainer, StyledPanelHeader, StyledPanelTitle } from '../Panel/styles';
 import {
     StyledExtensionItem,
     StyledExtensionItemContainer,
     StyledExtensionItemIcon,
-    StyledExtensionItemLabel,
-    StyledExtensionItemMenuButton
+    StyledExtensionItemLabel
 } from './styles';
 
 export const ExtensionsPanel = ({ type }: PanelProps) => {
@@ -47,12 +48,18 @@ export const ExtensionsPanel = ({ type }: PanelProps) => {
                                 {name}
                             </StyledExtensionItemLabel>
                         </StyledExtensionItemContainer>
-                        <StyledExtensionItemMenuButton
+                        <IconButton
                             className="extension-item-menu"
                             onClick={(e) => handleButtonClick(e, id)}
+                            sx={{
+                                height: '100%',
+                                borderRadius: 0,
+                                borderTopRightRadius: borderRadius.toUnit(),
+                                borderBottomRightRadius: borderRadius.toUnit()
+                            }}
                         >
                             <MoreVertOutlined />
-                        </StyledExtensionItemMenuButton>
+                        </IconButton>
                     </StyledExtensionItem>
                 ))}
             </StyledPanelContainer>

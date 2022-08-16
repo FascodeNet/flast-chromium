@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { borderRadius } from '../../themes';
 import { PanelType } from './index';
@@ -37,7 +38,7 @@ export const StyledPanelHeader = styled.header<StyledProps>`
 
 export const StyledPanelTitle = styled.h3`
   margin: 0;
-  font-weight: 400;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
 `;
 
 export const StyledPanelButton = styled.button`

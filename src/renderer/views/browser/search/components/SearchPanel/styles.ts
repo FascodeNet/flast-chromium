@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { borderRadius } from '../../../../../themes';
@@ -15,7 +16,6 @@ export const StyledPanel = styled.div<StyledProps>`
   align-items: center;
   gap: 12px;
   border-radius: ${borderRadius.toUnit()};
-  // box-shadow: 0 12px 16px rgba(0, 0, 0, .12), 0 8px 10px rgba(0, 0, 0, .16);
   overflow: hidden;
   user-select: none;
 
@@ -50,6 +50,7 @@ export const StyledLabel = styled.div`
   align-items: center;
   gap: 12px;
   font-size: 13px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
 `;
 
 export const StyledInput = styled.input`
@@ -58,6 +59,7 @@ export const StyledInput = styled.input`
   margin: 0;
   padding: 0;
   font-size: 13px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   outline: none;
   border: none;
   background: none;

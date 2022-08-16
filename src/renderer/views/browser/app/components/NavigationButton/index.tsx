@@ -27,7 +27,6 @@ export const BackButton = () => {
         <IconButton
             onClick={handleButtonClick}
             disabled={!canGoBack}
-            disableRipple
             className={clsx('navigation-button', 'back')}
         >
             <ArrowLeft />
@@ -52,7 +51,6 @@ export const ForwardButton = () => {
         <IconButton
             onClick={handleButtonClick}
             disabled={!canGoForward}
-            disableRipple
             className={clsx('navigation-button', 'forward')}
         >
             <ArrowRight />
@@ -76,7 +74,6 @@ export const ReloadButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            disableRipple
             className={clsx('navigation-button', !isLoading ? 'reload' : 'stop')}
         >
             {!isLoading ? <Reload /> : <Remove />}
@@ -104,7 +101,7 @@ export const HomeButton = () => {
     };
 
     return (
-        <IconButton onClick={handleButtonClick} disableRipple className={clsx('navigation-button', 'home')}>
+        <IconButton onClick={handleButtonClick} className={clsx('navigation-button', 'home')}>
             <Home />
         </IconButton>
     );

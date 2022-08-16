@@ -1,34 +1,30 @@
-import { Box, ButtonBase as MuiButtonBase, ButtonBaseProps, buttonClasses, styled, Theme } from '@mui/material';
+import { Box, styled, Theme } from '@mui/material';
+import { MUIStyledCommonProps } from '@mui/system/createStyled';
 import clsx from 'clsx';
-import React, { ReactNode } from 'react';
+import { platform } from 'os';
+import React, { ButtonHTMLAttributes, ReactNode } from 'react';
 
-const buttonStyled = (theme: Theme) => ({
+export const ButtonBase = styled('button')(({ theme }) => ({
     margin: 0,
-    padding: 0,
+    padding: theme.spacing(.5),
     display: 'flex',
+    placeItems: 'center',
+    placeContent: 'center',
+    gap: theme.spacing(.75),
+    fontWeight: platform() !== 'darwin' ? 400 : 300,
+    background: 'none',
+    border: 'none',
     borderRadius: theme.shape.borderRadius,
-    cursor: 'default',
-    WebkitAppRegion: 'no-drag',
     transition: theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'color'], {
         duration: theme.transitions.duration.short
     }),
-    [`&:hover, &.${buttonClasses.focusVisible}`]: {
-        background: theme.palette.action.hover
-    },
-    [`&.${buttonClasses.focusVisible}`]: {
-        outline: `solid 2px ${theme.palette.primary.main}`
-    },
-    [`&.${buttonClasses.disabled}`]: {
-        color: theme.palette.action.disabled
+    cursor: 'default',
+    userSelect: 'none',
+    WebkitAppRegion: 'no-drag',
+    '& .MuiSvgIcon-root': {
+        color: 'inherit',
+        fill: 'inherit'
     }
-});
-
-export const ButtonBase = styled(MuiButtonBase)(({ theme }) => ({
-    ...buttonStyled(theme),
-    padding: theme.spacing(.5),
-    placeItems: 'center',
-    placeContent: 'center',
-    gap: theme.spacing(.75)
 }));
 
 export const ButtonIcon = styled(
@@ -45,23 +41,15 @@ export const ButtonIcon = styled(
     backgroundSize: 'contain'
 }));
 
-export const IconButton = styled(
-    ({ className, ...props }: ButtonBaseProps) => <MuiButtonBase className={clsx('IconButton', className)} {...props} />
-)<ButtonBaseProps>(({ theme }) => ({
-    ...buttonStyled(theme),
-    placeItems: 'center',
-    placeContent: 'center'
-}));
-
-interface ButtonProps extends ButtonBaseProps {
+interface ButtonProps extends MUIStyledCommonProps<Theme>, ButtonHTMLAttributes<HTMLButtonElement> {
     icon?: ReactNode;
     children?: ReactNode;
 }
 
-export const Button = ({ icon, children, sx, ...props }: ButtonProps) => (
-    <ButtonBase {...props} sx={{ ...sx, pr: children ? 1 : .5 }}>
+export const Button = ({ icon, children, className, sx, ...props }: ButtonProps) => (
+    <ButtonBase {...props} className={clsx('button', className)} sx={{ ...sx, pr: children ? 1 : .5 }}>
         {icon && <Box
-            className="Icon"
+            className="button-icon"
             sx={{
                 display: 'flex',
                 placeItems: 'center',
@@ -71,6 +59,21 @@ export const Button = ({ icon, children, sx, ...props }: ButtonProps) => (
         >
             {icon}
         </Box>}
+        {children}
+    </ButtonBase>
+);
+
+interface IconButtonProps extends MUIStyledCommonProps<Theme>, ButtonHTMLAttributes<HTMLButtonElement> {
+    children?: ReactNode;
+    size?: string | number;
+}
+
+export const IconButton = ({ children, size, className, sx, ...props }: IconButtonProps) => (
+    <ButtonBase
+        {...props}
+        className={clsx('icon-button', className)}
+        sx={{ ...sx, width: size ?? 'auto', height: size ?? 'auto' }}
+    >
         {children}
     </ButtonBase>
 );

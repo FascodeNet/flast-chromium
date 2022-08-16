@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import React from 'react';
 import { useElectronAPI } from '../../utils/electron';
+import { IconButton } from '../Button';
 import { ExternalLink } from '../Icons/state';
-import { StyledPanelButton } from './styles';
 
 export type PanelType = 'popup' | 'sidebar';
 
@@ -32,8 +32,8 @@ export const PanelOpenButton = ({ url, type }: PanelOpenButtonProps) => {
     };
 
     return (
-        <StyledPanelButton onClick={handleExternalClick} className={clsx('panel-button', 'open')}>
+        <IconButton onClick={handleExternalClick} className={clsx('panel-button', 'open')} sx={{ ml: 'auto' }}>
             <ExternalLink />
-        </StyledPanelButton>
+        </IconButton>
     );
 };

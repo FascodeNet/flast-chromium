@@ -1,4 +1,5 @@
 import Color from 'color';
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { isSingle } from '../../../../../../utils/design';
@@ -41,6 +42,7 @@ export const StyledTabIcon = styled.div<StyledTabIconProps>`
 export const StyledTabTitle = styled.span`
   width: 100%;
   font-size: 12px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

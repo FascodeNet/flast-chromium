@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled from 'styled-components';
 import { borderRadius } from '../../../../../themes';
 
@@ -31,6 +32,7 @@ export const StyledInput = styled.input`
   margin: 0;
   padding: 0 4px;
   font-size: 13px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   outline: none;
   border: none;
   background: none;
@@ -41,6 +43,7 @@ export const StyledLabel = styled.span`
   display: block;
   flex-shrink: 0;
   font-size: 12px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   text-align: center;
   white-space: nowrap;
 `;

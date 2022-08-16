@@ -1,4 +1,5 @@
 import { styled } from '@mui/material';
+import { platform } from 'os';
 
 export const DownloadItem = styled('div')(({ theme }) => ({
     width: '100%',
@@ -45,14 +46,16 @@ export const DownloadItemTitle = styled('div')({
     height: 26,
     display: 'flex',
     alignItems: 'center',
-    fontSize: 14
+    fontSize: 14,
+    fontWeight: platform() !== 'darwin' ? 400 : 300
 });
 
 export const DownloadItemText = styled('div')({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    fontSize: 12
+    fontSize: 12,
+    fontWeight: platform() !== 'darwin' ? 400 : 300
 });
 
 export const DownloadItemButtonContainer = styled('div')(({ theme }) => ({

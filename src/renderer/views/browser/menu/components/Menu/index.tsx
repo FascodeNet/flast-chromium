@@ -108,7 +108,8 @@ const Item = ({ icon, label, shortcut, onClick, section, setSection, setSubMenuT
                     <StyledItemShortcutText key={match}>{match}</StyledItemShortcutText>
                 )) : shortcut}
             </StyledItemShortcut>
-            {setSection && setSubMenuTop && <ChevronRight sx={{ width: 16, height: 16 }} />}
+            {setSection && setSubMenuTop &&
+                <ChevronRight className="menu-item-nested" sx={{ width: 16, height: 16 }} />}
         </StyledItem>
     );
 };

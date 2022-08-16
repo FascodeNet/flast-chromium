@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { APPLICATION_NAME } from '../../../../../../constants';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
@@ -35,9 +36,9 @@ export const StyledAddressBar = styled.div<StyledAddressBarProps>`
   `};
 
   ${({ appearanceStyle }) => (appearanceStyle === 'top_double') && css`
-    ${StyledButton} {
-      min-width: 28px;
-      height: 28px;
+    & .button, & .icon-button, ${StyledButton} {
+      min-width: 28px !important;
+      height: 28px !important;
       padding: 4px;
     }
   `};
@@ -55,6 +56,7 @@ export const StyledTextContainer = styled.div`
 export const StyledText = styled.span`
   flex-shrink: 0;
   font-size: 14px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -68,13 +70,9 @@ export const StyledButtonContainer = styled.div`
   gap: 1px;
   cursor: default;
 
-  & .MuiButtonBase-root {
-    min-width: 30px !important;
-    height: 30px !important;
-
-    &.IconButton {
-      width: 30px !important;
-    }
+  & .button, & .icon-button {
+    min-width: 30px;
+    height: 30px;
   }
 `;
 

@@ -8,12 +8,11 @@ import { BookmarkData } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
 import { Button, ButtonIcon, IconButton } from '../../../../../components/Button';
-import { Extension, File, Search, Star, StarFilled } from '../../../../../components/Icons';
-import { Information, Lock, Warning } from '../../../../../components/Icons/state';
+import { Extension, File, Information, Lock, Search, Star, StarFilled, Warning } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { StyledAddressBar, StyledButton, StyledButtonContainer, StyledText, StyledTextContainer } from './styles';
+import { StyledAddressBar, StyledButtonContainer, StyledText, StyledTextContainer } from './styles';
 
 export const AddressBar = () => {
     const { windowApi, bookmarksApi, popupApi } = useElectronAPI();
@@ -163,8 +162,7 @@ export const AddressBar = () => {
                         <Button
                             onClick={handleInformationButtonClick}
                             icon={<StatusIcon />}
-                            disableRipple
-                            sx={{ '& .Icon *': { width: 20, height: 20 } }}
+                            sx={{ '& .button-icon *': { width: 20, height: 20 } }}
                         >
                             {statusButtonLabel}
                         </Button>
@@ -179,7 +177,6 @@ export const AddressBar = () => {
                     <StyledButtonContainer className="address-bar-container">
                         <IconButton
                             onClick={handleBookmarkButtonClick}
-                            disableRipple
                             sx={{ '& svg': { width: 20, height: 20 } }}
                         >
                             {bookmark ? <StarFilled /> : <Star />}
@@ -197,9 +194,9 @@ export const AddressBar = () => {
                     appearanceStyle={style}
                 >
                     <StyledButtonContainer className="address-bar-container">
-                        <StyledButton label={statusButtonLabel}>
-                            <StatusIcon />
-                        </StyledButton>
+                        <Button icon={<StatusIcon />} sx={{ '& .button-icon *': { width: 20, height: 20 } }}>
+                            {statusButtonLabel}
+                        </Button>
                     </StyledButtonContainer>
                     <StyledTextContainer className="address">
                         <StyledText>{address}</StyledText>
@@ -209,7 +206,7 @@ export const AddressBar = () => {
         }
     } else {
         return (
-            <IconButton onClick={handleClick} disableRipple className={clsx('address-bar-button', 'search')}>
+            <IconButton onClick={handleClick} className={clsx('address-bar-button', 'search')}>
                 <Search />
             </IconButton>
         );

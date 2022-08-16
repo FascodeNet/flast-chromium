@@ -30,7 +30,22 @@
   }
 
   .MuiSvgIcon-root {
+    color: @foreground-primary;
     fill: @foreground-primary;
+  }
+
+  .button, .icon-button {
+    color: @foreground-primary;
+    fill: @foreground-primary;
+
+    &:disabled {
+      color: @action-disabled-color;
+      fill: @action-disabled-color;
+    }
+
+    &:not(:disabled):hover, &:focus {
+      background-color: @action-hover-color !important;
+    }
   }
 
   .app {
@@ -168,8 +183,9 @@
       border-color: @action-hover-color !important;
     }
 
-    .menu-item-shortcut {
+    .menu-item-shortcut, .menu-item-nested {
       color: @foreground-secondary;
+      fill: @foreground-secondary;
     }
   }
 
@@ -177,10 +193,9 @@
     background-image: @background-gradation;
   }
 
-  .popup.search {
-    .panel.search-bar, .panel.search-result {
-      background-color: @background;
-    }
+  .popup.search .panel {
+    background-color: @background;
+    background-image: @background-gradation;
   }
 
   .history-group h4 {

@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 
 export const StyledItem = styled.div`
@@ -61,6 +62,7 @@ export const StyledItemLabelContainer = styled.div`
 
 export const StyledItemLabel = styled.span`
   font-size: 13px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -70,18 +72,12 @@ export const StyledItemSubLabel = styled.h6`
   margin: 0;
   padding: 0;
   font-size: 12px;
-  font-weight: normal;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
 `;
 
 export const StyledItemDescription = styled.div`
   margin-bottom: auto;
   font-size: 11px;
-`;
-
-export const StyledItemDate = styled.span`
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
 `;
 

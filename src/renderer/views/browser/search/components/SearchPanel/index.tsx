@@ -1,5 +1,5 @@
 import { PublicOutlined } from '@mui/icons-material';
-import { Avatar, Divider } from '@mui/material';
+import { Avatar, Divider, styled } from '@mui/material';
 import React, {
     ChangeEvent,
     Dispatch,
@@ -12,20 +12,32 @@ import React, {
 } from 'react';
 import reactStringReplace from 'react-string-replace';
 import { APPLICATION_PROTOCOL } from '../../../../../../constants';
-import { BookmarkData, DefaultUserConfig, SearchEngine } from '../../../../../../interfaces/user';
+import { AppearanceStyle, BookmarkData, DefaultUserConfig, SearchEngine } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { getTranslate } from '../../../../../../languages/language';
 import { ResultData } from '../../../../../../main/utils/search';
 import { equals, includes } from '../../../../../../utils';
 import { split } from '../../../../../../utils/array';
+import { isSingle } from '../../../../../../utils/design';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
+import { IconButton } from '../../../../../components/Button';
 import { Code } from '../../../../../components/Code';
 import { Search, Share, Star, StarFilled } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { ResultType } from '../../interface';
-import { StyledButton, StyledButtonContainer, StyledIcon, StyledInput, StyledLabel, StyledPanel } from './styles';
+import { StyledButtonContainer, StyledIcon, StyledInput, StyledLabel, StyledPanel } from './styles';
+
+const Button = styled(IconButton)<{ appearanceStyle: AppearanceStyle; }>(({ appearanceStyle }) => ({
+    minWidth: isSingle(appearanceStyle) ? 30 : 28,
+    height: isSingle(appearanceStyle) ? 30 : 28,
+    padding: isSingle(appearanceStyle) ? 5 : 4,
+    'svg, img': {
+        width: 20,
+        height: 20
+    }
+}));
 
 const filter = (array: ResultData[]) => array.filter((data, i) => array.findIndex(
     ({ title, url }) => title === data.title || url === data.url
@@ -336,12 +348,12 @@ export const SearchPanel = (
                 </div>
             </StyledLabel>}
             <StyledButtonContainer appearanceStyle={config.appearance.style}>
-                <StyledButton appearanceStyle={config.appearance.style}>
+                <Button appearanceStyle={config.appearance.style}>
                     <Share />
-                </StyledButton>
-                <StyledButton onClick={handleBookmarkButtonClick} appearanceStyle={config.appearance.style}>
+                </Button>
+                <Button onClick={handleBookmarkButtonClick} appearanceStyle={config.appearance.style}>
                     {bookmark ? <StarFilled /> : <Star />}
-                </StyledButton>
+                </Button>
             </StyledButtonContainer>
         </StyledPanel>
     );

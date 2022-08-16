@@ -1,6 +1,6 @@
 import { getCurrentWindow } from '@electron/remote';
 import { ipcRenderer } from 'electron';
-import React, { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
+import React, { MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { MoveDirection } from '../../../../../../interfaces/view';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
@@ -17,7 +17,20 @@ export const HorizontalTabContainer = () => {
     const { config } = useUserConfigContext();
     const style = config.appearance.style;
 
-    const tabContainerRef = useRef<HTMLDivElement>(null);
+    const tabContainerRef = useRef<HTMLDivElement>();
+
+    const ref = useCallback((element: HTMLDivElement | null) => {
+        if (element) {
+            tabContainerRef.current = element;
+
+            const tabContainerWidth = element.offsetWidth ?? 0;
+            if (tabContainerWidth < 1) return;
+
+            console.log('ipcRenderer#TabContainerWidth', tabContainerWidth);
+            setTabContainerWidth(tabContainerWidth);
+            setTabsBounds(tabContainerWidth, views, false);
+        }
+    }, []);
 
     const handleMouseWheel = (e: WheelEvent) => {
         if (e.deltaX === 0) {
@@ -98,7 +111,7 @@ export const HorizontalTabContainer = () => {
 
     return (
         <StyledHorizontalTabContainer className="horizontal-tab-container">
-            <StyledHorizontalTabWrapper ref={tabContainerRef} className="horizontal-tab-wrapper">
+            <StyledHorizontalTabWrapper ref={ref} className="horizontal-tab-wrapper">
                 {views.map((view) => (
                     <HorizontalTab
                         key={view.id}

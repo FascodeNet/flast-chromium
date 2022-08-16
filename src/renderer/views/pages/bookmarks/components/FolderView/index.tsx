@@ -1,11 +1,19 @@
-import { Box, Button, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
+import {
+    Box,
+    Button,
+    Divider,
+    IconButton,
+    ListItemIcon,
+    ListItemText,
+    Menu,
+    MenuItem,
+    useMediaQuery,
+    useTheme
+} from '@mui/material';
 import React, { Fragment, MouseEvent, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { BookmarkData, DefaultUserConfig, UserConfig } from '../../../../../../interfaces/user';
-import { MenuMore } from '../../../../../components/Icons';
-import { ArrowRight } from '../../../../../components/Icons/arrow';
-import { AddFolder } from '../../../../../components/Icons/object';
-import { Add, Edit, Remove } from '../../../../../components/Icons/state';
+import { Add, AddFolder, ArrowRight, Edit, MenuMore, Remove } from '../../../../../components/Icons';
 import { PageTitle, Section, SectionContent, SectionTitle } from '../../../../../components/Page';
 import { useTranslateContext } from '../../../../../contexts/translate';
 import { useBookmarksContext } from '../../contexts/bookmarks';
@@ -26,6 +34,9 @@ export const FolderView = ({ id }: Props) => {
 
     const { translate } = useTranslateContext();
     const translateSection = translate.pages.bookmarks;
+
+    const { palette: { action }, breakpoints: { values: { lg } } } = useTheme();
+    const matches = useMediaQuery(`(min-width: ${lg}px)`);
 
     useEffect(() => {
         window.flast.getUser().then(async (user) => {
@@ -114,16 +125,35 @@ export const FolderView = ({ id }: Props) => {
         <Fragment>
             <Helmet title={`${folder.title} - ${translateSection.title}`} />
             <PageTitle>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: matches ? 'row' : 'column',
+                        alignItems: matches ? 'center' : 'flex-start',
+                        justifyContent: matches ? 'flex-start' : 'center',
+                        gap: matches ? 1 : .5
+                    }}
+                >
                     <span>{folder.title}</span>
-                    <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box
+                        sx={{
+                            width: matches ? 'auto' : '100%',
+                            ml: matches ? 'auto' : 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                        }}
+                    >
                         <Button onClick={handleAddBookmarkClick} startIcon={<Add />} color="inherit">
                             {translateSection.addBookmark}
                         </Button>
                         <Button onClick={handleAddFolderClick} startIcon={<AddFolder />} color="inherit">
                             {translateSection.addFolder}
                         </Button>
-                        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                        <IconButton
+                            onClick={(e) => setAnchorEl(e.currentTarget)}
+                            sx={{ ml: matches ? 0 : 'auto' }}
+                        >
                             <MenuMore />
                         </IconButton>
                     </Box>

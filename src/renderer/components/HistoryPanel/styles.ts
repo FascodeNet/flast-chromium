@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { borderRadius } from '../../themes';
 
@@ -15,7 +16,7 @@ export const StyledHistoryGroup = styled.div`
     position: sticky;
     top: -9px;
     align-self: flex-start;
-    font-weight: 400;
+    font-weight: ${platform() !== 'darwin' ? 400 : 300};
   }
 `;
 
@@ -56,6 +57,7 @@ export const StyledHistoryItemFavicon = styled.div<StyledHistoryItemFaviconProps
 
 export const StyledHistoryItemLabel = styled.span`
   font-size: 12px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -63,6 +65,7 @@ export const StyledHistoryItemLabel = styled.span`
 
 export const StyledHistoryItemDate = styled.span`
   font-size: 12px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

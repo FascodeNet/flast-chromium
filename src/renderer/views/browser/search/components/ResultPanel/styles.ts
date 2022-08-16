@@ -8,7 +8,6 @@ export const StyledPanel = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  // gap: 4px;
   border-radius: ${borderRadius.toUnit()};
   overflow: hidden;
   user-select: none;

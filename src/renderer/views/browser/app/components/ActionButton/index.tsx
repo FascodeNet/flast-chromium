@@ -17,7 +17,7 @@ export const BookmarksButton = () => {
     };
 
     return (
-        <IconButton onClick={handleButtonClick} disableRipple className={clsx('action-button', 'bookmarks')}>
+        <IconButton onClick={handleButtonClick} className={clsx('action-button', 'bookmarks')}>
             <Bookmarks />
         </IconButton>
     );
@@ -35,7 +35,7 @@ export const HistoryButton = () => {
     };
 
     return (
-        <IconButton onClick={handleButtonClick} disableRipple className={clsx('action-button', 'history')}>
+        <IconButton onClick={handleButtonClick} className={clsx('action-button', 'history')}>
             <History />
         </IconButton>
     );
@@ -53,7 +53,7 @@ export const DownloadsButton = () => {
     };
 
     return (
-        <IconButton onClick={handleButtonClick} disableRipple className={clsx('action-button', 'downloads')}>
+        <IconButton onClick={handleButtonClick} className={clsx('action-button', 'downloads')}>
             <Download />
         </IconButton>
     );
@@ -71,7 +71,7 @@ export const ExtensionsButton = () => {
     };
 
     return (
-        <IconButton onClick={handleButtonClick} disableRipple className={clsx('action-button', 'extensions')}>
+        <IconButton onClick={handleButtonClick} className={clsx('action-button', 'extensions')}>
             <Extension />
         </IconButton>
     );
@@ -96,7 +96,6 @@ export const MenuButton = () => {
         <IconButton
             onClick={handleButtonClick}
             onContextMenu={handleButtonContextMenu}
-            disableRipple
             className={clsx('action-button', 'menu')}
         >
             <MenuMore />

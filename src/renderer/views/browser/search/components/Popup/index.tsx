@@ -40,7 +40,7 @@ export const Popup = () => {
     };
 
     return (
-        <StyledContainer>
+        <StyledContainer className="panel">
             <SearchPanel
                 value={value}
                 setValue={setValue}

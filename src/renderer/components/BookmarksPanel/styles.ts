@@ -1,20 +1,6 @@
+import { platform } from 'os';
 import styled from 'styled-components';
 import { borderRadius } from '../../themes';
-
-export const StyledHistoryGroup = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-
-  h4 {
-    margin: 0;
-    padding: 4px 7px;
-    align-self: flex-start;
-  }
-`;
-
 
 export const StyledBookmarkItem = styled.div`
   width: 100%;
@@ -60,13 +46,7 @@ export const StyledBookmarkItemIcon = styled.div`
 
 export const StyledBookmarkItemLabel = styled.span`
   font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-export const StyledBookmarkItemDate = styled.span`
-  font-size: 12px;
+  font-weight: ${platform() !== 'darwin' ? 400 : 300};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

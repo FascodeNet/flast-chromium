@@ -29,7 +29,22 @@
   }
 
   .MuiSvgIcon-root {
+    color: @foreground-primary;
     fill: @foreground-primary;
+  }
+
+  .button, .icon-button {
+    color: @foreground-primary;
+    fill: @foreground-primary;
+
+    &:disabled {
+      color: @action-disabled-color;
+      fill: @action-disabled-color;
+    }
+
+    &:not(:disabled):hover, &:focus {
+      background-color: @action-hover-color !important;
+    }
   }
 
   .app {
@@ -158,10 +173,8 @@
     background-image: none;
   }
 
-  .popup.search {
-    .panel.search-bar, .panel.search-result {
-      background-color: @background;
-    }
+  .popup.search .panel {
+    background-color: @background;
   }
 
   .history-group h4 {

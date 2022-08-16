@@ -3,12 +3,13 @@ import { Button, LinearProgress } from '@mui/material';
 import { ipcRenderer } from 'electron';
 import filesize from 'filesize';
 import React, { Fragment, useEffect, useState } from 'react';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_DOWNLOADS } from '../../../constants';
 import { IPCChannel } from '../../../constants/ipc';
 import { NativeDownloadData } from '../../../interfaces/user';
 import { getTranslate } from '../../../languages/language';
 import { useUserConfigContext } from '../../contexts/config';
 import { useElectronAPI } from '../../utils/electron';
-import { PanelProps } from '../Panel';
+import { PanelOpenButton, PanelProps } from '../Panel';
 import { StyledPanel, StyledPanelContainer, StyledPanelHeader, StyledPanelTitle } from '../Panel/styles';
 import {
     DownloadItem,
@@ -115,6 +116,7 @@ export const DownloadsPanel = ({ type }: PanelProps) => {
         <StyledPanel className="panel" type={type}>
             <StyledPanelHeader className="panel-header" type={type}>
                 <StyledPanelTitle className="panel-title">{translateSection.title}</StyledPanelTitle>
+                <PanelOpenButton url={`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_DOWNLOADS}`} type={type} />
             </StyledPanelHeader>
             <StyledPanelContainer className="panel-container">
                 {downloads.map((download) => (
