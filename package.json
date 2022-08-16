@@ -1,7 +1,7 @@
 {
   "name": "flast-chromium",
   "description": "Cross-platform browser based on Chromium (Electron).",
-  "version": "1.0.0-alpha.30",
+  "version": "1.0.0-alpha.31",
   "license": "GPL-3.0-only",
   "author": {
     "name": "Aoichaan0513",
