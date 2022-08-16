@@ -44,24 +44,24 @@ const api: IFlastAPI = {
         return ipcRenderer.invoke('get-user');
     },
     getLanguage: (userId: string) => {
-        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.reject();
         return ipcRenderer.invoke('user-language', userId);
     },
     getUserConfig: (userId: string) => {
-        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.reject();
         return ipcRenderer.invoke(IPCChannel.User.GET_CONFIG(userId));
     },
     setUserConfig: (userId: string, config: DeepPartial<UserConfig>) => {
-        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.reject();
         return ipcRenderer.invoke(IPCChannel.User.SET_CONFIG(userId), config);
     },
     setTheme: (userId: string) => {
-        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.reject();
         return ipcRenderer.invoke('set-theme', userId);
     },
 
     search: (userId: string, keyword: string) => {
-        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.reject();
         return ipcRenderer.invoke(`search-${userId}`, keyword);
     },
 
@@ -71,8 +71,7 @@ const api: IFlastAPI = {
         return ipcRenderer.invoke(IPCChannel.Bookmarks.LIST(userId));
     },
     addBookmark: (userId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
-        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        if (!userId || !data) return Promise.reject();
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId || !data) return Promise.reject();
         return ipcRenderer.invoke(IPCChannel.Bookmarks.ADD(userId), data);
     },
     removeBookmark: (userId: string, bookmarkId: string): Promise<boolean> => {
@@ -81,8 +80,7 @@ const api: IFlastAPI = {
         return ipcRenderer.invoke(IPCChannel.Bookmarks.REMOVE(userId), bookmarkId);
     },
     updateBookmark: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
-        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
-        if (!userId || !bookmarkId || !data) return Promise.reject();
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId || !bookmarkId || !data) return Promise.reject();
         return ipcRenderer.invoke(IPCChannel.Bookmarks.UPDATE(userId), bookmarkId, data);
     },
 
