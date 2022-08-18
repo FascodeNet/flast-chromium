@@ -33,7 +33,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Release (Windows)
+          name: Windows
           path: dist
 
   release-darwin:
@@ -58,15 +58,25 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Compile
+      - name: Compile (Universal)
         run: npm run ci-compile:darwin
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Compile (Intel)
+        run: npm run ci-compile:darwin:intel
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Compile (ARM)
+        run: npm run ci-compile:darwin:arm
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Release (macOS)
+          name: macOS
           path: dist
 
   release-linux:
@@ -105,5 +115,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Release (Linux)
+          name: Linux
           path: dist
