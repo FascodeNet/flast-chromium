@@ -1,7 +1,8 @@
 import Datastore from '@seald-io/nedb';
-import { app, ipcMain } from 'electron';
+import { format } from 'date-fns';
+import { ipcMain, shell } from 'electron';
 import { IPCChannel } from '../../../constants/ipc';
-import { DownloadData, NativeDownloadData, OmitData } from '../../../interfaces/user';
+import { DataGroup, DownloadData, OmitData } from '../../../interfaces/user';
 import { getUserDataPath } from '../../../utils/path';
 import { IDownloads, IUser } from '../../interfaces/user';
 
@@ -31,17 +32,39 @@ export class NormalDownloads implements IDownloads {
         ipcMain.handle(this.ipcChannel.LIST(user.id), () => {
             return this.downloads;
         });
-        ipcMain.handle(this.ipcChannel.LIST_WITH_FILE_ICON(user.id), async (e) => {
-            const downloadDataList: NativeDownloadData[] = [];
+        ipcMain.handle(this.ipcChannel.LIST_GROUPS(user.id), () => {
+            return this.downloadGroups;
+        });
 
-            for (const download of this.downloads) {
-                downloadDataList.push({
-                    ...download,
-                    icon: await app.getFileIcon(download.path)
-                });
-            }
-
-            return downloadDataList;
+        ipcMain.handle(IPCChannel.Downloads.OPEN_FILE(user.id), (e, id: string) => {
+            const data = this._downloads.find((download) => download._id === id);
+            if (!data || data.state !== 'completed') return;
+            shell.openPath(data.path);
+        });
+        ipcMain.handle(IPCChannel.Downloads.OPEN_FOLDER(user.id), (e, id: string) => {
+            const data = this._downloads.find((download) => download._id === id);
+            if (!data || data.state !== 'completed') return;
+            shell.showItemInFolder(data.path);
+        });
+        ipcMain.handle(IPCChannel.Downloads.PAUSE(user.id), (e, id: string) => {
+            const item = user.session.downloadItems.get(id);
+            if (!item || item.getState() !== 'progressing' && item.getState() !== 'interrupted') return;
+            item.pause();
+        });
+        ipcMain.handle(IPCChannel.Downloads.RESUME(user.id), (e, id: string) => {
+            const item = user.session.downloadItems.get(id);
+            if (!item || item.getState() !== 'progressing' && item.getState() !== 'interrupted') return;
+            item.resume();
+        });
+        ipcMain.handle(IPCChannel.Downloads.CANCEL(user.id), (e, id: string) => {
+            const item = user.session.downloadItems.get(id);
+            if (!item || item.getState() !== 'progressing' && item.getState() !== 'interrupted') return;
+            item.cancel();
+        });
+        ipcMain.handle(IPCChannel.Downloads.RETRY(user.id), (e, id: string) => {
+            const data = this._downloads.find((download) => download._id === id);
+            if (!data || data.state !== 'cancelled') return;
+            user.session.session.downloadURL(data.url);
         });
     }
 
@@ -50,7 +73,45 @@ export class NormalDownloads implements IDownloads {
     }
 
     public get downloads() {
-        return this._downloads.sort((a, b) => a.updatedAt!! < b.updatedAt!! ? 1 : -1);
+        return this._downloads.sort((a, b) => a.updatedAt < b.updatedAt ? 1 : -1);
+    }
+
+    public get downloadGroups() {
+        const predicate = (
+            group: DataGroup<Required<DownloadData>>,
+            date: Date
+        ) => {
+            return group.date.getFullYear() === date.getFullYear()
+                && group.date.getMonth() === date.getMonth()
+                && group.date.getDate() === date.getDate();
+        };
+
+        const downloadGroups: DataGroup<Required<DownloadData>>[] = [];
+
+        this.downloads.forEach((downloadData) => {
+            const date = new Date(downloadData.updatedAt);
+            const object = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+            const downloadGroup = downloadGroups.find((data) => predicate(data, object));
+            const downloadGroupIndex = downloadGroups.findIndex((data) => predicate(data, object));
+
+            if (downloadGroup) {
+                downloadGroups[downloadGroupIndex] = {
+                    ...downloadGroup,
+                    list: [...downloadGroup.list, downloadData]
+                };
+            } else {
+                downloadGroups.push(
+                    {
+                        date: object,
+                        formatDate: format(object, 'yyyy/MM/dd'),
+                        list: [downloadData]
+                    }
+                );
+            }
+        });
+
+        return downloadGroups.sort((a, b) => a.date < b.date ? 1 : -1);
     }
 
     public async add(data: OmitData<DownloadData>) {

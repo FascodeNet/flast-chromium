@@ -101,10 +101,14 @@ const History = {
 
 const Downloads = {
     LIST: (userId: string) => `downloads-${userId}`,
-    LIST_WITH_FILE_ICON: (userId: string) => `downloads-with_file_icon-${userId}`,
-    PAUSE: (downloadId: string) => `download-pause-${downloadId}`,
-    RESUME: (downloadId: string) => `download-resume-${downloadId}`,
-    CANCEL: (downloadId: string) => `download-cancel-${downloadId}`,
+    LIST_GROUPS: (userId: string) => `download-groups-${userId}`,
+
+    OPEN_FILE: (userId: string) => `download-open_file-${userId}`,
+    OPEN_FOLDER: (userId: string) => `download-open_folder-${userId}`,
+    PAUSE: (userId: string) => `download-pause-${userId}`,
+    RESUME: (userId: string) => `download-resume-${userId}`,
+    CANCEL: (userId: string) => `download-cancel-${userId}`,
+    RETRY: (userId: string) => `download-retry-${userId}`,
 
     UPDATED: (downloadId: string) => `download-updated-${downloadId}`
 } as const;

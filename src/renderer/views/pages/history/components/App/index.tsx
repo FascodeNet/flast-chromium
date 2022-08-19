@@ -1,23 +1,21 @@
-import { Theme } from '@mui/material';
+import { InputAdornment, TextField, Theme } from '@mui/material';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import React, { useEffect, useState } from 'react';
+import { isToday, isWithinInterval, isYesterday, previousSaturday, previousSunday, subWeeks } from 'date-fns';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { DefaultUserConfig, UserConfig } from '../../../../../../interfaces/user';
+import { includes } from '../../../../../../utils';
 import { GlobalNavigationDrawer } from '../../../../../components/GlobalNavigationDrawer';
-import { Applications } from '../../../../../components/Icons';
-import { Items } from '../../../../../components/Icons/object';
+import { Applications, Items, Search } from '../../../../../components/Icons';
 import { NavigationDrawer } from '../../../../../components/NavigationDrawer';
 import { StyledButton } from '../../../../../components/NavigationDrawer/styles';
 import { Page, PageContainer, PageContent } from '../../../../../components/Page';
 import { TranslateProvider, useTranslateContext } from '../../../../../contexts/translate';
 import { GlobalStyles, MuiDarkGlobalStyles, MuiLightGlobalStyles } from '../../../../../themes';
 import { HistoryProvider } from '../../contexts/history';
-import { All } from '../All';
-import { LastWeek } from '../LastWeek';
-import { Today } from '../Today';
-import { Yesterday } from '../Yesterday';
+import { ListView } from '../ListView';
 
 interface ContentProps {
     section: 'all' | 'today' | 'yesterday' | 'lastWeek' | 'before';
@@ -29,42 +27,73 @@ const Content = ({ section }: ContentProps) => {
     const { translate } = useTranslateContext();
     const translateSection = translate.pages.history;
 
+    const today = new Date();
+    const lastWeekStart = previousSunday(subWeeks(today, 1));
+    const lastWeekEnd = previousSaturday(today);
+
+    lastWeekStart.setHours(0, 0, 0, 0);
+    lastWeekEnd.setHours(23, 59, 59, 999);
+
+    const [query, setQuery] = useState('');
+    const isQuery = query.length > 0;
+
+    const handleNavigate = (path: string) => {
+        setQuery('');
+        navigate(path);
+    };
+
     return (
         <Page>
             <Helmet title={translateSection.title} />
             <GlobalNavigationDrawer />
             <NavigationDrawer title={translateSection.title}>
+                <TextField
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder={translateSection.search.placeholder}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Search />
+                            </InputAdornment>
+                        )
+                    }}
+                    fullWidth
+                    size="small"
+                    margin="none"
+                    sx={{ mb: 1 }}
+                />
                 <StyledButton
-                    onClick={() => navigate('/all')}
-                    active={section === 'all'}
+                    onClick={() => handleNavigate('/all')}
+                    active={!isQuery && section === 'all'}
                     startIcon={<Items />}
                 >
                     {translateSection.all}
                 </StyledButton>
                 <StyledButton
-                    onClick={() => navigate('/today')}
-                    active={section === 'today'}
+                    onClick={() => handleNavigate('/today')}
+                    active={!isQuery && section === 'today'}
                     startIcon={<Applications />}
                 >
                     {translateSection.today}
                 </StyledButton>
                 <StyledButton
-                    onClick={() => navigate('/yesterday')}
-                    active={section === 'yesterday'}
+                    onClick={() => handleNavigate('/yesterday')}
+                    active={!isQuery && section === 'yesterday'}
                     startIcon={<Applications />}
                 >
                     {translateSection.yesterday}
                 </StyledButton>
                 <StyledButton
-                    onClick={() => navigate('/last-week')}
-                    active={section === 'lastWeek'}
+                    onClick={() => handleNavigate('/last-week')}
+                    active={!isQuery && section === 'lastWeek'}
                     startIcon={<Applications />}
                 >
                     {translateSection.lastWeek}
                 </StyledButton>
                 <StyledButton
-                    onClick={() => navigate('/before')}
-                    active={section === 'before'}
+                    onClick={() => handleNavigate('/before')}
+                    active={!isQuery && section === 'before'}
                     startIcon={<Applications />}
                 >
                     {translateSection.before}
@@ -72,10 +101,27 @@ const Content = ({ section }: ContentProps) => {
             </NavigationDrawer>
             <PageContainer>
                 <PageContent>
-                    {section === 'all' && <All />}
-                    {section === 'today' && <Today />}
-                    {section === 'yesterday' && <Yesterday />}
-                    {section === 'lastWeek' && <LastWeek />}
+                    {isQuery ? <ListView
+                        title={translateSection.search.title}
+                        filter={({ title, url }) => includes(title, query, true) || includes(url, query, true)}
+                    /> : <Fragment>
+                        {section === 'all' && <ListView title={translateSection.all} />}
+                        {section === 'today' && <ListView
+                            title={translateSection.today}
+                            filter={({ updatedAt }) => isToday(updatedAt)}
+                        />}
+                        {section === 'yesterday' && <ListView
+                            title={translateSection.yesterday}
+                            filter={({ updatedAt }) => isYesterday(updatedAt)}
+                        />}
+                        {section === 'lastWeek' && <ListView
+                            title={translateSection.lastWeek}
+                            filter={({ updatedAt }) => isWithinInterval(updatedAt, {
+                                start: lastWeekStart,
+                                end: lastWeekEnd
+                            })}
+                        />}
+                    </Fragment>}
                 </PageContent>
             </PageContainer>
         </Page>

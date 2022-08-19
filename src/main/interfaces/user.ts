@@ -1,13 +1,13 @@
 import { ElectronBlocker } from '@cliqz/adblocker-electron';
 import Datastore from '@seald-io/nedb';
-import { Extension, Session } from 'electron';
+import { DownloadItem, Extension, Session } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions-production';
 import {
     BookmarkData,
     ContentType,
+    DataGroup,
     DownloadData,
     HistoryData,
-    HistoryGroup,
     OmitData,
     SiteContentCookieData,
     SiteContentData,
@@ -52,6 +52,8 @@ export interface ISession {
 
     readonly user: IUser;
 
+    downloadItems: Map<string, DownloadItem>;
+
     get session(): Session;
 
     get extensions(): ElectronChromeExtensions;
@@ -63,15 +65,15 @@ export interface IBookmarks {
 
     get datastore(): Datastore;
 
-    get bookmarks(): BookmarkData[];
+    get bookmarks(): Required<BookmarkData>[];
 
-    get folders(): BookmarkData[];
+    get folders(): Required<BookmarkData>[];
 
-    add(data: OmitData<BookmarkData>): Promise<BookmarkData>;
+    add(data: OmitData<BookmarkData>): Promise<Required<BookmarkData>>;
 
     remove(id: string): Promise<boolean>;
 
-    update(id: string, data: OmitData<BookmarkData>): Promise<BookmarkData>;
+    update(id: string, data: OmitData<BookmarkData>): Promise<Required<BookmarkData>>;
 }
 
 export interface IHistory {
@@ -80,11 +82,11 @@ export interface IHistory {
 
     get datastore(): Datastore;
 
-    get history(): HistoryData[];
+    get history(): Required<HistoryData>[];
 
-    get historyGroups(): HistoryGroup[];
+    get historyGroups(): DataGroup<Required<HistoryData>>[];
 
-    add(data: OmitData<HistoryData>): Promise<HistoryData>;
+    add(data: OmitData<HistoryData>): Promise<Required<HistoryData>>;
 
     remove(id: string): Promise<boolean>;
 }
@@ -96,6 +98,8 @@ export interface IDownloads {
     get datastore(): Datastore;
 
     get downloads(): Required<DownloadData>[];
+
+    get downloadGroups(): DataGroup<Required<DownloadData>>[];
 
     add(data: OmitData<DownloadData>): Promise<Required<DownloadData>>;
 

@@ -326,14 +326,40 @@ export interface Language {
             lastWeek: string;
             before: string;
 
+            search: {
+                title: string;
+                placeholder: string;
+            }
+
             notFound: string;
         };
         downloads: {
             title: string;
 
+            all: string;
+            images: string;
+            videos: string;
+            audios: string;
+
+            search: {
+                title: string;
+                placeholder: string;
+            }
+
+            openFile: string;
+            openFolder: string;
+            pause: string;
+            resume: string;
+            retry: string;
+
             notFound: string;
         };
         applications: {
+            title: string;
+
+            notFound: string;
+        };
+        extensions: {
             title: string;
 
             notFound: string;

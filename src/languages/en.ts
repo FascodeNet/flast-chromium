@@ -407,16 +407,37 @@ export const En: Language = {
         history: {
             title: 'History',
 
-            all: 'All',
+            all: 'All history',
             today: 'Today',
             yesterday: 'Yesterday',
             lastWeek: 'Last week',
             before: 'Before',
 
+            search: {
+                title: 'Search Results',
+                placeholder: 'Search History'
+            },
+
             notFound: 'No pages were viewed during this period.'
         },
         downloads: {
             title: 'Downloads',
+
+            all: 'All files',
+            images: 'Images',
+            videos: 'Videos',
+            audios: 'Audios',
+
+            search: {
+                title: 'Search Results',
+                placeholder: 'Search Files'
+            },
+
+            openFile: 'Open',
+            openFolder: 'Open folder',
+            pause: 'Pause',
+            resume: 'Resume',
+            retry: 'Retry',
 
             notFound: 'There are no downloaded items.'
         },
@@ -424,6 +445,11 @@ export const En: Language = {
             title: 'Applications',
 
             notFound: 'There is no application installed.'
+        },
+        extensions: {
+            title: 'Extensions',
+
+            notFound: 'There are no extensions added.'
         },
         settings: {
             title: 'Settings',

@@ -62,12 +62,12 @@ export const ItemIcon = ({ icon }: ItemIconProps) => icon ? (
 
 export const ItemFavicon = styled(
     Box,
-    { shouldForwardProp: (prop) => prop !== 'src' }
-)<{ src?: string; }>(({ src }) => ({
-    width: 24,
-    minWidth: 24,
-    height: 24,
-    minHeight: 24,
+    { shouldForwardProp: (prop) => prop !== 'src' && prop !== 'size' }
+)<{ src?: string; size?: string | number; }>(({ src, size }) => ({
+    width: size ?? 24,
+    minWidth: size ?? 24,
+    height: size ?? 24,
+    minHeight: size ?? 24,
     backgroundImage: src ? `url('${src}')` : 'unset',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',

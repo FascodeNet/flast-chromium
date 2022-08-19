@@ -403,21 +403,42 @@ export const Ja: Language = {
             rename: '名前を変更',
             move: '移動',
 
-            notFound: 'この場所に登録されているブックマークがありません。'
+            notFound: 'この場所に登録されているブックマークはありません。'
         },
         history: {
             title: '履歴',
 
-            all: 'すべて',
+            all: 'すべての履歴',
             today: '今日',
             yesterday: '昨日',
             lastWeek: '先週',
             before: 'さらに前',
 
+            search: {
+                title: '検索結果',
+                placeholder: '履歴を検索'
+            },
+
             notFound: 'この期間に閲覧したページはありません。'
         },
         downloads: {
             title: 'ダウンロード',
+
+            all: 'すべてのファイル',
+            images: '画像',
+            videos: '動画',
+            audios: '音声',
+
+            search: {
+                title: '検索結果',
+                placeholder: 'ファイルを検索'
+            },
+
+            openFile: '開く',
+            openFolder: 'フォルダを開く',
+            pause: '一時停止',
+            resume: '再開',
+            retry: '再試行',
 
             notFound: 'ダウンロードしたファイルがありません。'
         },
@@ -425,6 +446,11 @@ export const Ja: Language = {
             title: 'アプリケーション',
 
             notFound: 'インストールしたアプリケーションがありません。'
+        },
+        extensions: {
+            title: '拡張機能',
+
+            notFound: '追加した拡張機能がありません。'
         },
         settings: {
             title: '設定',

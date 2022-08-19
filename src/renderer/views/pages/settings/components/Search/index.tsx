@@ -18,9 +18,7 @@ import { DefaultUserConfig, SearchEngine, UserConfig } from '../../../../../../i
 import { DeepPartial } from '../../../../../../utils';
 import { isURL } from '../../../../../../utils/url';
 import { Code } from '../../../../../components/Code';
-import { Bookmarks, History } from '../../../../../components/Icons';
-import { Save } from '../../../../../components/Icons/object';
-import { Add, Edit, Remove } from '../../../../../components/Icons/state';
+import { Add, Bookmarks, Edit, History, Remove, Save } from '../../../../../components/Icons';
 import {
     ItemContainer,
     ItemFavicon,

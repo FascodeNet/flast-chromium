@@ -1,4 +1,4 @@
-import { app, Session as ElectronSession, session } from 'electron';
+import { app, DownloadItem, Session as ElectronSession, session } from 'electron';
 import { ElectronChromeExtensions } from 'electron-chrome-extensions-production';
 import { join } from 'path';
 import { ISession, IUser } from '../../interfaces/user';
@@ -13,6 +13,8 @@ export class NormalSession implements ISession {
 
     private readonly _session: ElectronSession;
     private readonly _extensions: ElectronChromeExtensions;
+
+    public downloadItems = new Map<string, DownloadItem>();
 
     public constructor(user: IUser) {
         this.user = user;

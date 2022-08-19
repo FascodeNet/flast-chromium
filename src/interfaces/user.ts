@@ -1,4 +1,3 @@
-import { NativeImage } from 'electron';
 import { PermissionType } from '../main/session/permission';
 import { ZoomLevel } from './view';
 
@@ -352,26 +351,17 @@ export interface HistoryData extends IData {
     favicon?: string;
 }
 
-export interface HistoryGroup {
-    date: Date;
-    formatDate: string;
-    history: Required<HistoryData>[];
-}
-
 export interface DownloadData extends IData {
     name?: string;
-    path?: string;
     url?: string;
+    path?: string;
+    icon?: string;
     mimeType?: string;
     totalBytes?: number;
     receivedBytes?: number;
     isPaused?: boolean;
     canResume?: boolean;
     state?: 'progressing' | 'completed' | 'cancelled' | 'interrupted';
-}
-
-export interface NativeDownloadData extends Required<DownloadData> {
-    icon?: NativeImage;
 }
 
 export interface SiteData extends IData {
@@ -402,6 +392,12 @@ export interface SiteContentZoomLevelData extends SiteData {
     kind?: 'content';
     type?: 'zoom_level';
     level?: ZoomLevel;
+}
+
+export interface DataGroup<T extends IData> {
+    date: Date;
+    formatDate: string;
+    list: T[];
 }
 
 export type OmitData<T extends IData> = Omit<T, '_id' | 'updatedAt' | 'createdAt'>;

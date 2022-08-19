@@ -140,7 +140,10 @@ export const HorizontalTab = (
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
             {!isPinned && <Fragment>
                 <StyledTabTitle className="horizontal-tab-item-title">{title}</StyledTabTitle>
-                <StyledTabCloseButton className="horizontal-tab-item-close-button" onClick={() => viewsApi.remove(id)}>
+                <StyledTabCloseButton
+                    onClick={() => viewsApi.remove(id)}
+                    className={clsx('button', 'horizontal-tab-item-close-button')}
+                >
                     <Remove />
                 </StyledTabCloseButton>
             </Fragment>}
@@ -202,10 +205,12 @@ export const VerticalTab = (
         >
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}
             {extended && <StyledTabTitle className="vertical-tab-item-title">{title}</StyledTabTitle>}
-            {!isPinned &&
-                <StyledTabCloseButton className="vertical-tab-item-close-button" onClick={() => viewsApi.remove(id)}>
-                    <Remove />
-                </StyledTabCloseButton>}
+            {!isPinned && <StyledTabCloseButton
+                onClick={() => viewsApi.remove(id)}
+                className={clsx('button', 'vertical-tab-item-close-button')}
+            >
+                <Remove />
+            </StyledTabCloseButton>}
         </StyledVerticalTab>
     );
 };

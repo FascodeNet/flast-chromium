@@ -5,10 +5,9 @@ import { useEffect, useState } from 'react';
 import { IPCChannel } from '../../constants/ipc';
 import {
     BookmarkData,
+    DataGroup,
     DownloadData,
     HistoryData,
-    HistoryGroup,
-    NativeDownloadData,
     OmitData,
     UserConfig,
     UserType
@@ -96,11 +95,11 @@ const findApi = {
 } as const;
 
 const bookmarksApi = {
-    list: (userId: string): Promise<BookmarkData[]> => {
+    list: (userId: string): Promise<Required<BookmarkData>[]> => {
         if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.Bookmarks.LIST(userId));
     },
-    add: (userId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
+    add: (userId: string, data: OmitData<BookmarkData>): Promise<Required<BookmarkData>> => {
         if (!userId || !data) return Promise.reject();
         return ipcRenderer.invoke(IPCChannel.Bookmarks.ADD(userId), data);
     },
@@ -108,22 +107,22 @@ const bookmarksApi = {
         if (!userId || !bookmarkId) return Promise.resolve(false);
         return ipcRenderer.invoke(IPCChannel.Bookmarks.REMOVE(userId), bookmarkId);
     },
-    update: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<BookmarkData> => {
+    update: (userId: string, bookmarkId: string, data: OmitData<BookmarkData>): Promise<Required<BookmarkData>> => {
         if (!userId || !bookmarkId || !data) return Promise.reject();
         return ipcRenderer.invoke(IPCChannel.Bookmarks.UPDATE(userId), bookmarkId, data);
     }
 } as const;
 
 const historyApi = {
-    list: (userId: string): Promise<HistoryData[]> => {
+    list: (userId: string): Promise<Required<HistoryData>[]> => {
         if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.History.LIST(userId));
     },
-    listGroups: (userId: string): Promise<HistoryGroup[]> => {
+    listGroups: (userId: string): Promise<DataGroup<Required<HistoryData>>[]> => {
         if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.History.LIST_GROUPS(userId));
     },
-    add: (userId: string, data: OmitData<HistoryData>): Promise<HistoryData> => {
+    add: (userId: string, data: OmitData<HistoryData>): Promise<Required<HistoryData>> => {
         if (!userId || !data) return Promise.reject();
         return ipcRenderer.invoke(IPCChannel.History.ADD(userId), data);
     },
@@ -138,21 +137,34 @@ const downloadsApi = {
         if (!userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.Downloads.LIST(userId));
     },
-    listWithFileIcon: (userId: string): Promise<NativeDownloadData[]> => {
+    listGroups: (userId: string): Promise<DataGroup<Required<DownloadData>>[]> => {
         if (!userId) return Promise.resolve([]);
-        return ipcRenderer.invoke(IPCChannel.Downloads.LIST_WITH_FILE_ICON(userId));
+        return ipcRenderer.invoke(IPCChannel.Downloads.LIST_GROUPS(userId));
     },
-    pause: (downloadId: string): Promise<void> => {
-        if (!downloadId) return Promise.resolve();
-        return ipcRenderer.invoke(IPCChannel.Downloads.PAUSE(downloadId));
+
+    openFile: (userId: string, downloadId: string): Promise<void> => {
+        if (!userId || !downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.OPEN_FILE(userId), downloadId);
     },
-    resume: (downloadId: string): Promise<void> => {
-        if (!downloadId) return Promise.resolve();
-        return ipcRenderer.invoke(IPCChannel.Downloads.RESUME(downloadId));
+    openFolder: (userId: string, downloadId: string): Promise<void> => {
+        if (!userId || !downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.OPEN_FOLDER(userId), downloadId);
     },
-    cancel: (downloadId: string): Promise<void> => {
-        if (!downloadId) return Promise.resolve();
-        return ipcRenderer.invoke(IPCChannel.Downloads.CANCEL(downloadId));
+    pause: (userId: string, downloadId: string): Promise<void> => {
+        if (!userId || !downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.PAUSE(userId), downloadId);
+    },
+    resume: (userId: string, downloadId: string): Promise<void> => {
+        if (!userId || !downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.RESUME(userId), downloadId);
+    },
+    cancel: (userId: string, downloadId: string): Promise<void> => {
+        if (!userId || !downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.CANCEL(userId), downloadId);
+    },
+    retry: (userId: string, downloadId: string): Promise<void> => {
+        if (!userId || !downloadId) return Promise.resolve();
+        return ipcRenderer.invoke(IPCChannel.Downloads.RETRY(userId), downloadId);
     }
 } as const;
 

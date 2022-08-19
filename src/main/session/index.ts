@@ -11,11 +11,10 @@ export const setUserAgent = (session: Session) => session.setUserAgent(
 
 export const setWebRequest = (session: Session, user: IUser) => {
     session.webRequest.onBeforeSendHeaders((details, callback) => {
-        if (!user.settings.config.privacy_security.send_dnt_request)
-            return callback(details);
+        if (user.settings.config.privacy_security.send_dnt_request)
+            details.requestHeaders.DNT = '1';
 
-        details.requestHeaders.DNT = '1';
-        return callback({ ...details, requestHeaders: details.requestHeaders });
+        return callback({ requestHeaders: details.requestHeaders });
     });
 };
 

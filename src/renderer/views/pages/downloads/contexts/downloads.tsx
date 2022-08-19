@@ -1,12 +1,14 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { NativeDownloadData } from '../../../../../interfaces/user';
+import { DataGroup, DownloadData } from '../../../../../interfaces/user';
 
 export interface DownloadsProps {
-    downloads: NativeDownloadData[];
+    downloads: Required<DownloadData>[];
+    downloadGroups: DataGroup<Required<DownloadData>>[];
 }
 
 export const DownloadsContext = createContext<DownloadsProps>({
-    downloads: []
+    downloads: [],
+    downloadGroups: []
 });
 
 export const useDownloadsContext = () => useContext(DownloadsContext);
@@ -20,20 +22,24 @@ export const DownloadsProvider = ({ children }: DownloadsProviderProps) => {
 
     const [userId, setUserId] = useState('');
 
-    const [downloads, setDownloads] = useState<NativeDownloadData[]>(context.downloads);
+    const [downloads, setDownloads] = useState<Required<DownloadData>[]>(context.downloads);
+    const [downloadGroups, setDownloadGroups] = useState<DataGroup<Required<DownloadData>>[]>(context.downloadGroups);
 
     useEffect(() => {
         window.flast.getUser().then(async (id) => {
             if (!id) return;
             setUserId(id);
 
-            const downloadDataList = await window.flast.getDownloadsWithFileIcon(id);
+            const downloadDataList = await window.flast.downloads.list(id);
             setDownloads(downloadDataList);
+
+            const downloadGroupList = await window.flast.downloads.listGroups(id);
+            setDownloadGroups(downloadGroupList);
         });
     }, []);
 
 
-    const value: DownloadsProps = { downloads };
+    const value: DownloadsProps = { downloads, downloadGroups };
 
     return (
         <DownloadsContext.Provider value={value}>

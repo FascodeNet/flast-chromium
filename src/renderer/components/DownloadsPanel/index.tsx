@@ -5,10 +5,11 @@ import filesize from 'filesize';
 import React, { Fragment, useEffect, useState } from 'react';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_DOWNLOADS } from '../../../constants';
 import { IPCChannel } from '../../../constants/ipc';
-import { NativeDownloadData } from '../../../interfaces/user';
+import { DownloadData } from '../../../interfaces/user';
 import { getTranslate } from '../../../languages/language';
 import { useUserConfigContext } from '../../contexts/config';
 import { useElectronAPI } from '../../utils/electron';
+import { ExternalLink, Remove } from '../Icons';
 import { PanelOpenButton, PanelProps } from '../Panel';
 import { StyledPanel, StyledPanelContainer, StyledPanelHeader, StyledPanelTitle } from '../Panel/styles';
 import {
@@ -22,20 +23,20 @@ import {
 } from './styles';
 
 interface ItemProps {
-    data: NativeDownloadData;
+    data: Required<DownloadData>;
 }
 
 const Item = ({ data }: ItemProps) => {
     const { downloadsApi, getCurrentUserId } = useElectronAPI();
 
-    const { config } = useUserConfigContext();
+    const { userId, config } = useUserConfigContext();
     const translate = getTranslate(config);
     const translateSection = translate.pages.downloads;
 
     const [download, setDownload] = useState(data);
 
     useEffect(() => {
-        ipcRenderer.on(IPCChannel.Downloads.UPDATED(data._id), (e, downloadData: NativeDownloadData) => {
+        ipcRenderer.on(IPCChannel.Downloads.UPDATED(data._id), (e, downloadData: Required<DownloadData>) => {
             setDownload(downloadData);
         });
 
@@ -44,29 +45,40 @@ const Item = ({ data }: ItemProps) => {
         };
     }, []);
 
-    const handlePauseClick = () => downloadsApi.pause(download._id);
-    const handleResumeClick = () => downloadsApi.resume(download._id);
-    const handleCancelClick = () => downloadsApi.cancel(download._id);
+    const handlePauseClick = () => downloadsApi.pause(userId, download._id);
+    const handleResumeClick = () => downloadsApi.resume(userId, download._id);
+    const handleCancelClick = () => downloadsApi.cancel(userId, download._id);
 
     return (
         <DownloadItem>
             <DownloadItemIconContainer>
-                <DownloadItemIcon src={download.icon?.toDataURL()} />
+                <DownloadItemIcon src={download.icon} />
             </DownloadItemIconContainer>
             <DownloadItemContent>
                 <DownloadItemTitle sx={{ textDecoration: download.state === 'cancelled' ? 'line-through' : 'none' }}>
                     {download.name}
                 </DownloadItemTitle>
-                {download.state === 'progressing' ? <Fragment>
+                {download.state === 'progressing' && <Fragment>
                     <LinearProgress
                         value={(download.receivedBytes / download.totalBytes) * 100}
                         variant={download.totalBytes > 0 ? 'determinate' : 'indeterminate'}
                         sx={{ width: '100%', height: 2 }}
                     />
                     <DownloadItemText>
-                        {filesize(download.receivedBytes)}{download.totalBytes > 0 && ` / ${filesize(download.totalBytes)}`}
+                        {download.totalBytes > 0 && `${Math.round((download.receivedBytes / download.totalBytes) * 100)}% - `}{filesize(download.receivedBytes)}{download.totalBytes > 0 && ` / ${filesize(download.totalBytes)}`}
                     </DownloadItemText>
-                    <DownloadItemButtonContainer>
+                </Fragment>}
+                <DownloadItemButtonContainer>
+                    {download.state === 'completed' && <Button
+                        onClick={() => shell.openPath(download.path)}
+                        startIcon={<ExternalLink />}
+                        size="small"
+                        variant="contained"
+                        disableElevation
+                    >
+                        開く
+                    </Button>}
+                    {download.state === 'progressing' && <Fragment>
                         <Button
                             onClick={download.isPaused ? handleResumeClick : handlePauseClick}
                             size="small"
@@ -75,18 +87,17 @@ const Item = ({ data }: ItemProps) => {
                         >
                             {download.isPaused ? '再開' : '一時停止'}
                         </Button>
-                        <Button onClick={handleCancelClick} size="small">{translate.common.cancel}</Button>
-                    </DownloadItemButtonContainer>
-                </Fragment> : <DownloadItemButtonContainer>
-                    <Button
-                        onClick={() => shell.openPath(download.path)}
-                        size="small"
-                        variant="contained"
-                        disableElevation
-                    >
-                        開く
-                    </Button>
-                </DownloadItemButtonContainer>}
+                        <Button
+                            onClick={handleCancelClick}
+                            startIcon={<Remove />}
+                            size="small"
+                        >
+                            {translate.common.cancel}
+                        </Button>
+                    </Fragment>}
+                    {download.state === 'interrupted' && <Button size="small">再開</Button>}
+                    {download.state === 'cancelled' && <Button size="small">再試行</Button>}
+                </DownloadItemButtonContainer>
             </DownloadItemContent>
         </DownloadItem>
     );
@@ -96,7 +107,7 @@ export const DownloadsPanel = ({ type }: PanelProps) => {
     const { downloadsApi, getCurrentUserId } = useElectronAPI();
 
     const [userId, setUserId] = useState('');
-    const [downloads, setDownloads] = useState<NativeDownloadData[]>([]);
+    const [downloads, setDownloads] = useState<Required<DownloadData>[]>([]);
 
     const { config } = useUserConfigContext();
     const translate = getTranslate(config);
@@ -107,7 +118,7 @@ export const DownloadsPanel = ({ type }: PanelProps) => {
             if (!id) return;
             setUserId(id);
 
-            const downloadDataList = await downloadsApi.listWithFileIcon(id);
+            const downloadDataList = await downloadsApi.list(id);
             setDownloads(downloadDataList);
         });
     }, []);

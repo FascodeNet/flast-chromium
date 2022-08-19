@@ -1,7 +1,7 @@
 import Datastore from '@seald-io/nedb';
 import { ipcMain } from 'electron';
 import { IPCChannel } from '../../../constants/ipc';
-import { HistoryData, HistoryGroup, OmitData } from '../../../interfaces/user';
+import { DataGroup, HistoryData, OmitData } from '../../../interfaces/user';
 import { IHistory, IUser } from '../../interfaces/user';
 import { NormalUser } from '../normal';
 
@@ -32,12 +32,12 @@ export class IncognitoHistory implements IHistory {
         throw new Error('This user is not allowed to use history!');
     }
 
-    public get history(): HistoryData[] {
+    public get history(): Required<HistoryData>[] {
         // throw new Error('This user is not allowed to use history!');
         return [];
     }
 
-    public get historyGroups(): HistoryGroup[] {
+    public get historyGroups(): DataGroup<Required<HistoryData>>[] {
         return [];
     }
 

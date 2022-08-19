@@ -10,7 +10,7 @@ export class NormalBookmarks implements IBookmarks {
     public readonly user: IUser;
 
     private readonly _datastore: Datastore;
-    private _bookmarks: BookmarkData[] = [];
+    private _bookmarks: Required<BookmarkData>[] = [];
 
     private readonly ipcChannel = IPCChannel.Bookmarks;
 
@@ -23,7 +23,7 @@ export class NormalBookmarks implements IBookmarks {
             timestampData: true
         });
 
-        this._datastore.find({}, {}, (err, docs) => {
+        this._datastore.find({}, {}, (err, docs: Required<BookmarkData>[]) => {
             if (err) throw new Error('The data could not be read!');
             this._bookmarks = docs;
         });
@@ -55,7 +55,7 @@ export class NormalBookmarks implements IBookmarks {
     }
 
     public async add(data: OmitData<BookmarkData>) {
-        const doc: BookmarkData = await this._datastore.insertAsync(data);
+        const doc = await this._datastore.insertAsync(data) as Required<BookmarkData>;
         this._bookmarks.push(doc);
         return doc;
     }
@@ -84,7 +84,7 @@ export class NormalBookmarks implements IBookmarks {
     }
 
     public async update(id: string, data: OmitData<BookmarkData>) {
-        const doc: BookmarkData = (await this._datastore.updateAsync(
+        const doc: Required<BookmarkData> = (await this._datastore.updateAsync(
             { _id: id },
             { $set: data },
             {

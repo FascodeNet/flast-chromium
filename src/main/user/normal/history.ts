@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { ipcMain } from 'electron';
 import { APPLICATION_PROTOCOL } from '../../../constants';
 import { IPCChannel } from '../../../constants/ipc';
-import { HistoryData, HistoryGroup, OmitData } from '../../../interfaces/user';
+import { DataGroup, HistoryData, OmitData } from '../../../interfaces/user';
 import { getUserDataPath } from '../../../utils/path';
 import { IHistory, IUser } from '../../interfaces/user';
 
@@ -12,7 +12,7 @@ export class NormalHistory implements IHistory {
     public readonly user: IUser;
 
     private readonly _datastore: Datastore;
-    private _history: HistoryData[] = [];
+    private _history: Required<HistoryData>[] = [];
 
     private readonly ipcChannel = IPCChannel.History;
 
@@ -25,7 +25,7 @@ export class NormalHistory implements IHistory {
             timestampData: true
         });
 
-        this._datastore.find({}, {}, (err, docs) => {
+        this._datastore.find({}, {}, (err, docs: Required<HistoryData>[]) => {
             if (err) throw new Error('The data could not be read!');
             this._history = docs;
         });
@@ -49,12 +49,12 @@ export class NormalHistory implements IHistory {
     }
 
     public get history() {
-        return this._history.sort((a, b) => a.updatedAt!! < b.updatedAt!! ? 1 : -1);
+        return this._history.sort((a, b) => a.updatedAt < b.updatedAt ? 1 : -1);
     }
 
     public get historyGroups() {
         const predicate = (
-            historyGroup: HistoryGroup,
+            historyGroup: DataGroup<Required<HistoryData>>,
             date: Date
         ) => {
             return historyGroup.date.getFullYear() === date.getFullYear()
@@ -62,10 +62,10 @@ export class NormalHistory implements IHistory {
                 && historyGroup.date.getDate() === date.getDate();
         };
 
-        const historyGroups: HistoryGroup[] = [];
+        const historyGroups: DataGroup<Required<HistoryData>>[] = [];
 
         this.history.forEach((historyData) => {
-            const date = new Date(historyData.updatedAt!!);
+            const date = new Date(historyData.updatedAt);
             const object = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
             const historyGroup = historyGroups.find((data) => predicate(data, object));
@@ -74,20 +74,20 @@ export class NormalHistory implements IHistory {
             if (historyGroup) {
                 historyGroups[historyGroupIndex] = {
                     ...historyGroup,
-                    history: [...historyGroup.history, historyData as Required<HistoryData>]
+                    list: [...historyGroup.list, historyData]
                 };
             } else {
                 historyGroups.push(
                     {
                         date: object,
                         formatDate: format(object, 'yyyy/MM/dd'),
-                        history: [historyData as Required<HistoryData>]
+                        list: [historyData]
                     }
                 );
             }
         });
 
-        return historyGroups;
+        return historyGroups.sort((a, b) => a.date < b.date ? 1 : -1);
     }
 
     public async add(data: OmitData<HistoryData>) {
@@ -107,7 +107,7 @@ export class NormalHistory implements IHistory {
                 return Promise.reject();
         }
 
-        const doc: HistoryData = (await this._datastore.updateAsync(
+        const doc: Required<HistoryData> = (await this._datastore.updateAsync(
             {
                 $where() {
                     return this.url === data.url && isToday(this.createdAt);

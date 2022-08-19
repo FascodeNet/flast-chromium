@@ -40,7 +40,7 @@ export const BookmarksProvider = ({ children }: BookmarksProviderProps) => {
             setUserId(id);
 
             try {
-                const bookmarkDataList = await window.flast.getBookmarks(id);
+                const bookmarkDataList = await window.flast.bookmarks.list(id);
                 setBookmarks(bookmarkDataList);
             } catch (e) {
                 return;
@@ -50,7 +50,7 @@ export const BookmarksProvider = ({ children }: BookmarksProviderProps) => {
 
     const addBookmark = async (data: OmitData<BookmarkData>) => {
         try {
-            await window.flast.addBookmark(userId, data);
+            await window.flast.bookmarks.add(userId, data);
             await reloadBookmarks();
         } catch (e) {
             return;
@@ -58,14 +58,14 @@ export const BookmarksProvider = ({ children }: BookmarksProviderProps) => {
     };
 
     const removeBookmark = async (id: string) => {
-        const result = await window.flast.removeBookmark(userId, id);
+        const result = await window.flast.bookmarks.remove(userId, id);
         if (result)
             await reloadBookmarks();
     };
 
     const updateBookmark = async (id: string, data: OmitData<BookmarkData>) => {
         try {
-            const result = await window.flast.updateBookmark(userId, id, data);
+            const result = await window.flast.bookmarks.update(userId, id, data);
             if (result)
                 await reloadBookmarks();
         } catch (e) {
@@ -75,7 +75,7 @@ export const BookmarksProvider = ({ children }: BookmarksProviderProps) => {
 
     const reloadBookmarks = async () => {
         try {
-            const bookmarkDataList = await window.flast.getBookmarks(userId);
+            const bookmarkDataList = await window.flast.bookmarks.list(userId);
             setBookmarks(bookmarkDataList);
         } catch (e) {
             return;

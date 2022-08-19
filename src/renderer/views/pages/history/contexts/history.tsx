@@ -1,15 +1,9 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { HistoryData, HistoryGroup } from '../../../../../interfaces/user';
-
-export const predicateHistory = (
-    historyGroup: HistoryGroup,
-    date: Date
-) => historyGroup.date.getFullYear() === date.getFullYear() && historyGroup.date.getMonth() === date.getMonth() && historyGroup.date.getDate() === date.getDate();
-
+import { DataGroup, HistoryData } from '../../../../../interfaces/user';
 
 export interface HistoryProps {
-    history: HistoryData[];
-    historyGroups: HistoryGroup[];
+    history: Required<HistoryData>[];
+    historyGroups: DataGroup<Required<HistoryData>>[];
 }
 
 export const HistoryContext = createContext<HistoryProps>({
@@ -28,23 +22,19 @@ export const HistoryProvider = ({ children }: HistoryProviderProps) => {
 
     const [userId, setUserId] = useState('');
 
-    const [history, setHistory] = useState<HistoryData[]>(context.history);
-    const [historyGroups, setHistoryGroups] = useState<HistoryGroup[]>(context.historyGroups);
+    const [history, setHistory] = useState<Required<HistoryData>[]>(context.history);
+    const [historyGroups, setHistoryGroups] = useState<DataGroup<Required<HistoryData>>[]>(context.historyGroups);
 
     useEffect(() => {
         window.flast.getUser().then(async (id) => {
             if (!id) return;
             setUserId(id);
 
-            try {
-                const historyDataList = await window.flast.getHistory(id);
-                setHistory(historyDataList);
+            const historyDataList = await window.flast.history.list(id);
+            setHistory(historyDataList);
 
-                const historyGroupList = await window.flast.getHistoryGroups(id);
-                setHistoryGroups(historyGroupList);
-            } catch (e) {
-                return;
-            }
+            const historyGroupList = await window.flast.history.listGroups(id);
+            setHistoryGroups(historyGroupList);
         });
     }, []);
 

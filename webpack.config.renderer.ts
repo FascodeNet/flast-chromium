@@ -49,6 +49,7 @@ applyPageEntries(
         'history',
         'downloads',
         'applications',
+        'extensions',
         'settings'
     ]
 );

@@ -1,10 +1,11 @@
-import { app, ipcMain, Session, WebContents } from 'electron';
+import { app, Session, WebContents } from 'electron';
 import { readFile, rename, writeFile } from 'fs/promises';
 import { customAlphabet } from 'nanoid';
 import { join, resolve } from 'path';
+import { APPLICATION_PROTOCOL, APPLICATION_WEB_DOWNLOADS } from '../../constants';
 import { DIALOG_DOWNLOADS_NAME } from '../../constants/dialog';
 import { IPCChannel } from '../../constants/ipc';
-import { NativeDownloadData } from '../../interfaces/user';
+import { DownloadData } from '../../interfaces/user';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { NormalUser } from '../user/normal';
@@ -14,14 +15,20 @@ import { existsPath, extractZip } from '../utils/file';
 export const registerDownloadListener = (session: Session, user: IUser) => {
     const downloads = user.downloads;
 
-    const sendUpdatedData = (webContents: WebContents, data: NativeDownloadData) => {
+    const sendUpdatedData = (webContents: WebContents, data: Required<DownloadData>) => {
         const dynamicDialog = Main.dialogManager.getDynamic(DIALOG_DOWNLOADS_NAME);
         if (dynamicDialog) {
             dynamicDialog.webContents.send(IPCChannel.Downloads.UPDATED(data._id), data);
         } else {
             const window = Main.windowManager.getWindows(user).find((appWindow) => appWindow.viewManager.get(webContents.id));
             if (!window) return;
-            window.webContents.send(IPCChannel.Downloads.UPDATED(data._id), data);
+
+            const view = window.viewManager.views.find((appView) => appView.url.startsWith(`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_DOWNLOADS}`));
+            if (view) {
+                view.webContents.send(IPCChannel.Downloads.UPDATED(data._id), data);
+            } else {
+                window.webContents.send(IPCChannel.Downloads.UPDATED(data._id), data);
+            }
         }
     };
 
@@ -32,8 +39,8 @@ export const registerDownloadListener = (session: Session, user: IUser) => {
 
         const data = await downloads.add({
             name: item.getFilename(),
-            path: item.getSavePath(),
             url: item.getURL(),
+            path: item.getSavePath(),
             mimeType: item.getMimeType(),
             totalBytes: item.getTotalBytes(),
             receivedBytes: item.getReceivedBytes(),
@@ -42,9 +49,13 @@ export const registerDownloadListener = (session: Session, user: IUser) => {
             state: item.getState()
         });
 
+        user.session.downloadItems.set(data._id, item);
+
         item.on('updated', async (event, state) => {
+            const icon = await app.getFileIcon(item.getSavePath());
             const downloadData = await downloads.update(data._id, {
                 path: item.getSavePath(),
+                icon: icon.toDataURL(),
                 totalBytes: item.getTotalBytes(),
                 receivedBytes: item.getReceivedBytes(),
                 isPaused: item.isPaused(),
@@ -52,11 +63,15 @@ export const registerDownloadListener = (session: Session, user: IUser) => {
                 state
             });
 
-            sendUpdatedData(webContents, { ...downloadData, icon: await app.getFileIcon(item.getSavePath()) });
+            user.session.downloadItems.set(data._id, item);
+
+            sendUpdatedData(webContents, downloadData);
         });
         item.once('done', async (event, state) => {
+            const icon = await app.getFileIcon(item.getSavePath());
             const downloadData = await downloads.update(data._id, {
                 path: item.getSavePath(),
+                icon: icon.toDataURL(),
                 totalBytes: item.getTotalBytes(),
                 receivedBytes: item.getReceivedBytes(),
                 isPaused: item.isPaused(),
@@ -64,7 +79,9 @@ export const registerDownloadListener = (session: Session, user: IUser) => {
                 state
             });
 
-            sendUpdatedData(webContents, { ...downloadData, icon: await app.getFileIcon(item.getSavePath()) });
+            user.session.downloadItems.set(data._id, item);
+
+            sendUpdatedData(webContents, downloadData);
 
             if (state === 'completed' && user instanceof NormalUser && isExtension) {
                 const crxBuf = await readFile(item.getSavePath());
@@ -98,16 +115,6 @@ export const registerDownloadListener = (session: Session, user: IUser) => {
                     );
                 }
             }
-        });
-
-        ipcMain.handle(IPCChannel.Downloads.PAUSE(data._id), () => {
-            item.pause();
-        });
-        ipcMain.handle(IPCChannel.Downloads.RESUME(data._id), () => {
-            item.resume();
-        });
-        ipcMain.handle(IPCChannel.Downloads.CANCEL(data._id), () => {
-            item.cancel();
         });
     });
 };

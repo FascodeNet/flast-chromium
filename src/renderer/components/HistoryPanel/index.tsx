@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_HISTORY } from '../../../constants';
-import { HistoryData, HistoryGroup } from '../../../interfaces/user';
+import { DataGroup, HistoryData } from '../../../interfaces/user';
 import { getTranslate } from '../../../languages/language';
 import { useUserConfigContext } from '../../contexts/config';
 import { useElectronAPI } from '../../utils/electron';
@@ -19,7 +19,7 @@ export const HistoryPanel = ({ type }: PanelProps) => {
     const { historyApi, getCurrentUserId } = useElectronAPI();
 
     const [userId, setUserId] = useState('');
-    const [historyGroups, setHistoryGroups] = useState<HistoryGroup[]>([]);
+    const [historyGroups, setHistoryGroups] = useState<DataGroup<Required<HistoryData>>[]>([]);
 
     const { config } = useUserConfigContext();
     const translate = getTranslate(config);
@@ -42,10 +42,10 @@ export const HistoryPanel = ({ type }: PanelProps) => {
                 <PanelOpenButton url={`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HISTORY}`} type={type} />
             </StyledPanelHeader>
             <StyledPanelContainer className="panel-container">
-                {historyGroups.map(({ formatDate, history }) => (
+                {historyGroups.map(({ formatDate, list }) => (
                     <StyledHistoryGroup key={formatDate} className="history-group">
                         <h4>{formatDate}</h4>
-                        {history.map(({ _id, title, url, favicon, updatedAt }: HistoryData) => (
+                        {list.map(({ _id, title, url, favicon, updatedAt }: HistoryData) => (
                             <StyledHistoryItem key={_id} className="history-item" title={url}>
                                 <StyledHistoryItemFavicon className="history-item-favicon" favicon={favicon} />
                                 <StyledHistoryItemLabel className="history-item-label">

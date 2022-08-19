@@ -11,7 +11,7 @@ export class IncognitoBookmarks implements IBookmarks {
     public readonly user: IUser;
 
     private readonly _datastore: Datastore;
-    private _bookmarks: BookmarkData[] = [];
+    private _bookmarks: Required<BookmarkData>[] = [];
 
     private readonly ipcChannel = IPCChannel.Bookmarks;
 
@@ -24,7 +24,7 @@ export class IncognitoBookmarks implements IBookmarks {
             timestampData: true
         });
 
-        this._datastore.find({}, {}, (err, docs) => {
+        this._datastore.find({}, {}, (err, docs: Required<BookmarkData>[]) => {
             if (err) throw new Error('The data could not be read!');
             this._bookmarks = docs;
         });
@@ -56,18 +56,36 @@ export class IncognitoBookmarks implements IBookmarks {
     }
 
     public async add(data: OmitData<BookmarkData>) {
-        const doc: BookmarkData = await this._datastore.insertAsync(data);
+        const doc = await this._datastore.insertAsync(data) as Required<BookmarkData>;
         this._bookmarks.push(doc);
         return doc;
     }
 
     public async remove(id: string) {
+        const bookmark = this._bookmarks.find((data) => data._id === id);
+        if (!bookmark)
+            return false;
+
+        if (bookmark.isFolder)
+            await this.removeOf(id);
+
         this._bookmarks = this._bookmarks.filter((data) => data._id !== id);
         return await this._datastore.removeAsync({ _id: id }, {}) > 0;
     }
 
+    private async removeOf(id: string) {
+        const items = this._bookmarks.filter((data) => data.parent === id);
+        for (const item of items) {
+            this._bookmarks = this._bookmarks.filter((data) => data._id !== item._id);
+            await this._datastore.removeAsync({ _id: item._id }, {});
+
+            if (item.isFolder)
+                await this.removeOf(item._id!!);
+        }
+    }
+
     public async update(id: string, data: OmitData<BookmarkData>) {
-        const doc: BookmarkData = (await this._datastore.updateAsync(
+        const doc: Required<BookmarkData> = (await this._datastore.updateAsync(
             { _id: id },
             { $set: data },
             {
