@@ -1,0 +1,118 @@
+{
+  "appId": "net.fascode.flast",
+  "productName": "Flast",
+  "electronVersion": "20.0.3",
+  "generateUpdatesFilesForAllChannels": true,
+  "asar": true,
+  "directories": {
+    "output": "dist",
+    "buildResources": "static/icons/app"
+  },
+  "files": [
+    "package.json",
+    "build/**/*",
+    "static/**/*"
+  ],
+  "publish": "github",
+  "win": {
+    "icon": "static/icons/app/icon.ico",
+    "target": [
+      {
+        "target": "nsis-web",
+        "arch": [
+          "x64",
+          "ia32"
+        ]
+      },
+      {
+        "target": "zip",
+        "arch": [
+          "x64",
+          "ia32"
+        ]
+      }
+    ]
+  },
+  "nsis": {
+    "include": "static/installer.nsh",
+    "installerIcon": "static/icons/app/icon.ico",
+    "uninstallerIcon": "static/icons/app/icon.ico"
+  },
+  "mac": {
+    "category": "public.app-category.utilities",
+    "target": "default"
+  },
+  "linux": {
+    "category": "Network",
+    "target": [
+      {
+        "target": "AppImage",
+        "arch": [
+          "x64"
+        ]
+      },
+      {
+        "target": "deb",
+        "arch": [
+          "x64"
+        ]
+      },
+      {
+        "target": "rpm",
+        "arch": [
+          "x64"
+        ]
+      }
+    ]
+  },
+  "fileAssociations": [
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "htm"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "html"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "shtml"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "xht"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "xhtml"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "webp"
+    },
+    {
+      "name": "Document",
+      "description": "Flast HTML Document",
+      "role": "Viewer",
+      "ext": "svg"
+    },
+    {
+      "name": "Document",
+      "description": "Flast PDF Document",
+      "role": "Viewer",
+      "ext": "pdf"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "lib": [
+      "es2021",
+      "dom"
+    ],
+    "jsx": "react",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    // "noEmit": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    // "isolatedModules": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "typeRoots": [
+      "src/@types",
+      "node_modules/@types"
+    ],
+    "incremental": true
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "target": "es2015",
+      "module": "commonjs"
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
+}
