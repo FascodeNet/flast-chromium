@@ -146,9 +146,9 @@ export class App {
                     standard: true,
                     secure: true,
                     bypassCSP: true,
-                    supportFetchAPI: true,
                     allowServiceWorkers: true,
-                    corsEnabled: false
+                    supportFetchAPI: true,
+                    corsEnabled: true
                 }
             },
             { scheme: 'chrome-extension', privileges: { standard: true, secure: true, bypassCSP: true } }

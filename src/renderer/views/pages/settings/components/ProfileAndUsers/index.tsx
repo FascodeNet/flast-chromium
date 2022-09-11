@@ -4,10 +4,10 @@ import { nanoid } from 'nanoid';
 import React, { ChangeEvent, Fragment, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { APPLICATION_PROTOCOL, APPLICATION_RESOURCE_AVATAR } from '../../../../../../constants';
-import { DefaultUserConfig, UserConfig } from '../../../../../../interfaces/user';
+import { DefaultUserConfig, UserConfig, UserData } from '../../../../../../interfaces/user';
 import { DeepPartial } from '../../../../../../utils';
 import { Edit, Remove, Save } from '../../../../../components/Icons';
-import { PageTitle, Section, SectionContent } from '../../../../../components/Page';
+import { LinkItem, PageTitle, Section, SectionContent, SectionTitle } from '../../../../../components/Page';
 import { useTranslateContext } from '../../../../../contexts/translate';
 
 export const ProfileAndUsers = () => {
@@ -18,6 +18,8 @@ export const ProfileAndUsers = () => {
     const translateSection = translate.pages.settings.profileAndUsers;
 
     const { palette: { mode, grey }, typography } = useTheme();
+
+    const [users, setUsers] = useState<UserData[]>([]);
 
     const [editing, setEditing] = useState(false);
     const [name, setName] = useState(config.profile.name);
@@ -35,6 +37,8 @@ export const ProfileAndUsers = () => {
             setName(userConfig.profile.name);
             setAvatar(userConfig.profile.avatar ? `${APPLICATION_PROTOCOL}://${APPLICATION_RESOURCE_AVATAR}/${nanoid()}` : null);
         });
+
+        window.flast.users.list().then((userDataList) => setUsers(userDataList));
     }, []);
 
     const setUserConfig = async (userConfig: DeepPartial<UserConfig>) => {
@@ -161,7 +165,9 @@ export const ProfileAndUsers = () => {
                                     {translate.common.save}
                                 </Button>
                             </Fragment> : <Fragment>
-                                <Typography variant="h5" sx={{ fontWeight: 300 }}>{config.profile.name}</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 300, userSelect: 'none' }}>
+                                    {config.profile.name}
+                                </Typography>
                                 <Button
                                     onClick={handleEditClick}
                                     variant="contained"
@@ -173,6 +179,33 @@ export const ProfileAndUsers = () => {
                             </Fragment>}
                         </Box>
                     </Paper>
+                </SectionContent>
+            </Section>
+            <Section>
+                <SectionContent>
+                    <LinkItem
+                        primary={translateSection.accountAndSync.title}
+                        href="./account"
+                        route
+                    />
+                </SectionContent>
+            </Section>
+            <Section>
+                <SectionTitle>ほかのユーザー</SectionTitle>
+                <SectionContent>
+                    {users.filter((user) => user.id !== userId).map((user) => (
+                        <LinkItem
+                            key={user.id}
+                            icon={
+                                <Avatar
+                                    src={user.avatar ?? undefined}
+                                    sx={{ width: 32, height: 32 }}
+                                />
+                            }
+                            primary={user.name}
+                            href="#"
+                        />
+                    ))}
                 </SectionContent>
             </Section>
         </Fragment>

@@ -10,6 +10,7 @@ import { App, Main } from '../../main';
 import { registerDownloadListener } from '../../session/download';
 import { registerPermissionListener } from '../../session/permission';
 import { search } from '../../utils/search';
+import { NormalAccount } from './account';
 import { NormalAdBlocker } from './ad-blocker';
 import { NormalBookmarks } from './bookmarks';
 import { NormalDownloads } from './downloads';
@@ -39,6 +40,8 @@ export class NormalUser implements IUser {
     private readonly _adBlocker: NormalAdBlocker;
     private readonly _sites: NormalSites;
 
+    private readonly _account: NormalAccount;
+
     public constructor(id: string) {
         this.id = id;
 
@@ -56,6 +59,8 @@ export class NormalUser implements IUser {
 
         this._adBlocker = new NormalAdBlocker(this);
         this._sites = new NormalSites(this);
+
+        this._account = new NormalAccount(this, this._settings.config);
 
         registerPermissionListener(this._session.session, this);
         registerDownloadListener(this._session.session, this);
@@ -164,5 +169,9 @@ export class NormalUser implements IUser {
 
     public get sites() {
         return this._sites;
+    }
+
+    public get account() {
+        return this._account;
     }
 }

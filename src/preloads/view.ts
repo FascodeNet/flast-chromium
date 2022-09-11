@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { IBookmarksAPI, IDownloadsAPI, IFlastAPI, IHistoryAPI, IUserAPI } from '../@types/electron';
+import { IBookmarksAPI, IDownloadsAPI, IFlastAPI, IHistoryAPI, IUserAPI, IUsersAPI } from '../@types/electron';
 import { APPLICATION_PROTOCOL } from '../constants';
 import { IPCChannel } from '../constants/ipc';
 import {
@@ -37,7 +37,14 @@ export const togglePictureInPicture = async (index: number = 0) => {
 };
 
 
-const userApi: IUserAPI = {
+const users: IUsersAPI = {
+    list: () => {
+        if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
+        return ipcRenderer.invoke(IPCChannel.Users.LIST());
+    }
+} as const;
+
+const user: IUserAPI = {
     current: () => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:`) return Promise.reject();
         return ipcRenderer.invoke('get-user');
@@ -64,7 +71,7 @@ const userApi: IUserAPI = {
     }
 };
 
-const bookmarksApi: IBookmarksAPI = {
+const bookmarks: IBookmarksAPI = {
     list: (userId: string): Promise<Required<BookmarkData>[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.Bookmarks.LIST(userId));
@@ -83,7 +90,7 @@ const bookmarksApi: IBookmarksAPI = {
     }
 } as const;
 
-const historyApi: IHistoryAPI = {
+const history: IHistoryAPI = {
     list: (userId: string): Promise<Required<HistoryData>[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.History.LIST(userId));
@@ -94,7 +101,7 @@ const historyApi: IHistoryAPI = {
     }
 } as const;
 
-const downloadsApi: IDownloadsAPI = {
+const downloads: IDownloadsAPI = {
     list: (userId: string): Promise<Required<DownloadData>[]> => {
         if (window.location.protocol !== `${APPLICATION_PROTOCOL}:` || !userId) return Promise.resolve([]);
         return ipcRenderer.invoke(IPCChannel.Downloads.LIST(userId));
@@ -164,10 +171,11 @@ const api: IFlastAPI = {
         return ipcRenderer.invoke(`search-${userId}`, keyword);
     },
 
-    user: userApi,
-    bookmarks: bookmarksApi,
-    history: historyApi,
-    downloads: downloadsApi
+    users,
+    user,
+    bookmarks,
+    history,
+    downloads
 };
 
 contextBridge.exposeInMainWorld('flast', api);

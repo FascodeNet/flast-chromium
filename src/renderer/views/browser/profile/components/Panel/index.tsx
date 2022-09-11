@@ -42,7 +42,7 @@ export const Panel = () => {
                         }}
                     >
                         <Typography variant="body1">{config.profile.name}</Typography>
-                        <Typography variant="body2">example@example.com</Typography>
+                        {config.account && <Typography variant="body2">{config.account.email}</Typography>}
                     </Box>
                 </Box>
                 <Divider sx={{ my: 0 }} />
@@ -56,7 +56,7 @@ export const Panel = () => {
                     }}
                 >
                     {users.filter((user) => user.id !== userId).map((user) => (
-                        <PanelItem className="panel-item">
+                        <PanelItem key={user.id} className="panel-item">
                             <Avatar
                                 src={user.avatar ?? undefined}
                                 sx={{ width: 32, height: 32 }}

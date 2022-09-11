@@ -49,6 +49,11 @@ export type Language = 'ja' | 'en';
 
 export interface UserConfig {
     profile: UserProfile;
+    account: {
+        server: string | null;
+        email: string;
+        token: string;
+    } | null;
     privacy_security: {
         send_dnt_request: boolean;
         save_history: boolean;
@@ -129,6 +134,7 @@ export const DefaultUserConfig: UserConfig = {
         name: 'New user',
         avatar: null
     },
+    account: null,
     privacy_security: {
         send_dnt_request: false,
         save_history: true

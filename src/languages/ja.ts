@@ -458,7 +458,14 @@ export const Ja: Language = {
             title: '設定',
 
             profileAndUsers: {
-                title: 'プロファイルとユーザー'
+                title: 'プロファイルとユーザー',
+
+                accountAndSync: {
+                    title: 'アカウントと同期',
+
+                    login: 'ログイン',
+                    logout: 'ログアウト'
+                }
             },
             privacyAndSecurity: {
                 title: 'プライバシーとセキュリティ',

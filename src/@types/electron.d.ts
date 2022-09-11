@@ -6,11 +6,16 @@ import {
     HistoryData,
     OmitData,
     UserConfig,
+    UserData,
     UserProfile
 } from '../interfaces/user';
 import { Language } from '../languages/language';
 import { SearchResult } from '../main/utils/search';
 import { DeepPartial } from '../utils';
+
+export interface IUsersAPI {
+    list: () => Promise<UserData[]>;
+}
 
 export interface IUserAPI {
     current: () => Promise<string | undefined>;
@@ -58,6 +63,7 @@ export interface IFlastAPI {
 
     search: (userId: string, keyword: string) => Promise<SearchResult>;
 
+    users: IUsersAPI;
     user: IUserAPI;
     bookmarks: IBookmarksAPI;
     history: IHistoryAPI;

@@ -28,6 +28,7 @@ import { Download } from '../Download';
 import { Pages } from '../Pages';
 import { PrivacyAndSecurity } from '../PrivacyAndSecurity';
 import { ProfileAndUsers } from '../ProfileAndUsers';
+import { Account } from '../ProfileAndUsers/account';
 import { Search } from '../Search';
 import { Sites } from '../Sites';
 import { SitePermission } from '../Sites/permission';
@@ -35,6 +36,7 @@ import { SystemAndPerformance } from '../SystemAndPerformance';
 
 interface ContentProps {
     section: 'profileAndUsers'
+        | 'account'
         | 'privacyAndSecurity'
         | 'adBlocker'
         | 'appearance'
@@ -70,7 +72,7 @@ const Content = ({ section }: ContentProps) => {
             <NavigationDrawer title={translateSection.title}>
                 <StyledButton
                     onClick={() => navigate('/profiles')}
-                    active={section === 'profileAndUsers'}
+                    active={section === 'profileAndUsers' || section === 'account'}
                     startIcon={<SupervisorAccountOutlined />}
                 >
                     {translateSection.profileAndUsers.title}
@@ -135,6 +137,7 @@ const Content = ({ section }: ContentProps) => {
             <PageContainer>
                 <PageContent>
                     {section === 'profileAndUsers' && <ProfileAndUsers />}
+                    {section === 'account' && <Account />}
                     {section === 'privacyAndSecurity' && <PrivacyAndSecurity />}
                     {section === 'adBlocker' && <AdBlocker />}
                     {section === 'appearance' && <Appearance />}
@@ -186,7 +189,10 @@ export const App = () => {
                     <BrowserRouter>
                         <Routes>
                             <Route index element={<Navigate to="/profiles" replace />} />
-                            <Route path="profiles" element={<Content section="profileAndUsers" />} />
+                            <Route path="profiles">
+                                <Route index element={<Content section="profileAndUsers" />} />
+                                <Route path="account" element={<Content section="account" />} />
+                            </Route>
                             <Route path="privacy-security" element={<Content section="privacyAndSecurity" />} />
                             <Route path="ad-blocker" element={<Content section="adBlocker" />} />
                             <Route path="appearance" element={<Content section="appearance" />} />

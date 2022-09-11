@@ -457,7 +457,14 @@ export const En: Language = {
             title: 'Settings',
 
             profileAndUsers: {
-                title: 'Profile & Users'
+                title: 'Profile & Users',
+
+                accountAndSync: {
+                    title: 'Account & Sync',
+
+                    login: 'Log in',
+                    logout: 'Log out'
+                }
             },
             privacyAndSecurity: {
                 title: 'Privacy & Security',

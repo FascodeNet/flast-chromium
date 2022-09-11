@@ -371,6 +371,13 @@ export interface Language {
 
             profileAndUsers: {
                 title: string;
+
+                accountAndSync: {
+                    title: string;
+
+                    login: string;
+                    logout: string;
+                }
             };
             privacyAndSecurity: {
                 title: string;
