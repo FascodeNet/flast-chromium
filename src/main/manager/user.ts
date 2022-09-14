@@ -145,7 +145,7 @@ export class UserManager {
         });
 
         ipcMain.handle('get-user', (e) => {
-            const window = Main.windowManager.windows.find((appWindow) => appWindow.viewManager.get(e.sender.id));
+            const window = Main.windowManager.windows.find((appWindow) => appWindow.tabManager.get(e.sender.id));
             if (!window) return undefined;
 
             return window.user.id;

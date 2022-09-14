@@ -36,7 +36,7 @@ export class WindowManager {
     public add(user: IUser, urls: string[] = user.settings.startupUrls, active: boolean = true) {
         const window = new AppWindow(
             user,
-            urls && urls.length > 0 ? urls : user.settings.startupUrls
+            urls ?? user.settings.startupUrls
         );
 
         this._windows.set(window.id, window);
@@ -84,7 +84,7 @@ export class WindowManager {
         this._windows.delete(window.id);
 
         if (window && !window.browserWindow.isDestroyed()) {
-            window.viewManager.clear();
+            window.tabManager.clear();
             window.browserWindow.close();
             window.browserWindow.destroy();
         }

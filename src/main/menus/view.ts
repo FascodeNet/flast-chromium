@@ -47,7 +47,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
                 const windows = Main.windowManager.getWindows(window.user);
                 windows.forEach((appWindow) => {
-                    appWindow.viewManager.views.forEach((appView) => appView.setBounds());
+                    appWindow.tabManager.tabs.forEach((appView) => appView.setBounds());
                     appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                 });
             }
@@ -68,7 +68,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.link.newTab,
             icon: getMenuItemIconFromName('tab_add'),
             accelerator: Shortcuts.TAB_ADD,
-            click: () => window.viewManager.add(linkURL, false)
+            click: () => window.tabManager.add(linkURL, false)
         },
         {
             label: languageSection.link.newWindow,
@@ -108,7 +108,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                             const windows = Main.windowManager.getWindows(user);
                             if (windows.length > 0) {
                                 const appWindow = windows[0];
-                                appWindow.viewManager.add(linkURL);
+                                appWindow.tabManager.add(linkURL);
                                 Main.windowManager.select(appWindow.id);
                             } else {
                                 Main.windowManager.add(user, [linkURL]);
@@ -154,7 +154,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         {
             label: languageSection.image.newTab,
             icon: getMenuItemIconFromName('image_add'),
-            click: () => window.viewManager.add(srcURL, false)
+            click: () => window.tabManager.add(srcURL, false)
         },
         {
             label: languageSection.image.saveImage,
@@ -188,13 +188,13 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.selection.textSearch.replace('%n', defaultSearchEngine.name).replace('%t', getSelectionText(true)),
             icon: getMenuItemIconFromName('search'),
             visible: canCopy && !isURL(getSelectionText(true)),
-            click: () => window.viewManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
+            click: () => window.tabManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
         },
         {
             label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
             icon: getMenuItemIconFromName('external_link'),
             visible: canCopy && isURL(getSelectionText(false)),
-            click: () => window.viewManager.add(prefixHttp(getSelectionText(false)))
+            click: () => window.tabManager.add(prefixHttp(getSelectionText(false)))
         },
         {
             label: languageSection.print,
@@ -220,13 +220,13 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.selection.textSearch.replace('%n', defaultSearchEngine.name).replace('%t', getSelectionText(true)),
             icon: getMenuItemIconFromName('search'),
             visible: canCopy && !isURL(getSelectionText(true)),
-            click: () => window.viewManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
+            click: () => window.tabManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
         },
         {
             label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
             icon: getMenuItemIconFromName('external_link'),
             visible: canCopy && isURL(getSelectionText(false)),
-            click: () => window.viewManager.add(prefixHttp(getSelectionText(false)))
+            click: () => window.tabManager.add(prefixHttp(getSelectionText(false)))
         },
         {
             label: languageSection.print,
@@ -387,7 +387,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                 accelerator: Shortcuts.VIEW_SOURCE,
                 enabled: !view.url.startsWith('view-source:'),
                 click: () => {
-                    const appView = window.viewManager.add('about:blank');
+                    const appView = window.tabManager.add('about:blank');
                     appView.load(`view-source:${view.url}`);
                 }
             },
@@ -406,7 +406,8 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 export const getTabMenu = (window: AppWindow, view: AppView) => {
     const translate = getTranslate(window.user.settings.config);
 
-    const viewManager = window.viewManager;
+    const windows = Main.windowManager.getWindows(window.user);
+    const tabManager = window.tabManager;
 
     const languageSection = translate.menus.tab;
     return Menu.buildFromTemplate(
@@ -415,12 +416,32 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 label: languageSection.addTab,
                 icon: getMenuItemIconFromName('tab_add'),
                 accelerator: Shortcuts.TAB_ADD,
-                click: () => viewManager.add()
+                click: () => tabManager.add()
             },
             {
                 label: languageSection.moveToWindow,
-                icon: getMenuItemIconFromName('tab_move_to_window')
-                // click: () => view.forward()
+                icon: getMenuItemIconFromName('tab_move_to_window'),
+                ...(windows.length > 1 ? {
+                    submenu: windows.filter((appWindow) => appWindow.id !== window.id).map((appWindow) => {
+                        const windowTabManager = appWindow.tabManager;
+                        const subLabel = windowTabManager.tabs.length - 1 > 0 ? ` とその他 ${windowTabManager.tabs.length - 1}つのタブ` : '';
+
+                        return {
+                            label: `${windowTabManager.get()?.title ?? appWindow.title}${subLabel}`,
+                            icon: getEmptyMenuItemIcon(),
+                            click: () => {
+                                view.window = appWindow;
+                                appWindow.browserWindow.show();
+                            }
+                        };
+                    })
+                } : {
+                    click: () => {
+                        const appWindow = Main.windowManager.add(window.user, [], false);
+                        view.window = appWindow;
+                        appWindow.browserWindow.show();
+                    }
+                })
             },
             { type: 'separator' },
             {
@@ -433,7 +454,7 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 label: languageSection.duplicateTab,
                 icon: getMenuItemIconFromName('tab_duplicate'),
                 accelerator: Shortcuts.TAB_DUPLICATE,
-                click: () => viewManager.add(view.url)
+                click: () => tabManager.add(view.url)
             },
             {
                 label: !view.pinned ? languageSection.pinTab : languageSection.unpinTab,
@@ -452,25 +473,25 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 label: languageSection.removeTab,
                 icon: getMenuItemIconFromName('tab_remove'),
                 accelerator: Shortcuts.TAB_REMOVE,
-                click: () => viewManager.remove(view.id)
+                click: () => tabManager.remove(view.id)
             },
             {
                 label: languageSection.removeOtherTabs,
                 icon: getMenuItemIconFromName('tab_remove_all'),
-                enabled: viewManager.views.filter((appView) => appView.id !== view.id).length > 0,
-                click: () => viewManager.removeOthers(view.id)
+                enabled: tabManager.tabs.filter((appView) => appView.id !== view.id).length > 0,
+                click: () => tabManager.removeOthers(view.id)
             },
             {
                 label: languageSection.removeLeftTabs,
                 icon: getEmptyMenuItemIcon(),
-                enabled: viewManager.getLeftViews(view.id).length > 0,
-                click: () => viewManager.removeLefts(view.id)
+                enabled: tabManager.getLeftTabs(view.id).length > 0,
+                click: () => tabManager.removeLefts(view.id)
             },
             {
                 label: languageSection.removeRightTabs,
                 icon: getEmptyMenuItemIcon(),
-                enabled: viewManager.getRightViews(view.id).length > 0,
-                click: () => viewManager.removeRights(view.id)
+                enabled: tabManager.getRightTabs(view.id).length > 0,
+                click: () => tabManager.removeRights(view.id)
             }
         ]
     );

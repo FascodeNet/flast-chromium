@@ -7,6 +7,7 @@ import { DeepPartial } from '../../../utils';
 import { getUserDataPath } from '../../../utils/path';
 import { IUser } from '../../interfaces/user';
 import { App, Main } from '../../main';
+import { ViewManager } from '../../manager/view';
 import { registerDownloadListener } from '../../session/download';
 import { registerPermissionListener } from '../../session/permission';
 import { search } from '../../utils/search';
@@ -42,6 +43,8 @@ export class NormalUser implements IUser {
 
     private readonly _account: NormalAccount;
 
+    private readonly _viewManager: ViewManager;
+
     public constructor(id: string) {
         this.id = id;
 
@@ -61,6 +64,8 @@ export class NormalUser implements IUser {
         this._sites = new NormalSites(this);
 
         this._account = new NormalAccount(this, this._settings.config);
+
+        this._viewManager = new ViewManager(this);
 
         registerPermissionListener(this._session.session, this);
         registerDownloadListener(this._session.session, this);
@@ -90,7 +95,7 @@ export class NormalUser implements IUser {
 
             const windows = Main.windowManager.getWindows(this);
             windows.forEach(async (window) => {
-                window.viewManager.views.forEach((view) => view.setBounds());
+                window.tabManager.tabs.forEach((view) => view.setBounds());
                 window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.id), this._settings.config);
                 await window.setStyle();
             });
@@ -123,7 +128,7 @@ export class NormalUser implements IUser {
 
             const windows = Main.windowManager.getWindows(this);
             windows.forEach((window) => {
-                window.viewManager.views.forEach((view) => view.setBounds());
+                window.tabManager.tabs.forEach((view) => view.setBounds());
                 window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.id), this._settings.config);
             });
 
@@ -177,5 +182,9 @@ export class NormalUser implements IUser {
 
     public get account() {
         return this._account;
+    }
+
+    public get viewManager() {
+        return this._viewManager;
     }
 }

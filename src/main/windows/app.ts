@@ -1,10 +1,16 @@
 import deepmerge from 'deepmerge';
-import { BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, TouchBar } from 'electron';
+import { BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, Rectangle, TouchBar } from 'electron';
 import { APPLICATION_NAME } from '../../constants';
+import {
+    WINDOW_DOUBLE_APP_BAR_HEIGHT,
+    WINDOW_EXTENDED_SIDEBAR_WIDTH,
+    WINDOW_EXTENDED_TAB_CONTAINER_WIDTH,
+    WINDOW_SINGLE_APP_BAR_HEIGHT
+} from '../../constants/design';
 import { DIALOG_EXTENSIONS_NAME } from '../../constants/dialog';
 import { IPCChannel } from '../../constants/ipc';
 import { WindowFullScreenState } from '../../interfaces/window';
-import { isHorizontal } from '../../utils/design';
+import { isHorizontal, isSingle, isVertical } from '../../utils/design';
 import { getBuildPath, getIconsPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { showBookmarksDialog } from '../dialogs/bookmarks';
@@ -18,7 +24,7 @@ import { showSearchDialog } from '../dialogs/search';
 import { WindowImpl } from '../implements/window';
 import { IUser } from '../interfaces/user';
 import { Main } from '../main';
-import { ViewManager } from '../manager/view';
+import { TabManager } from '../manager/tab';
 import { getApplicationMenu } from '../menus/app';
 import { getExtensionMenu } from '../menus/extension';
 import { getWindowMenu } from '../menus/window';
@@ -34,7 +40,7 @@ export class AppWindow extends WindowImpl {
 
     public readonly user: IUser;
 
-    public readonly viewManager: ViewManager;
+    public readonly tabManager: TabManager;
 
     private applicationMenu: Menu;
 
@@ -79,8 +85,8 @@ export class AppWindow extends WindowImpl {
             html: false
         };
 
-        this.viewManager = new ViewManager(this);
-        urls.forEach((url) => this.viewManager.add(url));
+        this.tabManager = new TabManager(this);
+        urls.forEach((url) => this.tabManager.add(url));
 
         this.applicationMenu = getWindowMenu(this);
         Menu.setApplicationMenu(this.applicationMenu);
@@ -102,6 +108,35 @@ export class AppWindow extends WindowImpl {
         return this._fullScreenState;
     }
 
+    /**
+     * BrowserView を配置できる領域
+     * @returns {Electron.CrossProcessExports.Rectangle}
+     */
+    public get contentBounds(): Rectangle {
+        const { width, height } = this.browserWindow.getContentBounds();
+        const userState = this.fullScreenState.user;
+        const isFullScreen = this.browserWindow.isFullScreen();
+
+        const {
+            style,
+            fullscreen_showing_toolbar: isFullScreenShowingToolbar,
+            sidebar: { extended, state }
+        } = this.user.settings.config.appearance;
+
+        const sidebarWidth = extended ? (state !== 'tab_container' ? WINDOW_EXTENDED_SIDEBAR_WIDTH : WINDOW_EXTENDED_TAB_CONTAINER_WIDTH) : WINDOW_SINGLE_APP_BAR_HEIGHT;
+
+        const contentX = (!isFullScreen || (userState && isFullScreenShowingToolbar)) && style === 'left' ? sidebarWidth : 0;
+        const contentY = !isFullScreen || (userState && isFullScreenShowingToolbar) ? (isSingle(style) ? WINDOW_SINGLE_APP_BAR_HEIGHT : WINDOW_DOUBLE_APP_BAR_HEIGHT) : 0;
+        const contentWidth = width - ((!isFullScreen || (userState && isFullScreenShowingToolbar)) && isVertical(style) ? sidebarWidth : 0);
+        const contentHeight = height - contentY;
+
+        return {
+            width: contentWidth,
+            height: contentHeight,
+            x: contentX,
+            y: contentY
+        };
+    }
 
     public setApplicationMenu() {
         if (this.isDestroyed) return;
@@ -112,7 +147,9 @@ export class AppWindow extends WindowImpl {
     }
 
     public async setTouchBar() {
-        const view = this.viewManager.get();
+        if (this.isDestroyed) return;
+
+        const view = this.tabManager.get();
 
         const resizeImage = (image: NativeImage) => image.resize({
             width: 20,
@@ -169,7 +206,7 @@ export class AppWindow extends WindowImpl {
                         label: '新しいタブ',
                         iconPosition: 'left',
                         click: () => {
-                            this.viewManager.add();
+                            this.tabManager.add();
                         }
                     }),
                     new TouchBarButton({
@@ -179,7 +216,7 @@ export class AppWindow extends WindowImpl {
                         enabled: view != null,
                         click: () => {
                             if (!view) return;
-                            this.viewManager.remove(view.id);
+                            this.tabManager.remove(view.id);
                         }
                     })
                 ]
@@ -268,7 +305,7 @@ export class AppWindow extends WindowImpl {
 
 
     private setViewBounds() {
-        const view = this.viewManager.get();
+        const view = this.tabManager.get();
         if (!view) return;
         view.setBounds();
         view.setDialogs();
@@ -276,7 +313,7 @@ export class AppWindow extends WindowImpl {
 
     private setListeners() {
         const onDestroyed = () => {
-            this.viewManager.clear();
+            this.tabManager.clear();
             Main.windowManager.remove(this.id);
 
             Menu.setApplicationMenu(getApplicationMenu(this.user));
@@ -356,7 +393,7 @@ export class AppWindow extends WindowImpl {
 
             const windows = Main.windowManager.getWindows(this.user);
             windows.forEach((window) => {
-                window.viewManager.views.forEach((view) => view.setBounds());
+                window.tabManager.tabs.forEach((view) => view.setBounds());
                 window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.user.id), settings.config);
             });
         });
@@ -381,7 +418,7 @@ export class AppWindow extends WindowImpl {
             showInformationDialog(this.user, this.browserWindow, x, y);
         });
         ipcMain.handle(IPCChannel.Popup.VIEW_FIND(this.id), () => {
-            const view = this.viewManager.get();
+            const view = this.tabManager.get();
             if (!view) return;
 
             view.findInPage(null);

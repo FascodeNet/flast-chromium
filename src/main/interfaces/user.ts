@@ -18,6 +18,7 @@ import {
     UserType
 } from '../../interfaces/user';
 import { DeepPartial } from '../../utils';
+import { ViewManager } from '../manager/view';
 import { PermissionType } from '../session/permission';
 import { ThemeData } from '../user/theme';
 
@@ -46,6 +47,8 @@ export interface IUser {
     get adBlocker(): IAdBlocker;
 
     get sites(): ISites;
+
+    get viewManager(): ViewManager;
 }
 
 export interface ISession {

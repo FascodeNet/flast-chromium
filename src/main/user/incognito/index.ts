@@ -5,6 +5,7 @@ import { UserConfig, UserType } from '../../../interfaces/user';
 import { DeepPartial } from '../../../utils';
 import { IUser } from '../../interfaces/user';
 import { App, Main } from '../../main';
+import { ViewManager } from '../../manager/view';
 import { registerDownloadListener } from '../../session/download';
 import { registerPermissionListener } from '../../session/permission';
 import { search } from '../../utils/search';
@@ -38,6 +39,8 @@ export class IncognitoUser implements IUser {
     private readonly _adBlocker: IncognitoAdBlocker;
     private readonly _sites: IncognitoSites;
 
+    private readonly _viewManager: ViewManager;
+
     public constructor(fromUser: NormalUser) {
         this.id = `incognito_${nanoid()}`;
 
@@ -55,6 +58,8 @@ export class IncognitoUser implements IUser {
         this._adBlocker = new IncognitoAdBlocker(this);
         this._sites = new IncognitoSites(this);
 
+        this._viewManager = new ViewManager(this);
+
         registerPermissionListener(this._session.session, this);
         registerDownloadListener(this._session.session, this);
 
@@ -71,7 +76,7 @@ export class IncognitoUser implements IUser {
 
             const windows = Main.windowManager.getWindows(this);
             windows.forEach(async (window) => {
-                window.viewManager.views.forEach((view) => view.setBounds());
+                window.tabManager.tabs.forEach((view) => view.setBounds());
                 window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.id), this._settings.config);
                 await window.setStyle();
             });
@@ -122,5 +127,9 @@ export class IncognitoUser implements IUser {
 
     public get sites() {
         return this._sites;
+    }
+
+    public get viewManager() {
+        return this._viewManager;
     }
 }
