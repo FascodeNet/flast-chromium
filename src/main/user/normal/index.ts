@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import { copyFile, mkdir } from 'fs/promises';
+import { copyFile, mkdir, rm } from 'fs/promises';
 import { extname } from 'path';
 import { IPCChannel } from '../../../constants/ipc';
 import { UserConfig, UserProfile, UserType } from '../../../interfaces/user';
@@ -100,6 +100,7 @@ export class NormalUser implements IUser {
         ipcMain.handle(IPCChannel.User.SET_PROFILE(this.id), async (e, { name, avatar }: UserProfile) => {
             this._settings.config = { profile: { name } };
 
+            const oldPath = this._settings.config.profile.avatar;
             if (avatar) {
                 const targetName = `Avatar${extname(avatar)}`;
                 const targetPath = getUserDataPath(this.id, targetName);
@@ -116,6 +117,9 @@ export class NormalUser implements IUser {
             } else {
                 this._settings.config = { profile: { avatar: null } };
             }
+
+            if (oldPath)
+                await rm(oldPath);
 
             const windows = Main.windowManager.getWindows(this);
             windows.forEach((window) => {
