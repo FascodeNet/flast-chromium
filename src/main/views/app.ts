@@ -13,6 +13,7 @@ import { IUser } from '../interfaces/user';
 import { Main } from '../main';
 import { FaviconManager } from '../manager/favicon';
 import { getContextMenu, getTabMenu } from '../menus/view';
+import { NormalUser } from '../user/normal';
 import { getRequestState, RequestState } from '../utils/request';
 import { AppWindow } from '../windows/app';
 
@@ -81,7 +82,7 @@ export class AppView extends ViewImpl {
         });
         this.handleIpc();
 
-        if (window.user.type === 'normal')
+        if (window.user instanceof NormalUser)
             userSession.extensions.addTab(this.webContents, window.browserWindow);
 
         this.webContents.loadURL(url);
@@ -105,7 +106,7 @@ export class AppView extends ViewImpl {
         if (!newTabManager.sortOrders.includes(this.id))
             newTabManager._sortOrders.push(this.id);
 
-        newTabManager.select(this.id);
+        newTabManager.select(this);
 
         this.setBounds();
 
@@ -113,18 +114,24 @@ export class AppView extends ViewImpl {
         oldTabManager.updateViews();
         newTabManager.updateViews();
 
+        // 移動前の段階でタブが2つ以上あるか
         if (sortedTabs.length > 1) {
             // 移動したタブのIDと現在選択されているタブのIDが一致しているか
             if (oldTabManager.selectedId === this.id && sortedTabIndex !== -1) {
                 // 最後のタブのインデックス
                 const lastIndex = sortedTabs.length - 1;
+
+                console.log('タブのウィンドウ間移動', oldTabManager.selectedId, sortedTabs.map((sortedTab) => sortedTab.id), sortedTabIndex, lastIndex);
+
                 // 選択されていたタブが最後かどうか
                 if (sortedTabIndex === lastIndex) {
+                    console.log('前移動', sortedTabs[sortedTabIndex - 1].id, sortedTabs[sortedTabIndex - 1].url);
                     // 前のタブにフォーカスを合わせる
-                    oldTabManager.select(sortedTabs[sortedTabIndex - 1].id);
+                    oldTabManager.select(sortedTabs[sortedTabIndex - 1]);
                 } else {
+                    console.log('後移動', sortedTabs[sortedTabIndex + 1].id, sortedTabs[sortedTabIndex + 1].url);
                     // 次のタブにフォーカスを合わせる
-                    oldTabManager.select(sortedTabs[sortedTabIndex + 1].id);
+                    oldTabManager.select(sortedTabs[sortedTabIndex + 1]);
                 }
             }
         } else {
@@ -268,35 +275,6 @@ export class AppView extends ViewImpl {
         if (findDialog && !findDialog.webContents.isDestroyed()) {
             findDialog.browserWindow = this.window.browserWindow;
 
-            // tslint:disable-next-line:no-shadowed-variable
-            const { width } = this.window.browserWindow.getContentBounds();
-            findDialog.bounds = {
-                width: 380,
-                height: 70,
-                x: width - 400,
-                y: getHeight(this.user.settings.config.appearance.style)
-            };
-
-            Main.dialogManager.show(findDialog);
-        }
-
-        /*
-        const searchDialog = Main.dialogManager.getDynamic(DIALOG_SEARCH_NAME);
-        if (searchDialog && !searchDialog.webContents.isDestroyed())
-            showSearchDialog(this.user, this.window);
-        */
-    }
-
-    public setDialogs() {
-        if (this.window.tabManager.selectedId !== this.id) return;
-
-        this.window.browserWindow.addBrowserView(this.browserView);
-        this.window.browserWindow.setTopBrowserView(this.browserView);
-
-        const findDialog = this.findDialog;
-        if (findDialog && !findDialog.webContents.isDestroyed()) {
-            findDialog.browserWindow = this.window.browserWindow;
-
             const { width } = this.window.browserWindow.getContentBounds();
             findDialog.bounds = {
                 width: 380,
@@ -316,7 +294,7 @@ export class AppView extends ViewImpl {
     }
 
     public updateView() {
-        if (this.webContents.isDestroyed()) return;
+        if (this.isDestroyed) return;
 
         this.setWindowTitle();
         this.window.setApplicationMenu();

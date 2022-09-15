@@ -73,7 +73,7 @@ export class AppWindow extends WindowImpl {
             }
         }));
 
-        this.incognito = user.type === 'incognito';
+        this.incognito = user instanceof IncognitoUser;
 
         this.user = user;
 
@@ -305,10 +305,7 @@ export class AppWindow extends WindowImpl {
 
 
     private setViewBounds() {
-        const view = this.tabManager.get();
-        if (!view) return;
-        view.setBounds();
-        view.setDialogs();
+        this.tabManager.tabs.forEach((view) => view.setBounds());
     }
 
     private setListeners() {

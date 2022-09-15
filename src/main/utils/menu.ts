@@ -12,11 +12,7 @@ export const joinTo = (
         const items = itemsArray[i];
         if (!items) continue;
 
-        if (Array.isArray(items)) {
-            list.push(...items);
-        } else {
-            list.push(items);
-        }
+        list.push(...(Array.isArray(items) ? items : [items]));
 
         if (i < (length - 1) && sep)
             list.push(sep);

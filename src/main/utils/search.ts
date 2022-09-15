@@ -46,7 +46,7 @@ export const search = async (value: string, user: IUser): Promise<SearchResult> 
         'history'
     ) : [];
 
-    if (user.type === 'incognito') {
+    if (user instanceof IncognitoUser) {
         return {
             suggests: [],
             bookmarks,

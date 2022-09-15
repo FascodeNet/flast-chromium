@@ -1,9 +1,11 @@
 import { ipcMain } from 'electron';
+import { ExtensionStore } from 'electron-chrome-extensions-production/dist/browser/store';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../constants';
 import { IPCChannel } from '../../constants/ipc';
 import { MoveDirection } from '../../interfaces/view';
 import { nonNullable } from '../../utils/array';
 import { IUser } from '../interfaces/user';
+import { NormalUser } from '../user/normal';
 import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
 import { ViewManager } from './view';
@@ -157,15 +159,20 @@ export class TabManager {
         }
     }
 
-    public select(id: number) {
-        const view = this.get(id);
-        if (!view) return;
-        this.selectOf(view);
+    public select(view: AppView | number) {
+        if (view instanceof AppView) {
+            if (!view) return;
+            this.selectOf(view);
+        } else {
+            const appView = this.get(view);
+            if (!appView) return;
+            this.selectOf(appView);
+        }
     }
 
     private selectOf(view: AppView) {
         if (!view) return;
-        if (view.webContents && view.webContents.isDestroyed()) {
+        if (!view.webContents || view.webContents.isDestroyed()) {
             this.viewManager.delete(view);
             return;
         }
@@ -177,8 +184,13 @@ export class TabManager {
         view.setBounds();
         view.webContents.focus();
 
-        if (view.user.type === 'normal')
+        if (view.user instanceof NormalUser) {
+            const store: ExtensionStore = (this.user.session.extensions as any).ctx.store;
+            store.tabToWindow.set(view.webContents, view.window.browserWindow);
+            store.windows.add(view.window.browserWindow);
+
             view.user.session.extensions.selectTab(view.webContents);
+        }
 
         this.window.webContents.send(`view-select-${this.window.id}`, view.id);
         view.updateView();
