@@ -10,6 +10,9 @@ import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
 import { ViewManager } from './view';
 
+/**
+ * ウィンドウごとのビューを管理するクラス
+ */
 export class TabManager {
 
     public readonly user: IUser;

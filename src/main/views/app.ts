@@ -106,6 +106,8 @@ export class AppView extends ViewImpl {
         if (!newTabManager.sortOrders.includes(this.id))
             newTabManager._sortOrders.push(this.id);
 
+        console.log(`Move view #${this.id}: ${oldWindow.id} to ${window.id}`);
+        oldWindow.browserWindow.removeBrowserView(this.browserView);
         newTabManager.select(this);
 
         this.setBounds();

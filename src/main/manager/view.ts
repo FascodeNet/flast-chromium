@@ -3,6 +3,9 @@ import { IUser } from '../interfaces/user';
 import { AppView } from '../views/app';
 import { AppWindow } from '../windows/app';
 
+/**
+ * ユーザー全体のビューを管理するクラス
+ */
 export class ViewManager {
 
     public readonly user: IUser;
