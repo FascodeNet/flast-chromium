@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { BrowserView, ipcMain, NativeImage } from 'electron';
+import { BrowserView, ipcMain, NativeImage, Rectangle } from 'electron';
 import { APPLICATION_NAME } from '../../constants';
 import { IPCChannel } from '../../constants/ipc';
 import { SitePermissionData } from '../../interfaces/user';
@@ -22,6 +22,7 @@ export class AppView extends ViewImpl {
     public readonly user: IUser;
 
     private _window: AppWindow;
+    private _contentBounds?: Rectangle;
 
     private _favicon?: string;
     private _color?: string;
@@ -266,7 +267,7 @@ export class AppView extends ViewImpl {
 
     public setBounds() {
         this.browserView.setAutoResize({ width: true, height: true });
-        this.browserView.setBounds(this.window.contentBounds);
+        this.browserView.setBounds(this._contentBounds ?? this.window.contentBounds);
 
         if (this.window.tabManager.selectedId === this.id) {
             this.window.browserWindow.addBrowserView(this.browserView);
