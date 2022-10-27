@@ -77,7 +77,7 @@ export class App {
 
             const windows = this.windowManager.getWindows(appWindow.user).filter((window) => window.id !== browserWindow.id);
             windows.forEach((window) => {
-                window.viewManager.views.forEach((view) => view.setBounds());
+                window.tabManager.tabs.forEach((view) => view.setBounds());
                 window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                 window.setStyle();
             });
@@ -98,7 +98,7 @@ export class App {
 
         nativeTheme.on('updated', () => {
             this.windowManager.windows.filter((window) => !window.isDestroyed).forEach((window) => {
-                window.viewManager.get()?.setBounds();
+                window.tabManager.get()?.setBounds();
                 window.setStyle();
             });
         });
@@ -123,14 +123,14 @@ export class App {
             if (this.windowManager.windows.length < 1 || currentWindow == null) {
                 this.windowManager.add(user, [`file:///${path}`]);
             } else {
-                currentWindow.viewManager.add(`file:///${path}`);
+                currentWindow.tabManager.add(`file:///${path}`);
                 currentWindow.browserWindow.show();
             }
         } else if (isURL(path)) {
             if (this.windowManager.windows.length < 1 || currentWindow == null) {
                 this.windowManager.add(user, [prefixHttp(path)]);
             } else {
-                currentWindow.viewManager.add(prefixHttp(path));
+                currentWindow.tabManager.add(prefixHttp(path));
                 currentWindow.browserWindow.show();
             }
         } else {

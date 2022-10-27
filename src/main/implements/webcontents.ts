@@ -17,7 +17,7 @@ export class WebContentsImpl {
     }
 
     public get isDestroyed() {
-        return !this.webContents || this.webContents.isDestroyed();
+        return this.parent instanceof BrowserWindow ? this.parent.isDestroyed() : (!this.webContents || this.webContents.isDestroyed());
     }
 
 

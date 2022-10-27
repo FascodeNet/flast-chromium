@@ -32,7 +32,7 @@ export const registerDownloadListener = (session: Session, user: IUser) => {
             for (const window of Main.windowManager.getWindows(user)) {
                 window.webContents.send(IPCChannel.Downloads.UPDATED(data._id), data);
 
-                for (const view of window.viewManager.views.filter((appView) => appView.url.startsWith(`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_DOWNLOADS}`))) {
+                for (const view of window.tabManager.tabs.filter((appView) => appView.url.startsWith(`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_DOWNLOADS}`))) {
                     view.webContents.send(IPCChannel.Downloads.UPDATED(data._id), data);
                 }
             }

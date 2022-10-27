@@ -22,7 +22,14 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         srcURL,
         hasImageContents,
         isEditable,
-        editFlags: { canUndo, canRedo, canCut, canCopy, canPaste, canSelectAll },
+        editFlags: {
+            canUndo,
+            canRedo,
+            canCut,
+            canCopy,
+            canPaste,
+            canSelectAll
+        },
         selectionText,
         mediaType
     } = params;
@@ -47,7 +54,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 
                 const windows = Main.windowManager.getWindows(window.user);
                 windows.forEach((appWindow) => {
-                    appWindow.viewManager.views.forEach((appView) => appView.setBounds());
+                    appWindow.tabManager.tabs.forEach((appView) => appView.setBounds());
                     appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                 });
             }
@@ -68,7 +75,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.link.newTab,
             icon: getMenuItemIconFromName('tab_add'),
             accelerator: Shortcuts.TAB_ADD,
-            click: () => window.viewManager.add(linkURL, false)
+            click: () => window.tabManager.add(linkURL, false)
         },
         {
             label: languageSection.link.newWindow,
@@ -108,7 +115,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
                             const windows = Main.windowManager.getWindows(user);
                             if (windows.length > 0) {
                                 const appWindow = windows[0];
-                                appWindow.viewManager.add(linkURL);
+                                appWindow.tabManager.add(linkURL);
                                 Main.windowManager.select(appWindow.id);
                             } else {
                                 Main.windowManager.add(user, [linkURL]);
@@ -154,7 +161,7 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         {
             label: languageSection.image.newTab,
             icon: getMenuItemIconFromName('image_add'),
-            click: () => window.viewManager.add(srcURL, false)
+            click: () => window.tabManager.add(srcURL, false)
         },
         {
             label: languageSection.image.saveImage,
@@ -188,13 +195,13 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             label: languageSection.selection.textSearch.replace('%n', defaultSearchEngine.name).replace('%t', getSelectionText(true)),
             icon: getMenuItemIconFromName('search'),
             visible: canCopy && !isURL(getSelectionText(true)),
-            click: () => window.viewManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
+            click: () => window.tabManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
         },
         {
             label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
             icon: getMenuItemIconFromName('external_link'),
             visible: canCopy && isURL(getSelectionText(false)),
-            click: () => window.viewManager.add(prefixHttp(getSelectionText(false)))
+            click: () => window.tabManager.add(prefixHttp(getSelectionText(false)))
         },
         {
             label: languageSection.print,
@@ -204,92 +211,86 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         }
     ] : undefined;
 
-    const editableEmojiPanelOptions: (MenuItem | MenuItemConstructorOptions)[] = app.isEmojiPanelSupported() ? [
-        {
+    const editableOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = isEditable ? joinTo([
+        app.isEmojiPanelSupported() ? {
             label: languageSection.editable.emojiPanel,
             icon: getMenuItemIconFromName('emoji'),
             accelerator: Shortcuts.EDIT_SHOW_EMOJI_PANEL,
             click: () => app.showEmojiPanel()
-        },
-        { type: 'separator' }
-    ] : [];
-
-    const editableSearchOptions: (MenuItem | MenuItemConstructorOptions)[] = selectionText !== '' ? [
-        { type: 'separator' },
-        {
-            label: languageSection.selection.textSearch.replace('%n', defaultSearchEngine.name).replace('%t', getSelectionText(true)),
-            icon: getMenuItemIconFromName('search'),
-            visible: canCopy && !isURL(getSelectionText(true)),
-            click: () => window.viewManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
-        },
-        {
-            label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
-            icon: getMenuItemIconFromName('external_link'),
-            visible: canCopy && isURL(getSelectionText(false)),
-            click: () => window.viewManager.add(prefixHttp(getSelectionText(false)))
-        },
-        {
-            label: languageSection.print,
-            icon: getMenuItemIconFromName('print'),
-            accelerator: Shortcuts.PRINT,
-            click: () => webContents.print()
-        }
-    ] : [];
-
-    const editableOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = isEditable ? [
-        ...editableEmojiPanelOptions,
-        {
-            label: languageSection.editable.undo,
-            icon: getMenuItemIconFromName('undo'),
-            accelerator: Shortcuts.EDIT_UNDO,
-            enabled: canUndo,
-            click: () => webContents.undo()
-        },
-        {
-            label: languageSection.editable.redo,
-            icon: getMenuItemIconFromName('redo'),
-            accelerator: Shortcuts.EDIT_REDO,
-            enabled: canRedo,
-            click: () => webContents.redo()
-        },
-        { type: 'separator' },
-        {
-            label: languageSection.editable.cut,
-            icon: getMenuItemIconFromName('cut'),
-            accelerator: Shortcuts.EDIT_CUT,
-            enabled: canCut,
-            click: () => webContents.cut()
-        },
-        {
-            label: languageSection.editable.copy,
-            icon: getMenuItemIconFromName('copy'),
-            accelerator: Shortcuts.EDIT_COPY,
-            enabled: canCopy,
-            click: () => webContents.copy()
-        },
-        {
-            label: languageSection.editable.paste,
-            icon: getMenuItemIconFromName('paste'),
-            accelerator: Shortcuts.EDIT_PASTE,
-            enabled: canPaste,
-            click: () => webContents.pasteAndMatchStyle()
-        },
-        {
-            label: languageSection.editable.pastePlainText,
-            icon: getMenuItemIconFromName('paste_as_plain_text'),
-            accelerator: Shortcuts.EDIT_PASTE_AS_PLAIN_TEXT,
-            enabled: canPaste,
-            click: () => webContents.paste()
-        },
-        {
-            label: languageSection.editable.selectAll,
-            icon: getMenuItemIconFromName('select_all'),
-            accelerator: Shortcuts.EDIT_SELECT_ALL,
-            enabled: canSelectAll,
-            click: () => webContents.selectAll()
-        },
-        ...editableSearchOptions
-    ] : undefined;
+        } : undefined,
+        [
+            {
+                label: languageSection.editable.undo,
+                icon: getMenuItemIconFromName('undo'),
+                accelerator: Shortcuts.EDIT_UNDO,
+                enabled: canUndo,
+                click: () => webContents.undo()
+            },
+            {
+                label: languageSection.editable.redo,
+                icon: getMenuItemIconFromName('redo'),
+                accelerator: Shortcuts.EDIT_REDO,
+                enabled: canRedo,
+                click: () => webContents.redo()
+            },
+            { type: 'separator' },
+            {
+                label: languageSection.editable.cut,
+                icon: getMenuItemIconFromName('cut'),
+                accelerator: Shortcuts.EDIT_CUT,
+                enabled: canCut,
+                click: () => webContents.cut()
+            },
+            {
+                label: languageSection.editable.copy,
+                icon: getMenuItemIconFromName('copy'),
+                accelerator: Shortcuts.EDIT_COPY,
+                enabled: canCopy,
+                click: () => webContents.copy()
+            },
+            {
+                label: languageSection.editable.paste,
+                icon: getMenuItemIconFromName('paste'),
+                accelerator: Shortcuts.EDIT_PASTE,
+                enabled: canPaste,
+                click: () => webContents.pasteAndMatchStyle()
+            },
+            {
+                label: languageSection.editable.pastePlainText,
+                icon: getMenuItemIconFromName('paste_as_plain_text'),
+                accelerator: Shortcuts.EDIT_PASTE_AS_PLAIN_TEXT,
+                enabled: canPaste,
+                click: () => webContents.paste()
+            },
+            {
+                label: languageSection.editable.selectAll,
+                icon: getMenuItemIconFromName('select_all'),
+                accelerator: Shortcuts.EDIT_SELECT_ALL,
+                enabled: canSelectAll,
+                click: () => webContents.selectAll()
+            }
+        ],
+        selectionText !== '' ? [
+            {
+                label: languageSection.selection.textSearch.replace('%n', defaultSearchEngine.name).replace('%t', getSelectionText(true)),
+                icon: getMenuItemIconFromName('search'),
+                visible: canCopy && !isURL(getSelectionText(true)),
+                click: () => window.tabManager.add(defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true))))
+            },
+            {
+                label: languageSection.selection.textLoad.replace('%u', getSelectionText(false)),
+                icon: getMenuItemIconFromName('external_link'),
+                visible: canCopy && isURL(getSelectionText(false)),
+                click: () => window.tabManager.add(prefixHttp(getSelectionText(false)))
+            },
+            {
+                label: languageSection.print,
+                icon: getMenuItemIconFromName('print'),
+                accelerator: Shortcuts.PRINT,
+                click: () => webContents.print()
+            }
+        ] : undefined
+    ]) : undefined;
 
     const developOptions: (MenuItem | MenuItemConstructorOptions)[] = [
         {
@@ -300,13 +301,12 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
         }
     ];
 
-    if (linkOptions || imageOptions || searchOptions) {
-        return Menu.buildFromTemplate(joinTo([linkOptions, imageOptions, searchOptions, developOptions]));
-    } else if (editableOptions) {
+    if (editableOptions) {
         return Menu.buildFromTemplate(joinTo([editableOptions, developOptions]));
+    } else if (linkOptions || imageOptions || searchOptions) {
+        return Menu.buildFromTemplate(joinTo([linkOptions, imageOptions, searchOptions, developOptions]));
     } else {
-        const mediaOptions: (MenuItem | MenuItemConstructorOptions)[] = mediaType === 'audio' || mediaType === 'video' || webContents.isCurrentlyAudible() ? [
-            { type: 'separator' },
+        const mediaOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = mediaType === 'audio' || mediaType === 'video' || webContents.isCurrentlyAudible() ? [
             {
                 label: view.muted ? languageSection.media.audioMuteExit : languageSection.media.audioMute,
                 icon: getMenuItemIconFromName(`speaker${webContents.audioMuted ? '' : '_muted'}`),
@@ -316,88 +316,89 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             {
                 label: languageSection.media.pictureInPicture,
                 icon: getMenuItemIconFromName('picture_in_picture'),
-                click: () => {
-                    webContents.executeJavaScript('api.togglePictureInPicture()');
-                }
+                click: () => webContents.executeJavaScript('api.togglePictureInPicture()')
             }
-        ] : [];
+        ] : undefined;
 
-        const extensionOptions: (MenuItem | MenuItemConstructorOptions)[] = view.user.type === 'normal' ? view.user.session.extensions.getContextMenuItems(view.browserView.webContents, params).map((item) => ({
+        const extensionOptions: (MenuItem | MenuItemConstructorOptions)[] | undefined = view.user instanceof NormalUser ? view.user.session.extensions.getContextMenuItems(view.browserView.webContents, params).map((item) => ({
             ...item,
             icon: typeof item.icon === 'object' ? resizeIcon(item.icon) : (item.icon ? getMenuItemIcon(item.icon) : getEmptyMenuItemIcon())
-        })) : [];
+        })) : undefined;
 
-        const genericOptions: (MenuItem | MenuItemConstructorOptions)[] = [
-            {
-                label: languageSection.back,
-                icon: getMenuItemIconFromName('arrow_left'),
-                accelerator: Shortcuts.NAVIGATION_BACK,
-                enabled: view.canGoBack,
-                click: () => view.back()
-            },
-            {
-                label: languageSection.forward,
-                icon: getMenuItemIconFromName('arrow_right'),
-                accelerator: Shortcuts.NAVIGATION_FORWARD,
-                enabled: view.canGoForward,
-                click: () => view.forward()
-            },
-            {
-                label: !view.isLoading ? languageSection.reload : languageSection.stop,
-                icon: getMenuItemIconFromName(!view.isLoading ? 'reload' : 'remove'),
-                accelerator: Shortcuts.NAVIGATION_RELOAD_1,
-                click: () => {
-                    !view.isLoading ? webContents.reload() : webContents.stop();
+        const genericOptions: (MenuItem | MenuItemConstructorOptions)[] = joinTo([
+            [
+                {
+                    label: languageSection.back,
+                    icon: getMenuItemIconFromName('arrow_left'),
+                    accelerator: Shortcuts.NAVIGATION_BACK,
+                    enabled: view.canGoBack,
+                    click: () => view.back()
+                },
+                {
+                    label: languageSection.forward,
+                    icon: getMenuItemIconFromName('arrow_right'),
+                    accelerator: Shortcuts.NAVIGATION_FORWARD,
+                    enabled: view.canGoForward,
+                    click: () => view.forward()
+                },
+                {
+                    label: !view.isLoading ? languageSection.reload : languageSection.stop,
+                    icon: getMenuItemIconFromName(!view.isLoading ? 'reload' : 'remove'),
+                    accelerator: Shortcuts.NAVIGATION_RELOAD_1,
+                    click: () => {
+                        !view.isLoading ? webContents.reload() : webContents.stop();
+                    }
                 }
-            },
-            ...mediaOptions,
-            { type: 'separator' },
-            {
-                label: languageSection.savePage,
-                icon: getMenuItemIconFromName('save_as'),
-                accelerator: Shortcuts.SAVE_AS,
-                click: () => {
-                    dialog.showSaveDialog({
-                        defaultPath: `${app.getPath('downloads')}/${webContents.getTitle()}`,
-                        filters: [
-                            { name: 'Web ページ', extensions: ['html'] }
-                        ]
-                    }).then(({ canceled, filePath }) => {
-                        if (canceled || !filePath) return;
-                        webContents.savePage(filePath, 'HTMLComplete').then(() => {
-                            console.log('Page was saved successfully.');
-                        }).catch((err) => {
-                            if (!err) console.log('Page Save successfully');
+            ],
+            mediaOptions,
+            [
+                {
+                    label: languageSection.savePage,
+                    icon: getMenuItemIconFromName('save_as'),
+                    accelerator: Shortcuts.SAVE_AS,
+                    click: () => {
+                        dialog.showSaveDialog({
+                            defaultPath: `${app.getPath('downloads')}/${webContents.getTitle()}`,
+                            filters: [
+                                { name: 'Web ページ', extensions: ['html'] }
+                            ]
+                        }).then(({ canceled, filePath }) => {
+                            if (canceled || !filePath) return;
+                            webContents.savePage(filePath, 'HTMLComplete').then(() => {
+                                console.log('Page was saved successfully.');
+                            }).catch((err) => {
+                                if (!err) console.log('Page Save successfully');
+                            });
                         });
-                    });
+                    }
+                },
+                {
+                    label: languageSection.print,
+                    icon: getMenuItemIconFromName('print'),
+                    accelerator: Shortcuts.PRINT,
+                    click: () => webContents.print()
                 }
-            },
-            {
-                label: languageSection.print,
-                icon: getMenuItemIconFromName('print'),
-                accelerator: Shortcuts.PRINT,
-                click: () => webContents.print()
-            },
-            { type: 'separator' },
-            ...extensionOptions,
-            { type: 'separator' },
-            {
-                label: languageSection.viewSource,
-                icon: getMenuItemIconFromName('view_source'),
-                accelerator: Shortcuts.VIEW_SOURCE,
-                enabled: !view.url.startsWith('view-source:'),
-                click: () => {
-                    const appView = window.viewManager.add('about:blank');
-                    appView.load(`view-source:${view.url}`);
+            ],
+            extensionOptions,
+            [
+                {
+                    label: languageSection.viewSource,
+                    icon: getMenuItemIconFromName('view_source'),
+                    accelerator: Shortcuts.VIEW_SOURCE,
+                    enabled: !view.url.startsWith('view-source:'),
+                    click: () => {
+                        const appView = window.tabManager.add('about:blank');
+                        appView.load(`view-source:${view.url}`);
+                    }
+                },
+                {
+                    label: languageSection.devTool,
+                    icon: getMenuItemIconFromName('inspect'),
+                    accelerator: Shortcuts.DEVELOPER_TOOLS_1,
+                    click: onDevToolClick
                 }
-            },
-            {
-                label: languageSection.devTool,
-                icon: getMenuItemIconFromName('inspect'),
-                accelerator: Shortcuts.DEVELOPER_TOOLS_1,
-                click: onDevToolClick
-            }
-        ];
+            ]
+        ]);
 
         return Menu.buildFromTemplate(joinTo([fullscreenOptions, genericOptions]));
     }
@@ -406,7 +407,8 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
 export const getTabMenu = (window: AppWindow, view: AppView) => {
     const translate = getTranslate(window.user.settings.config);
 
-    const viewManager = window.viewManager;
+    const windows = Main.windowManager.getWindows(window.user);
+    const tabManager = window.tabManager;
 
     const languageSection = translate.menus.tab;
     return Menu.buildFromTemplate(
@@ -415,12 +417,32 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 label: languageSection.addTab,
                 icon: getMenuItemIconFromName('tab_add'),
                 accelerator: Shortcuts.TAB_ADD,
-                click: () => viewManager.add()
+                click: () => tabManager.add()
             },
             {
                 label: languageSection.moveToWindow,
-                icon: getMenuItemIconFromName('tab_move_to_window')
-                // click: () => view.forward()
+                icon: getMenuItemIconFromName('tab_move_to_window'),
+                ...(windows.length > 1 ? {
+                    submenu: windows.filter((appWindow) => appWindow.id !== window.id).map((appWindow) => {
+                        const windowTabManager = appWindow.tabManager;
+                        const subLabel = windowTabManager.tabs.length - 1 > 0 ? ` とその他 ${windowTabManager.tabs.length - 1}つのタブ` : '';
+
+                        return {
+                            label: `${windowTabManager.get()?.title ?? appWindow.title}${subLabel}`,
+                            icon: getEmptyMenuItemIcon(),
+                            click: () => {
+                                view.window = appWindow;
+                                appWindow.browserWindow.show();
+                            }
+                        };
+                    })
+                } : {
+                    click: () => {
+                        const appWindow = Main.windowManager.add(window.user, [], false);
+                        view.window = appWindow;
+                        appWindow.browserWindow.show();
+                    }
+                })
             },
             { type: 'separator' },
             {
@@ -433,7 +455,7 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 label: languageSection.duplicateTab,
                 icon: getMenuItemIconFromName('tab_duplicate'),
                 accelerator: Shortcuts.TAB_DUPLICATE,
-                click: () => viewManager.add(view.url)
+                click: () => tabManager.add(view.url)
             },
             {
                 label: !view.pinned ? languageSection.pinTab : languageSection.unpinTab,
@@ -452,25 +474,25 @@ export const getTabMenu = (window: AppWindow, view: AppView) => {
                 label: languageSection.removeTab,
                 icon: getMenuItemIconFromName('tab_remove'),
                 accelerator: Shortcuts.TAB_REMOVE,
-                click: () => viewManager.remove(view.id)
+                click: () => tabManager.remove(view.id)
             },
             {
                 label: languageSection.removeOtherTabs,
                 icon: getMenuItemIconFromName('tab_remove_all'),
-                enabled: viewManager.views.filter((appView) => appView.id !== view.id).length > 0,
-                click: () => viewManager.removeOthers(view.id)
+                enabled: tabManager.tabs.filter((appView) => appView.id !== view.id).length > 0,
+                click: () => tabManager.removeOthers(view.id)
             },
             {
                 label: languageSection.removeLeftTabs,
                 icon: getEmptyMenuItemIcon(),
-                enabled: viewManager.getLeftViews(view.id).length > 0,
-                click: () => viewManager.removeLefts(view.id)
+                enabled: tabManager.getLeftTabs(view.id).length > 0,
+                click: () => tabManager.removeLefts(view.id)
             },
             {
                 label: languageSection.removeRightTabs,
                 icon: getEmptyMenuItemIcon(),
-                enabled: viewManager.getRightViews(view.id).length > 0,
-                click: () => viewManager.removeRights(view.id)
+                enabled: tabManager.getRightTabs(view.id).length > 0,
+                click: () => tabManager.removeRights(view.id)
             }
         ]
     );

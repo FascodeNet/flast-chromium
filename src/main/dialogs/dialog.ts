@@ -106,7 +106,7 @@ export class Dialog {
         if (this.webContents.isDestroyed()) return;
 
         this.browserWindow.removeBrowserView(this.browserView);
-        const selected = Main.windowManager.get(this.browserWindow.id)?.viewManager.get();
+        const selected = Main.windowManager.get(this.browserWindow.id)?.tabManager.get();
         if (selected)
             this.browserWindow.setTopBrowserView(selected.browserView);
     }

@@ -24,7 +24,7 @@ interface ExtensionActionStore extends Partial<ExtensionAction> {
 export const getExtensionMenu = ({ id, name, url, manifest }: IExtension, window: AppWindow) => {
     const translate = getTranslate(window.user.settings.config);
 
-    const viewManager = window.viewManager;
+    const tabManager = window.tabManager;
     const contextMenus: ContextMenusAPI = (window.user.session.extensions as any).api.contextMenus;
     const menuItems: MenuItem[] = (contextMenus as any).buildMenuItemsForExtension(id, 'all');
 
@@ -41,7 +41,7 @@ export const getExtensionMenu = ({ id, name, url, manifest }: IExtension, window
         [
             {
                 label: name,
-                click: () => viewManager.add(`https://chrome.google.com/webstore/detail/${id}`)
+                click: () => tabManager.add(`https://chrome.google.com/webstore/detail/${id}`)
             },
             { type: 'separator' },
             ...menuItems,
@@ -52,7 +52,7 @@ export const getExtensionMenu = ({ id, name, url, manifest }: IExtension, window
                 click: () => {
                     if (!optionPage || !optionPageUrl) return;
 
-                    const appView = window.viewManager.add('about:blank');
+                    const appView = window.tabManager.add('about:blank');
                     appView.load(optionPageUrl);
                     appView.browserView.webContents.clearHistory();
                 }

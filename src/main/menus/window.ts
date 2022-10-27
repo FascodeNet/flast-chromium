@@ -28,8 +28,8 @@ export const getWindowMenu = (window: AppWindow) => {
     const translate = getTranslate(window.user.settings.config);
     const languageSection = translate.menus.window;
 
-    const viewManager = window.viewManager;
-    const view = viewManager.get();
+    const tabManager = window.tabManager;
+    const view = tabManager.get();
 
     const getFavicon = (appView: AppView) => {
         let dataURL = appView.favicon;
@@ -101,7 +101,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.file.newTab,
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_add') : undefined,
                 accelerator: Shortcuts.TAB_ADD,
-                click: () => viewManager.add()
+                click: () => tabManager.add()
             },
             {
                 label: languageSection.file.newWindow,
@@ -170,11 +170,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => {
                     const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_SETTINGS}`;
 
-                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    const pageView = tabManager.tabs.find((appView) => appView.url.startsWith(url));
                     if (pageView) {
-                        viewManager.select(pageView.id);
+                        tabManager.select(pageView.id);
                     } else {
-                        viewManager.add(url);
+                        tabManager.add(url);
                     }
                 }
             },
@@ -183,7 +183,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.file.closeTab,
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_remove') : undefined,
                 accelerator: Shortcuts.TAB_REMOVE,
-                click: () => viewManager.remove()
+                click: () => tabManager.remove()
             },
             {
                 label: languageSection.file.closeWindow,
@@ -303,7 +303,7 @@ export const getWindowMenu = (window: AppWindow) => {
 
                     const windows = Main.windowManager.getWindows(window.user);
                     windows.forEach((appWindow) => {
-                        appWindow.viewManager.views.forEach((appView) => appView.setBounds());
+                        appWindow.tabManager.tabs.forEach((appView) => appView.setBounds());
                         appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                     });
                 }
@@ -321,7 +321,7 @@ export const getWindowMenu = (window: AppWindow) => {
 
                     const windows = Main.windowManager.getWindows(window.user);
                     windows.forEach((appWindow) => {
-                        appWindow.viewManager.views.forEach((appView) => appView.setBounds());
+                        appWindow.tabManager.tabs.forEach((appView) => appView.setBounds());
                         appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                     });
                 }
@@ -389,11 +389,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.view.viewSource,
                 icon: !IS_MAC ? getMenuItemIconFromName('view_source') : undefined,
                 accelerator: Shortcuts.VIEW_SOURCE,
-                enabled: !viewManager.get()?.url.startsWith('view-source:'),
+                enabled: !tabManager.get()?.url.startsWith('view-source:'),
                 click: () => {
                     if (!view) return;
 
-                    const appView = viewManager.add('about:blank');
+                    const appView = tabManager.add('about:blank');
                     appView.load(`view-source:${view.url}`);
                 }
             },
@@ -509,11 +509,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => {
                     const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_BOOKMARKS}`;
 
-                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    const pageView = tabManager.tabs.find((appView) => appView.url.startsWith(url));
                     if (pageView) {
-                        viewManager.select(pageView.id);
+                        tabManager.select(pageView.id);
                     } else {
-                        viewManager.add(url);
+                        tabManager.add(url);
                     }
                 }
             },
@@ -524,11 +524,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => {
                     const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HISTORY}`;
 
-                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    const pageView = tabManager.tabs.find((appView) => appView.url.startsWith(url));
                     if (pageView) {
-                        viewManager.select(pageView.id);
+                        tabManager.select(pageView.id);
                     } else {
-                        viewManager.add(url);
+                        tabManager.add(url);
                     }
                 }
             },
@@ -539,11 +539,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => {
                     const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_DOWNLOADS}`;
 
-                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    const pageView = tabManager.tabs.find((appView) => appView.url.startsWith(url));
                     if (pageView) {
-                        viewManager.select(pageView.id);
+                        tabManager.select(pageView.id);
                     } else {
-                        viewManager.add(url);
+                        tabManager.add(url);
                     }
                 }
             },
@@ -553,11 +553,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => {
                     const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_APPLICATIONS}`;
 
-                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    const pageView = tabManager.tabs.find((appView) => appView.url.startsWith(url));
                     if (pageView) {
-                        viewManager.select(pageView.id);
+                        tabManager.select(pageView.id);
                     } else {
-                        viewManager.add(url);
+                        tabManager.add(url);
                     }
                 }
             },
@@ -567,11 +567,11 @@ export const getWindowMenu = (window: AppWindow) => {
                 click: () => {
                     const url = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_EXTENSIONS}`;
 
-                    const pageView = viewManager.views.find((appView) => appView.url.startsWith(url));
+                    const pageView = tabManager.tabs.find((appView) => appView.url.startsWith(url));
                     if (pageView) {
-                        viewManager.select(pageView.id);
+                        tabManager.select(pageView.id);
                     } else {
-                        viewManager.add(url);
+                        tabManager.add(url);
                     }
                 }
             }
@@ -588,41 +588,41 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_add') : undefined,
                 accelerator: Shortcuts.TAB_ADD,
                 click: () => {
-                    const appView = viewManager.add();
-                    viewManager.select(appView.id);
+                    const appView = tabManager.add();
+                    tabManager.select(appView.id);
                 }
             },
             {
                 label: languageSection.tab.removeTab,
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_remove') : undefined,
                 accelerator: Shortcuts.TAB_REMOVE,
-                click: () => viewManager.remove()
+                click: () => tabManager.remove()
             },
             {
                 label: languageSection.tab.removeOtherTabs,
                 icon: !IS_MAC ? getMenuItemIconFromName('tab_remove_all') : undefined,
-                enabled: viewManager.views.filter((v) => v.id !== viewManager.selectedId).length > 0,
+                enabled: tabManager.tabs.filter((v) => v.id !== tabManager.selectedId).length > 0,
                 click: () => {
                     if (!view) return;
-                    viewManager.removeOthers(view.id);
+                    tabManager.removeOthers(view.id);
                 }
             },
             {
                 label: languageSection.tab.removeLeftTabs,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
-                enabled: viewManager.getLeftViews(viewManager.selectedId).length > 0,
+                enabled: tabManager.getLeftTabs(tabManager.selectedId).length > 0,
                 click: () => {
                     if (!view) return;
-                    viewManager.removeLefts(view.id);
+                    tabManager.removeLefts(view.id);
                 }
             },
             {
                 label: languageSection.tab.removeRightTabs,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
-                enabled: viewManager.getRightViews(viewManager.selectedId).length > 0,
+                enabled: tabManager.getRightTabs(tabManager.selectedId).length > 0,
                 click: () => {
                     if (!view) return;
-                    viewManager.removeRights(view.id);
+                    tabManager.removeRights(view.id);
                 }
             },
             { type: 'separator' },
@@ -632,7 +632,7 @@ export const getWindowMenu = (window: AppWindow) => {
                 accelerator: Shortcuts.TAB_DUPLICATE,
                 click: () => {
                     if (!view) return;
-                    viewManager.add(view.url);
+                    tabManager.add(view.url);
                 }
             },
             {
@@ -658,36 +658,36 @@ export const getWindowMenu = (window: AppWindow) => {
                 label: languageSection.tab.prevTab,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.TAB_PREVIOUS,
-                enabled: viewManager.views.length > 0,
+                enabled: tabManager.tabs.length > 0,
                 click: () => {
-                    const views = viewManager.views;
+                    const views = tabManager.tabs;
 
-                    const index = views.findIndex((appView) => appView.id === viewManager.selectedId);
-                    viewManager.select(views[index > 0 ? index - 1 : views.length - 1].id);
+                    const index = views.findIndex((appView) => appView.id === tabManager.selectedId);
+                    tabManager.select(views[index > 0 ? index - 1 : views.length - 1].id);
                 }
             },
             {
                 label: languageSection.tab.nextTab,
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.TAB_NEXT,
-                enabled: viewManager.views.length > 0,
+                enabled: tabManager.tabs.length > 0,
                 click: () => {
-                    const views = viewManager.views;
+                    const views = tabManager.tabs;
 
-                    const index = views.findIndex((appView) => appView.id === viewManager.selectedId);
-                    viewManager.select(views[index < (views.length - 1) ? index + 1 : 0].id);
+                    const index = views.findIndex((appView) => appView.id === tabManager.selectedId);
+                    tabManager.select(views[index < (views.length - 1) ? index + 1 : 0].id);
                 }
             },
             { type: 'separator' },
-            ...(viewManager.views.map((appView, i): MenuItemConstructorOptions => (
+            ...(tabManager.tabs.map((appView, i): MenuItemConstructorOptions => (
                 {
                     label: appView.title,
-                    icon: !IS_MAC ? (viewManager.selectedId === appView.id ? getMenuItemIconFromName('check') : getFavicon(appView)) : undefined,
+                    icon: !IS_MAC ? (tabManager.selectedId === appView.id ? getMenuItemIconFromName('check') : getFavicon(appView)) : undefined,
                     accelerator: i < 9 ? `CmdOrCtrl+${i + 1}` : undefined,
                     type: !IS_MAC ? 'normal' : 'checkbox',
-                    checked: viewManager.selectedId === appView.id,
-                    enabled: viewManager.selectedId !== appView.id,
-                    click: () => viewManager.select(appView.id)
+                    checked: tabManager.selectedId === appView.id,
+                    enabled: tabManager.selectedId !== appView.id,
+                    click: () => tabManager.select(appView.id)
                 }
             )))
         ]
@@ -764,12 +764,12 @@ export const getWindowMenu = (window: AppWindow) => {
             },
             { type: 'separator' },
             ...(Main.windowManager.getWindows(window.user).map((appWindow, i): MenuItemConstructorOptions => {
-                const windowViewManager = appWindow.viewManager;
-                const subLabel = windowViewManager.views.length - 1 > 0 ? ` とその他 ${windowViewManager.views.length - 1}つのタブ` : '';
+                const windowTabManager = appWindow.tabManager;
+                const subLabel = windowTabManager.tabs.length - 1 > 0 ? ` とその他 ${windowTabManager.tabs.length - 1}つのタブ` : '';
 
                 return (
                     {
-                        label: `${windowViewManager.get()?.title ?? appWindow.title}${subLabel}`,
+                        label: `${windowTabManager.get()?.title ?? appWindow.title}${subLabel}`,
                         icon: !IS_MAC ? (window.id === appWindow.id ? getMenuItemIconFromName('check') : getEmptyMenuItemIcon()) : undefined,
                         accelerator: i < 9 ? `CmdOrCtrl+Shift+${i + 1}` : undefined,
                         type: !IS_MAC ? 'normal' : 'checkbox',

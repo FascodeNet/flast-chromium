@@ -1,7 +1,7 @@
 {
   "appId": "net.fascode.flast",
   "productName": "Flast",
-  "electronVersion": "20.0.3",
+  "electronVersion": "21.2.0",
   "generateUpdatesFilesForAllChannels": true,
   "asar": true,
   "directories": {

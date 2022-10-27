@@ -1,6 +1,6 @@
 import { platform } from 'os';
 import styled, { css } from 'styled-components';
-import { WINDOW_DOUBLE_TITLE_BAR_HEIGHT, WINDOW_SINGLE_LENGTH } from '../../../../../../constants/design';
+import { WINDOW_DOUBLE_TITLE_BAR_HEIGHT, WINDOW_SINGLE_APP_BAR_HEIGHT } from '../../../../../../constants/design';
 import { AppearanceStyle } from '../../../../../../interfaces/user';
 
 interface StyledProps {
@@ -13,7 +13,7 @@ interface StyledTitleBarProps extends StyledProps {
 
 export const StyledTitleBar = styled.div<StyledTitleBarProps>`
   width: 100%;
-  height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? WINDOW_SINGLE_LENGTH : WINDOW_DOUBLE_TITLE_BAR_HEIGHT}px;
+  height: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? WINDOW_SINGLE_APP_BAR_HEIGHT : WINDOW_DOUBLE_TITLE_BAR_HEIGHT}px;
   grid-area: title-bar;
   display: grid;
   grid-template-columns: ${({ fullScreen }) => fullScreen ? '1fr' : (platform() !== 'darwin' ? '1fr 135px' : '80px 1fr')};
@@ -101,7 +101,7 @@ const getStyle = (style: AppearanceStyle) => {
             return css`
               ${!isMac ? css`
                 padding: .5rem 1rem .5rem .5rem;
-                grid-template-columns: calc(${WINDOW_SINGLE_LENGTH}px - 1rem) auto 1fr auto;
+                grid-template-columns: calc(${WINDOW_SINGLE_APP_BAR_HEIGHT}px - 1rem) auto 1fr auto;
                 grid-template-areas: 'application-menu navigation-bar address-bar action-bar';
               ` : css`
                 padding: .5rem;

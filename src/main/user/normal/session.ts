@@ -28,7 +28,7 @@ export class NormalSession implements ISession {
                 if (!window || window.browserWindow.isDestroyed())
                     throw new Error(`Unable to find windowId = ${windowId}.`);
 
-                const view = window.viewManager.add(url, active);
+                const view = window.tabManager.add(url, active);
 
                 return Promise.resolve([view.webContents, view.window.browserWindow]);
             },
@@ -40,17 +40,17 @@ export class NormalSession implements ISession {
                 if (!window)
                     return;
 
-                window.viewManager.remove(webContents.id);
+                window.tabManager.remove(webContents.id);
             },
             selectTab: (webContents, browserWindow) => {
                 if (browserWindow.isDestroyed())
                     return;
 
-                const window = Main.windowManager.get(browserWindow.id);
+                const window = Main.windowManager.windows.find((appWindow) => appWindow.tabManager.get(webContents.id) !== undefined);
                 if (!window)
                     return;
 
-                window.viewManager.select(webContents.id);
+                window.tabManager.select(webContents.id);
             },
 
             createWindow: ({ url, incognito }) => {
