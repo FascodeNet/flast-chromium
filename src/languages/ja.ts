@@ -548,6 +548,12 @@ export const Ja: Language = {
                     },
                     newTab: '新しいタブ ページを開く',
                     custom: '特定のページを開く'
+                },
+                newTab: {
+                    title: '新しいタブ',
+
+                    default: 'デフォルトのページを開く',
+                    custom: '特定のページを開く'
                 }
             },
             searchAndAddressBar: {

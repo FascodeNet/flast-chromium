@@ -132,6 +132,8 @@ export interface ISettings {
 
     get homeUrl(): string;
 
+    get newTabUrl(): string;
+
     get config(): UserConfig;
 
     set config(data: DeepPartial<UserConfig>);

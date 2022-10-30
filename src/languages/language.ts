@@ -461,6 +461,12 @@ export interface Language {
                     newTab: string;
                     custom: string;
                 }
+                newTab: {
+                    title: string;
+
+                    default: string;
+                    custom: string;
+                }
             };
             searchAndAddressBar: {
                 title: string;

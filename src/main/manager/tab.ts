@@ -1,6 +1,5 @@
 import { ipcMain } from 'electron';
 import { ExtensionStore } from 'electron-chrome-extensions-production/dist/browser/store';
-import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../constants';
 import { IPCChannel } from '../../constants/ipc';
 import { MoveDirection } from '../../interfaces/view';
 import { nonNullable } from '../../utils/array';
@@ -66,11 +65,11 @@ export class TabManager {
         return this.viewManager.get(id ?? this._selectedId, this.window);
     }
 
-    public add(url: string = `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`, active: boolean = true) {
+    public add(url: string = this.user.settings.newTabUrl, active: boolean = true) {
         const view = new AppView(
             this.window,
             {
-                url: url ?? `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`,
+                url: url ?? this.user.settings.newTabUrl,
                 active: active ?? true
             }
         );

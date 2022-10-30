@@ -88,14 +88,14 @@ export const HomeButton = () => {
     const {
         config: {
             appearance: { style },
-            pages: { home: { mode, url } }
+            pages: { home, new_tab }
         }
     } = useUserConfigContext();
 
     const handleButtonClick = () => {
         viewApi.load(
             selectedId,
-            mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`
+            home.mode === 'custom' && home.url && isURL(home.url) ? home.url : (new_tab.mode === 'custom' && new_tab.url && isURL(new_tab.url) ? new_tab.url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`)
         );
     };
 

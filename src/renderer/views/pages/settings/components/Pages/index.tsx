@@ -12,7 +12,13 @@ import {
 } from '@mui/material';
 import React, { ChangeEvent, Fragment, MouseEvent, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { DefaultUserConfig, HomeButtonPageMode, StartupPageMode, UserConfig } from '../../../../../../interfaces/user';
+import {
+    DefaultUserConfig,
+    HomeButtonPageMode,
+    NewTabPageMode,
+    StartupPageMode,
+    UserConfig
+} from '../../../../../../interfaces/user';
 import { DeepPartial } from '../../../../../../utils';
 import { isURL } from '../../../../../../utils/url';
 import { Add, Edit, Home, Remove, Save } from '../../../../../components/Icons';
@@ -44,6 +50,7 @@ export const Pages = () => {
 
     const [startupUrls, setStartupUrls] = useState<string[]>([]);
     const [isHomeUrlValidated, setHomeUrlValidated] = useState(true);
+    const [isNewTabUrlValidated, setNewTabUrlValidated] = useState(true);
 
     const [dialogState, setDialogState] = useState<number | undefined>(undefined);
     const [dialogUrl, setDialogUrl] = useState('');
@@ -59,8 +66,12 @@ export const Pages = () => {
             setStartupUrls(userConfig.pages.startup.urls);
 
             const homeUrl = userConfig.pages.home.url;
-            const validated = !config.appearance.buttons.home || config.pages.home.mode !== 'custom' || !homeUrl || isURL(homeUrl);
-            setHomeUrlValidated(validated);
+            const homeUrlValidated = !config.appearance.buttons.home || config.pages.home.mode !== 'custom' || !homeUrl || isURL(homeUrl);
+            setHomeUrlValidated(homeUrlValidated);
+
+            const newTabUrl = userConfig.pages.new_tab.url;
+            const newTabUrlValidated = config.pages.new_tab.mode !== 'custom' || !newTabUrl || isURL(newTabUrl);
+            setHomeUrlValidated(newTabUrlValidated);
         });
     }, []);
 
@@ -231,6 +242,46 @@ export const Pages = () => {
                             error={!isHomeUrlValidated}
                             helperText={!isHomeUrlValidated && '正しいURLを入力してください'}
                             disabled={!config.appearance.buttons.home || config.pages.home.mode !== 'custom'}
+                            fullWidth
+                            size="small"
+                            margin="none"
+                            variant="outlined"
+                        />
+                    </ItemContainer>
+                </SectionContent>
+            </Section>
+            <Section>
+                <SectionTitle>{translateSection.newTab.title}</SectionTitle>
+                <SectionContent>
+                    <RadioItem<NewTabPageMode>
+                        primary={translateSection.newTab.default}
+                        name="new_tab"
+                        value="default"
+                        selectedValue={config.pages.new_tab.mode}
+                        setSelected={(mode) => setUserConfig({ pages: { new_tab: { mode } } })}
+                    />
+                    <RadioItem<NewTabPageMode>
+                        primary={translateSection.newTab.custom}
+                        name="new_tab"
+                        value="custom"
+                        selectedValue={config.pages.new_tab.mode}
+                        setSelected={(mode) => setUserConfig({ pages: { new_tab: { mode } } })}
+                    />
+                    <ItemContainer>
+                        <TextField
+                            value={config.pages.new_tab.url ?? ''}
+                            onChange={(e) => {
+                                const url = e.currentTarget.value.length > 0 ? e.currentTarget.value : undefined;
+                                const validated = config.pages.new_tab.mode !== 'custom' || !url || isURL(url);
+
+                                setHomeUrlValidated(validated);
+                                setUserConfig({ pages: { new_tab: { url } } });
+                            }}
+                            type="url"
+                            placeholder="URL"
+                            error={!isNewTabUrlValidated}
+                            helperText={!isNewTabUrlValidated && '正しいURLを入力してください'}
+                            disabled={config.pages.new_tab.mode !== 'custom'}
                             fullWidth
                             size="small"
                             margin="none"

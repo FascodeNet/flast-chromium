@@ -547,6 +547,12 @@ export const En: Language = {
                     },
                     newTab: 'Open new tab page',
                     custom: 'Open a specific page'
+                },
+                newTab: {
+                    title: 'New Tab',
+
+                    default: 'Open default page',
+                    custom: 'Open a specific page'
                 }
             },
             searchAndAddressBar: {

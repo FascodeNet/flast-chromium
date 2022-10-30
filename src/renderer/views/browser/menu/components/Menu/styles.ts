@@ -70,11 +70,6 @@ export const StyledItemContainer = styled.div`
   transition: all .2s ease-out;
 `;
 
-export const StyledCertificateStatus = styled(StyledItem)`
-  height: unset;
-  align-items: flex-start;
-`;
-
 interface StyledItemIconProps {
     favicon?: string;
 }
@@ -105,7 +100,7 @@ export const StyledItemIcon = styled.div<StyledItemIconProps>`
 `;
 
 export const StyledItemLabel = styled.div`
-  margin: 0;
+  margin: 1px 0 0;
   font-size: 13px;
   font-weight: ${platform() !== 'darwin' ? 400 : 300};
   white-space: nowrap;
@@ -115,19 +110,21 @@ export const StyledItemLabel = styled.div`
 
 export const StyledItemShortcut = styled.div`
   margin: 0;
-  padding: 0;
+  padding: 2px 0 0;
   display: inline-flex;
   place-items: center;
   place-content: center;
   font-family: 'SF Pro Text', 'SF Mono Regular', Roboto, sans-serif;
   font-size: 11px;
-  font-weight: normal;
+  font-weight: 400;
 `;
 
 export const StyledItemShortcutText = styled.span`
+  margin-bottom: 1px;
   color: inherit;
+  font-family: 'Roboto', sans-serif;
   font-size: 13.5px;
-  font-weight: ${platform() !== 'darwin' ? 400 : 300};
+  font-weight: 400;
 `;
 
 export const StyledItemButtonContainer = styled.div`
@@ -148,7 +145,9 @@ export const StyledItemButton = styled.button`
   font-weight: 300;
   background: none;
   border: none;
-  transition: all .2s ease-out;
+  transition: ${({ theme }) => theme.transitions.create(['background-color', 'box-shadow', 'border-color'], {
+    duration: theme.transitions.duration.short
+  })};
 
   svg, img {
     width: 20px;

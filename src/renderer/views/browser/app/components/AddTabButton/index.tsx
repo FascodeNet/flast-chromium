@@ -12,7 +12,7 @@ export const AddTabButton = () => {
     const {
         config: {
             appearance: { style },
-            pages: { home: { mode, url } }
+            pages: { new_tab: { mode, url } }
         }
     } = useUserConfigContext();
 

@@ -27,7 +27,7 @@ export class IncognitoSettings implements ISettings {
         const { mode, urls } = this._config.pages.startup;
         switch (mode) {
             case 'new_tab':
-                return [`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`];
+                return [this.newTabUrl];
             case 'prev_sessions':
                 return [];
             case 'custom':
@@ -37,6 +37,11 @@ export class IncognitoSettings implements ISettings {
 
     public get homeUrl(): string {
         const { mode, url } = this._config.pages.home;
+        return mode === 'custom' && url && isURL(url) ? url : this.newTabUrl;
+    }
+
+    public get newTabUrl(): string {
+        const { mode, url } = this._config.pages.new_tab;
         return mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`;
     }
 

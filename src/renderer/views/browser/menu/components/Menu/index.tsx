@@ -17,6 +17,7 @@ import {
 import { ViewState } from '../../../../../../interfaces/view';
 import { getTranslate } from '../../../../../../languages/language';
 import { replaceShortcut, Shortcuts } from '../../../../../../main/menus/shortcuts';
+import { isURL } from '../../../../../../utils/url';
 import {
     Add,
     Applications,
@@ -161,6 +162,7 @@ export const MainMenu = () => {
         }
     };
 
+    const newTab = config.pages.new_tab;
     return (
         <Fragment>
             <MenuPopup>
@@ -170,7 +172,7 @@ export const MainMenu = () => {
                             icon={<TabAdd />}
                             label={translateSection.newTab}
                             shortcut={replaceShortcut(Shortcuts.TAB_ADD)}
-                            onClick={() => viewsApi.add(`${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`, true)}
+                            onClick={() => viewsApi.add(newTab.mode === 'custom' && newTab.url && isURL(newTab.url) ? newTab.url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`, true)}
                         />
                         <Item
                             icon={<WindowAdd />}

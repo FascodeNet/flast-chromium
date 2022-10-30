@@ -33,6 +33,7 @@ export type AppearanceSidebarState =
 
 export type StartupPageMode = 'new_tab' | 'prev_sessions' | 'custom';
 export type HomeButtonPageMode = 'new_tab' | 'custom';
+export type NewTabPageMode = 'default' | 'custom';
 export type NewTabBackgroundStyle = 'none' | 'random' | 'custom';
 
 export interface SearchEngine {
@@ -91,6 +92,8 @@ export interface UserConfig {
             url: string | null;
         }
         new_tab: {
+            mode: NewTabPageMode;
+            url: string | null;
             background: {
                 style: NewTabBackgroundStyle;
                 url: string | null;
@@ -131,7 +134,7 @@ export interface UserConfig {
 
 export const DefaultUserConfig: UserConfig = {
     profile: {
-        name: 'New user',
+        name: '新しいユーザー',
         avatar: null
     },
     account: null,
@@ -228,6 +231,8 @@ export const DefaultUserConfig: UserConfig = {
             url: null
         },
         new_tab: {
+            mode: 'default',
+            url: null,
             background: {
                 style: 'random',
                 url: null
