@@ -358,7 +358,7 @@ export interface ThemeManifest {
     background_color: string;
 }
 
-interface IData {
+export interface IData {
     _id?: string;
     updatedAt?: Date;
     createdAt?: Date;

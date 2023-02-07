@@ -1,6 +1,7 @@
 import Datastore from '@seald-io/nedb';
 import {
     ContentType,
+    IData,
     OmitData,
     SiteContentCookieData,
     SiteContentData,
@@ -65,7 +66,7 @@ export class NormalSites implements ISites {
         return this.contents.find((site) => site.origin === origin && site.type === type);
     }
 
-    public async add<T>(data: OmitData<T>) {
+    public async add<T extends IData>(data: OmitData<T>) {
         const doc = await this._datastore.insertAsync(data) as unknown;
         this._sites.push(doc as Required<SitePermissionData | SiteContentData | SiteContentCookieData | SiteContentZoomLevelData>);
         return doc as Required<T>;
@@ -76,7 +77,7 @@ export class NormalSites implements ISites {
         return await this._datastore.removeAsync({ _id: id }, {}) > 0;
     }
 
-    public async update<T>(id: string, data: OmitData<T>) {
+    public async update<T extends IData>(id: string, data: OmitData<T>) {
         const doc: Required<T> = (await this._datastore.updateAsync(
             { _id: id },
             { $set: data },
