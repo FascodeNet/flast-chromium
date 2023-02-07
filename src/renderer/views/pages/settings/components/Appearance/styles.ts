@@ -1,12 +1,11 @@
-import { ButtonBase, Theme } from '@mui/material';
-import { styled as muiStyled } from '@mui/styles';
+import { ButtonBase, styled as muiStyled } from '@mui/material';
 import styled from 'styled-components';
 
 interface StyledSelectProps {
     image: string;
 }
 
-export const StyledStyleSelectButton = muiStyled(ButtonBase)(({ theme }: { theme: Theme }) => ({
+export const StyledStyleSelectButton = muiStyled(ButtonBase)(({ theme }) => ({
     position: 'relative',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
