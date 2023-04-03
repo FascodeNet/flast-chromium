@@ -1,35 +1,9 @@
-import styled, { css } from 'styled-components';
-import { WINDOW_DOUBLE_TITLE_BAR_HEIGHT, WINDOW_DOUBLE_TOOL_BAR_HEIGHT } from '../../../../../../constants/design';
-import { AppearanceStyle } from '../../../../../../interfaces/user';
+import styled from 'styled-components';
 
-interface StyledAppProps {
-    appearanceStyle: AppearanceStyle;
-}
-
-export const StyledApp = styled.div<StyledAppProps>`
+export const StyledApp = styled.div`
   width: 100%;
   height: 100%;
   display: grid;
-
-  ${({ appearanceStyle }) => getGridStyle(appearanceStyle)};
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: auto 1fr auto;
 `;
-
-const getGridStyle = (style: AppearanceStyle) => {
-    switch (style) {
-        case 'top_double':
-            return css`
-              grid-template-rows: ${WINDOW_DOUBLE_TITLE_BAR_HEIGHT}px ${WINDOW_DOUBLE_TOOL_BAR_HEIGHT}px calc(100% - ${WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT}px);
-              grid-template-areas:
-                    'title-bar'
-                    'tool-bar'
-                    'content';
-            `;
-        default:
-            return css`
-              grid-template-rows: 50px calc(100% - 50px);
-              grid-template-areas:
-                    'title-bar'
-                    'content';
-            `;
-    }
-};

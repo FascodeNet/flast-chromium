@@ -1,12 +1,17 @@
-import {
-    WINDOW_DOUBLE_TITLE_BAR_HEIGHT,
-    WINDOW_DOUBLE_TOOL_BAR_HEIGHT,
-    WINDOW_SINGLE_APP_BAR_HEIGHT
-} from '../constants/design';
-import { AppearanceStyle } from '../interfaces/user';
+import { AppearanceTabContainerPosition } from '../interfaces/user';
 
-export const getHeight = (style: AppearanceStyle) => isDouble(style) ? WINDOW_DOUBLE_TITLE_BAR_HEIGHT + WINDOW_DOUBLE_TOOL_BAR_HEIGHT : WINDOW_SINGLE_APP_BAR_HEIGHT;
-export const isHorizontal = (style: AppearanceStyle) => !isVertical(style);
-export const isVertical = (style: AppearanceStyle) => style === 'left' || style === 'right';
-export const isSingle = (style: AppearanceStyle) => !isDouble(style);
-export const isDouble = (style: AppearanceStyle) => style === 'top_double' || style === 'bottom_double';
+/**
+ * タブコンテナを縦長で表示しているかどうか
+ *
+ * @param {AppearanceTabContainerPosition} position
+ * @returns {boolean}
+ */
+export const isVerticalTabContainer = (position: AppearanceTabContainerPosition) => position === 'left' || position === 'right';
+
+/**
+ * タブコンテナを横長で表示しているかどうか
+ *
+ * @param {AppearanceTabContainerPosition} position
+ * @returns {boolean}
+ */
+export const isHorizontalTabContainer = (position: AppearanceTabContainerPosition) => !isVerticalTabContainer(position);

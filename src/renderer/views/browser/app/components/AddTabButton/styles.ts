@@ -1,18 +1,11 @@
 import styled from 'styled-components';
-import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { ADD_TAB_BUTTON_HEIGHT, ADD_TAB_BUTTON_WIDTH } from '../../../../../utils/tab';
 
-interface StyledProps {
-    appearanceStyle: AppearanceStyle;
-}
-
-export const StyledAddTabButton = styled.button<StyledProps>`
+export const StyledVerticalAddTabButton = styled.button`
   width: ${ADD_TAB_BUTTON_WIDTH}px;
   height: ${ADD_TAB_BUTTON_HEIGHT}px;
-  margin: ${({ appearanceStyle }) => appearanceStyle !== 'top_double' ? '0' : '0 0 0 4px'};
+  margin: 0;
   padding: 0;
-  position: absolute;
-  left: 0;
   display: flex;
   place-content: center;
   place-items: center;
@@ -27,4 +20,9 @@ export const StyledAddTabButton = styled.button<StyledProps>`
   & svg {
     font-size: 1.2rem;
   }
+`;
+
+export const StyledHorizontalAddTabButton = styled(StyledVerticalAddTabButton)`
+  position: absolute;
+  left: 0;
 `;

@@ -1,5 +1,5 @@
-import { Box, styled } from '@mui/material';
-import React, { Fragment, useEffect, useState } from 'react';
+import { Box, ButtonBase, buttonClasses, styled, useTheme } from '@mui/material';
+import React, { Fragment, ReactNode, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import ThemeBlueManifest from '../../../../../../../static/styles/blue/manifest.json';
 import SchemeDarkManifest from '../../../../../../../static/styles/dark/manifest.json';
@@ -11,15 +11,18 @@ import ThemeRedManifest from '../../../../../../../static/styles/red/manifest.js
 import ThemeYellowManifest from '../../../../../../../static/styles/yellow/manifest.json';
 import {
     AppearanceColorScheme,
-    AppearanceStyle,
+    AppearanceTabContainerPosition,
+    AppearanceTabContainerSidePosition,
     AppearanceTheme,
+    AppearanceToolbarPosition,
     DefaultUserConfig,
     UserConfig
 } from '../../../../../../interfaces/user';
 import { DeepPartial } from '../../../../../../utils';
-import { isVertical } from '../../../../../../utils/design';
+import { isVerticalTabContainer } from '../../../../../../utils/design';
 import { Applications, Bookmarks, Download, Extension, History, Home } from '../../../../../components/Icons';
 import {
+    ItemDisabledProps,
     PageTitle,
     RadioItem,
     Section,
@@ -38,6 +41,70 @@ const ThemeColor = styled(
     borderRadius: '50%',
     backgroundColor: color
 }));
+
+const GridButton = styled(
+    ButtonBase,
+    { shouldForwardProp: (prop) => prop !== 'row' && prop !== 'column' }
+)<{ row: string; column: string; }>(({ theme, row, column }) => ({
+    margin: theme.spacing(.5),
+    gridRow: row,
+    gridColumn: column,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing(1),
+    background: theme.palette.action.hover,
+    borderRadius: theme.shape.borderRadius,
+    transition: theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'color'], {
+        duration: theme.transitions.duration.short
+    }),
+    [`&.${buttonClasses.disabled}`]: {
+        color: theme.palette.action.disabled
+    },
+    [`&:hover, &.${buttonClasses.focusVisible}`]: {
+        background: theme.palette.action.hover
+    }
+}));
+
+interface RadioItemProps<T> extends ItemDisabledProps {
+    children?: ReactNode;
+    row: string;
+    column: string;
+    name: string;
+    value: T;
+    selectedValue: T;
+    setSelected: (value: T) => void;
+}
+
+const GridRadioButton = <T, >(
+    {
+        children,
+        row,
+        column,
+        name,
+        value,
+        selectedValue,
+        setSelected,
+        disabled
+    }: RadioItemProps<T>
+) => {
+    const theme = useTheme();
+
+    return (
+        <GridButton
+            row={row}
+            column={column}
+            onClick={() => setSelected(value)}
+            disabled={disabled}
+            sx={{
+                background: selectedValue === value ? theme.palette.primary.main : theme.palette.action.hover,
+                color: selectedValue === value ? theme.palette.primary.contrastText : 'inherit'
+            }}
+        >
+            {children}
+        </GridButton>
+    );
+};
 
 export const Appearance = () => {
     const [userId, setUserId] = useState('');
@@ -61,6 +128,33 @@ export const Appearance = () => {
         await window.flast.user.setTheme(userId);
         setConfig(cfg);
     };
+
+    const isTabContainerSidePositionDisabled = config.appearance.toolbar_position as string !== config.appearance.tab_container.position as string;
+
+    const handleToolbarPositionSelect = (toolbarPosition: AppearanceToolbarPosition, tabContainerPosition: Extract<AppearanceTabContainerPosition, 'top' | 'bottom'>) => setUserConfig(
+        {
+            appearance: {
+                toolbar_position: toolbarPosition,
+                tab_container: {
+                    position: tabContainerPosition,
+                    side: 'default'
+                }
+            }
+        }
+    );
+
+    const handleTabContainerPositionSelect = (position: AppearanceTabContainerPosition) => setUserConfig(
+        {
+            appearance: {
+                tab_container: {
+                    position,
+                    side: 'default'
+                }
+            }
+        }
+    );
+
+    const theme = useTheme();
 
     return (
         <Fragment>
@@ -176,35 +270,108 @@ export const Appearance = () => {
                 </SectionContent>
             </Section>
             <Section>
-                <SectionTitle>{translateSection.tabPosition.title}</SectionTitle>
+                <SectionTitle>{translateSection.toolbar.title}</SectionTitle>
+                <SectionTitle variant="h6">{translateSection.toolbar.position.title}</SectionTitle>
                 <SectionContent>
-                    <RadioItem<AppearanceStyle>
-                        primary={translateSection.tabPosition.topSingle}
-                        name="style"
-                        value="top_single"
-                        selectedValue={config.appearance.style}
-                        setSelected={(style) => setUserConfig({ appearance: { style } })}
+                    <RadioItem<AppearanceToolbarPosition>
+                        primary={translateSection.toolbar.position.top}
+                        name="toolbar"
+                        value="top"
+                        selectedValue={config.appearance.toolbar_position}
+                        setSelected={(position) => handleToolbarPositionSelect(position, 'top')}
                     />
-                    <RadioItem<AppearanceStyle>
-                        primary={translateSection.tabPosition.topDouble}
-                        name="style"
-                        value="top_double"
-                        selectedValue={config.appearance.style}
-                        setSelected={(style) => setUserConfig({ appearance: { style } })}
+                    <RadioItem<AppearanceToolbarPosition>
+                        primary={translateSection.toolbar.position.bottom}
+                        name="toolbar"
+                        value="bottom"
+                        selectedValue={config.appearance.toolbar_position}
+                        setSelected={(position) => handleToolbarPositionSelect(position, 'bottom')}
                     />
-                    <RadioItem<AppearanceStyle>
-                        primary={translateSection.tabPosition.left}
-                        name="style"
-                        value="left"
-                        selectedValue={config.appearance.style}
-                        setSelected={(style) => setUserConfig({ appearance: { style } })}
+                </SectionContent>
+            </Section>
+            <Section>
+                <SectionTitle>{translateSection.tabContainer.title}</SectionTitle>
+                <SectionTitle variant="h6">{translateSection.tabContainer.position.title}</SectionTitle>
+                <SectionContent>
+                    <Box
+                        sx={{
+                            width: 'fit-content',
+                            aspectRatio: '1 / 1',
+                            p: .5,
+                            display: 'grid',
+                            gridTemplateRows: '50px 80px 50px',
+                            gridTemplateColumns: '50px 80px 50px',
+                            border: `solid 1px ${theme.palette.divider}`,
+                            borderRadius: 1
+                        }}
+                    >
+                        <GridRadioButton<AppearanceTabContainerPosition>
+                            row="1 / 2"
+                            column="2 / 3"
+                            name="tab_container"
+                            value="top"
+                            selectedValue={config.appearance.tab_container.position}
+                            setSelected={handleTabContainerPositionSelect}
+                        >
+                            {translateSection.tabContainer.position.top}
+                        </GridRadioButton>
+                        <GridRadioButton<AppearanceTabContainerPosition>
+                            row="3 / 4"
+                            column="2 / 3"
+                            name="tab_container"
+                            value="bottom"
+                            selectedValue={config.appearance.tab_container.position}
+                            setSelected={handleTabContainerPositionSelect}
+                        >
+                            {translateSection.tabContainer.position.bottom}
+                        </GridRadioButton>
+                        <GridRadioButton<AppearanceTabContainerPosition>
+                            row="2 / 3"
+                            column="1 / 2"
+                            name="tab_container"
+                            value="left"
+                            selectedValue={config.appearance.tab_container.position}
+                            setSelected={handleTabContainerPositionSelect}
+                        >
+                            {translateSection.tabContainer.position.left}
+                        </GridRadioButton>
+                        <GridRadioButton<AppearanceTabContainerPosition>
+                            row="2 / 3"
+                            column="3 / 4"
+                            name="tab_container"
+                            value="right"
+                            selectedValue={config.appearance.tab_container.position}
+                            setSelected={handleTabContainerPositionSelect}
+                        >
+                            {translateSection.tabContainer.position.right}
+                        </GridRadioButton>
+                    </Box>
+                </SectionContent>
+                <SectionTitle variant="h6">{translateSection.tabContainer.sidePosition.title}</SectionTitle>
+                <SectionContent>
+                    <RadioItem<AppearanceTabContainerSidePosition>
+                        primary={translateSection.tabContainer.sidePosition.default}
+                        name="tab_container_side"
+                        value="default"
+                        selectedValue={config.appearance.tab_container.side}
+                        setSelected={(side) => setUserConfig({ appearance: { tab_container: { side } } })}
+                        disabled={isTabContainerSidePositionDisabled}
                     />
-                    <RadioItem<AppearanceStyle>
-                        primary={translateSection.tabPosition.right}
-                        name="style"
-                        value="right"
-                        selectedValue={config.appearance.style}
-                        setSelected={(style) => setUserConfig({ appearance: { style } })}
+                    <RadioItem<AppearanceTabContainerSidePosition>
+                        primary={translateSection.tabContainer.sidePosition.outside}
+                        name="tab_container_side"
+                        value="outside"
+                        selectedValue={config.appearance.tab_container.side}
+                        setSelected={(side) => setUserConfig({ appearance: { tab_container: { side } } })}
+                        disabled={isTabContainerSidePositionDisabled}
+                    />
+                    <RadioItem<AppearanceTabContainerSidePosition>
+                        primary={translateSection.tabContainer.sidePosition.inside}
+                        name="tab_container_side"
+                        value="inside"
+                        selectedValue={config.appearance.tab_container.side}
+                        setSelected={(side) => setUserConfig({ appearance: { tab_container: { side } } })}
+                        disabled={isTabContainerSidePositionDisabled}
                     />
                 </SectionContent>
             </Section>
@@ -222,21 +389,21 @@ export const Appearance = () => {
                         primary={translateSection.button.bookmarks}
                         checked={config.appearance.buttons.bookmarks}
                         setChecked={(bookmarks) => setUserConfig({ appearance: { buttons: { bookmarks } } })}
-                        disabled={isVertical(config.appearance.style)}
+                        disabled={isVerticalTabContainer(config.appearance.tab_container.position)}
                     />
                     <SwitchItem
                         icon={<History />}
                         primary={translateSection.button.history}
                         checked={config.appearance.buttons.history}
                         setChecked={(history) => setUserConfig({ appearance: { buttons: { history } } })}
-                        disabled={isVertical(config.appearance.style)}
+                        disabled={isVerticalTabContainer(config.appearance.tab_container.position)}
                     />
                     <SwitchItem
                         icon={<Download />}
                         primary={translateSection.button.downloads}
                         checked={config.appearance.buttons.downloads}
                         setChecked={(downloads) => setUserConfig({ appearance: { buttons: { downloads } } })}
-                        disabled={isVertical(config.appearance.style)}
+                        disabled={isVerticalTabContainer(config.appearance.tab_container.position)}
                     />
                     <SwitchItem
                         icon={<Applications />}

@@ -422,13 +422,35 @@ export interface Language {
                 theme: {
                     title: string;
                 }
-                tabPosition: {
+                toolbar: {
                     title: string;
 
-                    topSingle: string;
-                    topDouble: string;
-                    left: string;
-                    right: string;
+                    position: {
+                        title: string;
+
+                        top: string;
+                        bottom: string;
+                    }
+                }
+                tabContainer: {
+                    title: string;
+
+                    expand: string;
+                    position: {
+                        title: string;
+
+                        top: string;
+                        bottom: string;
+                        left: string;
+                        right: string;
+                    }
+                    sidePosition: {
+                        title: string;
+
+                        default: string;
+                        outside: string;
+                        inside: string;
+                    }
                 }
                 button: {
                     title: string;

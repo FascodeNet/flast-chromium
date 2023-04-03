@@ -1,12 +1,10 @@
 import { platform } from 'os';
 import styled, { css } from 'styled-components';
 import { APPLICATION_NAME } from '../../../../../../constants';
-import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { borderRadius } from '../../../../../themes';
 
 interface StyledAddressBarProps {
     active?: boolean;
-    appearanceStyle: AppearanceStyle;
 }
 
 export const StyledAddressBar = styled.div<StyledAddressBarProps>`
@@ -29,18 +27,10 @@ export const StyledAddressBar = styled.div<StyledAddressBarProps>`
   cursor: text;
   app-region: no-drag;
 
-  ${({ active = false, appearanceStyle }) => (active && appearanceStyle === 'top_single') && css`
+  ${({ active = false }) => (active) && css`
     grid-area: none;
     grid-row: 1 / 2;
     grid-column: 1 / 4;
-  `};
-
-  ${({ appearanceStyle }) => (appearanceStyle === 'top_double') && css`
-    & .button, & .icon-button, ${StyledButton} {
-      min-width: 28px !important;
-      height: 28px !important;
-      padding: 4px;
-    }
   `};
 `;
 

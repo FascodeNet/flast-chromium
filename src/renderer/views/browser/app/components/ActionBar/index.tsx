@@ -1,6 +1,6 @@
 import { getCurrentWebContents } from '@electron/remote';
 import React from 'react';
-import { isHorizontal } from '../../../../../../utils/design';
+import { isHorizontalTabContainer } from '../../../../../../utils/design';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import {
     BookmarksButton,
@@ -16,7 +16,7 @@ export const ActionBar = () => {
     const {
         config: {
             appearance: {
-                style,
+                tab_container: { position },
                 buttons: { bookmarks, history, downloads, applications, extensions }
             }
         }
@@ -25,10 +25,10 @@ export const ActionBar = () => {
     const allExtensions = getCurrentWebContents().session.getAllExtensions();
 
     return (
-        <StyledContainer className="action-bar" appearanceStyle={style}>
-            {isHorizontal(style) && bookmarks && <BookmarksButton />}
-            {isHorizontal(style) && history && <HistoryButton />}
-            {isHorizontal(style) && downloads && <DownloadsButton />}
+        <StyledContainer className="action-bar">
+            {isHorizontalTabContainer(position) && bookmarks && <BookmarksButton />}
+            {isHorizontalTabContainer(position) && history && <HistoryButton />}
+            {isHorizontalTabContainer(position) && downloads && <DownloadsButton />}
             {allExtensions.length > 0 && <ExtensionsButton />}
             <ProfileButton />
             <MenuButton />

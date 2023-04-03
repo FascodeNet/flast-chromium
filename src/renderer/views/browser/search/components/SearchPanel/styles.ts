@@ -1,13 +1,8 @@
 import { platform } from 'os';
 import styled, { css } from 'styled-components';
-import { AppearanceStyle } from '../../../../../../interfaces/user';
 import { borderRadius } from '../../../../../themes';
 
-interface StyledProps {
-  appearanceStyle: AppearanceStyle;
-}
-
-export const StyledPanel = styled.div<StyledProps>`
+export const StyledPanel = styled.div`
   width: 100%;
   height: 34px;
   margin: 0;
@@ -18,14 +13,6 @@ export const StyledPanel = styled.div<StyledProps>`
   border-radius: ${borderRadius.toUnit()};
   overflow: hidden;
   user-select: none;
-
-  ${({ appearanceStyle }) => (appearanceStyle !== 'top_double') ? css`
-    height: 34px;
-    padding: 4px 0 4px 12px;
-  ` : css`
-    height: 32px;
-    padding: 3px 0 3px 12px;
-  `};
 `;
 
 export const StyledIcon = styled.div`
@@ -65,28 +52,25 @@ export const StyledInput = styled.input`
   background: none;
 `;
 
-export const StyledButtonContainer = styled.div<StyledProps>`
+export const StyledButtonContainer = styled.div`
   height: 100%;
+  margin: -4px 0 -4px -4px;
+  padding: 0 2px 0 0;
   display: flex;
   align-items: center;
   gap: 2px;
   cursor: default;
-
-  ${({ appearanceStyle }) => (appearanceStyle !== 'top_double') ? css`
-    margin: -4px 0 -4px -4px;
-    padding: 0 2px 0 0;
-  ` : css`
-    margin: -3px 0 -3px -3px;
-    padding: 0 2px 0 0;
-  `};
 `;
 
-interface StyledButtonProps extends StyledProps {
-  label?: string;
+interface StyledButtonProps {
+    label?: string;
 }
 
 export const StyledButton = styled.button<StyledButtonProps>`
+  min-width: 30px;
+  height: 30px;
   margin: 0;
+  padding: 5px;
   display: flex;
   place-content: center;
   place-items: center;
@@ -104,16 +88,6 @@ export const StyledButton = styled.button<StyledButtonProps>`
     width: 20px;
     height: 20px;
   }
-
-  ${({ appearanceStyle }) => (appearanceStyle !== 'top_double') ? css`
-    min-width: 30px;
-    height: 30px;
-    padding: 5px;
-  ` : css`
-    min-width: 28px;
-    height: 28px;
-    padding: 4px;
-  `};
 
   ${({ label }) => label && css`
     &::after {

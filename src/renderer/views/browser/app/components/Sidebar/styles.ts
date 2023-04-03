@@ -1,50 +1,16 @@
 import styled, { css } from 'styled-components';
-import { AppearanceSidebarState, AppearanceStyle } from '../../../../../../interfaces/user';
+import { AppearanceSidebarState } from '../../../../../../interfaces/user';
 
 interface StyledSidebarProps {
-    appearanceStyle: AppearanceStyle;
     extended: boolean;
     panel: AppearanceSidebarState;
 }
-
-const getStyle = (style: AppearanceStyle, extended: boolean, state: AppearanceSidebarState) => {
-    if (extended && state !== 'tab_container') {
-        switch (style) {
-            case 'left':
-                return css`
-                  display: grid;
-                  grid-template-columns: 50px 1fr;
-                  grid-template-rows: 1fr auto;
-                  grid-template-areas:
-                    'vertical-tab-container panel'
-                    'tool-bar panel';
-                `;
-            case 'right':
-                return css`
-                  display: grid;
-                  grid-template-columns: 1fr 50px;
-                  grid-template-rows: 1fr auto;
-                  grid-template-areas:
-                    'panel vertical-tab-container'
-                    'panel tool-bar';
-                `;
-        }
-    } else {
-        return css`
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        `;
-    }
-};
 
 export const StyledSidebar = styled.aside<StyledSidebarProps>`
   width: 100%;
   height: 100%;
   grid-area: sidebar;
   overflow: hidden;
-
-  ${({ appearanceStyle, extended, panel }) => getStyle(appearanceStyle, extended, panel)};
 `;
 
 export const StyledVerticalContainer = styled.div`

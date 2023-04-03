@@ -98,7 +98,7 @@ export class App {
 
         nativeTheme.on('updated', () => {
             this.windowManager.windows.filter((window) => !window.isDestroyed).forEach((window) => {
-                window.tabManager.get()?.setBounds();
+                window.setViewBounds();
                 window.setStyle();
             });
         });

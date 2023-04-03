@@ -49,8 +49,8 @@
   }
 
   .app {
-    &[data-style='top_single'], &[data-style='bottom_single'], &[data-style='left'], &[data-style='right'] {
-      .title-bar, .tool-bar, .horizontal-tab-container, .vertical-tab-container {
+    &[data-tabcontainer-side-position='default'] {
+      .app-bar, .title-bar, .horizontal-tab-container, .vertical-tab-container {
         background-color: @background;
       }
 
@@ -89,14 +89,13 @@
       }
     }
 
-    &[data-style='top_double'], &[data-style='bottom_double'] {
-      .title-bar, .horizontal-tab-container, .vertical-tab-container {
+    &:not([data-tabcontainer-side-position='default']) {
+      .tab-bar, .horizontal-tab-container, .vertical-tab-container {
         background-color: darken(@background, 10%);
       }
 
       .tool-bar {
         background-color: @background;
-        border-bottom: solid 1px @divider;
       }
 
       .horizontal-tab-item, .vertical-tab-item {
@@ -122,6 +121,30 @@
       }
     }
 
+    &[data-toolbar-position='top']:not([data-tabcontainer-side-position='inside']) {
+      .tool-bar {
+        border-bottom: solid 1px @divider;
+      }
+
+      &[data-tabcontainer-position='bottom'] {
+        .horizontal-tab-bar {
+          border-top: solid 1px @divider;
+        }
+      }
+    }
+
+    &[data-toolbar-position='bottom']:not([data-tabcontainer-side-position='inside']) {
+      .tool-bar {
+        border-top: solid 1px @divider;
+      }
+
+      &[data-tabcontainer-position='top'] {
+        .horizontal-tab-bar {
+          border-bottom: solid 1px @divider;
+        }
+      }
+    }
+
     .address-bar {
       background-color: darken(@background, 3%);
       border-color: darken(@background, 10%);
@@ -144,6 +167,10 @@
       }
     }
 
+    .app-content {
+      background-color: @divider;
+    }
+
     .sidebar {
       &.left {
         border-right: solid 1px @divider;
@@ -162,7 +189,7 @@
       }
     }
 
-    &:not([data-style]) {
+    &:not([data-toolbar-position]):not([data-tabcontainer-position]):not([data-tabcontainer-side-position]) {
       .title-bar {
         background-color: darken(@background, 10%);
       }

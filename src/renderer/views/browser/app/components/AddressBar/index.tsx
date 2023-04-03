@@ -138,8 +138,7 @@ export const AddressBar = () => {
         }
     };
 
-    const style = config.appearance.style;
-    if (window.outerWidth >= 850 || style !== 'top_single' || active) {
+    if (window.outerWidth >= 850 || active) {
         try {
             const {
                 protocol,
@@ -156,7 +155,6 @@ export const AddressBar = () => {
                     onClick={handleClick}
                     className={clsx('address-bar', state.requestState?.type)}
                     active={active}
-                    appearanceStyle={style}
                 >
                     <StyledButtonContainer className="address-bar-container">
                         <Button
@@ -191,7 +189,6 @@ export const AddressBar = () => {
                     onClick={handleClick}
                     active={active}
                     className="address-bar"
-                    appearanceStyle={style}
                 >
                     <StyledButtonContainer className="address-bar-container">
                         <Button icon={<StatusIcon />} sx={{ '& .button-icon *': { width: 20, height: 20 } }}>

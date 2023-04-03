@@ -22,7 +22,10 @@ export type AppearanceColorScheme = 'system' | 'light' | 'dark';
 export type AppearanceSystemTheme = AppearanceColorScheme | 'incognito';
 export type AppearanceInternalTheme = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple';
 export type AppearanceTheme = AppearanceInternalTheme | string | null;
-export type AppearanceStyle = 'top_single' | 'top_double' | 'bottom_single' | 'bottom_double' | 'left' | 'right';
+export type AppearanceToolbarPosition = 'top' | 'bottom';
+export type AppearanceTabContainerPosition = 'top' | 'bottom' | 'left' | 'right';
+export type AppearanceTabContainerSidePosition = 'default' | 'outside' | 'inside';
+export type AppearanceSidebarPosition = 'left' | 'right' | 'none';
 export type AppearanceSidebarState =
     'tab_container'
     | 'bookmarks'
@@ -67,10 +70,16 @@ export interface UserConfig {
         color_scheme: AppearanceColorScheme;
         theme: AppearanceTheme;
         tab_colored: boolean;
-        style: AppearanceStyle;
         fullscreen_showing_toolbar: boolean;
+        toolbar_position: AppearanceToolbarPosition;
+        tab_container: {
+            expanded: boolean;
+            position: AppearanceTabContainerPosition;
+            side: AppearanceTabContainerSidePosition;
+        }
         sidebar: {
-            extended: boolean;
+            expanded: boolean;
+            position: AppearanceSidebarPosition;
             state: AppearanceSidebarState;
         }
         buttons: {
@@ -206,10 +215,16 @@ export const DefaultUserConfig: UserConfig = {
         color_scheme: 'system',
         theme: null,
         tab_colored: true,
-        style: 'top_single',
         fullscreen_showing_toolbar: true,
+        toolbar_position: 'top',
+        tab_container: {
+            expanded: false,
+            position: 'top',
+            side: 'default'
+        },
         sidebar: {
-            extended: false,
+            expanded: false,
+            position: 'none',
             state: 'tab_container'
         },
         buttons: {

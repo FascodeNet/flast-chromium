@@ -510,13 +510,35 @@ export const Ja: Language = {
                 theme: {
                     title: 'テーマ'
                 },
-                tabPosition: {
-                    title: 'タブとアドレスバーの配置',
+                toolbar: {
+                    title: 'ツールバー',
 
-                    topSingle: '上 (1行)',
-                    topDouble: '上 (2行)',
-                    left: '左',
-                    right: '右'
+                    position: {
+                        title: '配置',
+
+                        top: '上',
+                        bottom: '下'
+                    }
+                },
+                tabContainer: {
+                    title: 'タブコンテナ',
+
+                    expand: 'タブコンテナの表示幅を広げる',
+                    position: {
+                        title: '配置',
+
+                        top: '上',
+                        bottom: '下',
+                        left: '左',
+                        right: '右'
+                    },
+                    sidePosition: {
+                        title: '詳しい配置',
+
+                        default: 'デフォルト',
+                        outside: 'ツールバーの外側',
+                        inside: 'ツールバーの内側'
+                    }
                 },
                 button: {
                     title: '表示するボタンの選択',

@@ -2,20 +2,16 @@ import { getCurrentWindow } from '@electron/remote';
 import { ipcRenderer } from 'electron';
 import React, { MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { MoveDirection } from '../../../../../../interfaces/view';
-import { useUserConfigContext } from '../../../../../contexts/config';
 import { useViewManagerContext } from '../../../../../contexts/view';
 import { useElectronAPI } from '../../../../../utils/electron';
 import { setTabsBounds } from '../../../../../utils/tab';
-import { AddTabButton } from '../AddTabButton';
+import { HorizontalAddTabButton, VerticalAddTabButton } from '../AddTabButton';
 import { HorizontalTab, VerticalTab } from '../Tab';
 import { StyledHorizontalTabContainer, StyledHorizontalTabWrapper, StyledVerticalTabContainer } from './styles';
 
 export const HorizontalTabContainer = () => {
     const { views, setTabContainerWidth } = useViewManagerContext();
     const { viewsApi } = useElectronAPI();
-
-    const { config } = useUserConfigContext();
-    const style = config.appearance.style;
 
     const tabContainerRef = useRef<HTMLDivElement>();
 
@@ -123,7 +119,7 @@ export const HorizontalTabContainer = () => {
                     />
                 ))}
             </StyledHorizontalTabWrapper>
-            <AddTabButton />
+            <HorizontalAddTabButton />
         </StyledHorizontalTabContainer>
     );
 };
@@ -206,7 +202,7 @@ export const VerticalTabContainer = ({ extended }: VerticalTabContainerProps) =>
                     extended={extended}
                 />
             ))}
-            <AddTabButton />
+            <VerticalAddTabButton />
         </StyledVerticalTabContainer>
     );
 };

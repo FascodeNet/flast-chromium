@@ -509,13 +509,35 @@ export const En: Language = {
                 theme: {
                     title: 'Theme'
                 },
-                tabPosition: {
-                    title: 'Tab Position',
+                toolbar: {
+                    title: 'Toolbar',
 
-                    topSingle: 'Top (1 Rows)',
-                    topDouble: 'Top (2 Rows)',
-                    left: 'Left',
-                    right: 'Right'
+                    position: {
+                        title: 'Position',
+
+                        top: 'Top',
+                        bottom: 'Bottom'
+                    }
+                },
+                tabContainer: {
+                    title: 'Tab Container',
+
+                    expand: 'タブコンテナの表示幅を広げる',
+                    position: {
+                        title: 'Position',
+
+                        top: 'Top',
+                        bottom: 'Bottom',
+                        left: 'Left',
+                        right: 'Right'
+                    },
+                    sidePosition: {
+                        title: 'Detailed Layout',
+
+                        default: 'Default',
+                        outside: 'Outside toolbar',
+                        inside: 'Inside toolbar'
+                    }
                 },
                 button: {
                     title: 'Select buttons to display',

@@ -2,7 +2,6 @@ import { nativeTheme } from '@electron/remote';
 import { Avatar } from '@mui/material';
 import clsx from 'clsx';
 import React, { MouseEvent } from 'react';
-import { isSingle } from '../../../../../../utils/design';
 import { IconButton } from '../../../../../components/Button';
 import { Bookmarks, Download, Extension, History, MenuMore } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
@@ -12,8 +11,6 @@ import { useElectronAPI } from '../../../../../utils/electron';
 export const BookmarksButton = () => {
     const { popupApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
         const { x, y, height } = e.currentTarget.getBoundingClientRect();
         popupApi.bookmarks(x, y + height);
@@ -22,7 +19,7 @@ export const BookmarksButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('action-button', 'bookmarks')}
         >
             <Bookmarks />
@@ -33,8 +30,6 @@ export const BookmarksButton = () => {
 export const HistoryButton = () => {
     const { popupApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
         const { x, y, height } = e.currentTarget.getBoundingClientRect();
         popupApi.history(x, y + height);
@@ -43,7 +38,7 @@ export const HistoryButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('action-button', 'history')}
         >
             <History />
@@ -54,8 +49,6 @@ export const HistoryButton = () => {
 export const DownloadsButton = () => {
     const { popupApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
         const { x, y, height } = e.currentTarget.getBoundingClientRect();
         popupApi.downloads(x, y + height);
@@ -64,7 +57,7 @@ export const DownloadsButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('action-button', 'downloads')}
         >
             <Download />
@@ -75,8 +68,6 @@ export const DownloadsButton = () => {
 export const ExtensionsButton = () => {
     const { popupApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
         const { x, y, height } = e.currentTarget.getBoundingClientRect();
         popupApi.extensions(x, y + height);
@@ -85,7 +76,7 @@ export const ExtensionsButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('action-button', 'extensions')}
         >
             <Extension />
@@ -96,7 +87,7 @@ export const ExtensionsButton = () => {
 export const ProfileButton = () => {
     const { popupApi } = useElectronAPI();
 
-    const { config: { profile: { name, avatar }, appearance: { style } } } = useUserConfigContext();
+    const { config: { profile: { name, avatar } } } = useUserConfigContext();
     const { palette: { background } } = nativeTheme.shouldUseDarkColors ? MuiDarkGlobalStyles : MuiLightGlobalStyles;
 
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -107,7 +98,7 @@ export const ProfileButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('action-button', 'profile')}
             sx={{ borderRadius: '50%' }}
         >
@@ -131,8 +122,6 @@ export const ProfileButton = () => {
 export const MenuButton = () => {
     const { windowApi, popupApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
         const { x, y, height } = e.currentTarget.getBoundingClientRect();
         popupApi.windowMenu(x, y + height);
@@ -146,7 +135,7 @@ export const MenuButton = () => {
         <IconButton
             onClick={handleButtonClick}
             onContextMenu={handleButtonContextMenu}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('action-button', 'menu')}
         >
             <MenuMore />

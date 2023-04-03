@@ -13,7 +13,6 @@ import {
 } from '../../constants';
 import { IPCChannel } from '../../constants/ipc';
 import { getTranslate } from '../../languages/language';
-import { isHorizontal } from '../../utils/design';
 import { getIconsPath } from '../../utils/path';
 import { IS_MAC } from '../../utils/process';
 import { App, Main } from '../main';
@@ -314,16 +313,18 @@ export const getWindowMenu = (window: AppWindow) => {
                 icon: !IS_MAC ? getEmptyMenuItemIcon() : undefined,
                 accelerator: Shortcuts.SIDEBAR,
                 click: () => {
+                    /*
                     const settings = window.user.settings;
                     if (isHorizontal(settings.config.appearance.style)) return;
 
-                    settings.config = { appearance: { sidebar: { extended: !settings.config.appearance.sidebar.extended } } };
+                    settings.config = { appearance: { sidebar: { expanded: !settings.config.appearance.sidebar.expanded } } };
 
                     const windows = Main.windowManager.getWindows(window.user);
                     windows.forEach((appWindow) => {
                         appWindow.tabManager.tabs.forEach((appView) => appView.setBounds());
                         appWindow.webContents.send(IPCChannel.User.UPDATED_SETTINGS(appWindow.user.id), settings.config);
                     });
+                    */
                 }
             },
             { type: 'separator' },

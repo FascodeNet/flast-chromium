@@ -95,7 +95,7 @@ export class NormalUser implements IUser {
 
             const windows = Main.windowManager.getWindows(this);
             windows.forEach(async (window) => {
-                window.tabManager.tabs.forEach((view) => view.setBounds());
+                window.setViewBounds();
                 window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.id), this._settings.config);
                 await window.setStyle();
             });
@@ -128,7 +128,7 @@ export class NormalUser implements IUser {
 
             const windows = Main.windowManager.getWindows(this);
             windows.forEach((window) => {
-                window.tabManager.tabs.forEach((view) => view.setBounds());
+                window.setViewBounds();
                 window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.id), this._settings.config);
             });
 

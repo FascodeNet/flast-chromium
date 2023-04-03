@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../constants';
-import { isSingle } from '../../../../../../utils/design';
 import { isURL } from '../../../../../../utils/url';
 import { IconButton } from '../../../../../components/Button';
 import { ArrowLeft, ArrowRight, Home, Reload, Remove } from '../../../../../components/Icons';
@@ -15,8 +14,6 @@ export const BackButton = () => {
 
     const { viewApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = () => {
         viewApi.back(selectedId);
     };
@@ -25,7 +22,7 @@ export const BackButton = () => {
         <IconButton
             onClick={handleButtonClick}
             disabled={!canGoBack}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('navigation-button', 'back')}
         >
             <ArrowLeft />
@@ -39,8 +36,6 @@ export const ForwardButton = () => {
 
     const { viewApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = () => {
         viewApi.forward(selectedId);
     };
@@ -49,7 +44,7 @@ export const ForwardButton = () => {
         <IconButton
             onClick={handleButtonClick}
             disabled={!canGoForward}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('navigation-button', 'forward')}
         >
             <ArrowRight />
@@ -63,8 +58,6 @@ export const ReloadButton = () => {
 
     const { viewApi } = useElectronAPI();
 
-    const { config: { appearance: { style } } } = useUserConfigContext();
-
     const handleButtonClick = () => {
         !isLoading ? viewApi.reload(selectedId, false) : viewApi.stop(selectedId);
     };
@@ -72,7 +65,7 @@ export const ReloadButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('navigation-button', !isLoading ? 'reload' : 'stop')}
         >
             {!isLoading ? <Reload /> : <Remove />}
@@ -87,7 +80,6 @@ export const HomeButton = () => {
 
     const {
         config: {
-            appearance: { style },
             pages: { home, new_tab }
         }
     } = useUserConfigContext();
@@ -102,7 +94,7 @@ export const HomeButton = () => {
     return (
         <IconButton
             onClick={handleButtonClick}
-            size={isSingle(style) ? 34 : 32}
+            size={34}
             className={clsx('navigation-button', 'home')}
         >
             <Home />

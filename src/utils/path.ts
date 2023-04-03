@@ -11,4 +11,4 @@ export const getSpecialPath = (
     name: 'home' | 'appData' | 'userData' | 'cache' | 'temp' | 'exe' | 'module' | 'desktop' | 'documents' | 'downloads' | 'music' | 'pictures' | 'videos' | 'recent' | 'logs' | 'crashDumps',
     ...paths: string[]
 ) => join(app.getPath(name), ...paths);
-export const getUserDataPath = (userId: string, ...paths: string[]) => getSpecialPath('userData', 'users', userId, ...paths);
+export const getUserDataPath = (userId: string, ...paths: string[]) => getSpecialPath('userData', 'Users', userId, ...paths);

@@ -1,5 +1,4 @@
 import { DIALOG_FIND_NAME } from '../../constants/dialog';
-import { getHeight } from '../../utils/design';
 import { getBuildPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { buildTheme } from '../../utils/theme';
@@ -16,7 +15,7 @@ export const showFindDialog = (user: IUser, view: AppView): Dialog => {
         width: 380,
         height: 70,
         x: width - 400,
-        y: getHeight(user.settings.config.appearance.style)
+        y: 50
     };
 
     const dialogName = `${DIALOG_FIND_NAME}-${view.id}`;

@@ -62,7 +62,7 @@ export const setTabsLefts = (containerWidth: number, views: ViewState[], animati
     animateTab(
         'translateX',
         Math.min(left, containerWidth + TABS_PADDING),
-        '.add-tab-button',
+        '.add-tab-button.horizontal',
         animation
     );
 };

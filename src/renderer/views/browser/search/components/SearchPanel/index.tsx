@@ -12,13 +12,12 @@ import React, {
 } from 'react';
 import reactStringReplace from 'react-string-replace';
 import { APPLICATION_PROTOCOL } from '../../../../../../constants';
-import { AppearanceStyle, BookmarkData, DefaultUserConfig, SearchEngine } from '../../../../../../interfaces/user';
+import { BookmarkData, DefaultUserConfig, SearchEngine } from '../../../../../../interfaces/user';
 import { ViewState } from '../../../../../../interfaces/view';
 import { getTranslate } from '../../../../../../languages/language';
 import { ResultData } from '../../../../../../main/utils/search';
 import { equals, includes } from '../../../../../../utils';
 import { split } from '../../../../../../utils/array';
-import { isSingle } from '../../../../../../utils/design';
 import { isURL, prefixHttp } from '../../../../../../utils/url';
 import { IconButton } from '../../../../../components/Button';
 import { Code } from '../../../../../components/Code';
@@ -29,15 +28,15 @@ import { useElectronAPI } from '../../../../../utils/electron';
 import { ResultType } from '../../interface';
 import { StyledButtonContainer, StyledIcon, StyledInput, StyledLabel, StyledPanel } from './styles';
 
-const Button = styled(IconButton)<{ appearanceStyle: AppearanceStyle; }>(({ appearanceStyle }) => ({
-    minWidth: isSingle(appearanceStyle) ? 30 : 28,
-    height: isSingle(appearanceStyle) ? 30 : 28,
-    padding: isSingle(appearanceStyle) ? 5 : 4,
+const Button = styled(IconButton)({
+    minWidth: 30,
+    height: 30,
+    padding: 5,
     'svg, img': {
         width: 20,
         height: 20
     }
-}));
+});
 
 const filter = (array: ResultData[]) => array.filter((data, i) => array.findIndex(
     ({ title, url }) => title === data.title || url === data.url
@@ -306,7 +305,7 @@ export const SearchPanel = (
     };
 
     return (
-        <StyledPanel className="panel search-bar" appearanceStyle={config.appearance.style}>
+        <StyledPanel className="panel search-bar">
             <StyledIcon>
                 {icon ? (
                     <Avatar
@@ -347,11 +346,11 @@ export const SearchPanel = (
                     )}
                 </div>
             </StyledLabel>}
-            <StyledButtonContainer appearanceStyle={config.appearance.style}>
-                <Button appearanceStyle={config.appearance.style}>
+            <StyledButtonContainer>
+                <Button>
                     <Share />
                 </Button>
-                <Button onClick={handleBookmarkButtonClick} appearanceStyle={config.appearance.style}>
+                <Button onClick={handleBookmarkButtonClick}>
                     {bookmark ? <StarFilled /> : <Star />}
                 </Button>
             </StyledButtonContainer>

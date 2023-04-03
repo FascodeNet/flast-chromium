@@ -1,13 +1,12 @@
 import Color from 'color';
 import { platform } from 'os';
 import styled, { css } from 'styled-components';
-import { AppearanceStyle } from '../../../../../../interfaces/user';
-import { isSingle } from '../../../../../../utils/design';
+import { AppearanceTabContainerSidePosition, AppearanceToolbarPosition } from '../../../../../../interfaces/user';
 import { borderRadius } from '../../../../../themes';
 import { TAB_MAX_WIDTH } from '../../../../../utils/tab';
 
 interface StyledTabIconProps {
-  favicon?: string;
+    favicon?: string;
 }
 
 export const StyledTabProgress = styled.div`
@@ -68,13 +67,14 @@ export const StyledTabCloseButton = styled.button`
 `;
 
 interface StyledTabProps {
-  active?: boolean;
-  pinned?: boolean;
-  themeColor?: string;
+    active?: boolean;
+    pinned?: boolean;
+    themeColor?: string;
 }
 
 interface StyledHorizontalTabProps extends StyledTabProps {
-  appearanceStyle: AppearanceStyle;
+    position: AppearanceToolbarPosition;
+    sidePosition: AppearanceTabContainerSidePosition;
 }
 
 export const StyledHorizontalTab = styled.div<StyledHorizontalTabProps>`
@@ -92,12 +92,13 @@ export const StyledHorizontalTab = styled.div<StyledHorizontalTabProps>`
   outline-width: 2px;
   border-style: solid;
   border-width: 2px;
+  border-radius: ${borderRadius.toUnit()};
   app-region: no-drag;
 
-  ${({ appearanceStyle }) => isSingle(appearanceStyle) ? css`
+  ${({ position, sidePosition }) => sidePosition === 'default' ? css`
     border-radius: ${borderRadius.toUnit()};
   ` : css`
-    border-radius: ${appearanceStyle === 'top_double' ? `${borderRadius.toUnit()} ${borderRadius.toUnit()} 0 0` : `0 0 ${borderRadius.toUnit()} ${borderRadius.toUnit()}`};
+    border-radius: ${position === 'top' ? `${borderRadius.toUnit()} ${borderRadius.toUnit()} 0 0` : `0 0 ${borderRadius.toUnit()} ${borderRadius.toUnit()}`};
   `};
 
   &:hover {

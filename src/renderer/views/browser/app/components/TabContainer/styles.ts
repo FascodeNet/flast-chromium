@@ -1,9 +1,4 @@
 import styled from 'styled-components';
-import { AppearanceStyle } from '../../../../../../interfaces/user';
-
-interface StyledProps {
-    appearanceStyle: AppearanceStyle;
-}
 
 export const StyledHorizontalTabContainer = styled.div`
   width: 100%;

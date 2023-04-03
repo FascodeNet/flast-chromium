@@ -102,8 +102,15 @@ export const HorizontalTab = (
     const { selectedId } = useViewManagerContext();
     const { viewsApi, viewApi } = useElectronAPI();
 
-    const { config } = useUserConfigContext();
-    const { style, tab_colored: isTabColored } = config.appearance;
+    const {
+        config: {
+            appearance: {
+                tab_colored: isTabColored,
+                toolbar_position: position,
+                tab_container: { side: tabContainerSidePosition }
+            }
+        }
+    } = useUserConfigContext();
 
     const handleClick = () => {
         if (id === selectedId) return;
@@ -125,7 +132,6 @@ export const HorizontalTab = (
             pinned={isPinned}
             themeColor={isTabColored ? color : undefined}
             tabIndex={0}
-            appearanceStyle={style}
             className={
                 clsx(
                     'horizontal-tab-item',
@@ -135,6 +141,8 @@ export const HorizontalTab = (
                     `horizontal-tab-item-${id}`
                 )
             }
+            position={position}
+            sidePosition={tabContainerSidePosition}
             style={{ zIndex: isDragging ? 2 : 'unset' }}
         >
             {!isLoading ? <TabIcon url={url} favicon={favicon} /> : <TabProgress />}

@@ -8,6 +8,7 @@ import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
 import { getEmptyMenuItemIcon, getMenuItemIcon, getMenuItemIconFromName, joinTo, resizeIcon } from '../utils/menu';
 import { AppView } from '../views/app';
+import { SideView } from '../views/side';
 import { AppWindow } from '../windows/app';
 import { Shortcuts } from './shortcuts';
 
@@ -202,6 +203,21 @@ export const getContextMenu = (window: AppWindow, view: AppView, params: Context
             icon: getMenuItemIconFromName('external_link'),
             visible: canCopy && isURL(getSelectionText(false)),
             click: () => window.tabManager.add(prefixHttp(getSelectionText(false)))
+        },
+        {
+            label: `サイドバーで「${getSelectionText(true)}」を検索`,
+            icon: getEmptyMenuItemIcon(),
+            click: () => {
+                const url = defaultSearchEngine.url.replace('%s', encodeURIComponent(getSelectionText(true)));
+
+                if (window.sideView) {
+                    window.sideView.load(url);
+                } else {
+                    window.sideView = new SideView(window, url);
+                }
+
+                window.sideView.setBounds();
+            }
         },
         {
             label: languageSection.print,

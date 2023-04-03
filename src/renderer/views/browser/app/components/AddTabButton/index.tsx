@@ -1,17 +1,17 @@
+import clsx from 'clsx';
 import React, { MouseEvent } from 'react';
 import { APPLICATION_PROTOCOL, APPLICATION_WEB_HOME } from '../../../../../../constants';
 import { isURL } from '../../../../../../utils/url';
-import { Add } from '../../../../../components/Icons/state';
+import { Add } from '../../../../../components/Icons';
 import { useUserConfigContext } from '../../../../../contexts/config';
 import { useElectronAPI } from '../../../../../utils/electron';
-import { StyledAddTabButton } from './styles';
+import { StyledHorizontalAddTabButton, StyledVerticalAddTabButton } from './styles';
 
-export const AddTabButton = () => {
+export const HorizontalAddTabButton = () => {
     const { viewsApi } = useElectronAPI();
 
     const {
         config: {
-            appearance: { style },
             pages: { new_tab: { mode, url } }
         }
     } = useUserConfigContext();
@@ -24,8 +24,31 @@ export const AddTabButton = () => {
     };
 
     return (
-        <StyledAddTabButton className="add-tab-button" onClick={handleButtonClick} appearanceStyle={style}>
+        <StyledHorizontalAddTabButton className={clsx('add-tab-button', 'horizontal')} onClick={handleButtonClick}>
             <Add color="action" />
-        </StyledAddTabButton>
+        </StyledHorizontalAddTabButton>
+    );
+};
+
+export const VerticalAddTabButton = () => {
+    const { viewsApi } = useElectronAPI();
+
+    const {
+        config: {
+            pages: { new_tab: { mode, url } }
+        }
+    } = useUserConfigContext();
+
+    const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+        viewsApi.add(
+            mode === 'custom' && url && isURL(url) ? url : `${APPLICATION_PROTOCOL}://${APPLICATION_WEB_HOME}`,
+            true
+        );
+    };
+
+    return (
+        <StyledVerticalAddTabButton className={clsx('add-tab-button', 'vertical')} onClick={handleButtonClick}>
+            <Add color="action" />
+        </StyledVerticalAddTabButton>
     );
 };

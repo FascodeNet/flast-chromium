@@ -3,14 +3,18 @@ import { BrowserWindow, ipcMain, Menu, NativeImage, nativeImage, Rectangle, Touc
 import { APPLICATION_NAME } from '../../constants';
 import {
     WINDOW_DOUBLE_APP_BAR_HEIGHT,
-    WINDOW_EXTENDED_SIDEBAR_WIDTH,
+    WINDOW_DOUBLE_TAB_CONTAINER_HEIGHT,
+    WINDOW_DOUBLE_TITLE_BAR_HEIGHT,
+    WINDOW_DOUBLE_TOOL_BAR_HEIGHT,
     WINDOW_EXTENDED_TAB_CONTAINER_WIDTH,
+    WINDOW_SIDE_VIEW_TOOL_BAR_HEIGHT,
+    WINDOW_SIDE_VIEW_WIDTH,
     WINDOW_SINGLE_APP_BAR_HEIGHT
 } from '../../constants/design';
 import { DIALOG_EXTENSIONS_NAME } from '../../constants/dialog';
 import { IPCChannel } from '../../constants/ipc';
 import { WindowFullScreenState } from '../../interfaces/window';
-import { isHorizontal, isSingle, isVertical } from '../../utils/design';
+import { isHorizontalTabContainer, isVerticalTabContainer } from '../../utils/design';
 import { getBuildPath, getIconsPath } from '../../utils/path';
 import { IS_DEVELOPMENT } from '../../utils/process';
 import { showBookmarksDialog } from '../dialogs/bookmarks';
@@ -31,6 +35,7 @@ import { getWindowMenu } from '../menus/window';
 import { IncognitoUser } from '../user/incognito';
 import { NormalUser } from '../user/normal';
 import { search } from '../utils/search';
+import { SideView } from '../views/side';
 
 const { TouchBarButton, TouchBarPopover, TouchBarSpacer } = TouchBar;
 
@@ -45,6 +50,8 @@ export class AppWindow extends WindowImpl {
     private applicationMenu: Menu;
 
     private _fullScreenState: WindowFullScreenState;
+
+    private _sideView?: SideView;
 
     public constructor(user: IUser, urls: string[] = user.settings.startupUrls) {
         super(new BrowserWindow({
@@ -108,27 +115,89 @@ export class AppWindow extends WindowImpl {
         return this._fullScreenState;
     }
 
+    public get sideView() {
+        return this._sideView;
+    }
+
+    public set sideView(view: SideView | undefined) {
+        this._sideView = view;
+        this.setViewBounds();
+    }
+
     /**
      * BrowserView を配置できる領域
      * @returns {Electron.CrossProcessExports.Rectangle}
      */
     public get contentBounds(): Rectangle {
         const { width, height } = this.browserWindow.getContentBounds();
-        const userState = this.fullScreenState.user;
-        const isFullScreen = this.browserWindow.isFullScreen();
+        const { user: userState, html: htmlState } = this.fullScreenState;
 
         const {
-            style,
             fullscreen_showing_toolbar: isFullScreenShowingToolbar,
-            sidebar: { extended, state }
+            toolbar_position: position,
+            tab_container: {
+                expanded: tabContainerExpanded,
+                position: tabContainerPosition,
+                side: tabContainerSidePosition
+            },
+            sidebar: { expanded: sidebarExpanded, position: sidebarPosition }
         } = this.user.settings.config.appearance;
 
-        const sidebarWidth = extended ? (state !== 'tab_container' ? WINDOW_EXTENDED_SIDEBAR_WIDTH : WINDOW_EXTENDED_TAB_CONTAINER_WIDTH) : WINDOW_SINGLE_APP_BAR_HEIGHT;
+        if ((userState && !isFullScreenShowingToolbar) || htmlState) {
+            return {
+                width,
+                height,
+                x: 0,
+                y: 0
+            };
+        }
 
-        const contentX = (!isFullScreen || (userState && isFullScreenShowingToolbar)) && style === 'left' ? sidebarWidth : 0;
-        const contentY = !isFullScreen || (userState && isFullScreenShowingToolbar) ? (isSingle(style) ? WINDOW_SINGLE_APP_BAR_HEIGHT : WINDOW_DOUBLE_APP_BAR_HEIGHT) : 0;
-        const contentWidth = width - ((!isFullScreen || (userState && isFullScreenShowingToolbar)) && isVertical(style) ? sidebarWidth : 0);
-        const contentHeight = height - contentY;
+        const tabContainerWidth = tabContainerExpanded ? WINDOW_EXTENDED_TAB_CONTAINER_WIDTH : WINDOW_SINGLE_APP_BAR_HEIGHT;
+        const appbarHeight = (position === 'top' && tabContainerPosition === 'bottom') || (position === 'bottom' && tabContainerPosition === 'top') || (isHorizontalTabContainer(tabContainerPosition) && tabContainerSidePosition !== 'default') ? WINDOW_DOUBLE_APP_BAR_HEIGHT : WINDOW_SINGLE_APP_BAR_HEIGHT;
+
+        // 領域の幅
+        let contentWidth = width;
+        // 領域の高さ
+        let contentHeight = height;
+        // 横方向の表示開始位置 (右にずらす)
+        let contentX = 0;
+        // 縦方向の表示開始位置 (下にずらす)
+        let contentY = 0;
+
+
+        // 領域の幅を減らす
+        if (isVerticalTabContainer(tabContainerPosition))
+            contentWidth -= tabContainerWidth;
+
+        // サイドバーの幅分減らす
+        if (this._sideView || sidebarExpanded)
+            contentWidth -= (WINDOW_SIDE_VIEW_WIDTH + 10);
+
+        if (sidebarPosition !== 'none')
+            contentWidth -= WINDOW_SINGLE_APP_BAR_HEIGHT;
+
+        // 領域の高さを減らす
+        contentHeight -= appbarHeight;
+
+        if (!userState && position === 'bottom' && tabContainerPosition !== 'top')
+            contentHeight -= WINDOW_DOUBLE_TITLE_BAR_HEIGHT;
+
+        // タブコンテナが左側の場合のみ表示開始位置を右方向にずらす
+        if (tabContainerPosition === 'left')
+            contentX += tabContainerWidth;
+
+        if (sidebarPosition === 'left' && (this._sideView || sidebarExpanded))
+            contentX += (WINDOW_SIDE_VIEW_WIDTH + 10);
+
+        // ツールバーとタブコンテナの配置の設定に応じて表示開始位置を下方向にずらす
+        if (!userState && position === 'bottom' && tabContainerPosition !== 'top')
+            contentY += WINDOW_DOUBLE_TITLE_BAR_HEIGHT;
+        else if (position === 'top' && tabContainerPosition === 'bottom')
+            contentY += WINDOW_DOUBLE_TOOL_BAR_HEIGHT;
+        else if (position === 'bottom' && tabContainerPosition === 'top')
+            contentY += WINDOW_DOUBLE_TAB_CONTAINER_HEIGHT;
+        else if (position === 'top')
+            contentY += appbarHeight;
 
         return {
             width: contentWidth,
@@ -137,6 +206,87 @@ export class AppWindow extends WindowImpl {
             y: contentY
         };
     }
+
+    public get sideViewBounds(): Rectangle {
+        const { width, height } = this.browserWindow.getContentBounds();
+        const { user: userState, html: htmlState } = this.fullScreenState;
+
+        const {
+            toolbar_position: position,
+            tab_container: {
+                expanded: tabContainerExpanded,
+                position: tabContainerPosition,
+                side: tabContainerSidePosition
+            },
+            sidebar: { expanded: sidebarExpanded, position: sidebarPosition }
+        } = this.user.settings.config.appearance;
+
+        if (htmlState) {
+            return {
+                width: 0,
+                height: 0,
+                x: 0,
+                y: 0
+            };
+        }
+
+        const tabContainerWidth = tabContainerExpanded ? WINDOW_EXTENDED_TAB_CONTAINER_WIDTH : WINDOW_SINGLE_APP_BAR_HEIGHT;
+        const appbarHeight = (position === 'top' && tabContainerPosition === 'bottom') || (position === 'bottom' && tabContainerPosition === 'top') || (isHorizontalTabContainer(tabContainerPosition) && tabContainerSidePosition !== 'default') ? WINDOW_DOUBLE_APP_BAR_HEIGHT : WINDOW_SINGLE_APP_BAR_HEIGHT;
+
+        // 領域の幅
+        const contentWidth = 400;
+        // 領域の高さ
+        let contentHeight = height - (WINDOW_SIDE_VIEW_TOOL_BAR_HEIGHT + 5);
+        // 横方向の表示開始位置 (右にずらす)
+        const contentX = (sidebarPosition === 'left' ? WINDOW_SINGLE_APP_BAR_HEIGHT : (width - ((sidebarPosition === 'right' ? WINDOW_SINGLE_APP_BAR_HEIGHT : 0) + WINDOW_SIDE_VIEW_WIDTH))) - 5;
+        // 縦方向の表示開始位置 (下にずらす)
+        let contentY = WINDOW_SIDE_VIEW_TOOL_BAR_HEIGHT;
+
+        // 領域の高さを減らす
+        contentHeight -= appbarHeight;
+
+        if (!userState && position === 'bottom' && tabContainerPosition !== 'top')
+            contentHeight -= WINDOW_DOUBLE_TITLE_BAR_HEIGHT;
+
+        // ツールバーとタブコンテナの配置の設定に応じて表示開始位置を下方向にずらす
+        if (!userState && position === 'bottom' && tabContainerPosition !== 'top')
+            contentY += WINDOW_DOUBLE_TITLE_BAR_HEIGHT;
+        else if (position === 'top' && tabContainerPosition === 'bottom')
+            contentY += WINDOW_DOUBLE_TOOL_BAR_HEIGHT;
+        else if (position === 'bottom' && tabContainerPosition === 'top')
+            contentY += WINDOW_DOUBLE_TAB_CONTAINER_HEIGHT;
+        else if (position === 'top')
+            contentY += appbarHeight;
+
+        return {
+            width: contentWidth,
+            height: contentHeight,
+            x: contentX,
+            y: contentY
+        };
+    }
+
+
+    public setViewBounds() {
+        const {
+            toolbar_position: position,
+            tab_container: { position: tabContainerPosition, side: tabContainerSidePosition }
+        } = this.user.settings.config.appearance;
+
+        if ((position === 'bottom' && tabContainerPosition === 'bottom') || (position === 'bottom' && isVerticalTabContainer(tabContainerPosition)))
+            this.browserWindow.setTrafficLightPosition({ x: 5, y: 5 });
+        else if ((position === 'bottom' && tabContainerPosition === 'top') || (position === 'top' && tabContainerSidePosition === 'outside'))
+            this.browserWindow.setTrafficLightPosition({ x: 11, y: 11 });
+        else if ((position === 'top' && tabContainerPosition === 'bottom') || (position === 'top' && tabContainerSidePosition === 'inside'))
+            this.browserWindow.setTrafficLightPosition({ x: 13, y: 13 });
+        else
+            this.browserWindow.setTrafficLightPosition({ x: 17, y: 17 });
+
+        if (!this._fullScreenState.html)
+            this._sideView?.setBounds();
+        this.tabManager.tabs.forEach((view) => view.setBounds());
+    }
+
 
     public setApplicationMenu() {
         if (this.isDestroyed) return;
@@ -303,11 +453,6 @@ export class AppWindow extends WindowImpl {
         Main.windowManager.remove(this.id);
     }
 
-
-    private setViewBounds() {
-        this.tabManager.tabs.forEach((view) => view.setBounds());
-    }
-
     private setListeners() {
         const onDestroyed = () => {
             this.tabManager.clear();
@@ -376,23 +521,9 @@ export class AppWindow extends WindowImpl {
         ipcMain.handle(IPCChannel.Window.APPLICATION_MENU(this.id), () => {
             const settings = this.user.settings;
 
-            this.applicationMenu.popup({
-                window: this.browserWindow,
-                x: settings.config.appearance.style !== 'top_double' ? 8 : 0,
-                y: settings.config.appearance.style !== 'top_double' ? 42 : 36
-            });
         });
         ipcMain.handle(IPCChannel.Window.SIDEBAR(this.id), () => {
-            const settings = this.user.settings;
-            if (isHorizontal(settings.config.appearance.style)) return;
 
-            settings.config = { appearance: { sidebar: { extended: !settings.config.appearance.sidebar.extended } } };
-
-            const windows = Main.windowManager.getWindows(this.user);
-            windows.forEach((window) => {
-                window.tabManager.tabs.forEach((view) => view.setBounds());
-                window.webContents.send(IPCChannel.User.UPDATED_SETTINGS(this.user.id), settings.config);
-            });
         });
 
         ipcMain.handle(IPCChannel.Window.CLOSE(this.id), () => {

@@ -1,10 +1,9 @@
 import deepmerge from 'deepmerge';
-import { BrowserView, ipcMain, NativeImage, Rectangle } from 'electron';
+import { BrowserView, ipcMain, NativeImage } from 'electron';
 import { APPLICATION_NAME } from '../../constants';
 import { IPCChannel } from '../../constants/ipc';
 import { SitePermissionData } from '../../interfaces/user';
 import { AppViewInitializerOptions, DefaultFindState, FindState, MediaStatus, ViewState } from '../../interfaces/view';
-import { getHeight } from '../../utils/design';
 import { getBuildPath } from '../../utils/path';
 import { Dialog } from '../dialogs/dialog';
 import { showFindDialog } from '../dialogs/find';
@@ -22,7 +21,6 @@ export class AppView extends ViewImpl {
     public readonly user: IUser;
 
     private _window: AppWindow;
-    private _contentBounds?: Rectangle;
 
     private _favicon?: string;
     private _color?: string;
@@ -66,7 +64,6 @@ export class AppView extends ViewImpl {
 
         this.setListeners();
         this.webContents.setWindowOpenHandler(({ url: handlerUrl, frameName, disposition }) => {
-            console.log(handlerUrl, frameName, disposition);
             if (disposition === 'new-window') {
                 if (frameName === '_self') {
                     this.webContents.loadURL(handlerUrl);
@@ -267,7 +264,7 @@ export class AppView extends ViewImpl {
 
     public setBounds() {
         this.browserView.setAutoResize({ width: true, height: true });
-        this.browserView.setBounds(this._contentBounds ?? this.window.contentBounds);
+        this.browserView.setBounds(this.window.contentBounds);
 
         if (this.window.tabManager.selectedId === this.id) {
             this.window.browserWindow.addBrowserView(this.browserView);
@@ -283,7 +280,7 @@ export class AppView extends ViewImpl {
                 width: 380,
                 height: 70,
                 x: width - 400,
-                y: getHeight(this.user.settings.config.appearance.style)
+                y: 50
             };
 
             Main.dialogManager.show(findDialog);
