@@ -2,7 +2,11 @@
   "name": "flast-chromium",
   "description": "Cross-platform browser based on Chromium (Electron).",
   "version": "1.0.0-alpha.33",
-  "packageManager": "yarn@3.4.1",
+  "packageManager": "yarn@3.5.0",
+  "volta": {
+    "node": "18.15.0",
+    "yarn": "3.5.0"
+  },
   "license": "GPL-3.0-only",
   "author": {
     "name": "Aoichaan0513",
