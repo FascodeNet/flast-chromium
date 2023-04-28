@@ -16,7 +16,7 @@ import { IPCChannel } from '../../constants/ipc';
 import { WindowFullScreenState } from '../../interfaces/window';
 import { isHorizontalTabContainer, isVerticalTabContainer } from '../../utils/design';
 import { getBuildPath, getIconsPath } from '../../utils/path';
-import { IS_DEVELOPMENT } from '../../utils/process';
+import { IS_DEVELOPMENT, IS_MAC } from '../../utils/process';
 import { showBookmarksDialog } from '../dialogs/bookmarks';
 import { showDownloadsDialog } from '../dialogs/downloads';
 import { showExtensionsDialog } from '../dialogs/extensions';
@@ -273,14 +273,16 @@ export class AppWindow extends WindowImpl {
             tab_container: { position: tabContainerPosition, side: tabContainerSidePosition }
         } = this.user.settings.config.appearance;
 
-        if ((position === 'bottom' && tabContainerPosition === 'bottom') || (position === 'bottom' && isVerticalTabContainer(tabContainerPosition)))
-            this.browserWindow.setTrafficLightPosition({ x: 5, y: 5 });
-        else if ((position === 'bottom' && tabContainerPosition === 'top') || (position === 'top' && tabContainerSidePosition === 'outside'))
-            this.browserWindow.setTrafficLightPosition({ x: 11, y: 11 });
-        else if ((position === 'top' && tabContainerPosition === 'bottom') || (position === 'top' && tabContainerSidePosition === 'inside'))
-            this.browserWindow.setTrafficLightPosition({ x: 13, y: 13 });
-        else
-            this.browserWindow.setTrafficLightPosition({ x: 17, y: 17 });
+        if (IS_MAC) {
+            if ((position === 'bottom' && tabContainerPosition === 'bottom') || (position === 'bottom' && isVerticalTabContainer(tabContainerPosition)))
+                this.browserWindow.setTrafficLightPosition({ x: 5, y: 5 });
+            else if ((position === 'bottom' && tabContainerPosition === 'top') || (position === 'top' && tabContainerSidePosition === 'outside'))
+                this.browserWindow.setTrafficLightPosition({ x: 11, y: 11 });
+            else if ((position === 'top' && tabContainerPosition === 'bottom') || (position === 'top' && tabContainerSidePosition === 'inside'))
+                this.browserWindow.setTrafficLightPosition({ x: 13, y: 13 });
+            else
+                this.browserWindow.setTrafficLightPosition({ x: 17, y: 17 });
+        }
 
         if (!this._fullScreenState.html)
             this._sideView?.setBounds();
